@@ -18,6 +18,16 @@ from pathlib import Path
 
 from pydantic import BaseModel
 
+from pliegocheck_schemas.document_extraction import (
+    DOCUMENT_EXTRACTION_SCHEMA_VERSION,
+    DocumentExtractionContracts,
+    DocumentExtractionStatus,
+    DocumentProcessingJobStatus,
+    DocumentProcessingJobType,
+    DocumentProcessingStatus,
+    ExtractedSegmentType,
+    ExtractionErrorCode,
+)
 from pliegocheck_schemas.manual_import import (
     MANUAL_IMPORT_SCHEMA_VERSION,
     DocumentType,
@@ -122,12 +132,53 @@ def generate_manual_import_enums_ts() -> None:
     write_text(GENERATED_DIR / "manual-import.enums.ts", "\n".join(blocks))
 
 
+def generate_document_extraction_enums_ts() -> None:
+    blocks = [
+        TS_HEADER,
+        "export const DOCUMENT_EXTRACTION_SCHEMA_VERSION = "
+        f'"{DOCUMENT_EXTRACTION_SCHEMA_VERSION}";\n',
+        ts_const_block(
+            "DOCUMENT_PROCESSING_STATUS_VALUES",
+            "DocumentProcessingStatusValue",
+            DocumentProcessingStatus,
+        ),
+        ts_const_block(
+            "DOCUMENT_PROCESSING_JOB_STATUS_VALUES",
+            "DocumentProcessingJobStatusValue",
+            DocumentProcessingJobStatus,
+        ),
+        ts_const_block(
+            "DOCUMENT_PROCESSING_JOB_TYPE_VALUES",
+            "DocumentProcessingJobTypeValue",
+            DocumentProcessingJobType,
+        ),
+        ts_const_block(
+            "DOCUMENT_EXTRACTION_STATUS_VALUES",
+            "DocumentExtractionStatusValue",
+            DocumentExtractionStatus,
+        ),
+        ts_const_block(
+            "EXTRACTED_SEGMENT_TYPE_VALUES",
+            "ExtractedSegmentTypeValue",
+            ExtractedSegmentType,
+        ),
+        ts_const_block(
+            "EXTRACTION_ERROR_CODE_VALUES",
+            "ExtractionErrorCodeValue",
+            ExtractionErrorCode,
+        ),
+    ]
+    write_text(GENERATED_DIR / "document-extraction.enums.ts", "\n".join(blocks))
+
+
 def main() -> int:
     try:
         generate_json_schema(NormalizedRequirement, "normalized-requirement.schema.json")
         generate_json_schema(ManualImportContracts, "manual-import.schema.json")
+        generate_json_schema(DocumentExtractionContracts, "document-extraction.schema.json")
         generate_requirement_enums_ts()
         generate_manual_import_enums_ts()
+        generate_document_extraction_enums_ts()
     except Exception as exc:  # el fallo debe ser visible y con codigo distinto de cero
         print(f"ERROR generando contratos: {exc}", file=sys.stderr)
         return 1

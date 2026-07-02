@@ -1,6 +1,11 @@
 import type {
   ApiError,
+  DocumentExtractionDetail,
+  ExtractedSegmentList,
+  ExtractedSegmentType,
   DocumentUploadResponse,
+  ExtractionRetryResponse,
+  ProcessInventory,
   ProcessCreate,
   ProcessDetail,
   ProcessList,
@@ -87,6 +92,55 @@ export function createProcess(payload: ProcessCreate) {
 
 export function getProcess(processId: string) {
   return request<ProcessDetail>(`/processes/${processId}`);
+}
+
+export function getInventory(processId: string) {
+  return request<ProcessInventory>(`/processes/${processId}/inventory`);
+}
+
+export function enqueueProcessExtractions(processId: string) {
+  return request<ExtractionRetryResponse[]>(`/processes/${processId}/extractions`, {
+    method: "POST",
+    body: JSON.stringify({}),
+  });
+}
+
+export function enqueueDocumentExtraction(processId: string, documentId: string, force = false) {
+  return request<ExtractionRetryResponse>(
+    `/processes/${processId}/documents/${documentId}/extractions`,
+    {
+      method: "POST",
+      body: JSON.stringify({ force }),
+    },
+  );
+}
+
+export function getDocumentExtraction(processId: string, documentId: string) {
+  return request<DocumentExtractionDetail>(
+    `/processes/${processId}/documents/${documentId}/extraction`,
+  );
+}
+
+export function getExtractionSegments(
+  processId: string,
+  documentId: string,
+  params: {
+    limit?: number;
+    offset?: number;
+    page_number?: string;
+    sheet_name?: string;
+    segment_type?: ExtractedSegmentType | "";
+  } = {},
+) {
+  const query = new URLSearchParams();
+  query.set("limit", String(params.limit ?? 20));
+  query.set("offset", String(params.offset ?? 0));
+  if (params.page_number?.trim()) query.set("page_number", params.page_number.trim());
+  if (params.sheet_name?.trim()) query.set("sheet_name", params.sheet_name.trim());
+  if (params.segment_type) query.set("segment_type", params.segment_type);
+  return request<ExtractedSegmentList>(
+    `/processes/${processId}/documents/${documentId}/extraction/segments?${query.toString()}`,
+  );
 }
 
 export async function uploadDocuments(processId: string, files: File[]) {

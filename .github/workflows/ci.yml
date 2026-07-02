@@ -29,6 +29,15 @@ jobs:
       PLIEGOCHECK_TEST_DATABASE_URL: postgresql+psycopg://pliegocheck:pliegocheck@localhost:56543/pliegocheck_test
       PLIEGOCHECK_STORAGE_PATH: ./var/documents
       PLIEGOCHECK_MAX_FILE_SIZE_MB: "20"
+      PLIEGOCHECK_EXTRACTION_MAX_SECONDS: "10"
+      PLIEGOCHECK_EXTRACTION_MAX_CHARACTERS: "2000000"
+      PLIEGOCHECK_EXTRACTION_MAX_PAGES: "500"
+      PLIEGOCHECK_EXTRACTION_MAX_SHEETS: "50"
+      PLIEGOCHECK_EXTRACTION_MAX_ROWS_PER_SHEET: "10000"
+      PLIEGOCHECK_EXTRACTION_MAX_ZIP_ENTRIES: "5000"
+      PLIEGOCHECK_EXTRACTION_MAX_UNCOMPRESSED_MB: "200"
+      PLIEGOCHECK_EXTRACTION_MAX_COMPRESSION_RATIO: "100"
+      PLIEGOCHECK_WORKER_MAX_ATTEMPTS: "3"
       PLIEGOCHECK_ALLOWED_WEB_ORIGINS: http://localhost:3000
       NEXT_PUBLIC_API_BASE_URL: http://localhost:8000
     steps:
@@ -79,6 +88,9 @@ jobs:
 
       - name: Pruebas
         run: pnpm test
+
+      - name: Pruebas de extraccion documental
+        run: pnpm extraction:test
 
       - name: Build web
         run: pnpm build

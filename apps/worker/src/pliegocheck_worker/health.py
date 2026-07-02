@@ -1,14 +1,16 @@
 """Diagnostico del worker."""
 
 from pliegocheck_worker import SERVICE_NAME, SERVICE_VERSION
+from pliegocheck_worker.runner import queue_connected
 
 
 def health_status() -> dict[str, str | bool]:
-    """Estado del worker. ``queue_connected`` es False: aun no existe cola real."""
+    """Estado del worker con comprobacion real de la cola PostgreSQL."""
+    connected = queue_connected()
     return {
-        "status": "ok",
+        "status": "ok" if connected else "error",
         "service": SERVICE_NAME,
         "version": SERVICE_VERSION,
-        "queue_connected": False,
-        "document_processing_enabled": False,
+        "queue_connected": connected,
+        "document_processing_enabled": connected,
     }

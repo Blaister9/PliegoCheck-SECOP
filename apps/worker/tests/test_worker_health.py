@@ -8,14 +8,14 @@ from pliegocheck_worker.cli import main
 from pliegocheck_worker.health import health_status
 
 
-def test_health_status_reports_skeleton_state() -> None:
+def test_health_status_reports_queue_state() -> None:
     status = health_status()
     assert status == {
         "status": "ok",
         "service": "worker",
         "version": "0.1.0",
-        "queue_connected": False,
-        "document_processing_enabled": False,
+        "queue_connected": True,
+        "document_processing_enabled": True,
     }
 
 
@@ -26,8 +26,8 @@ def test_cli_health_prints_json_and_exits_zero(capsys: pytest.CaptureFixture[str
     payload = json.loads(captured.out)
     assert payload["status"] == "ok"
     assert payload["service"] == "worker"
-    assert payload["queue_connected"] is False
-    assert payload["document_processing_enabled"] is False
+    assert payload["queue_connected"] is True
+    assert payload["document_processing_enabled"] is True
 
 
 def test_cli_requires_a_command() -> None:

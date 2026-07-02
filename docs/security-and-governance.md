@@ -28,20 +28,35 @@ Controles de seguridad, aislamiento y gobernanza de decisiones que la plataforma
 - **Carga manual segura (Microfase 2):** los documentos originales se guardan fuera de PostgreSQL, con `storage_key` relativa generada por servidor y SHA-256 calculado sobre los bytes originales. Las respuestas no exponen rutas físicas, temporales ni claves internas.
 - **Validación de archivos:** se rechazan rutas, nombres reservados, doble extensión peligrosa, formatos no permitidos, archivos vacíos, tamaños excesivos, `Content-Type` incoherente y firmas mágicas incompatibles cuando aplica. Los documentos todavía no se extraen ni se interpretan.
 
-## 5. Seguridad frente a los modelos de IA
+## 5. Controles de extraccion documental
+
+- **Extraccion deterministica:** la Microfase 3 no usa LLM ni interpreta requisitos; solo produce
+  metadata, advertencias y segmentos trazables.
+- **Estados explicitos:** imagenes o PDFs sin texto digital quedan `NEEDS_OCR`, documentos cifrados
+  quedan `ENCRYPTED` y formatos heredados quedan `UNSUPPORTED`.
+- **Verificacion de integridad:** antes de extraer, el worker recalcula SHA-256 y compara contra la
+  metadata persistida.
+- **Limites operativos:** paginas, caracteres, hojas, filas, entradas ZIP, tamano descomprimido,
+  ratio de compresion y timeout se controlan por variables de entorno.
+- **Contenedores Office:** se inspeccionan como ZIP para rechazar macros, rutas peligrosas y
+  estructuras anormalmente grandes.
+- **Render seguro:** la web muestra segmentos como texto plano, sin interpretar HTML contenido en los
+  documentos.
+
+## 6. Seguridad frente a los modelos de IA
 
 - **Documentos externos tratados como datos, nunca como instrucciones.** Todo contenido documental se delimita como dato a analizar; los prompts lo declaran explícitamente ([agent-prompting-standard.md](agent-prompting-standard.md)).
 - **Resistencia básica a prompt injection documental:** validación de salidas contra esquema (Structured Outputs), verificación de citas por el `EvidenceVerificationAgent`, y rechazo de salidas que no validan. Un pliego no puede "ordenar" un `GO`.
 - **Herramientas autorizadas por agente:** cada agente solo dispone de las herramientas de su contrato ([agent-contracts.md](agent-contracts.md)); no hay herramientas globales.
 - **Límites de costo y tokens:** presupuesto máximo por ejecución y por análisis; al agotarse, el pipeline se detiene y escala, nunca degrada la calidad silenciosamente.
 
-## 6. Gobernanza de la decisión
+## 7. Gobernanza de la decisión
 
 - **Revisión humana obligatoria para decisiones críticas:** evidencia contradictoria, ambigüedad jurídica, causales insubsanables y cualquier `requires_human_review` bloquean la decisión definitiva hasta `HumanReview`.
 - **Prohibición de afirmar certeza jurídica:** el sistema presenta análisis y evidencia; nunca afirma que una interpretación jurídica es definitiva. El resultado es apoyo a la decisión, no dictamen.
 - **Gestión de cambios en reglas:** las reglas del motor determinístico cambian solo mediante nueva versión (`DecisionRule`) con changelog y revisión; los cambios nunca son retroactivos sobre decisiones emitidas.
 
-## 7. Amenazas específicas y mitigaciones
+## 8. Amenazas específicas y mitigaciones
 
 | Amenaza | Mitigación |
 | --- | --- |
@@ -55,6 +70,6 @@ Controles de seguridad, aislamiento y gobernanza de decisiones que la plataforma
 | Cambio de condiciones por adendas no procesadas | Versionado de procesos (`ProcessVersion`) y reprocesamiento obligatorio al incorporar adendas; las decisiones citan la versión analizada. |
 | Manipulación del perfil de empresa (inflar capacidades) | Toda capacidad exige soporte documental, cambios de perfil auditados (`AuditEvent`), y las decisiones citan las evidencias exactas usadas. |
 
-## 8. Observabilidad mínima
+## 9. Observabilidad mínima
 
 Eventos de ejecución con: consumo de tokens y costo por `AgentRun`, tiempos por etapa, errores y reintentos, versiones de prompt y modelo, y estado del pipeline. Sin esta telemetría no se autoriza operación en producción.

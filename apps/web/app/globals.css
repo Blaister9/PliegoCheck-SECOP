@@ -222,6 +222,14 @@ td {
   gap: 0.35rem 1rem;
 }
 
+.section-heading {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
 .document-row {
   display: flex;
   justify-content: space-between;
@@ -234,6 +242,41 @@ td {
 .document-row p {
   margin: 0.2rem 0 0;
   color: var(--color-muted);
+}
+
+.document-actions,
+.pagination {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.warning {
+  color: #92400e;
+  font-weight: 600;
+}
+
+.segment-preview {
+  margin-top: 1rem;
+}
+
+.segment-row {
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  background: #ffffff;
+  margin-bottom: 0.75rem;
+  padding: 0.75rem;
+}
+
+.segment-row pre {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  margin: 0.5rem 0 0;
+  color: var(--color-text);
+  background: #f3f5f8;
+  border-radius: 4px;
+  padding: 0.75rem;
 }
 
 .upload-results {

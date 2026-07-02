@@ -10,6 +10,7 @@ import pytest
 from pydantic import ValidationError
 
 from pliegocheck_schemas import (
+    DocumentProcessingStatus,
     DocumentUploadStatus,
     ProcessCreate,
     ProcessDocumentMetadata,
@@ -108,6 +109,7 @@ def test_document_metadata_rejects_invalid_sha256() -> None:
                 "declared_content_type": "application/pdf",
                 "detected_content_type": "application/pdf",
                 "upload_status": DocumentUploadStatus.STORED,
+                "processing_status": DocumentProcessingStatus.QUEUED,
                 "created_at": datetime.now(UTC),
             }
         )
