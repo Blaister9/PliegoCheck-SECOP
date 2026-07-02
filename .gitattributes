@@ -1,0 +1,30 @@
+# Normalización de saltos de línea y codificación
+* text=auto eol=lf
+
+# Archivos de texto siempre en UTF-8 con LF
+*.md text eol=lf
+*.txt text eol=lf
+*.json text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+*.toml text eol=lf
+*.py text eol=lf
+*.ts text eol=lf
+*.tsx text eol=lf
+*.js text eol=lf
+*.css text eol=lf
+*.html text eol=lf
+.gitattributes text eol=lf
+.editorconfig text eol=lf
+
+# Scripts de Windows conservan CRLF
+*.bat text eol=crlf
+*.ps1 text eol=crlf
+
+# Binarios
+*.pdf binary
+*.docx binary
+*.xlsx binary
+*.png binary
+*.jpg binary
+*.jpeg binary
