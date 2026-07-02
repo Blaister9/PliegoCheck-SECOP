@@ -1,0 +1,58 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  ci:
+    name: Calidad del monorepo
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configurar pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+
+      - name: Configurar uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+
+      - name: Instalar dependencias Node
+        run: pnpm install --frozen-lockfile
+
+      - name: Instalar dependencias Python
+        run: uv sync --all-packages --frozen
+
+      - name: Contratos sincronizados
+        run: pnpm schemas:check
+
+      - name: Formato
+        run: pnpm format:check
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Typecheck
+        run: pnpm typecheck
+
+      - name: Pruebas
+        run: pnpm test
+
+      - name: Build web
+        run: pnpm build
+
+      - name: Repositorio sin cambios tras las validaciones
+        run: |
+          git diff --exit-code
+          test -z "$(git status --porcelain)"

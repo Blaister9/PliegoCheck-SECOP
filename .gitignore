@@ -1,0 +1,37 @@
+# Dependencias
+node_modules/
+
+# Builds y artefactos
+.next/
+out/
+dist/
+build/
+*.tsbuildinfo
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.egg-info/
+
+# Cobertura
+coverage/
+.coverage
+htmlcov/
+
+# Entorno
+.env
+.env.*
+!.env.example
+
+# Temporales e IDE
+*.log
+*.tmp
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/

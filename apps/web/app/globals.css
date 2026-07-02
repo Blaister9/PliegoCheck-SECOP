@@ -1,0 +1,128 @@
+:root {
+  --color-text: #1a2332;
+  --color-muted: #4a5568;
+  --color-accent: #1d4ed8;
+  --color-surface: #f7f8fa;
+  --color-border: #d7dce3;
+  --color-notice-bg: #fef3c7;
+  --color-notice-border: #d97706;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family:
+    system-ui,
+    -apple-system,
+    "Segoe UI",
+    Roboto,
+    sans-serif;
+  color: var(--color-text);
+  background: var(--color-surface);
+  line-height: 1.6;
+}
+
+.container {
+  max-width: 52rem;
+  margin: 0 auto;
+  padding: 2rem 1.25rem 3rem;
+}
+
+h1 {
+  font-size: 2rem;
+  margin: 0 0 0.25rem;
+}
+
+h2 {
+  font-size: 1.35rem;
+  margin: 2rem 0 0.75rem;
+  border-bottom: 1px solid var(--color-border);
+  padding-bottom: 0.35rem;
+}
+
+.status-badge {
+  display: inline-block;
+  margin: 0 0 1rem;
+  padding: 0.2rem 0.7rem;
+  border: 1px solid var(--color-accent);
+  border-radius: 999px;
+  color: var(--color-accent);
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.lead {
+  font-size: 1.05rem;
+  color: var(--color-muted);
+  margin: 0;
+}
+
+.notice {
+  margin: 1.5rem 0;
+  padding: 0.9rem 1.1rem;
+  background: var(--color-notice-bg);
+  border-left: 4px solid var(--color-notice-border);
+  border-radius: 4px;
+}
+
+.architecture li {
+  margin-bottom: 0.4rem;
+}
+
+.decision-states {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
+  gap: 0.75rem;
+  margin: 0;
+}
+
+.decision-state {
+  background: #ffffff;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  padding: 0.75rem 0.9rem;
+}
+
+.decision-state dt {
+  font-weight: 700;
+  margin-bottom: 0.3rem;
+}
+
+.decision-state dd {
+  margin: 0;
+  color: var(--color-muted);
+  font-size: 0.92rem;
+}
+
+code {
+  font-family: ui-monospace, "Cascadia Code", Consolas, monospace;
+  font-size: 0.92em;
+  background: #eef1f5;
+  padding: 0.1em 0.35em;
+  border-radius: 4px;
+}
+
+a {
+  color: var(--color-accent);
+}
+
+footer {
+  margin-top: 2.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--color-border);
+  color: var(--color-muted);
+  font-size: 0.9rem;
+}
+
+@media (max-width: 30rem) {
+  h1 {
+    font-size: 1.6rem;
+  }
+
+  .container {
+    padding: 1.25rem 1rem 2rem;
+  }
+}

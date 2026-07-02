@@ -104,7 +104,34 @@ La decisión de stack y sus alternativas están formalizadas en [docs/ADR-001-st
 
 ## Estado actual del repositorio
 
-**Microfase 0 completada: fundación documental.** El repositorio contiene únicamente documentación fundacional; no hay todavía frontend, backend, base de datos, integración con SECOP II ni llamadas reales a modelos. La implementación comienza en la Microfase 1 (esqueleto del monorepo).
+**Microfase 1 completada: esqueleto ejecutable del monorepo.** Existen una web mínima (Next.js), una API con endpoints de salud (FastAPI), un worker de diagnóstico (Python, sin cola real), el primer contrato compartido (`NormalizedRequirement` v1.0.0) con generación reproducible de JSON Schema y tipos TypeScript, pruebas, lint, typecheck y CI en GitHub Actions.
+
+**Todavía no existe análisis funcional de procesos**: no hay carga documental, ni integración con SECOP II, ni agentes de IA, ni base de datos, ni autenticación, ni motor GO / NO GO ejecutable. Eso comienza en la Microfase 2 (importación manual de proceso y documentos).
+
+## Desarrollo local
+
+Requisitos: Node.js 22 (LTS), pnpm 11 (vía `packageManager`/corepack), Python 3.12 y [uv](https://docs.astral.sh/uv/).
+
+```bash
+pnpm install            # dependencias Node (workspace pnpm)
+uv sync --all-packages  # dependencias Python (workspace uv)
+```
+
+| Comando | Qué hace |
+| --- | --- |
+| `pnpm dev:web` | Frontend Next.js en modo desarrollo |
+| `pnpm dev:api` | API FastAPI con recarga (puerto 8000; OpenAPI en `/docs`) |
+| `pnpm worker:health` | Diagnóstico del worker (imprime JSON y termina) |
+| `pnpm schemas:generate` | Regenera JSON Schema y tipos TS desde el modelo canónico Pydantic |
+| `pnpm schemas:check` | Verifica que el modelo canónico y lo generado estén sincronizados |
+| `pnpm format` / `pnpm format:check` | Formato Prettier + Ruff |
+| `pnpm lint` | ESLint + Ruff |
+| `pnpm typecheck` | tsc + mypy |
+| `pnpm test` | vitest + pytest |
+| `pnpm build` | Build de producción de la web |
+| `pnpm check` | Suite local integral (formato, lint, typecheck, tests, schemas, build) |
+
+Guía completa en [docs/development.md](docs/development.md).
 
 ## Documentación disponible
 

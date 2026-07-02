@@ -27,16 +27,16 @@ Microfase 10: autenticación, multiempresa y operación
 - **Riesgos:** sobre-especificar antes de aprender de la implementación (mitigado: los documentos son revisables por ADR).
 - **Fuera de alcance:** cualquier código funcional.
 
-## Microfase 1 — Esqueleto del monorepo ⬅ siguiente
+## Microfase 1 — Esqueleto del monorepo ✅ (completada)
 
 - **Objetivo:** materializar la estructura del ADR-001 con tooling mínimo funcionando.
-- **Entregable:** monorepo con `apps/web` (Next.js), `apps/api` (FastAPI con healthcheck), `apps/worker` (proceso Python mínimo), `packages/schemas` (primer esquema compartido: el requisito normalizado), lint y formateo configurados, CI que compila y valida en cada PR, contenedores de desarrollo.
+- **Entregable (realizado):** monorepo con `apps/web` (Next.js), `apps/api` (FastAPI con `/health/live`, `/health/ready` y `/contracts`), `apps/worker` (CLI Python de diagnóstico), `packages/schemas` (contrato `NormalizedRequirement` v1.0.0 con generación reproducible Pydantic → JSON Schema → TypeScript), workspaces pnpm y uv, Prettier/ESLint/Ruff/mypy, pruebas vitest y pytest, y CI en GitHub Actions.
 - **Dependencias:** Microfase 0.
-- **Criterios de aceptación:** `web` arranca y llama al healthcheck de `api`; CI verde en PR; esquema del requisito validado desde Python y TypeScript; sin lógica de negocio.
-- **Riesgos:** parálisis por tooling (mitigar: configuración mínima, sin optimizaciones prematuras).
+- **Criterios de aceptación (verificados):** web y API arrancan; el contrato se valida desde Python y TypeScript y es consumido por API y web; CI valida formato, lint, typecheck, tests, sincronización de schemas y build; sin lógica de negocio.
+- **Notas de implementación:** los contenedores de desarrollo previstos originalmente se pospusieron (ver registro en [ADR-001](ADR-001-stack-and-architecture.md)): no aportan valor sin base de datos ni servicios externos y llegarán cuando exista infraestructura que aislar.
 - **Fuera de alcance:** base de datos, agentes, UI real, autenticación.
 
-## Microfase 2 — Importación manual de proceso y documentos
+## Microfase 2 — Importación manual de proceso y documentos ⬅ siguiente
 
 - **Objetivo:** poder crear un proceso manualmente y adjuntarle documentos de forma inmutable.
 - **Entregable:** entidades `Process`, `ProcessVersion`, `ProcessDocument` en PostgreSQL (Alembic), almacenamiento S3-compatible con hash de integridad, UI mínima de creación y carga, `AuditEvent`s básicos.

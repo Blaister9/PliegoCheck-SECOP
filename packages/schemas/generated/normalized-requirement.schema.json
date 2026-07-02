@@ -1,0 +1,212 @@
+{
+  "$defs": {
+    "RequirementCategory": {
+      "description": "Categorias iniciales de requisitos (ver docs/domain-model.md).",
+      "enum": [
+        "LEGAL",
+        "FINANCIAL",
+        "ORGANIZATIONAL",
+        "EXPERIENCE",
+        "TECHNICAL",
+        "WORKFORCE",
+        "GUARANTEE",
+        "SCHEDULE",
+        "ECONOMIC",
+        "OPERATIONAL",
+        "DOCUMENTARY",
+        "RISK_AND_INELIGIBILITY"
+      ],
+      "title": "RequirementCategory",
+      "type": "string"
+    },
+    "RequirementCriticality": {
+      "description": "Criticidad de un requisito (ver docs/decision-engine.md).",
+      "enum": ["BLOCKING", "HIGH", "MEDIUM", "LOW", "INFORMATIONAL"],
+      "title": "RequirementCriticality",
+      "type": "string"
+    },
+    "RequirementStatus": {
+      "description": "Estado de cumplimiento de un requisito (ver docs/decision-engine.md).",
+      "enum": [
+        "COMPLIES",
+        "DOES_NOT_COMPLY",
+        "PARTIAL",
+        "UNKNOWN",
+        "NOT_APPLICABLE",
+        "CONFLICTING_EVIDENCE"
+      ],
+      "title": "RequirementStatus",
+      "type": "string"
+    },
+    "RequirementSubsanability": {
+      "description": "Subsanabilidad de un requisito (ver docs/decision-engine.md).",
+      "enum": ["SUBSANABLE", "NON_SUBSANABLE", "CONDITIONAL", "UNKNOWN"],
+      "title": "RequirementSubsanability",
+      "type": "string"
+    },
+    "SourceLocation": {
+      "additionalProperties": false,
+      "description": "Ubicacion del requisito dentro del documento de origen.",
+      "properties": {
+        "page": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Pagina del documento de origen; cuando existe, debe ser mayor que cero.",
+          "title": "Page"
+        },
+        "section": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Seccion o numeral del documento de origen (por ejemplo '3.2').",
+          "title": "Section"
+        }
+      },
+      "title": "SourceLocation",
+      "type": "object"
+    }
+  },
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "Requisito normalizado de un proceso, entrada del motor deterministico.",
+  "properties": {
+    "category": {
+      "$ref": "#/$defs/RequirementCategory",
+      "description": "Categoria del requisito."
+    },
+    "company_value": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "integer"
+        },
+        {
+          "type": "number"
+        },
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "Valor acreditado por la empresa con evidencia; null cuando no se conoce. Nunca se rellena con valores plausibles.",
+      "title": "Company Value"
+    },
+    "confidence": {
+      "description": "Confianza del agente (0 a 1). Informativa: nunca sustituye la evidencia.",
+      "maximum": 1.0,
+      "minimum": 0.0,
+      "title": "Confidence",
+      "type": "number"
+    },
+    "criticality": {
+      "$ref": "#/$defs/RequirementCriticality",
+      "description": "Criticidad del requisito para la decision."
+    },
+    "description": {
+      "description": "Texto normalizado del requisito, fiel al documento de origen.",
+      "minLength": 1,
+      "title": "Description",
+      "type": "string"
+    },
+    "evidence_ids": {
+      "description": "Identificadores de las evidencias que respaldan el status.",
+      "items": {
+        "type": "string"
+      },
+      "title": "Evidence Ids",
+      "type": "array"
+    },
+    "expected_value": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "integer"
+        },
+        {
+          "type": "number"
+        },
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "Valor exigido por el pliego cuando el requisito es cuantificable; null cuando no aplica o no esta escrito explicitamente.",
+      "title": "Expected Value"
+    },
+    "requirement_id": {
+      "description": "Identificador unico del requisito dentro del proceso (por ejemplo 'REQ-001').",
+      "minLength": 1,
+      "title": "Requirement Id",
+      "type": "string"
+    },
+    "requires_human_review": {
+      "description": "Marca el requisito para revision humana obligatoria.",
+      "title": "Requires Human Review",
+      "type": "boolean"
+    },
+    "schema_version": {
+      "const": "1.0.0",
+      "description": "Version del contrato NormalizedRequirement.",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "source_document_id": {
+      "description": "Identificador del documento del que proviene el requisito.",
+      "minLength": 1,
+      "title": "Source Document Id",
+      "type": "string"
+    },
+    "source_location": {
+      "$ref": "#/$defs/SourceLocation",
+      "description": "Ubicacion exacta del requisito en el documento de origen."
+    },
+    "status": {
+      "$ref": "#/$defs/RequirementStatus",
+      "description": "Estado de cumplimiento; UNKNOWN cuando no hay evidencia suficiente."
+    },
+    "subsanability": {
+      "$ref": "#/$defs/RequirementSubsanability",
+      "description": "Subsanabilidad segun el pliego; UNKNOWN cuando no es determinable."
+    }
+  },
+  "required": [
+    "schema_version",
+    "requirement_id",
+    "category",
+    "description",
+    "source_document_id",
+    "source_location",
+    "criticality",
+    "subsanability",
+    "expected_value",
+    "company_value",
+    "status",
+    "evidence_ids",
+    "confidence",
+    "requires_human_review"
+  ],
+  "title": "NormalizedRequirement",
+  "type": "object"
+}
