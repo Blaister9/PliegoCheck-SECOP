@@ -1,0 +1,125 @@
+# ADR-001 — Stack tecnológico y arquitectura objetivo
+
+- **Estado:** Aceptado
+- **Fecha:** 2026-07-01
+- **Decisores:** Equipo PliegoCheck
+
+## Contexto
+
+PliegoCheck-SECOP debe evolucionar de un repositorio vacío a una plataforma multiagente que analice procesos de SECOP II y produzca decisiones GO / NO GO auditables. El sistema combina tres naturalezas de trabajo distintas:
+
+1. **Interfaz de usuario** para gestionar procesos, perfiles de empresa, evidencias y revisar decisiones.
+2. **Procesamiento documental y de IA** de larga duración (descarga, extracción, normalización, evaluación), que no puede ejecutarse dentro del ciclo request/response de una petición web.
+3. **Decisión determinística** con reglas versionadas, que exige reproducibilidad y trazabilidad estrictas.
+
+Las restricciones del dominio (evidencia obligatoria, incertidumbre explícita, revisión humana, separación inferencia/decisión) están definidas en [domain-model.md](domain-model.md) y [decision-engine.md](decision-engine.md), y condicionan la arquitectura.
+
+## Decisión
+
+Adoptar un **monorepo** con separación de aplicaciones:
+
+```text
+Monorepo
+├── apps/web       → Next.js + TypeScript (frontend)
+├── apps/api       → Python + FastAPI (API y motor de decisión)
+├── apps/worker    → Python (procesamiento asíncrono: documentos y agentes)
+├── packages/schemas → contratos compartidos (JSON Schema como fuente; Pydantic y TypeScript derivados)
+└── docs           → documentación y ADRs
+```
+
+Componentes previstos:
+
+| Componente | Elección |
+| --- | --- |
+| Frontend | Next.js + TypeScript |
+| API | FastAPI + Python |
+| Contratos | Pydantic + JSON Schema compartidos entre web, api y worker |
+| Base de datos | PostgreSQL |
+| Migraciones | Alembic |
+| Almacenamiento documental | Compatible con S3 (documentos originales inmutables) |
+| Procesamiento en segundo plano | Cola de trabajos, incorporada **solo cuando el flujo lo necesite** (a partir de la extracción documental) |
+| IA | OpenAI Responses API |
+| Respuestas de agentes | Structured Outputs validadas contra esquema |
+| Observabilidad | Eventos de ejecución: consumo de tokens, tiempos, errores, versiones de prompts y modelo |
+| Fuente SECOP II | Datos abiertos de Colombia Compra Eficiente + carga manual de documentos |
+| Motor de decisión | Componente determinístico **independiente del LLM**, dentro de `apps/api` |
+| Despliegue | Contenedores; sin fijar todavía un proveedor único de nube |
+
+**No se fijan versiones exactas de frameworks en este ADR.** Al iniciar la implementación (Microfase 1) se usarán las versiones estables compatibles vigentes, y quedarán registradas en los lockfiles del monorepo.
+
+## Diagrama de componentes
+
+```mermaid
+flowchart TB
+    U[Usuario] --> WEB[apps/web · Next.js]
+    WEB -->|HTTP + contratos tipados| API[apps/api · FastAPI]
+    API --> PG[(PostgreSQL)]
+    API --> S3[(Almacenamiento S3-compatible)]
+    API -->|encola trabajos| Q[[Cola de trabajos]]
+    Q --> WK[apps/worker · Python]
+    WK -->|OpenAI Responses API| LLM[(Modelos de IA)]
+    WK --> PG
+    WK --> S3
+    API --> DE[Motor determinístico de decisión]
+    DE --> PG
+    CCE[Datos abiertos Colombia Compra Eficiente] --> API
+    UP[Carga manual de documentos] --> API
+    subgraph SCHPKG["packages/schemas"]
+        SCH[JSON Schema / Pydantic / TypeScript]
+    end
+    WEB -. usa .-> SCH
+    API -. usa .-> SCH
+    WK -. usa .-> SCH
+```
+
+## Alternativas consideradas y por qué se descartan inicialmente
+
+### Aplicación monolítica exclusivamente en Next.js
+Descartada. El procesamiento documental y las cadenas de agentes son trabajos largos, con reintentos y estado, que encajan mal en API routes serverless. El ecosistema Python es más maduro para extracción documental (PDF, DOCX, OCR) y para tooling de IA. Next.js queda donde aporta: la experiencia de usuario.
+
+### Sistema completamente basado en prompts
+Descartada. Delegar la decisión final al LLM viola el principio de separación inferencia/decisión: la decisión sería irreproducible, no auditable y vulnerable a alucinación. Los LLM extraen y evalúan; las reglas determinísticas versionadas deciden ([decision-engine.md](decision-engine.md)).
+
+### Microservicios independientes desde el primer MVP
+Descartada. Con un equipo pequeño y un dominio aún en descubrimiento, los microservicios agregan costo operativo (despliegue, red, contratos entre servicios, observabilidad distribuida) sin beneficio proporcional. El monorepo con tres apps mantiene fronteras claras y permite extraer servicios después si la escala lo exige.
+
+### Vector database como requisito obligatorio inicial
+Descartada como requisito. El flujo central (extraer requisitos → evaluar → decidir) opera sobre documentos concretos de un proceso concreto, con referencias exactas a página y sección. La búsqueda semántica puede añadirse después si un caso de uso la justifica; no condiciona la arquitectura.
+
+### Scraping como única fuente de SECOP II
+Descartada. El scraping de la plataforma transaccional es frágil y de legalidad operativa dudosa. La fuente primaria son los **datos abiertos de Colombia Compra Eficiente** (API pública de datos.gov.co), complementados con **carga manual** de los documentos del proceso, que además cubre los casos donde los datos abiertos no incluyen los anexos.
+
+### Decisiones jurídicas automáticas sin revisión humana
+Descartada de forma permanente, no solo inicial. El sistema nunca afirma certeza jurídica; toda decisión con ambigüedad jurídica, evidencia contradictoria o criticidad alta escala a revisión humana ([security-and-governance.md](security-and-governance.md)).
+
+## Consecuencias
+
+**Positivas**
+- Fronteras claras entre UI, API/decisión y procesamiento pesado desde el día uno.
+- Contratos compartidos (`packages/schemas`) evitan divergencia entre frontend, API y worker.
+- El motor determinístico separado hace las decisiones reproducibles y auditables.
+- Python en api/worker da acceso directo al mejor ecosistema de extracción documental y IA.
+
+**Negativas / costos asumidos**
+- Dos lenguajes (TypeScript y Python) exigen disciplina en la generación de contratos compartidos.
+- El monorepo requiere tooling de orquestación local (se definirá en Microfase 1).
+- La cola de trabajos introduce infraestructura adicional cuando se active (aceptado: se pospone hasta que el flujo la necesite).
+
+## Riesgos
+
+| Riesgo | Mitigación |
+| --- | --- |
+| Divergencia entre esquemas Pydantic y TypeScript | JSON Schema como fuente única; generación automática verificada en CI. |
+| Dependencia de un solo proveedor de IA | Contratos de agentes independientes del proveedor; el proveedor es un detalle de `apps/worker`. |
+| Datos abiertos incompletos (anexos faltantes) | La carga manual de documentos es vía de primera clase, no un fallback improvisado. |
+| Costo de tokens sin control | Observabilidad de consumo por ejecución y límites por agente desde el diseño ([security-and-governance.md](security-and-governance.md)). |
+
+## Límites del MVP
+
+El MVP (Microfases 1–8 del [roadmap](roadmap.md)) **no incluye**:
+
+- Integración automática con datos abiertos SECOP II (llega en Microfase 9; antes, carga manual).
+- Autenticación completa y multiempresa en producción (Microfase 10).
+- Todos los evaluadores especializados: el MVP arranca con el evaluador financiero como primer vertical completo.
+- Procesamiento OCR avanzado de documentos escaneados de baja calidad (se registra como limitación y escala a revisión humana).
+- Alta disponibilidad, autoescalado o multi-región.
