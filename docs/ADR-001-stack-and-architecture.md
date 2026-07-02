@@ -131,6 +131,18 @@ Decisiones concretas tomadas al materializar el esqueleto del monorepo:
 
 Límites de esta fase: sin base de datos, sin cola real (el worker es un CLI de diagnóstico), sin agentes de IA, sin integración SECOP II, sin autenticación y sin despliegue.
 
+## Registro de implementación — Microfase 2 (2026-07-02)
+
+Decisiones concretas tomadas al implementar la importación manual:
+
+| Decisión | Elección | Motivo |
+| --- | --- | --- |
+| Persistencia | PostgreSQL + SQLAlchemy 2 + Alembic | Coincide con el stack objetivo y permite migraciones reproducibles desde base vacía. |
+| Almacenamiento inicial | `LocalDocumentStorage` bajo `PLIEGOCHECK_STORAGE_PATH` | Suficiente para desarrollo y pruebas; mantiene una abstracción reemplazable por S3-compatible. |
+| Comunicación web/API | Navegador → FastAPI con CORS restringido | Mantiene una sola frontera HTTP y evita mezclar BFF con llamadas directas en esta fase. |
+| Contratos | Pydantic canónico → JSON Schema → TypeScript | La web y la API consumen contratos de procesos, documentos y carga desde `packages/schemas`. |
+| Cola | Pospuesta | No hay extracción ni procesamiento asíncrono todavía; el worker informa `document_processing_enabled=false`. |
+
 ## Límites del MVP
 
 El MVP (Microfases 1–8 del [roadmap](roadmap.md)) **no incluye**:

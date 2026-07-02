@@ -1,12 +1,12 @@
-"""Genera los artefactos derivados del contrato canonico Pydantic.
+"""Genera los artefactos derivados de los contratos canonicos Pydantic.
 
 Produce, de forma deterministica (sin fechas, rutas locales ni contenido variable):
 
-- ``generated/normalized-requirement.schema.json``: JSON Schema del contrato.
-- ``generated/normalized-requirement.enums.ts``: constantes TypeScript de los
-  vocabularios cerrados, para consumo en runtime desde el frontend.
+- ``generated/<contrato>.schema.json``: JSON Schema de cada contrato.
+- ``generated/<contrato>.enums.ts``: constantes TypeScript de los vocabularios
+  cerrados, para consumo en runtime desde el frontend.
 
-El tipo TypeScript de la interfaz se genera aparte desde el JSON Schema
+Los tipos TypeScript de las interfaces se generan aparte desde los JSON Schema
 (``scripts/generate-ts.mjs``). Este script falla con codigo distinto de cero
 si la generacion no puede completarse.
 """
@@ -16,6 +16,17 @@ import sys
 from enum import StrEnum
 from pathlib import Path
 
+from pydantic import BaseModel
+
+from pliegocheck_schemas.manual_import import (
+    MANUAL_IMPORT_SCHEMA_VERSION,
+    DocumentType,
+    DocumentUploadStatus,
+    ManualImportContracts,
+    ProcessSource,
+    ProcessStatus,
+    UploadErrorCode,
+)
 from pliegocheck_schemas.normalized_requirement import (
     NORMALIZED_REQUIREMENT_SCHEMA_VERSION,
     NormalizedRequirement,
@@ -29,8 +40,8 @@ GENERATED_DIR = Path(__file__).resolve().parent.parent / "generated"
 
 TS_HEADER = (
     "// Archivo generado automaticamente por packages/schemas/scripts/generate.py.\n"
-    "// No editar a mano: la definicion canonica es el modelo Pydantic\n"
-    "// packages/schemas/src/pliegocheck_schemas/normalized_requirement.py.\n"
+    "// No editar a mano: la definicion canonica son los modelos Pydantic de\n"
+    "// packages/schemas/src/pliegocheck_schemas/.\n"
 )
 
 
@@ -40,11 +51,31 @@ def write_text(path: Path, content: str) -> None:
         fh.write(content)
 
 
-def generate_json_schema() -> None:
-    schema = NormalizedRequirement.model_json_schema()
+def strip_property_titles(node: object) -> None:
+    """Elimina ``title`` recursivamente.
+
+    Los nombres de los tipos TypeScript provienen de las claves de ``$defs``;
+    los ``title`` por propiedad solo generan aliases ruidosos y colisiones.
+    """
+    if isinstance(node, dict):
+        node.pop("title", None)
+        for key, value in node.items():
+            if key == "properties" and isinstance(value, dict):
+                for property_schema in value.values():
+                    strip_property_titles(property_schema)
+                continue
+            strip_property_titles(value)
+    elif isinstance(node, list):
+        for item in node:
+            strip_property_titles(item)
+
+
+def generate_json_schema(model: type[BaseModel], filename: str) -> None:
+    schema = model.model_json_schema()
+    strip_property_titles(schema)
     schema["$schema"] = "https://json-schema.org/draft/2020-12/schema"
     content = json.dumps(schema, indent=2, sort_keys=True, ensure_ascii=False) + "\n"
-    write_text(GENERATED_DIR / "normalized-requirement.schema.json", content)
+    write_text(GENERATED_DIR / filename, content)
 
 
 def ts_const_block(const_name: str, type_name: str, enum_cls: type[StrEnum]) -> str:
@@ -55,7 +86,7 @@ def ts_const_block(const_name: str, type_name: str, enum_cls: type[StrEnum]) -> 
     )
 
 
-def generate_enums_ts() -> None:
+def generate_requirement_enums_ts() -> None:
     blocks = [
         TS_HEADER,
         "export const NORMALIZED_REQUIREMENT_SCHEMA_VERSION = "
@@ -76,10 +107,27 @@ def generate_enums_ts() -> None:
     write_text(GENERATED_DIR / "normalized-requirement.enums.ts", "\n".join(blocks))
 
 
+def generate_manual_import_enums_ts() -> None:
+    blocks = [
+        TS_HEADER,
+        f'export const MANUAL_IMPORT_SCHEMA_VERSION = "{MANUAL_IMPORT_SCHEMA_VERSION}";\n',
+        ts_const_block("PROCESS_SOURCE_VALUES", "ProcessSourceValue", ProcessSource),
+        ts_const_block("PROCESS_STATUS_VALUES", "ProcessStatusValue", ProcessStatus),
+        ts_const_block("DOCUMENT_TYPE_VALUES", "DocumentTypeValue", DocumentType),
+        ts_const_block(
+            "DOCUMENT_UPLOAD_STATUS_VALUES", "DocumentUploadStatusValue", DocumentUploadStatus
+        ),
+        ts_const_block("UPLOAD_ERROR_CODE_VALUES", "UploadErrorCodeValue", UploadErrorCode),
+    ]
+    write_text(GENERATED_DIR / "manual-import.enums.ts", "\n".join(blocks))
+
+
 def main() -> int:
     try:
-        generate_json_schema()
-        generate_enums_ts()
+        generate_json_schema(NormalizedRequirement, "normalized-requirement.schema.json")
+        generate_json_schema(ManualImportContracts, "manual-import.schema.json")
+        generate_requirement_enums_ts()
+        generate_manual_import_enums_ts()
     except Exception as exc:  # el fallo debe ser visible y con codigo distinto de cero
         print(f"ERROR generando contratos: {exc}", file=sys.stderr)
         return 1

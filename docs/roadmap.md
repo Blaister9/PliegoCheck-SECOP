@@ -5,8 +5,8 @@ Fases pequeñas, cada una con entregable verificable. Cada microfase termina int
 ```text
 Microfase 0: fundación documental
 Microfase 1: esqueleto del monorepo
-Microfase 2: importación manual de proceso y documentos
-Microfase 3: inventario y extracción documental
+Microfase 2: importación manual de proceso y documentos (completada)
+Microfase 3: inventario y extracción documental (siguiente)
 Microfase 4: normalización de requisitos
 Microfase 5: perfil de empresa y evidencias
 Microfase 6: evaluador financiero inicial
@@ -36,16 +36,16 @@ Microfase 10: autenticación, multiempresa y operación
 - **Notas de implementación:** los contenedores de desarrollo previstos originalmente se pospusieron (ver registro en [ADR-001](ADR-001-stack-and-architecture.md)): no aportan valor sin base de datos ni servicios externos y llegarán cuando exista infraestructura que aislar.
 - **Fuera de alcance:** base de datos, agentes, UI real, autenticación.
 
-## Microfase 2 — Importación manual de proceso y documentos ⬅ siguiente
+## Microfase 2 — Importación manual de proceso y documentos ✅ (completada)
 
 - **Objetivo:** poder crear un proceso manualmente y adjuntarle documentos de forma inmutable.
-- **Entregable:** entidades `Process`, `ProcessVersion`, `ProcessDocument` en PostgreSQL (Alembic), almacenamiento S3-compatible con hash de integridad, UI mínima de creación y carga, `AuditEvent`s básicos.
+- **Entregable (realizado):** entidades `Process`, `ProcessDocument` e `ImportEvent` en PostgreSQL (Alembic), almacenamiento local reemplazable con hash de integridad, API y UI mínima de creación, listado, carga múltiple, inventario inicial y descarga.
 - **Dependencias:** Microfase 1.
-- **Criterios de aceptación:** un usuario crea un proceso, sube PDF/DOCX/XLSX, los archivos quedan almacenados con hash y versión; migraciones reproducibles.
+- **Criterios de aceptación (verificados):** un usuario crea un proceso, sube documentos permitidos, los archivos quedan almacenados fuera de PostgreSQL con SHA-256, los duplicados por proceso se rechazan y las migraciones son reproducibles.
 - **Riesgos:** modelar de más (mitigar: solo las entidades de esta fase).
 - **Fuera de alcance:** extracción de contenido, datos abiertos, análisis.
 
-## Microfase 3 — Inventario y extracción documental
+## Microfase 3 — Inventario y extracción documental ⬅ siguiente
 
 - **Objetivo:** extraer contenido de los documentos con calidad medida.
 - **Entregable:** `DocumentInventoryAgent` y `DocumentExtractionAgent` operativos sobre la cola de trabajos (primera incorporación de la cola), `DocumentExtraction` persistida por página/sección, métricas de calidad y páginas fallidas, primeros `AgentRun`/`PromptVersion` registrados.

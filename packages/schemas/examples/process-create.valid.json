@@ -1,0 +1,12 @@
+{
+  "title": "Servicio de vigilancia judicial",
+  "contracting_entity": "Entidad de ejemplo",
+  "secop_reference": "CO1.NTC.EJEMPLO",
+  "description": "Proceso de ejemplo para la importación manual.",
+  "source_url": "https://www.colombiacompra.gov.co/ejemplo",
+  "selection_method": "Licitación pública",
+  "estimated_value": "1250000000.50",
+  "currency": "COP",
+  "published_at": "2026-06-01T08:00:00-05:00",
+  "closing_at": "2026-07-15T17:00:00-05:00"
+}

@@ -1,28 +1,43 @@
-// Genera el tipo TypeScript de la interfaz NormalizedRequirement desde el
-// JSON Schema versionado. La definicion canonica es el modelo Pydantic; este
-// paso mantiene una unica fuente de verdad sin duplicacion manual.
+// Genera los tipos TypeScript de las interfaces desde los JSON Schema
+// versionados. La definicion canonica son los modelos Pydantic; este paso
+// mantiene una unica fuente de verdad sin duplicacion manual.
 import { writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { compileFromFile } from "json-schema-to-typescript";
 
 const here = dirname(fileURLToPath(import.meta.url));
-const schemaPath = join(here, "..", "generated", "normalized-requirement.schema.json");
-const outputPath = join(here, "..", "generated", "normalized-requirement.ts");
+const generatedDir = join(here, "..", "generated");
 
-const banner =
-  "// Archivo generado automaticamente desde normalized-requirement.schema.json\n" +
-  "// (pnpm schemas:generate). No editar a mano: la definicion canonica es el\n" +
-  "// modelo Pydantic packages/schemas/src/pliegocheck_schemas/normalized_requirement.py.";
+const CONTRACTS = [
+  {
+    schema: "normalized-requirement.schema.json",
+    output: "normalized-requirement.ts",
+  },
+  {
+    schema: "manual-import.schema.json",
+    output: "manual-import.ts",
+  },
+];
+
+function banner(schemaFile) {
+  return (
+    `// Archivo generado automaticamente desde ${schemaFile}\n` +
+    "// (pnpm schemas:generate). No editar a mano: la definicion canonica son los\n" +
+    "// modelos Pydantic de packages/schemas/src/pliegocheck_schemas/."
+  );
+}
 
 try {
-  const ts = await compileFromFile(schemaPath, {
-    bannerComment: banner,
-    additionalProperties: false,
-  });
-  writeFileSync(outputPath, ts, { encoding: "utf-8" });
-  console.log(`Tipo TypeScript generado en ${outputPath}`);
+  for (const contract of CONTRACTS) {
+    const ts = await compileFromFile(join(generatedDir, contract.schema), {
+      bannerComment: banner(contract.schema),
+      additionalProperties: false,
+    });
+    writeFileSync(join(generatedDir, contract.output), ts, { encoding: "utf-8" });
+    console.log(`Tipo TypeScript generado: generated/${contract.output}`);
+  }
 } catch (error) {
-  console.error(`ERROR generando tipo TypeScript: ${error}`);
+  console.error(`ERROR generando tipos TypeScript: ${error}`);
   process.exit(1);
 }

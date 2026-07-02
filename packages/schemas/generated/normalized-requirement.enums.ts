@@ -1,6 +1,6 @@
 // Archivo generado automaticamente por packages/schemas/scripts/generate.py.
-// No editar a mano: la definicion canonica es el modelo Pydantic
-// packages/schemas/src/pliegocheck_schemas/normalized_requirement.py.
+// No editar a mano: la definicion canonica son los modelos Pydantic de
+// packages/schemas/src/pliegocheck_schemas/.
 
 export const NORMALIZED_REQUIREMENT_SCHEMA_VERSION = "1.0.0";
 
