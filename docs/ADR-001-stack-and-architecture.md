@@ -114,6 +114,23 @@ Descartada de forma permanente, no solo inicial. El sistema nunca afirma certeza
 | Datos abiertos incompletos (anexos faltantes) | La carga manual de documentos es vía de primera clase, no un fallback improvisado. |
 | Costo de tokens sin control | Observabilidad de consumo por ejecución y límites por agente desde el diseño ([security-and-governance.md](security-and-governance.md)). |
 
+## Registro de implementación — Microfase 1 (2026-07-01)
+
+Decisiones concretas tomadas al materializar el esqueleto del monorepo:
+
+| Decisión | Elección | Motivo |
+| --- | --- | --- |
+| Gestor de paquetes JS | pnpm 11 (workspaces, fijado con `packageManager`) | Workspaces nativos, lockfile estricto, sin herramienta adicional. |
+| Gestor de paquetes Python | uv (workspace con `apps/api`, `apps/worker`, `packages/schemas`) | Un solo entorno para el monorepo, lockfile reproducible (`uv.lock`), instala el propio Python. |
+| Versiones base | Node 22 LTS (`.nvmrc`), Python 3.12 (`.python-version`) | Estables y soportadas; resueltas realmente por los gestores: Next 15, React 19, TypeScript 5.9, FastAPI 0.139, Pydantic 2.13, pytest 9, mypy 2.1, Ruff 0.15. |
+| Estrategia canónica de contratos | Modelo Pydantic → JSON Schema versionado → tipos TS generados (`json-schema-to-typescript`) + constantes de runtime | Una sola fuente de verdad; `pnpm schemas:check` en CI impide la divergencia silenciosa. |
+| Calidad | Prettier + ESLint (typescript-eslint, flat config) / Ruff (lint+formato) + mypy `strict` / vitest + pytest | Cobertura equivalente en ambos ecosistemas con configuración raíz única. |
+| Orquestación del monorepo | Solo scripts pnpm/uv + GitHub Actions; **sin Turborepo/Nx** | Con 3 apps y 1 paquete, los scripts son suficientes; una capa de orquestación se justificará solo cuando el grafo de tareas crezca. |
+| Contenedores de desarrollo | Pospuestos | Sin base de datos ni servicios externos no hay entorno que aislar; llegarán con la infraestructura real (Microfase 2+). |
+| ESLint de Next.js | No se usa `eslint-config-next` por ahora | El lint raíz (typescript-eslint) cubre el código actual con una sola configuración; se reevaluará si se necesitan las reglas específicas de Next. |
+
+Límites de esta fase: sin base de datos, sin cola real (el worker es un CLI de diagnóstico), sin agentes de IA, sin integración SECOP II, sin autenticación y sin despliegue.
+
 ## Límites del MVP
 
 El MVP (Microfases 1–8 del [roadmap](roadmap.md)) **no incluye**:

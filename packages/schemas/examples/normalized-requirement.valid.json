@@ -1,0 +1,19 @@
+{
+  "schema_version": "1.0.0",
+  "requirement_id": "REQ-001",
+  "category": "FINANCIAL",
+  "description": "El proponente debe acreditar un indice de liquidez mayor o igual al exigido en el pliego.",
+  "source_document_id": "DOC-001",
+  "source_location": {
+    "page": 12,
+    "section": "3.2"
+  },
+  "criticality": "BLOCKING",
+  "subsanability": "UNKNOWN",
+  "expected_value": null,
+  "company_value": null,
+  "status": "UNKNOWN",
+  "evidence_ids": [],
+  "confidence": 0.0,
+  "requires_human_review": true
+}

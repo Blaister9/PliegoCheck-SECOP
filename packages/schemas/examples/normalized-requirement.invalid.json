@@ -1,0 +1,19 @@
+{
+  "schema_version": "1.0.0",
+  "requirement_id": "",
+  "category": "CATEGORIA_INEXISTENTE",
+  "description": "   ",
+  "source_document_id": "DOC-001",
+  "source_location": {
+    "page": 0,
+    "section": "3.2"
+  },
+  "criticality": "BLOCKING",
+  "subsanability": "UNKNOWN",
+  "expected_value": null,
+  "company_value": null,
+  "status": "UNKNOWN",
+  "evidence_ids": "no-es-una-lista",
+  "confidence": 1.5,
+  "requires_human_review": true
+}
