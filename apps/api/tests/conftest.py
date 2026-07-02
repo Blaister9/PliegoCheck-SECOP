@@ -21,7 +21,7 @@ TEST_STORAGE_PATH = Path("var/test-documents")
 
 def pytest_configure(config: pytest.Config) -> None:
     _ = config
-    os.environ.setdefault("DATABASE_URL", TEST_DATABASE_URL)
+    os.environ["DATABASE_URL"] = TEST_DATABASE_URL
     os.environ.setdefault("PLIEGOCHECK_STORAGE_PATH", str(TEST_STORAGE_PATH))
     os.environ.setdefault("PLIEGOCHECK_MAX_FILE_SIZE_MB", "1")
     os.environ.setdefault("PLIEGOCHECK_ALLOWED_WEB_ORIGINS", "http://localhost:3000")
