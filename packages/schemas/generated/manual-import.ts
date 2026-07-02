@@ -16,6 +16,20 @@ export type UploadErrorCode =
   | "DUPLICATE_DOCUMENT"
   | "STORAGE_ERROR"
   | "DATABASE_ERROR";
+export type ExtractionErrorCode =
+  | "PROCESSING_JOB_NOT_FOUND"
+  | "EXTRACTION_NOT_FOUND"
+  | "EXTRACTION_ALREADY_QUEUED"
+  | "EXTRACTION_ALREADY_COMPLETED"
+  | "UNSUPPORTED_FORMAT"
+  | "ENCRYPTED_DOCUMENT"
+  | "NEEDS_OCR"
+  | "SOURCE_FILE_NOT_FOUND"
+  | "SOURCE_HASH_MISMATCH"
+  | "EXTRACTION_TIMEOUT"
+  | "EXTRACTION_LIMIT_EXCEEDED"
+  | "EXTRACTION_FAILED"
+  | "DATABASE_ERROR";
 /**
  * Tipo documental declarado. La clasificacion automatica llega en Microfase 3.
  */
@@ -30,6 +44,16 @@ export type DocumentType =
   | "FORM"
   | "ADDENDUM"
   | "SUPPORTING_DOCUMENT";
+export type DocumentProcessingStatus =
+  | "NOT_QUEUED"
+  | "QUEUED"
+  | "PROCESSING"
+  | "COMPLETED"
+  | "COMPLETED_WITH_WARNINGS"
+  | "NEEDS_OCR"
+  | "UNSUPPORTED"
+  | "ENCRYPTED"
+  | "FAILED";
 /**
  * Resultado del intento de carga de un documento.
  */
@@ -68,7 +92,7 @@ export interface ManualImport {
  * Error estructurado devuelto por la API. Nunca expone detalles internos.
  */
 export interface ApiError {
-  code: UploadErrorCode;
+  code: UploadErrorCode | ExtractionErrorCode;
   details?: {
     [k: string]: string;
   };
@@ -103,6 +127,7 @@ export interface ProcessDocumentMetadata {
   extension: string;
   id: string;
   original_filename: string;
+  processing_status: DocumentProcessingStatus;
   sha256: string;
   size_bytes: number;
   upload_status: DocumentUploadStatus;

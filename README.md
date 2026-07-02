@@ -102,11 +102,15 @@ flowchart TB
 
 La decisión de stack y sus alternativas están formalizadas en [docs/ADR-001-stack-and-architecture.md](docs/ADR-001-stack-and-architecture.md).
 
-## Estado actual del repositorio
+## Estado actual - Microfase 3
 
-**Microfase 2 completada: importación manual de procesos y documentos.** Existen PostgreSQL, SQLAlchemy 2, Alembic, almacenamiento documental local, contratos compartidos de importación manual, API para crear/listar/consultar procesos, carga múltiple segura, SHA-256, rechazo de duplicados, inventario inicial, descarga del original y UI mínima.
+Implementado: importacion manual de procesos, carga documental segura, almacenamiento local con
+SHA-256, cola transaccional inicial, extractores deterministas para PDF con texto, DOCX, XLSX, CSV y
+TXT, inventario documental, reintentos, segmentos paginados y preview en la web.
 
-**Todavía no existe análisis documental ni decisión GO / NO GO**: no hay integración automática con SECOP II, OCR, extracción, agentes de IA, autenticación, S3 real, colas ni motor de decisión ejecutable. Eso continúa en la Microfase 3.
+No implementado todavia: OCR, normalizacion de requisitos, agentes de IA, integracion automatica con
+SECOP II, autenticacion, S3 real y motor GO / NO GO ejecutable. La extraccion no evalua requisitos ni
+produce decisiones.
 
 ## Desarrollo local
 
@@ -122,6 +126,7 @@ uv sync --all-packages  # dependencias Python (workspace uv)
 | `pnpm dev:web` | Frontend Next.js en modo desarrollo |
 | `pnpm dev:api` | API FastAPI con recarga (puerto 8000; OpenAPI en `/docs`) |
 | `pnpm worker:health` | Diagnóstico del worker (imprime JSON y termina) |
+| `pnpm worker:run-once` / `pnpm worker:drain` | Procesa uno o varios trabajos de extraccion documental |
 | `pnpm infra:up` / `pnpm infra:down` | PostgreSQL local para desarrollo |
 | `pnpm db:migrate` / `pnpm db:check` | Migraciones Alembic y verificación de divergencias |
 | `pnpm schemas:generate` | Regenera JSON Schema y tipos TS desde el modelo canónico Pydantic |
@@ -130,6 +135,7 @@ uv sync --all-packages  # dependencias Python (workspace uv)
 | `pnpm lint` | ESLint + Ruff |
 | `pnpm typecheck` | tsc + mypy |
 | `pnpm test` | vitest + pytest |
+| `pnpm extraction:test` | Pruebas dedicadas de worker/extractores y flujo API de extraccion |
 | `pnpm build` | Build de producción de la web |
 | `pnpm check` | Suite local integral (formato, lint, typecheck, tests, schemas, build) |
 

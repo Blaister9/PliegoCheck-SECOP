@@ -11,6 +11,8 @@
     "dev:web": "pnpm --filter @pliegocheck/web dev",
     "dev:api": "uv run uvicorn pliegocheck_api.main:app --reload --port 8000",
     "worker:health": "uv run pliegocheck-worker health",
+    "worker:run-once": "uv run pliegocheck-worker run-once",
+    "worker:drain": "uv run pliegocheck-worker drain",
     "infra:up": "docker compose up -d postgres",
     "infra:down": "docker compose down",
     "db:migrate": "node scripts/db.mjs migrate",
@@ -22,6 +24,7 @@
     "lint": "eslint . && uv run ruff check",
     "typecheck": "pnpm -r typecheck && uv run mypy",
     "test": "pnpm -r test && uv run pytest",
+    "extraction:test": "uv run pytest apps/worker/tests && uv run pytest apps/api/tests/test_process_import.py",
     "build": "pnpm --filter @pliegocheck/web build",
     "check": "pnpm format:check && pnpm lint && pnpm typecheck && pnpm test && pnpm schemas:check && pnpm build"
   },

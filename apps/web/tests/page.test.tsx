@@ -1,4 +1,3 @@
-// Valida la UI de Microfase 2 mockeando la frontera HTTP con FastAPI.
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import {
@@ -25,7 +24,7 @@ describe("pagina principal", () => {
   it("muestra el nombre del producto y el estado de la fase", () => {
     render(<Home />);
     expect(screen.getByRole("heading", { level: 1, name: "PliegoCheck-SECOP" })).toBeDefined();
-    expect(screen.getByText("Importación manual — Microfase 2")).toBeDefined();
+    expect(screen.getByText("Inventario y extraccion documental - Microfase 3")).toBeDefined();
     expect(screen.getByRole("link", { name: "Procesos importados" })).toBeDefined();
     expect(screen.getByRole("link", { name: "Crear proceso" })).toBeDefined();
   });
@@ -44,10 +43,10 @@ describe("pagina principal", () => {
     }
   });
 
-  it("muestra el aviso de que no existe analisis documental", () => {
+  it("muestra el aviso de que no existe analisis de requisitos", () => {
     render(<Home />);
     expect(screen.getByRole("note", { name: "Estado del proyecto" }).textContent).toContain(
-      "los documentos todavía no se extraen ni analizan",
+      "todavia no evalua requisitos",
     );
   });
 
@@ -130,6 +129,7 @@ describe("detalle de proceso", () => {
     const fetchMock = vi.mocked(fetch);
     fetchMock
       .mockResolvedValueOnce(jsonResponse(processDetail()))
+      .mockResolvedValueOnce(jsonResponse(processInventory()))
       .mockResolvedValueOnce(
         jsonResponse(
           {
@@ -148,19 +148,37 @@ describe("detalle de proceso", () => {
           207,
         ),
       )
-      .mockResolvedValueOnce(jsonResponse(processDetail()));
+      .mockResolvedValueOnce(jsonResponse(processDetail()))
+      .mockResolvedValueOnce(jsonResponse(processInventory()));
 
     render(<ProcessDetailClient processId="11111111-1111-1111-1111-111111111111" />);
     expect(await screen.findByText("Proceso de prueba")).toBeDefined();
     expect(
-      screen.getByText("Los documentos todavía no han sido extraídos ni analizados."),
+      screen.getByText(
+        "La extraccion es deterministica y todavia no evalua requisitos ni produce una decision GO / NO GO.",
+      ),
     ).toBeDefined();
     expect(screen.getByText("pliego.pdf")).toBeDefined();
+    expect(screen.getByText("Estado: QUEUED")).toBeDefined();
     const file = new File(["contenido"], "nuevo.pdf", { type: "application/pdf" });
     fireEvent.change(screen.getByLabelText("Documentos"), { target: { files: [file] } });
     fireEvent.click(screen.getByRole("button", { name: "Cargar" }));
     expect(await screen.findByText("Almacenados: 1. Rechazados: 1.")).toBeDefined();
     expect(screen.getByText("pliego.exe: REJECTED (FILE_TYPE_NOT_ALLOWED)")).toBeDefined();
+  });
+
+  it("muestra preview de segmentos como texto plano", async () => {
+    const fetchMock = vi.mocked(fetch);
+    fetchMock
+      .mockResolvedValueOnce(jsonResponse(processDetail()))
+      .mockResolvedValueOnce(jsonResponse(processInventory("COMPLETED")))
+      .mockResolvedValueOnce(jsonResponse(segmentList()));
+
+    render(<ProcessDetailClient processId="11111111-1111-1111-1111-111111111111" />);
+    expect(await screen.findByText("Estado: COMPLETED")).toBeDefined();
+    fireEvent.click(screen.getByRole("button", { name: "Ver segmentos" }));
+    expect(await screen.findByText("Segmentos 1-1 de 1")).toBeDefined();
+    expect(screen.getByText("Linea extraida <script>alert(1)</script>")).toBeDefined();
   });
 });
 
@@ -192,11 +210,74 @@ function processDetail() {
         declared_content_type: "application/pdf",
         detected_content_type: "application/pdf",
         upload_status: "STORED",
+        processing_status: "QUEUED",
         created_at: "2026-07-02T00:00:00Z",
       },
     ],
     created_at: "2026-07-02T00:00:00Z",
     updated_at: "2026-07-02T00:00:00Z",
+  };
+}
+
+function processInventory(status = "QUEUED") {
+  return {
+    process_id: "11111111-1111-1111-1111-111111111111",
+    total: 1,
+    documents: [
+      {
+        document_id: "33333333-3333-3333-3333-333333333333",
+        original_filename: "pliego.pdf",
+        document_type: "UNKNOWN",
+        extension: ".pdf",
+        size_bytes: 1024,
+        sha256: "a".repeat(64),
+        declared_content_type: "application/pdf",
+        detected_content_type: "application/pdf",
+        upload_status: "STORED",
+        processing_status: status,
+        detected_format: status === "QUEUED" ? null : "pdf",
+        page_count: status === "QUEUED" ? null : 1,
+        sheet_count: null,
+        has_text: status === "COMPLETED",
+        is_encrypted: false,
+        needs_ocr: false,
+        contains_macros: false,
+        segment_count: status === "QUEUED" ? 0 : 1,
+        character_count: status === "QUEUED" ? 0 : 42,
+        warnings: [],
+        latest_extraction: null,
+        created_at: "2026-07-02T00:00:00Z",
+      },
+    ],
+  };
+}
+
+function segmentList() {
+  return {
+    extraction_id: "44444444-4444-4444-4444-444444444444",
+    total: 1,
+    limit: 20,
+    offset: 0,
+    segments: [
+      {
+        id: "55555555-5555-5555-5555-555555555555",
+        extraction_id: "44444444-4444-4444-4444-444444444444",
+        sequence: 1,
+        segment_type: "TEXT_LINES",
+        text: "Linea extraida <script>alert(1)</script>",
+        page_number: null,
+        paragraph_index: null,
+        table_index: null,
+        sheet_name: null,
+        row_start: null,
+        row_end: null,
+        line_start: 1,
+        line_end: 1,
+        source_location: { line_start: 1, line_end: 1 },
+        metadata: {},
+        created_at: "2026-07-02T00:00:00Z",
+      },
+    ],
   };
 }
 

@@ -5,7 +5,14 @@
       "description": "Error estructurado devuelto por la API. Nunca expone detalles internos.",
       "properties": {
         "code": {
-          "$ref": "#/$defs/UploadErrorCode"
+          "anyOf": [
+            {
+              "$ref": "#/$defs/UploadErrorCode"
+            },
+            {
+              "$ref": "#/$defs/ExtractionErrorCode"
+            }
+          ]
         },
         "details": {
           "additionalProperties": {
@@ -19,6 +26,20 @@
       },
       "required": ["code", "message"],
       "type": "object"
+    },
+    "DocumentProcessingStatus": {
+      "enum": [
+        "NOT_QUEUED",
+        "QUEUED",
+        "PROCESSING",
+        "COMPLETED",
+        "COMPLETED_WITH_WARNINGS",
+        "NEEDS_OCR",
+        "UNSUPPORTED",
+        "ENCRYPTED",
+        "FAILED"
+      ],
+      "type": "string"
     },
     "DocumentType": {
       "description": "Tipo documental declarado. La clasificacion automatica llega en Microfase 3.",
@@ -101,6 +122,24 @@
     "DocumentUploadStatus": {
       "description": "Resultado del intento de carga de un documento.",
       "enum": ["STORED", "REJECTED"],
+      "type": "string"
+    },
+    "ExtractionErrorCode": {
+      "enum": [
+        "PROCESSING_JOB_NOT_FOUND",
+        "EXTRACTION_NOT_FOUND",
+        "EXTRACTION_ALREADY_QUEUED",
+        "EXTRACTION_ALREADY_COMPLETED",
+        "UNSUPPORTED_FORMAT",
+        "ENCRYPTED_DOCUMENT",
+        "NEEDS_OCR",
+        "SOURCE_FILE_NOT_FOUND",
+        "SOURCE_HASH_MISMATCH",
+        "EXTRACTION_TIMEOUT",
+        "EXTRACTION_LIMIT_EXCEEDED",
+        "EXTRACTION_FAILED",
+        "DATABASE_ERROR"
+      ],
       "type": "string"
     },
     "ProcessCreate": {
@@ -421,6 +460,9 @@
         "original_filename": {
           "type": "string"
         },
+        "processing_status": {
+          "$ref": "#/$defs/DocumentProcessingStatus"
+        },
         "sha256": {
           "pattern": "^[a-f0-9]{64}$",
           "type": "string"
@@ -443,6 +485,7 @@
         "declared_content_type",
         "detected_content_type",
         "upload_status",
+        "processing_status",
         "created_at"
       ],
       "type": "object"

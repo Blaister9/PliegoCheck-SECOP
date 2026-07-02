@@ -28,6 +28,8 @@ select = ["E", "F", "W", "I", "UP", "B", "SIM", "RUF"]
 
 [tool.mypy]
 strict = true
+explicit_package_bases = true
+mypy_path = ["apps/api/src", "apps/worker/src", "packages/schemas/src"]
 python_version = "3.12"
 files = [
     "apps/api/src",
@@ -38,6 +40,10 @@ files = [
     "packages/schemas/tests",
     "packages/schemas/scripts",
 ]
+
+[[tool.mypy.overrides]]
+module = ["fitz", "fitz.*", "openpyxl", "openpyxl.*"]
+ignore_missing_imports = true
 
 [tool.pytest.ini_options]
 testpaths = ["apps/api/tests", "apps/worker/tests", "packages/schemas/tests"]

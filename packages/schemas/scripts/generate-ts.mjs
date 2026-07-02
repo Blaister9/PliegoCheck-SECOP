@@ -18,6 +18,10 @@ const CONTRACTS = [
     schema: "manual-import.schema.json",
     output: "manual-import.ts",
   },
+  {
+    schema: "document-extraction.schema.json",
+    output: "document-extraction.ts",
+  },
 ];
 
 function banner(schemaFile) {

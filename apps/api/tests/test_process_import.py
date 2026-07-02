@@ -8,6 +8,10 @@ from fastapi.testclient import TestClient
 from sqlalchemy import text
 from sqlalchemy.engine import Engine
 
+from pliegocheck_api.config import get_settings
+from pliegocheck_api.db import get_engine, get_sessionmaker
+from pliegocheck_worker.runner import run_once
+
 PDF_BYTES = b"%PDF-1.4\n1 0 obj\n<<>>\nendobj\n%%EOF\n"
 
 
@@ -97,6 +101,7 @@ def test_upload_list_duplicate_and_download(client: TestClient, migrated_engine:
     document = result["document"]
     assert document["sha256"] == sha256(PDF_BYTES).hexdigest()
     assert document["document_type"] == "UNKNOWN"
+    assert document["processing_status"] == "QUEUED"
     assert "storage_key" not in str(upload.json())
 
     detail = client.get(f"/processes/{process['id']}").json()
@@ -127,8 +132,68 @@ def test_upload_list_duplicate_and_download(client: TestClient, migrated_engine:
             connection.execute(text("SELECT event_type FROM import_events")).scalars().all()
         )
     assert "DOCUMENT_UPLOADED" in event_types
+    assert "EXTRACTION_QUEUED" in event_types
     assert "DUPLICATE_DOCUMENT_REJECTED" in event_types
     assert "DOCUMENT_DOWNLOADED" in event_types
+
+
+def test_inventory_extraction_and_segments_flow(client: TestClient) -> None:
+    process = create_process(client)
+    content = b"Linea uno\nLinea dos\n"
+    upload = client.post(
+        f"/processes/{process['id']}/documents",
+        files={"files": ("notas.txt", content, "text/plain")},
+    )
+    assert upload.status_code == 201, upload.text
+    document = upload.json()["results"][0]["document"]
+
+    inventory = client.get(f"/processes/{process['id']}/inventory").json()
+    assert inventory["total"] == 1
+    assert inventory["documents"][0]["processing_status"] == "QUEUED"
+    assert "storage_key" not in str(inventory)
+
+    duplicate_enqueue = client.post(
+        f"/processes/{process['id']}/documents/{document['id']}/extractions",
+        json={"force": False},
+    )
+    assert duplicate_enqueue.status_code == 200
+    assert duplicate_enqueue.json()["message"] == "El documento ya tiene un trabajo activo."
+
+    get_settings.cache_clear()
+    get_engine.cache_clear()
+    get_sessionmaker.cache_clear()
+    worker_result = run_once("api-test-worker")
+    assert worker_result["processed"] == 1
+    assert worker_result["job_status"] == "COMPLETED"
+
+    extraction = client.get(f"/processes/{process['id']}/documents/{document['id']}/extraction")
+    assert extraction.status_code == 200
+    extraction_payload = extraction.json()
+    assert extraction_payload["detected_format"] == "txt"
+    assert extraction_payload["segment_count"] == 1
+    assert extraction_payload["segments_preview"][0]["line_start"] == 1
+
+    segments = client.get(
+        f"/processes/{process['id']}/documents/{document['id']}/extraction/segments",
+        params={"segment_type": "TEXT_LINES", "limit": 5, "offset": 0},
+    )
+    assert segments.status_code == 200
+    payload = segments.json()
+    assert payload["total"] == 1
+    assert "Linea dos" in payload["segments"][0]["text"]
+
+    inventory_after = client.get(f"/processes/{process['id']}/inventory").json()
+    item = inventory_after["documents"][0]
+    assert item["processing_status"] in {"COMPLETED", "COMPLETED_WITH_WARNINGS"}
+    assert item["sha256"] == sha256(content).hexdigest()
+    assert item["segment_count"] == 1
+
+    retry = client.post(
+        f"/processes/{process['id']}/documents/{document['id']}/extractions",
+        json={"force": True},
+    )
+    assert retry.status_code == 200
+    assert retry.json()["processing_status"] == "QUEUED"
 
 
 def test_multiple_upload_partial_success(client: TestClient) -> None:

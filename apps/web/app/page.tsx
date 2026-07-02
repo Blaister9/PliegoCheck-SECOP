@@ -17,7 +17,7 @@ const DECISION_STATES = [
   },
   {
     code: "BUSCAR_ALIADO",
-    description: "Requiere consorcio, unión temporal o aliado para complementar capacidad.",
+    description: "Requiere consorcio, union temporal o aliado para complementar capacidad.",
   },
   {
     code: "NO_GO",
@@ -26,11 +26,11 @@ const DECISION_STATES = [
   {
     code: "NO_CARGAR",
     description:
-      "Existe una causal insubsanable o un riesgo crítico que impide presentar la oferta.",
+      "Existe una causal insubsanable o un riesgo critico que impide presentar la oferta.",
   },
   {
     code: "PENDIENTE_INFORMACION",
-    description: "No hay evidencia suficiente para tomar una decisión responsable.",
+    description: "No hay evidencia suficiente para tomar una decision responsable.",
   },
 ] as const;
 
@@ -41,11 +41,11 @@ const ARCHITECTURE = [
   },
   {
     name: "apps/api",
-    detail: "API y motor determinístico de decisión (FastAPI + Python).",
+    detail: "API, inventario documental y motor deterministico de decision (FastAPI + Python).",
   },
   {
     name: "apps/worker",
-    detail: "Procesamiento asíncrono de documentos y agentes (Python, aún sin cola real).",
+    detail: "Extraccion deterministica de documentos y trabajos de procesamiento (Python).",
   },
   {
     name: "packages/schemas",
@@ -58,11 +58,12 @@ export default function Home() {
     <main className="container">
       <header>
         <h1>PliegoCheck-SECOP</h1>
-        <p className="status-badge">Importación manual — Microfase 2</p>
+        <p className="status-badge">Inventario y extraccion documental - Microfase 3</p>
         <p className="lead">
-          Plataforma multiagente de análisis <strong>GO / NO GO</strong> para procesos de
-          contratación pública publicados en SECOP II (Colombia). En esta fase permite crear
-          procesos manualmente y adjuntar documentos originales para inventario inicial.
+          Plataforma multiagente de analisis <strong>GO / NO GO</strong> para procesos de
+          contratacion publica publicados en SECOP II (Colombia). En esta fase permite crear
+          procesos manualmente, adjuntar documentos originales, inventariarlos y extraer texto
+          estructurado sin tomar decisiones de cumplimiento.
         </p>
         <nav className="actions" aria-label="Acciones principales">
           <Link className="button" href="/processes">
@@ -75,8 +76,8 @@ export default function Home() {
       </header>
 
       <aside className="notice" role="note" aria-label="Estado del proyecto">
-        <strong>Aviso:</strong> los documentos todavía no se extraen ni analizan. No se consultan
-        datos de SECOP II y no se emiten decisiones GO / NO GO.
+        <strong>Aviso:</strong> la extraccion es deterministica y todavia no evalua requisitos, no
+        consulta datos de SECOP II y no emite decisiones GO / NO GO.
       </aside>
 
       <section aria-labelledby="arquitectura">
@@ -84,19 +85,19 @@ export default function Home() {
         <ul className="architecture">
           {ARCHITECTURE.map((component) => (
             <li key={component.name}>
-              <code>{component.name}</code> — {component.detail}
+              <code>{component.name}</code> - {component.detail}
             </li>
           ))}
         </ul>
         <p>
-          La decisión final la produce un motor determinístico con reglas versionadas, separado de
+          La decision final la produce un motor deterministico con reglas versionadas, separado de
           los agentes de IA (ver{" "}
           <a href={`${DOCS_BASE}/docs/decision-engine.md`}>docs/decision-engine.md</a>).
         </p>
       </section>
 
       <section aria-labelledby="estados">
-        <h2 id="estados">Estados posibles de decisión</h2>
+        <h2 id="estados">Estados posibles de decision</h2>
         <dl className="decision-states">
           {DECISION_STATES.map((state) => (
             <div key={state.code} className="decision-state">
@@ -114,13 +115,13 @@ export default function Home() {
         <p>
           Primer contrato versionado: <code>NormalizedRequirement</code> v
           {NORMALIZED_REQUIREMENT_SCHEMA_VERSION}, con {REQUIREMENT_CATEGORY_VALUES.length}{" "}
-          categorías de requisitos. Este dato proviene del paquete compartido{" "}
-          <code>@pliegocheck/schemas</code>, generado desde el modelo canónico.
+          categorias de requisitos. Este dato proviene del paquete compartido{" "}
+          <code>@pliegocheck/schemas</code>, generado desde el modelo canonico.
         </p>
       </section>
 
       <section aria-labelledby="documentacion">
-        <h2 id="documentacion">Documentación</h2>
+        <h2 id="documentacion">Documentacion</h2>
         <ul>
           <li>
             <a href={`${DOCS_BASE}/README.md`}>README del proyecto</a>
@@ -138,8 +139,8 @@ export default function Home() {
 
       <footer>
         <p>
-          El resultado de PliegoCheck es apoyo para la decisión de participar en un proceso; no
-          reemplaza la revisión jurídica, financiera ni contractual profesional.
+          El resultado de PliegoCheck es apoyo para la decision de participar en un proceso; no
+          reemplaza la revision juridica, financiera ni contractual profesional.
         </p>
       </footer>
     </main>

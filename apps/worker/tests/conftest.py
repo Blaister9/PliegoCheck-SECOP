@@ -1,4 +1,4 @@
-"""Fixtures de integracion de la API contra PostgreSQL real."""
+"""Fixtures del worker contra PostgreSQL real."""
 
 import os
 import shutil
@@ -8,7 +8,6 @@ from pathlib import Path
 import pytest
 from alembic import command
 from alembic.config import Config
-from fastapi.testclient import TestClient
 from sqlalchemy import create_engine, text
 from sqlalchemy.engine import Engine
 
@@ -60,14 +59,8 @@ def clean_database_and_storage(migrated_engine: Engine) -> Generator[None, None,
     with migrated_engine.begin() as connection:
         connection.execute(
             text(
-                "TRUNCATE TABLE import_events, process_documents, processes "
-                "RESTART IDENTITY CASCADE"
-            )
-        )
-        connection.execute(
-            text(
                 "TRUNCATE TABLE extracted_segments, document_extractions, "
-                "document_processing_jobs "
+                "document_processing_jobs, import_events, process_documents, processes "
                 "RESTART IDENTITY CASCADE"
             )
         )
@@ -77,10 +70,3 @@ def clean_database_and_storage(migrated_engine: Engine) -> Generator[None, None,
     yield
     if TEST_STORAGE_PATH.exists():
         shutil.rmtree(TEST_STORAGE_PATH)
-
-
-@pytest.fixture
-def client() -> TestClient:
-    from pliegocheck_api.main import app
-
-    return TestClient(app)

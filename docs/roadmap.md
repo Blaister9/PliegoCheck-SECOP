@@ -1,124 +1,105 @@
-# Roadmap incremental — PliegoCheck-SECOP
+# Roadmap incremental - PliegoCheck-SECOP
 
-Fases pequeñas, cada una con entregable verificable. Cada microfase termina integrada en `main` mediante Pull Request, siguiendo [AGENTS.md](../AGENTS.md).
+Fases pequenas, cada una con entregable verificable. Cada microfase termina integrada en `main`
+mediante Pull Request, siguiendo [AGENTS.md](../AGENTS.md).
 
 ```text
-Microfase 0: fundación documental
-Microfase 1: esqueleto del monorepo
-Microfase 2: importación manual de proceso y documentos (completada)
-Microfase 3: inventario y extracción documental (siguiente)
-Microfase 4: normalización de requisitos
+Microfase 0: fundacion documental (completada)
+Microfase 1: esqueleto del monorepo (completada)
+Microfase 2: importacion manual de proceso y documentos (completada)
+Microfase 3: inventario y extraccion documental (completada)
+Microfase 4: normalizacion de requisitos (siguiente)
 Microfase 5: perfil de empresa y evidencias
 Microfase 6: evaluador financiero inicial
-Microfase 7: motor determinístico de decisión
-Microfase 8: explicación y reporte auditable
-Microfase 9: integración con datos abiertos SECOP II
-Microfase 10: autenticación, multiempresa y operación
+Microfase 7: motor deterministico de decision
+Microfase 8: explicacion y reporte auditable
+Microfase 9: integracion con datos abiertos SECOP II
+Microfase 10: autenticacion, multiempresa y operacion
 ```
 
----
+## Microfase 0 - Fundacion documental - completada
 
-## Microfase 0 — Fundación documental ✅ (este trabajo)
+- **Objetivo:** fijar vision, arquitectura, dominio, contratos y gobernanza antes de escribir codigo.
+- **Entregable:** README, AGENTS.md, ADR-001, modelo de dominio, motor de decision, contratos de
+  agentes, estandar de prompting, seguridad y roadmap.
+- **Fuera de alcance:** codigo funcional.
 
-- **Objetivo:** fijar visión, arquitectura, dominio, contratos y gobernanza antes de escribir código.
-- **Entregable:** README, AGENTS.md, ADR-001, modelo de dominio, motor de decisión, contratos de agentes, estándar de prompting, seguridad y este roadmap.
-- **Dependencias:** ninguna.
-- **Criterios de aceptación:** documentos completos, consistentes entre sí, en UTF-8, integrados en `main` vía PR.
-- **Riesgos:** sobre-especificar antes de aprender de la implementación (mitigado: los documentos son revisables por ADR).
-- **Fuera de alcance:** cualquier código funcional.
+## Microfase 1 - Esqueleto del monorepo - completada
 
-## Microfase 1 — Esqueleto del monorepo ✅ (completada)
+- **Objetivo:** materializar la estructura del ADR-001 con tooling minimo funcionando.
+- **Entregable:** `apps/web`, `apps/api`, `apps/worker`, `packages/schemas`, workspaces pnpm/uv,
+  Prettier, ESLint, Ruff, mypy, vitest, pytest y CI.
+- **Fuera de alcance:** base de datos, agentes, UI real y autenticacion.
 
-- **Objetivo:** materializar la estructura del ADR-001 con tooling mínimo funcionando.
-- **Entregable (realizado):** monorepo con `apps/web` (Next.js), `apps/api` (FastAPI con `/health/live`, `/health/ready` y `/contracts`), `apps/worker` (CLI Python de diagnóstico), `packages/schemas` (contrato `NormalizedRequirement` v1.0.0 con generación reproducible Pydantic → JSON Schema → TypeScript), workspaces pnpm y uv, Prettier/ESLint/Ruff/mypy, pruebas vitest y pytest, y CI en GitHub Actions.
-- **Dependencias:** Microfase 0.
-- **Criterios de aceptación (verificados):** web y API arrancan; el contrato se valida desde Python y TypeScript y es consumido por API y web; CI valida formato, lint, typecheck, tests, sincronización de schemas y build; sin lógica de negocio.
-- **Notas de implementación:** los contenedores de desarrollo previstos originalmente se pospusieron (ver registro en [ADR-001](ADR-001-stack-and-architecture.md)): no aportan valor sin base de datos ni servicios externos y llegarán cuando exista infraestructura que aislar.
-- **Fuera de alcance:** base de datos, agentes, UI real, autenticación.
+## Microfase 2 - Importacion manual de proceso y documentos - completada
 
-## Microfase 2 — Importación manual de proceso y documentos ✅ (completada)
+- **Objetivo:** crear un proceso manualmente y adjuntarle documentos de forma inmutable.
+- **Entregable:** entidades `Process`, `ProcessDocument` e `ImportEvent`; almacenamiento local;
+  API/UI de creacion, listado, carga multiple, inventario inicial y descarga.
+- **Fuera de alcance:** extraccion de contenido, datos abiertos y analisis.
 
-- **Objetivo:** poder crear un proceso manualmente y adjuntarle documentos de forma inmutable.
-- **Entregable (realizado):** entidades `Process`, `ProcessDocument` e `ImportEvent` en PostgreSQL (Alembic), almacenamiento local reemplazable con hash de integridad, API y UI mínima de creación, listado, carga múltiple, inventario inicial y descarga.
-- **Dependencias:** Microfase 1.
-- **Criterios de aceptación (verificados):** un usuario crea un proceso, sube documentos permitidos, los archivos quedan almacenados fuera de PostgreSQL con SHA-256, los duplicados por proceso se rechazan y las migraciones son reproducibles.
-- **Riesgos:** modelar de más (mitigar: solo las entidades de esta fase).
-- **Fuera de alcance:** extracción de contenido, datos abiertos, análisis.
+## Microfase 3 - Inventario y extraccion documental - completada
 
-## Microfase 3 — Inventario y extracción documental ⬅ siguiente
+- **Objetivo:** extraer contenido documental con trazabilidad y estados explicitos.
+- **Entregable:** cola transaccional `document_processing_jobs`, resultados `document_extractions`,
+  segmentos `extracted_segments`, endpoints de inventario/reintento/segmentos, UI de inventario y
+  preview, y worker deterministico para PDF, DOCX, XLSX, CSV y TXT.
+- **Criterios verificados:** documentos soportados producen segmentos navegables; imagenes quedan
+  `NEEDS_OCR`; formatos heredados quedan `UNSUPPORTED`; documentos cifrados quedan `ENCRYPTED`; no
+  se inventa texto cuando falta evidencia digital.
+- **Fuera de alcance:** OCR, normalizacion de requisitos, evaluaciones LLM, `AgentRun`,
+  `PromptVersion` y decisiones GO / NO GO.
 
-- **Objetivo:** extraer contenido de los documentos con calidad medida.
-- **Entregable:** `DocumentInventoryAgent` y `DocumentExtractionAgent` operativos sobre la cola de trabajos (primera incorporación de la cola), `DocumentExtraction` persistida por página/sección, métricas de calidad y páginas fallidas, primeros `AgentRun`/`PromptVersion` registrados.
-- **Dependencias:** Microfase 2.
-- **Criterios de aceptación:** un pliego PDF real produce extracción navegable con origen por página; documentos ilegibles quedan marcados, no inventados; cada ejecución registra modelo, prompt y consumo.
-- **Riesgos:** calidad de OCR en escaneados (aceptado: se registra como limitación y escala).
-- **Fuera de alcance:** normalización de requisitos, evaluaciones.
-
-## Microfase 4 — Normalización de requisitos
+## Microfase 4 - Normalizacion de requisitos - siguiente
 
 - **Objetivo:** convertir extracciones en requisitos normalizados trazables.
-- **Entregable:** `RequirementNormalizationAgent` con el esquema del [motor de decisión](decision-engine.md), Structured Outputs validadas, detección de conflictos pliego/adendas, UI de revisión de requisitos.
+- **Entregable previsto:** `RequirementNormalizationAgent`, Structured Outputs validadas, deteccion
+  de conflictos pliego/adendas y UI de revision de requisitos.
 - **Dependencias:** Microfase 3.
-- **Criterios de aceptación:** de un proceso real se obtiene la lista de requisitos con documento/página/sección verificables manualmente; `status` siempre `UNKNOWN`; salidas inválidas se rechazan y quedan registradas.
-- **Riesgos:** cobertura incompleta de requisitos (mitigar: revisión humana en UI y métricas de cobertura).
-- **Fuera de alcance:** evaluación de cumplimiento.
+- **Criterios de aceptacion:** de un proceso real se obtiene la lista de requisitos con documento,
+  pagina o seccion verificables manualmente; `status` inicial siempre `UNKNOWN`; salidas invalidas se
+  rechazan y quedan registradas.
+- **Fuera de alcance:** evaluacion de cumplimiento.
 
-## Microfase 5 — Perfil de empresa y evidencias
+## Microfase 5 - Perfil de empresa y evidencias
 
 - **Objetivo:** capturar la capacidad real de la empresa con soporte documental.
-- **Entregable:** `CompanyProfile`, `CompanyCapability`, `RequirementEvidence` persistidas; carga de soportes (RUP, estados financieros, certificaciones) con vigencias; UI de perfil.
-- **Dependencias:** Microfase 2 (almacenamiento); independiente de 3–4 en lo esencial.
-- **Criterios de aceptación:** todo indicador o capacidad guardado apunta a su documento soporte; datos sin soporte quedan marcados como no acreditados.
-- **Riesgos:** perfiles inflados sin soporte (mitigado por el modelo: sin documento no hay evidencia).
-- **Fuera de alcance:** evaluación automática de los soportes.
+- **Entregable previsto:** `CompanyProfile`, `CompanyCapability`, `RequirementEvidence`, carga de
+  soportes con vigencias y UI de perfil.
+- **Fuera de alcance:** evaluacion automatica de los soportes.
 
-## Microfase 6 — Evaluador financiero inicial
+## Microfase 6 - Evaluador financiero inicial
 
 - **Objetivo:** primer evaluador vertical completo: requisitos financieros vs. perfil.
-- **Entregable:** `FinancialEvaluationAgent` conforme a su contrato, comparaciones aritméticas deterministas de indicadores, `Evaluation` y `Finding`s persistidos con evidencia citada, `EvidenceVerificationAgent` en su primera versión verificando esta vertical.
-- **Dependencias:** Microfases 4 y 5.
-- **Criterios de aceptación:** para un proceso real, cada requisito financiero recibe `status` con evidencia o `UNKNOWN`; un `COMPLIES` sin evidencia es imposible de persistir; conflictos marcan revisión humana.
-- **Riesgos:** interpretación errónea de indicadores atípicos (mitigar: escala a revisión humana).
-- **Fuera de alcance:** los demás evaluadores; decisión final.
+- **Entregable previsto:** `FinancialEvaluationAgent`, comparaciones aritmeticas deterministas,
+  `Evaluation`, `Finding` y primera version de verificacion de evidencia.
+- **Fuera de alcance:** los demas evaluadores y decision final.
 
-## Microfase 7 — Motor determinístico de decisión
+## Microfase 7 - Motor deterministico de decision
 
 - **Objetivo:** implementar el motor de [decision-engine.md](decision-engine.md).
-- **Entregable:** servicio determinístico con reglas versionadas (`DecisionRule`), `Decision` persistida con trazabilidad completa, suspensión por revisión humana pendiente, tests exhaustivos de las reglas R1–R9.
-- **Dependencias:** Microfase 6 (al menos una vertical alimentando el motor).
-- **Criterios de aceptación:** misma entrada + misma versión de reglas ⇒ misma decisión (test); sin evidencia crítica jamás emite `GO` (test); toda decisión registra versiones de reglas y prompts.
-- **Riesgos:** reglas demasiado rígidas para la variedad de pliegos (mitigar: versionado y gestión de cambios).
-- **Fuera de alcance:** cobertura de todas las categorías de requisitos.
+- **Entregable previsto:** reglas versionadas, `Decision` persistida y tests exhaustivos de reglas.
+- **Criterios de aceptacion:** misma entrada + misma version de reglas produce la misma decision; sin
+  evidencia critica nunca emite `GO`.
 
-## Microfase 8 — Explicación y reporte auditable
+## Microfase 8 - Explicacion y reporte auditable
 
-- **Objetivo:** comunicar la decisión con evidencia navegable.
-- **Entregable:** `DecisionExplanationAgent`, reporte con factores determinantes y citas, flujo de `HumanReview` (confirmar/corregir/rechazar) operativo, exportación del reporte.
-- **Dependencias:** Microfase 7.
-- **Criterios de aceptación:** el reporte cita documento/página/sección verificables; la explicación no puede alterar la decisión (test); las revisiones humanas quedan auditadas.
-- **Riesgos:** explicaciones que suenen a certeza jurídica (mitigar: lenguaje calibrado obligatorio y advertencia fija).
-- **Fuera de alcance:** métricas de negocio, comparativos entre procesos.
+- **Objetivo:** comunicar la decision con evidencia navegable.
+- **Entregable previsto:** reporte auditable, flujo de `HumanReview` y exportacion.
 
-## Microfase 9 — Integración con datos abiertos SECOP II
+## Microfase 9 - Integracion con datos abiertos SECOP II
 
-- **Objetivo:** ingesta automática desde datos abiertos de Colombia Compra Eficiente.
-- **Entregable:** `SecopIngestionAgent` contra la API de datos abiertos (datos.gov.co), búsqueda y registro de procesos por identificador, descarga de documentos disponibles, detección de adendas que crean `ProcessVersion` nueva y disparan reanálisis.
-- **Dependencias:** Microfases 2 y 3.
-- **Criterios de aceptación:** un proceso real se registra por su identificador SECOP con metadatos y documentos disponibles; los faltantes se completan por carga manual; las adendas generan nueva versión.
-- **Riesgos:** datos abiertos incompletos o con rezago (aceptado: carga manual sigue siendo vía de primera clase).
-- **Fuera de alcance:** scraping de la plataforma transaccional.
+- **Objetivo:** ingesta automatica desde datos abiertos de Colombia Compra Eficiente.
+- **Entregable previsto:** busqueda y registro por identificador SECOP, descarga de documentos
+  disponibles y versionado por adendas.
 
-## Microfase 10 — Autenticación, multiempresa y operación
+## Microfase 10 - Autenticacion, multiempresa y operacion
 
-- **Objetivo:** operación multiusuario y multiorganización segura.
-- **Entregable:** autenticación, roles (administrador, analista, revisor), aislamiento por `Organization` verificado con pruebas, límites de costo por tenant, observabilidad completa ([security-and-governance.md](security-and-governance.md)), despliegue en contenedores documentado.
-- **Dependencias:** Microfases 1–8 (9 deseable).
-- **Criterios de aceptación:** pruebas de aislamiento entre tenants en verde; acciones críticas restringidas por rol; telemetría de costos operativa; despliegue reproducible.
-- **Riesgos:** endurecer seguridad tarde (mitigado: los principios aplican desde la Microfase 2; aquí se completan y verifican).
-- **Fuera de alcance:** alta disponibilidad multi-región, facturación.
+- **Objetivo:** operacion multiusuario y multiorganizacion segura.
+- **Entregable previsto:** autenticacion, roles, aislamiento por organizacion, limites de costo,
+  observabilidad y despliegue reproducible.
 
----
+## Despues del MVP
 
-## Después del MVP (no comprometido)
-
-Evaluadores restantes a profundidad, búsqueda semántica si un caso la justifica, alertas de nuevos procesos por perfil, y análisis de competencia. Ninguno condiciona la arquitectura actual.
+Evaluadores restantes a profundidad, busqueda semantica si un caso la justifica, alertas de nuevos
+procesos por perfil y analisis de competencia.

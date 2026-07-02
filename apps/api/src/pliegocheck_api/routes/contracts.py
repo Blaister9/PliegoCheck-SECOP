@@ -8,8 +8,10 @@ from fastapi import APIRouter
 from pydantic import BaseModel
 
 from pliegocheck_schemas import (
+    DOCUMENT_EXTRACTION_SCHEMA_VERSION,
     MANUAL_IMPORT_SCHEMA_VERSION,
     NORMALIZED_REQUIREMENT_SCHEMA_VERSION,
+    DocumentExtractionContracts,
     ManualImportContracts,
     NormalizedRequirement,
 )
@@ -44,6 +46,11 @@ def list_contracts() -> ContractsResponse:
                 name="manual_import",
                 schema_version=MANUAL_IMPORT_SCHEMA_VERSION,
                 title=ManualImportContracts.__name__,
+            ),
+            ContractInfo(
+                name="document_extraction",
+                schema_version=DOCUMENT_EXTRACTION_SCHEMA_VERSION,
+                title=DocumentExtractionContracts.__name__,
             ),
         ]
     )

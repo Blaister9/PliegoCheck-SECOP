@@ -29,6 +29,8 @@ from pydantic import (
     model_validator,
 )
 
+from pliegocheck_schemas.document_extraction import DocumentProcessingStatus, ExtractionErrorCode
+
 MANUAL_IMPORT_SCHEMA_VERSION = "1.0.0"
 
 NonBlankStr = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=500)]
@@ -91,12 +93,15 @@ class UploadErrorCode(StrEnum):
     DATABASE_ERROR = "DATABASE_ERROR"
 
 
+ApiErrorCode = UploadErrorCode | ExtractionErrorCode
+
+
 class ApiError(BaseModel):
     """Error estructurado devuelto por la API. Nunca expone detalles internos."""
 
     model_config = ConfigDict(extra="forbid")
 
-    code: UploadErrorCode
+    code: ApiErrorCode
     message: str
     details: dict[str, str] = Field(default_factory=dict)
 
@@ -143,6 +148,7 @@ class ProcessDocumentMetadata(BaseModel):
     declared_content_type: str | None
     detected_content_type: str | None
     upload_status: DocumentUploadStatus
+    processing_status: DocumentProcessingStatus
     created_at: AwareDatetime
 
 
