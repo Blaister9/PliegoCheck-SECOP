@@ -25,6 +25,8 @@ Controles de seguridad, aislamiento y gobernanza de decisiones que la plataforma
 
 - **Retención y eliminación:** política de retención definida por organización; al eliminar una organización o proceso se eliminan sus documentos del almacenamiento y sus derivados, conservando los `AuditEvent`s mínimos exigibles.
 - **Reprocesamiento por adendas:** cuando aparecen adendas o documentos nuevos se crea una `ProcessVersion` nueva y se reanaliza; las decisiones anteriores quedan asociadas a su versión original, nunca se sobrescriben.
+- **Carga manual segura (Microfase 2):** los documentos originales se guardan fuera de PostgreSQL, con `storage_key` relativa generada por servidor y SHA-256 calculado sobre los bytes originales. Las respuestas no exponen rutas físicas, temporales ni claves internas.
+- **Validación de archivos:** se rechazan rutas, nombres reservados, doble extensión peligrosa, formatos no permitidos, archivos vacíos, tamaños excesivos, `Content-Type` incoherente y firmas mágicas incompatibles cuando aplica. Los documentos todavía no se extraen ni se interpretan.
 
 ## 5. Seguridad frente a los modelos de IA
 

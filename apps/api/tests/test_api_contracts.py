@@ -2,17 +2,17 @@
 
 from fastapi.testclient import TestClient
 
-from pliegocheck_api.main import app
-from pliegocheck_schemas import NORMALIZED_REQUIREMENT_SCHEMA_VERSION
-
-client = TestClient(app)
+from pliegocheck_schemas import MANUAL_IMPORT_SCHEMA_VERSION, NORMALIZED_REQUIREMENT_SCHEMA_VERSION
 
 
-def test_contracts_catalog_exposes_shared_schema_version() -> None:
+def test_contracts_catalog_exposes_shared_schema_version(client: TestClient) -> None:
     response = client.get("/contracts")
     assert response.status_code == 200
     contracts = response.json()["contracts"]
-    assert len(contracts) == 1
-    assert contracts[0]["name"] == "normalized_requirement"
-    assert contracts[0]["schema_version"] == NORMALIZED_REQUIREMENT_SCHEMA_VERSION
-    assert contracts[0]["title"] == "NormalizedRequirement"
+    by_name = {contract["name"]: contract for contract in contracts}
+    assert (
+        by_name["normalized_requirement"]["schema_version"] == NORMALIZED_REQUIREMENT_SCHEMA_VERSION
+    )
+    assert by_name["normalized_requirement"]["title"] == "NormalizedRequirement"
+    assert by_name["manual_import"]["schema_version"] == MANUAL_IMPORT_SCHEMA_VERSION
+    assert by_name["manual_import"]["title"] == "ManualImportContracts"

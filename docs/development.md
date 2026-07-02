@@ -24,9 +24,9 @@ Ambos comandos son reproducibles: `pnpm-lock.yaml` y `uv.lock` están versionado
 
 ```text
 apps/
-├── web/       Next.js + TypeScript (App Router). UI mínima.
-├── api/       FastAPI. Endpoints /health/live, /health/ready y /contracts.
-└── worker/    CLI Python de diagnóstico. Sin cola real todavía.
+├── web/       Next.js + TypeScript (App Router). UI de importación manual.
+├── api/       FastAPI. Procesos, documentos, salud y contratos.
+└── worker/    CLI Python de diagnóstico. Sin cola ni procesamiento documental.
 packages/
 └── schemas/   Contratos compartidos. Modelo canónico Pydantic → JSON Schema → TypeScript.
 scripts/       Automatización Node multiplataforma (generación de contratos).
@@ -39,14 +39,26 @@ docs/          Documentación fundacional y ADRs.
 - **Frontend:** `pnpm dev:web` → http://localhost:3000
 - **API:** `pnpm dev:api` → http://localhost:8000 (OpenAPI interactivo en `/docs`, JSON en `/openapi.json`)
 - **Worker:** `pnpm worker:health` — imprime el diagnóstico en JSON por stdout (logs por stderr) y termina. No procesa trabajos: la cola real llega en la Microfase 3.
+- **PostgreSQL:** `pnpm infra:up` publica PostgreSQL en `localhost:56543`.
+- **Migraciones:** `pnpm db:migrate` aplica Alembic; `pnpm db:check` detecta divergencias.
+
+Variables locales mínimas en `.env.example`:
+
+```text
+DATABASE_URL
+PLIEGOCHECK_STORAGE_PATH
+PLIEGOCHECK_MAX_FILE_SIZE_MB
+PLIEGOCHECK_ALLOWED_WEB_ORIGINS
+NEXT_PUBLIC_API_BASE_URL
+```
 
 ## Contratos compartidos
 
 La definición canónica de cada contrato es un **modelo Pydantic** en `packages/schemas/src/pliegocheck_schemas/`. De ahí se generan, de forma determinística:
 
-1. `generated/normalized-requirement.schema.json` — JSON Schema (draft 2020-12).
-2. `generated/normalized-requirement.ts` — interfaz TypeScript (vía `json-schema-to-typescript`).
-3. `generated/normalized-requirement.enums.ts` — constantes de runtime para TypeScript.
+1. `generated/*.schema.json` — JSON Schema (draft 2020-12).
+2. `generated/*.ts` — interfaces TypeScript (vía `json-schema-to-typescript`).
+3. `generated/*.enums.ts` — constantes de runtime para TypeScript.
 
 Comandos:
 
@@ -76,6 +88,6 @@ Notas:
 
 ## Estado funcional real
 
-Implementado: esqueleto ejecutable, contrato `NormalizedRequirement` v1.0.0 consumido por API (endpoint `/contracts`) y web (página principal), pruebas de los tres servicios y del contrato, CI completa.
+Implementado: importación manual de procesos, carga documental segura, almacenamiento local, SHA-256, duplicados por proceso, descarga del original, migraciones, contratos compartidos y UI mínima.
 
-No implementado todavía (ver [roadmap](roadmap.md)): carga de procesos y documentos, extracción documental, agentes de IA, integración SECOP II, base de datos, autenticación, motor de decisión ejecutable, contenedores y despliegue.
+No implementado todavía (ver [roadmap](roadmap.md)): extracción documental, OCR, agentes de IA, integración automática con SECOP II, autenticación, S3 real, colas y motor GO / NO GO ejecutable.

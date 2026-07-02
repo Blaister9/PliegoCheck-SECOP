@@ -1,0 +1,610 @@
+{
+  "$defs": {
+    "ApiError": {
+      "additionalProperties": false,
+      "description": "Error estructurado devuelto por la API. Nunca expone detalles internos.",
+      "properties": {
+        "code": {
+          "$ref": "#/$defs/UploadErrorCode"
+        },
+        "details": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "type": "object"
+        },
+        "message": {
+          "type": "string"
+        }
+      },
+      "required": ["code", "message"],
+      "type": "object"
+    },
+    "DocumentType": {
+      "description": "Tipo documental declarado. La clasificacion automatica llega en Microfase 3.",
+      "enum": [
+        "UNKNOWN",
+        "TERMS",
+        "TECHNICAL_ANNEX",
+        "FINANCIAL_ANNEX",
+        "EXPERIENCE_ANNEX",
+        "RISK_MATRIX",
+        "SCHEDULE",
+        "FORM",
+        "ADDENDUM",
+        "SUPPORTING_DOCUMENT"
+      ],
+      "type": "string"
+    },
+    "DocumentUploadResponse": {
+      "additionalProperties": false,
+      "description": "Respuesta de la carga multiple: un resultado explicito por archivo.",
+      "properties": {
+        "process_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "rejected_count": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "results": {
+          "items": {
+            "$ref": "#/$defs/DocumentUploadResult"
+          },
+          "type": "array"
+        },
+        "stored_count": {
+          "minimum": 0,
+          "type": "integer"
+        }
+      },
+      "required": ["process_id", "results", "stored_count", "rejected_count"],
+      "type": "object"
+    },
+    "DocumentUploadResult": {
+      "additionalProperties": false,
+      "description": "Resultado individual de la carga de un archivo (comportamiento parcial explicito).",
+      "properties": {
+        "document": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ProcessDocumentMetadata"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "error": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ApiError"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "original_filename": {
+          "type": "string"
+        },
+        "upload_status": {
+          "$ref": "#/$defs/DocumentUploadStatus"
+        }
+      },
+      "required": ["original_filename", "upload_status"],
+      "type": "object"
+    },
+    "DocumentUploadStatus": {
+      "description": "Resultado del intento de carga de un documento.",
+      "enum": ["STORED", "REJECTED"],
+      "type": "string"
+    },
+    "ProcessCreate": {
+      "additionalProperties": false,
+      "description": "Datos para registrar manualmente un proceso de contratacion.",
+      "properties": {
+        "closing_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "contracting_entity": {
+          "maxLength": 500,
+          "minLength": 1,
+          "type": "string"
+        },
+        "currency": {
+          "default": "COP",
+          "pattern": "^[A-Z]{3}$",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 5000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "estimated_value": {
+          "anyOf": [
+            {
+              "minimum": 0.0,
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "published_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "secop_reference": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "selection_method": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "source_url": {
+          "anyOf": [
+            {
+              "format": "uri",
+              "maxLength": 2083,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "title": {
+          "maxLength": 500,
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": ["title", "contracting_entity"],
+      "type": "object"
+    },
+    "ProcessDetail": {
+      "additionalProperties": false,
+      "description": "Detalle completo de un proceso, incluido su inventario documental.",
+      "properties": {
+        "closing_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "contracting_entity": {
+          "type": "string"
+        },
+        "created_at": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "currency": {
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "document_count": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "documents": {
+          "items": {
+            "$ref": "#/$defs/ProcessDocumentMetadata"
+          },
+          "type": "array"
+        },
+        "estimated_value": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Valor estimado serializado como string decimal para no perder precision."
+        },
+        "id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "internal_reference": {
+          "type": "string"
+        },
+        "published_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "secop_reference": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "selection_method": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "source": {
+          "$ref": "#/$defs/ProcessSource"
+        },
+        "source_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "status": {
+          "$ref": "#/$defs/ProcessStatus"
+        },
+        "title": {
+          "type": "string"
+        },
+        "updated_at": {
+          "format": "date-time",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "internal_reference",
+        "secop_reference",
+        "title",
+        "contracting_entity",
+        "description",
+        "source_url",
+        "selection_method",
+        "estimated_value",
+        "currency",
+        "published_at",
+        "closing_at",
+        "status",
+        "source",
+        "document_count",
+        "documents",
+        "created_at",
+        "updated_at"
+      ],
+      "type": "object"
+    },
+    "ProcessDocumentList": {
+      "additionalProperties": false,
+      "description": "Inventario basico de documentos de un proceso.",
+      "properties": {
+        "documents": {
+          "items": {
+            "$ref": "#/$defs/ProcessDocumentMetadata"
+          },
+          "type": "array"
+        },
+        "process_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "total": {
+          "minimum": 0,
+          "type": "integer"
+        }
+      },
+      "required": ["process_id", "total", "documents"],
+      "type": "object"
+    },
+    "ProcessDocumentMetadata": {
+      "additionalProperties": false,
+      "description": "Metadata de un documento cargado. No incluye storage_key ni rutas fisicas.",
+      "properties": {
+        "created_at": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "declared_content_type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "detected_content_type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "document_type": {
+          "$ref": "#/$defs/DocumentType"
+        },
+        "extension": {
+          "type": "string"
+        },
+        "id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "original_filename": {
+          "type": "string"
+        },
+        "sha256": {
+          "pattern": "^[a-f0-9]{64}$",
+          "type": "string"
+        },
+        "size_bytes": {
+          "exclusiveMinimum": 0,
+          "type": "integer"
+        },
+        "upload_status": {
+          "$ref": "#/$defs/DocumentUploadStatus"
+        }
+      },
+      "required": [
+        "id",
+        "original_filename",
+        "document_type",
+        "extension",
+        "size_bytes",
+        "sha256",
+        "declared_content_type",
+        "detected_content_type",
+        "upload_status",
+        "created_at"
+      ],
+      "type": "object"
+    },
+    "ProcessList": {
+      "additionalProperties": false,
+      "description": "Pagina de procesos: los items de la pagina y el total real.",
+      "properties": {
+        "items": {
+          "items": {
+            "$ref": "#/$defs/ProcessSummary"
+          },
+          "type": "array"
+        },
+        "limit": {
+          "exclusiveMinimum": 0,
+          "type": "integer"
+        },
+        "offset": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "total": {
+          "minimum": 0,
+          "type": "integer"
+        }
+      },
+      "required": ["items", "total", "limit", "offset"],
+      "type": "object"
+    },
+    "ProcessSource": {
+      "description": "Origen de un proceso. La ingesta automatica llegara en la Microfase 9.",
+      "enum": ["MANUAL"],
+      "type": "string"
+    },
+    "ProcessStatus": {
+      "description": "Estado operativo del proceso durante la importacion.\n\n``READY_FOR_INVENTORY`` significa unicamente que hay al menos un documento\nalmacenado y el proceso puede pasar a inventario documental (Microfase 3).\nNo significa \"listo para presentar oferta\" ni es un resultado GO.",
+      "enum": ["DRAFT", "DOCUMENTS_PENDING", "READY_FOR_INVENTORY"],
+      "type": "string"
+    },
+    "ProcessSummary": {
+      "additionalProperties": false,
+      "description": "Resumen de un proceso para listados.",
+      "properties": {
+        "closing_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "contracting_entity": {
+          "type": "string"
+        },
+        "created_at": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "document_count": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "internal_reference": {
+          "type": "string"
+        },
+        "secop_reference": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "status": {
+          "$ref": "#/$defs/ProcessStatus"
+        },
+        "title": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "internal_reference",
+        "secop_reference",
+        "title",
+        "contracting_entity",
+        "status",
+        "closing_at",
+        "document_count",
+        "created_at"
+      ],
+      "type": "object"
+    },
+    "UploadErrorCode": {
+      "description": "Codigos de error de dominio de la importacion manual.",
+      "enum": [
+        "PROCESS_NOT_FOUND",
+        "DOCUMENT_NOT_FOUND",
+        "INVALID_PROCESS_DATA",
+        "FILE_EMPTY",
+        "FILE_TOO_LARGE",
+        "FILE_TYPE_NOT_ALLOWED",
+        "FILE_CONTENT_MISMATCH",
+        "DUPLICATE_DOCUMENT",
+        "STORAGE_ERROR",
+        "DATABASE_ERROR"
+      ],
+      "type": "string"
+    }
+  },
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "Contenedor exclusivamente para la generacion conjunta de esquemas.\n\nNo es un contrato de intercambio: agrupa los contratos de importacion\nmanual para producir un unico JSON Schema con ``$defs`` compartidos.",
+  "properties": {
+    "api_error": {
+      "$ref": "#/$defs/ApiError"
+    },
+    "document_upload_response": {
+      "$ref": "#/$defs/DocumentUploadResponse"
+    },
+    "document_upload_result": {
+      "$ref": "#/$defs/DocumentUploadResult"
+    },
+    "process_create": {
+      "$ref": "#/$defs/ProcessCreate"
+    },
+    "process_detail": {
+      "$ref": "#/$defs/ProcessDetail"
+    },
+    "process_document_list": {
+      "$ref": "#/$defs/ProcessDocumentList"
+    },
+    "process_document_metadata": {
+      "$ref": "#/$defs/ProcessDocumentMetadata"
+    },
+    "process_list": {
+      "$ref": "#/$defs/ProcessList"
+    },
+    "process_summary": {
+      "$ref": "#/$defs/ProcessSummary"
+    }
+  },
+  "required": [
+    "process_create",
+    "process_summary",
+    "process_detail",
+    "process_list",
+    "process_document_metadata",
+    "process_document_list",
+    "document_upload_result",
+    "document_upload_response",
+    "api_error"
+  ],
+  "type": "object"
+}

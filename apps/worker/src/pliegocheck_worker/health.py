@@ -10,4 +10,5 @@ def health_status() -> dict[str, str | bool]:
         "service": SERVICE_NAME,
         "version": SERVICE_VERSION,
         "queue_connected": False,
+        "document_processing_enabled": False,
     }

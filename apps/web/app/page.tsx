@@ -2,6 +2,7 @@ import {
   NORMALIZED_REQUIREMENT_SCHEMA_VERSION,
   REQUIREMENT_CATEGORY_VALUES,
 } from "@pliegocheck/schemas";
+import Link from "next/link";
 
 const DOCS_BASE = "https://github.com/Blaister9/PliegoCheck-SECOP/blob/main";
 
@@ -57,19 +58,25 @@ export default function Home() {
     <main className="container">
       <header>
         <h1>PliegoCheck-SECOP</h1>
-        <p className="status-badge">Fundación técnica — Microfase 1</p>
+        <p className="status-badge">Importación manual — Microfase 2</p>
         <p className="lead">
           Plataforma multiagente de análisis <strong>GO / NO GO</strong> para procesos de
-          contratación pública publicados en SECOP II (Colombia): ingesta el proceso y sus
-          documentos, normaliza los requisitos, los contrasta contra el perfil de la empresa y
-          produce una decisión auditable con evidencia trazable.
+          contratación pública publicados en SECOP II (Colombia). En esta fase permite crear
+          procesos manualmente y adjuntar documentos originales para inventario inicial.
         </p>
+        <nav className="actions" aria-label="Acciones principales">
+          <Link className="button" href="/processes">
+            Procesos importados
+          </Link>
+          <Link className="button secondary" href="/processes/new">
+            Crear proceso
+          </Link>
+        </nav>
       </header>
 
       <aside className="notice" role="note" aria-label="Estado del proyecto">
-        <strong>Aviso:</strong> este es el esqueleto técnico del proyecto. Todavía no existe
-        análisis funcional de procesos: no se cargan documentos, no se consultan datos de SECOP II y
-        no se emiten decisiones.
+        <strong>Aviso:</strong> los documentos todavía no se extraen ni analizan. No se consultan
+        datos de SECOP II y no se emiten decisiones GO / NO GO.
       </aside>
 
       <section aria-labelledby="arquitectura">

@@ -16,13 +16,11 @@
         "DOCUMENTARY",
         "RISK_AND_INELIGIBILITY"
       ],
-      "title": "RequirementCategory",
       "type": "string"
     },
     "RequirementCriticality": {
       "description": "Criticidad de un requisito (ver docs/decision-engine.md).",
       "enum": ["BLOCKING", "HIGH", "MEDIUM", "LOW", "INFORMATIONAL"],
-      "title": "RequirementCriticality",
       "type": "string"
     },
     "RequirementStatus": {
@@ -35,13 +33,11 @@
         "NOT_APPLICABLE",
         "CONFLICTING_EVIDENCE"
       ],
-      "title": "RequirementStatus",
       "type": "string"
     },
     "RequirementSubsanability": {
       "description": "Subsanabilidad de un requisito (ver docs/decision-engine.md).",
       "enum": ["SUBSANABLE", "NON_SUBSANABLE", "CONDITIONAL", "UNKNOWN"],
-      "title": "RequirementSubsanability",
       "type": "string"
     },
     "SourceLocation": {
@@ -59,8 +55,7 @@
             }
           ],
           "default": null,
-          "description": "Pagina del documento de origen; cuando existe, debe ser mayor que cero.",
-          "title": "Page"
+          "description": "Pagina del documento de origen; cuando existe, debe ser mayor que cero."
         },
         "section": {
           "anyOf": [
@@ -72,11 +67,9 @@
             }
           ],
           "default": null,
-          "description": "Seccion o numeral del documento de origen (por ejemplo '3.2').",
-          "title": "Section"
+          "description": "Seccion o numeral del documento de origen (por ejemplo '3.2')."
         }
       },
-      "title": "SourceLocation",
       "type": "object"
     }
   },
@@ -106,14 +99,12 @@
           "type": "null"
         }
       ],
-      "description": "Valor acreditado por la empresa con evidencia; null cuando no se conoce. Nunca se rellena con valores plausibles.",
-      "title": "Company Value"
+      "description": "Valor acreditado por la empresa con evidencia; null cuando no se conoce. Nunca se rellena con valores plausibles."
     },
     "confidence": {
       "description": "Confianza del agente (0 a 1). Informativa: nunca sustituye la evidencia.",
       "maximum": 1.0,
       "minimum": 0.0,
-      "title": "Confidence",
       "type": "number"
     },
     "criticality": {
@@ -123,7 +114,6 @@
     "description": {
       "description": "Texto normalizado del requisito, fiel al documento de origen.",
       "minLength": 1,
-      "title": "Description",
       "type": "string"
     },
     "evidence_ids": {
@@ -131,7 +121,6 @@
       "items": {
         "type": "string"
       },
-      "title": "Evidence Ids",
       "type": "array"
     },
     "expected_value": {
@@ -152,30 +141,25 @@
           "type": "null"
         }
       ],
-      "description": "Valor exigido por el pliego cuando el requisito es cuantificable; null cuando no aplica o no esta escrito explicitamente.",
-      "title": "Expected Value"
+      "description": "Valor exigido por el pliego cuando el requisito es cuantificable; null cuando no aplica o no esta escrito explicitamente."
     },
     "requirement_id": {
       "description": "Identificador unico del requisito dentro del proceso (por ejemplo 'REQ-001').",
       "minLength": 1,
-      "title": "Requirement Id",
       "type": "string"
     },
     "requires_human_review": {
       "description": "Marca el requisito para revision humana obligatoria.",
-      "title": "Requires Human Review",
       "type": "boolean"
     },
     "schema_version": {
       "const": "1.0.0",
       "description": "Version del contrato NormalizedRequirement.",
-      "title": "Schema Version",
       "type": "string"
     },
     "source_document_id": {
       "description": "Identificador del documento del que proviene el requisito.",
       "minLength": 1,
-      "title": "Source Document Id",
       "type": "string"
     },
     "source_location": {
@@ -207,6 +191,5 @@
     "confidence",
     "requires_human_review"
   ],
-  "title": "NormalizedRequirement",
   "type": "object"
 }

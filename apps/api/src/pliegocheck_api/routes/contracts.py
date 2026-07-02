@@ -7,7 +7,12 @@ proviene del modelo canonico, no de una constante duplicada.
 from fastapi import APIRouter
 from pydantic import BaseModel
 
-from pliegocheck_schemas import NORMALIZED_REQUIREMENT_SCHEMA_VERSION, NormalizedRequirement
+from pliegocheck_schemas import (
+    MANUAL_IMPORT_SCHEMA_VERSION,
+    NORMALIZED_REQUIREMENT_SCHEMA_VERSION,
+    ManualImportContracts,
+    NormalizedRequirement,
+)
 
 router = APIRouter(prefix="/contracts", tags=["contracts"])
 
@@ -34,6 +39,11 @@ def list_contracts() -> ContractsResponse:
                 name="normalized_requirement",
                 schema_version=NORMALIZED_REQUIREMENT_SCHEMA_VERSION,
                 title=NormalizedRequirement.__name__,
-            )
+            ),
+            ContractInfo(
+                name="manual_import",
+                schema_version=MANUAL_IMPORT_SCHEMA_VERSION,
+                title=ManualImportContracts.__name__,
+            ),
         ]
     )

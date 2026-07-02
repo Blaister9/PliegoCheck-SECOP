@@ -104,9 +104,9 @@ La decisión de stack y sus alternativas están formalizadas en [docs/ADR-001-st
 
 ## Estado actual del repositorio
 
-**Microfase 1 completada: esqueleto ejecutable del monorepo.** Existen una web mínima (Next.js), una API con endpoints de salud (FastAPI), un worker de diagnóstico (Python, sin cola real), el primer contrato compartido (`NormalizedRequirement` v1.0.0) con generación reproducible de JSON Schema y tipos TypeScript, pruebas, lint, typecheck y CI en GitHub Actions.
+**Microfase 2 completada: importación manual de procesos y documentos.** Existen PostgreSQL, SQLAlchemy 2, Alembic, almacenamiento documental local, contratos compartidos de importación manual, API para crear/listar/consultar procesos, carga múltiple segura, SHA-256, rechazo de duplicados, inventario inicial, descarga del original y UI mínima.
 
-**Todavía no existe análisis funcional de procesos**: no hay carga documental, ni integración con SECOP II, ni agentes de IA, ni base de datos, ni autenticación, ni motor GO / NO GO ejecutable. Eso comienza en la Microfase 2 (importación manual de proceso y documentos).
+**Todavía no existe análisis documental ni decisión GO / NO GO**: no hay integración automática con SECOP II, OCR, extracción, agentes de IA, autenticación, S3 real, colas ni motor de decisión ejecutable. Eso continúa en la Microfase 3.
 
 ## Desarrollo local
 
@@ -122,6 +122,8 @@ uv sync --all-packages  # dependencias Python (workspace uv)
 | `pnpm dev:web` | Frontend Next.js en modo desarrollo |
 | `pnpm dev:api` | API FastAPI con recarga (puerto 8000; OpenAPI en `/docs`) |
 | `pnpm worker:health` | Diagnóstico del worker (imprime JSON y termina) |
+| `pnpm infra:up` / `pnpm infra:down` | PostgreSQL local para desarrollo |
+| `pnpm db:migrate` / `pnpm db:check` | Migraciones Alembic y verificación de divergencias |
 | `pnpm schemas:generate` | Regenera JSON Schema y tipos TS desde el modelo canónico Pydantic |
 | `pnpm schemas:check` | Verifica que el modelo canónico y lo generado estén sincronizados |
 | `pnpm format` / `pnpm format:check` | Formato Prettier + Ruff |
@@ -145,6 +147,8 @@ Guía completa en [docs/development.md](docs/development.md).
 | [docs/agent-prompting-standard.md](docs/agent-prompting-standard.md) | Estándar y plantillas para prompts de agentes. |
 | [docs/security-and-governance.md](docs/security-and-governance.md) | Seguridad, gobernanza, amenazas y controles. |
 | [docs/roadmap.md](docs/roadmap.md) | Roadmap incremental por microfases. |
+| [docs/manual-import.md](docs/manual-import.md) | Flujo de importación manual, validaciones y límites. |
+| [docs/ADR-002-manual-import-persistence.md](docs/ADR-002-manual-import-persistence.md) | Decisión de persistencia y almacenamiento local. |
 
 ## Roadmap resumido
 

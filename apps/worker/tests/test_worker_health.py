@@ -15,6 +15,7 @@ def test_health_status_reports_skeleton_state() -> None:
         "service": "worker",
         "version": "0.1.0",
         "queue_connected": False,
+        "document_processing_enabled": False,
     }
 
 
@@ -26,6 +27,7 @@ def test_cli_health_prints_json_and_exits_zero(capsys: pytest.CaptureFixture[str
     assert payload["status"] == "ok"
     assert payload["service"] == "worker"
     assert payload["queue_connected"] is False
+    assert payload["document_processing_enabled"] is False
 
 
 def test_cli_requires_a_command() -> None:
