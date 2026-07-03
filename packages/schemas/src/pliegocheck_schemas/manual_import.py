@@ -30,6 +30,7 @@ from pydantic import (
 )
 
 from pliegocheck_schemas.document_extraction import DocumentProcessingStatus, ExtractionErrorCode
+from pliegocheck_schemas.normalized_requirement import NormalizationErrorCode
 
 MANUAL_IMPORT_SCHEMA_VERSION = "1.0.0"
 
@@ -93,7 +94,7 @@ class UploadErrorCode(StrEnum):
     DATABASE_ERROR = "DATABASE_ERROR"
 
 
-ApiErrorCode = UploadErrorCode | ExtractionErrorCode
+ApiErrorCode = UploadErrorCode | ExtractionErrorCode | NormalizationErrorCode
 
 
 class ApiError(BaseModel):

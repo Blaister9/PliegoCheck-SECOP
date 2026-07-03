@@ -34,6 +34,20 @@ def pytest_configure(config: pytest.Config) -> None:
     os.environ["PLIEGOCHECK_EXTRACTION_MAX_COMPRESSION_RATIO"] = "100"
     os.environ["PLIEGOCHECK_WORKER_MAX_ATTEMPTS"] = "3"
     os.environ["PLIEGOCHECK_EXTRACTION_SYNC"] = "1"
+    os.environ["PLIEGOCHECK_AI_ENABLED"] = "false"
+    os.environ["OPENAI_API_KEY"] = ""
+    os.environ["OPENAI_NORMALIZATION_MODEL"] = "gpt-5.5-pro"
+    os.environ["OPENAI_NORMALIZATION_REASONING_EFFORT"] = "high"
+    os.environ["OPENAI_NORMALIZATION_BACKGROUND"] = "true"
+    os.environ["OPENAI_NORMALIZATION_MAX_OUTPUT_TOKENS"] = "16000"
+    os.environ["OPENAI_NORMALIZATION_TIMEOUT_SECONDS"] = "60"
+    os.environ["OPENAI_NORMALIZATION_POLL_INTERVAL_SECONDS"] = "1"
+    os.environ["OPENAI_NORMALIZATION_MAX_CALLS_PER_RUN"] = "20"
+    os.environ["OPENAI_NORMALIZATION_MAX_SEGMENTS_PER_BATCH"] = "5"
+    os.environ["OPENAI_NORMALIZATION_MAX_CHARACTERS_PER_BATCH"] = "2000"
+    os.environ["OPENAI_NORMALIZATION_MAX_TOTAL_CHARACTERS"] = "10000"
+    os.environ["OPENAI_NORMALIZATION_MAX_RETRIES"] = "2"
+    os.environ["PLIEGOCHECK_ALLOW_FAKE_NORMALIZATION_PROVIDER"] = "true"
     from pliegocheck_api.config import get_settings
     from pliegocheck_api.db import get_engine, get_sessionmaker
 
@@ -59,7 +73,11 @@ def clean_database_and_storage(migrated_engine: Engine) -> Generator[None, None,
     with migrated_engine.begin() as connection:
         connection.execute(
             text(
-                "TRUNCATE TABLE extracted_segments, document_extractions, "
+                "TRUNCATE TABLE requirement_evidence, requirement_relations, "
+                "rejected_requirement_candidates, requirements, "
+                "requirement_normalization_batches, requirement_normalization_runs, "
+                "requirement_normalization_jobs, prompt_versions, "
+                "extracted_segments, document_extractions, "
                 "document_processing_jobs, import_events, process_documents, processes "
                 "RESTART IDENTITY CASCADE"
             )

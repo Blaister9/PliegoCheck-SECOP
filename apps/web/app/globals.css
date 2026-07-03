@@ -287,6 +287,35 @@ td {
   background: #ffffff;
 }
 
+.normalization-panel,
+.requirement-detail {
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  background: #ffffff;
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+
+.run-summary {
+  border-top: 1px solid var(--color-border);
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+}
+
+.link-button {
+  color: var(--color-accent);
+  background: transparent;
+  border: 0;
+  padding: 0;
+  text-align: left;
+  text-decoration: underline;
+}
+
+.requirement-detail h3,
+.requirement-detail h4 {
+  margin-bottom: 0.4rem;
+}
+
 footer {
   margin-top: 2.5rem;
   padding-top: 1rem;

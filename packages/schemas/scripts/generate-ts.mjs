@@ -15,6 +15,10 @@ const CONTRACTS = [
     output: "normalized-requirement.ts",
   },
   {
+    schema: "requirement-normalization.schema.json",
+    output: "requirement-normalization.ts",
+  },
+  {
     schema: "manual-import.schema.json",
     output: "manual-import.ts",
   },

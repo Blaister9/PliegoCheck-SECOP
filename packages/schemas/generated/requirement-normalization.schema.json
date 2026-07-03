@@ -1,0 +1,1820 @@
+{
+  "$defs": {
+    "ExpectedValue": {
+      "additionalProperties": false,
+      "description": "Valor exigido por el pliego cuando existe soporte explicito.",
+      "properties": {
+        "raw_text": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "unit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "value": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": ["value", "unit", "raw_text"],
+      "type": "object"
+    },
+    "NormalizationBatchSummary": {
+      "additionalProperties": false,
+      "properties": {
+        "batch_index": {
+          "type": "integer"
+        },
+        "candidate_count": {
+          "type": "integer"
+        },
+        "created_at": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "error_code": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "error_message": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "finished_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "input_digest": {
+          "pattern": "^[a-f0-9]{64}$",
+          "type": "string"
+        },
+        "input_tokens": {
+          "type": "integer"
+        },
+        "output_tokens": {
+          "type": "integer"
+        },
+        "provider_response_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "reasoning_tokens": {
+          "type": "integer"
+        },
+        "run_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "segment_ids": {
+          "items": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "started_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "status": {
+          "$ref": "#/$defs/RequirementNormalizationStatus"
+        }
+      },
+      "required": [
+        "id",
+        "run_id",
+        "batch_index",
+        "status",
+        "segment_ids",
+        "input_digest",
+        "provider_response_id",
+        "candidate_count",
+        "input_tokens",
+        "output_tokens",
+        "reasoning_tokens",
+        "started_at",
+        "finished_at",
+        "error_code",
+        "error_message",
+        "created_at"
+      ],
+      "type": "object"
+    },
+    "NormalizationCreateRequest": {
+      "additionalProperties": false,
+      "properties": {
+        "document_ids": {
+          "anyOf": [
+            {
+              "items": {
+                "format": "uuid",
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "force": {
+          "default": false,
+          "type": "boolean"
+        }
+      },
+      "type": "object"
+    },
+    "NormalizationCreateResponse": {
+      "additionalProperties": false,
+      "properties": {
+        "job": {
+          "$ref": "#/$defs/NormalizationJobSummary"
+        },
+        "run": {
+          "$ref": "#/$defs/NormalizationRunSummary"
+        }
+      },
+      "required": ["job", "run"],
+      "type": "object"
+    },
+    "NormalizationJobSummary": {
+      "additionalProperties": false,
+      "properties": {
+        "attempt_count": {
+          "type": "integer"
+        },
+        "available_at": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "created_at": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "finished_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "force": {
+          "type": "boolean"
+        },
+        "id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "last_error_code": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "last_error_message": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "max_attempts": {
+          "type": "integer"
+        },
+        "priority": {
+          "type": "integer"
+        },
+        "process_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "run_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "started_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "status": {
+          "$ref": "#/$defs/RequirementNormalizationStatus"
+        },
+        "updated_at": {
+          "format": "date-time",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "process_id",
+        "run_id",
+        "status",
+        "priority",
+        "attempt_count",
+        "max_attempts",
+        "force",
+        "available_at",
+        "started_at",
+        "finished_at",
+        "last_error_code",
+        "last_error_message",
+        "created_at",
+        "updated_at"
+      ],
+      "type": "object"
+    },
+    "NormalizationProvider": {
+      "enum": ["openai", "fake"],
+      "type": "string"
+    },
+    "NormalizationRetryResponse": {
+      "additionalProperties": false,
+      "properties": {
+        "job": {
+          "$ref": "#/$defs/NormalizationJobSummary"
+        },
+        "message": {
+          "type": "string"
+        },
+        "run": {
+          "$ref": "#/$defs/NormalizationRunSummary"
+        }
+      },
+      "required": ["job", "run", "message"],
+      "type": "object"
+    },
+    "NormalizationRunDetail": {
+      "additionalProperties": false,
+      "properties": {
+        "accepted_requirement_count": {
+          "type": "integer"
+        },
+        "batch_count": {
+          "type": "integer"
+        },
+        "batches": {
+          "items": {
+            "$ref": "#/$defs/NormalizationBatchSummary"
+          },
+          "type": "array"
+        },
+        "candidate_count": {
+          "type": "integer"
+        },
+        "consolidation_prompt_version": {
+          "$ref": "#/$defs/PromptVersionSummary"
+        },
+        "consolidation_prompt_version_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "created_at": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "documents_used": {
+          "items": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "error_code": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "error_message": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "finished_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "input_digest": {
+          "pattern": "^[a-f0-9]{64}$",
+          "type": "string"
+        },
+        "input_tokens": {
+          "type": "integer"
+        },
+        "job_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "model": {
+          "type": "string"
+        },
+        "omitted_documents": {
+          "items": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "output_tokens": {
+          "type": "integer"
+        },
+        "process_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "prompt_version": {
+          "$ref": "#/$defs/PromptVersionSummary"
+        },
+        "prompt_version_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "provider": {
+          "$ref": "#/$defs/NormalizationProvider"
+        },
+        "provider_response_ids": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "reasoning_effort": {
+          "type": "string"
+        },
+        "reasoning_tokens": {
+          "type": "integer"
+        },
+        "rejected_candidate_count": {
+          "type": "integer"
+        },
+        "segment_count": {
+          "type": "integer"
+        },
+        "source_extraction_ids": {
+          "items": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "started_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "status": {
+          "$ref": "#/$defs/RequirementNormalizationStatus"
+        },
+        "updated_at": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "warning_count": {
+          "type": "integer"
+        },
+        "warnings": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "id",
+        "job_id",
+        "process_id",
+        "status",
+        "provider",
+        "model",
+        "reasoning_effort",
+        "prompt_version_id",
+        "consolidation_prompt_version_id",
+        "input_digest",
+        "source_extraction_ids",
+        "segment_count",
+        "batch_count",
+        "candidate_count",
+        "accepted_requirement_count",
+        "rejected_candidate_count",
+        "warning_count",
+        "input_tokens",
+        "output_tokens",
+        "reasoning_tokens",
+        "provider_response_ids",
+        "started_at",
+        "finished_at",
+        "error_code",
+        "error_message",
+        "created_at",
+        "updated_at",
+        "prompt_version",
+        "consolidation_prompt_version",
+        "batches",
+        "warnings",
+        "documents_used",
+        "omitted_documents"
+      ],
+      "type": "object"
+    },
+    "NormalizationRunList": {
+      "additionalProperties": false,
+      "properties": {
+        "items": {
+          "items": {
+            "$ref": "#/$defs/NormalizationRunSummary"
+          },
+          "type": "array"
+        },
+        "limit": {
+          "exclusiveMinimum": 0,
+          "type": "integer"
+        },
+        "offset": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "process_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "total": {
+          "minimum": 0,
+          "type": "integer"
+        }
+      },
+      "required": ["process_id", "total", "limit", "offset", "items"],
+      "type": "object"
+    },
+    "NormalizationRunSummary": {
+      "additionalProperties": false,
+      "properties": {
+        "accepted_requirement_count": {
+          "type": "integer"
+        },
+        "batch_count": {
+          "type": "integer"
+        },
+        "candidate_count": {
+          "type": "integer"
+        },
+        "consolidation_prompt_version_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "created_at": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "error_code": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "error_message": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "finished_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "input_digest": {
+          "pattern": "^[a-f0-9]{64}$",
+          "type": "string"
+        },
+        "input_tokens": {
+          "type": "integer"
+        },
+        "job_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "model": {
+          "type": "string"
+        },
+        "output_tokens": {
+          "type": "integer"
+        },
+        "process_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "prompt_version_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "provider": {
+          "$ref": "#/$defs/NormalizationProvider"
+        },
+        "provider_response_ids": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "reasoning_effort": {
+          "type": "string"
+        },
+        "reasoning_tokens": {
+          "type": "integer"
+        },
+        "rejected_candidate_count": {
+          "type": "integer"
+        },
+        "segment_count": {
+          "type": "integer"
+        },
+        "source_extraction_ids": {
+          "items": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "started_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "status": {
+          "$ref": "#/$defs/RequirementNormalizationStatus"
+        },
+        "updated_at": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "warning_count": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id",
+        "job_id",
+        "process_id",
+        "status",
+        "provider",
+        "model",
+        "reasoning_effort",
+        "prompt_version_id",
+        "consolidation_prompt_version_id",
+        "input_digest",
+        "source_extraction_ids",
+        "segment_count",
+        "batch_count",
+        "candidate_count",
+        "accepted_requirement_count",
+        "rejected_candidate_count",
+        "warning_count",
+        "input_tokens",
+        "output_tokens",
+        "reasoning_tokens",
+        "provider_response_ids",
+        "started_at",
+        "finished_at",
+        "error_code",
+        "error_message",
+        "created_at",
+        "updated_at"
+      ],
+      "type": "object"
+    },
+    "NormalizedRequirement": {
+      "additionalProperties": false,
+      "description": "Requisito persistido tras validacion deterministica de evidencia.",
+      "properties": {
+        "category": {
+          "$ref": "#/$defs/RequirementCategory"
+        },
+        "condition_text": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "confidence": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "type": "number"
+        },
+        "created_at": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "criticality": {
+          "$ref": "#/$defs/RequirementCriticality"
+        },
+        "criticality_basis": {
+          "$ref": "#/$defs/RequirementBasis"
+        },
+        "description": {
+          "maxLength": 2000,
+          "minLength": 1,
+          "type": "string"
+        },
+        "evidence_status": {
+          "$ref": "#/$defs/RequirementEvidenceStatus"
+        },
+        "expected_value": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ExpectedValue"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "is_active": {
+          "type": "boolean"
+        },
+        "modality": {
+          "$ref": "#/$defs/RequirementModality"
+        },
+        "normalization_run_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "process_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "requires_human_review": {
+          "type": "boolean"
+        },
+        "review_status": {
+          "$ref": "#/$defs/RequirementReviewStatus"
+        },
+        "scope": {
+          "$ref": "#/$defs/RequirementScope"
+        },
+        "stable_key": {
+          "pattern": "^[a-f0-9]{64}$",
+          "type": "string"
+        },
+        "subsanability": {
+          "$ref": "#/$defs/RequirementSubsanability"
+        },
+        "subsanability_basis": {
+          "$ref": "#/$defs/RequirementBasis"
+        },
+        "updated_at": {
+          "format": "date-time",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "process_id",
+        "normalization_run_id",
+        "stable_key",
+        "category",
+        "scope",
+        "modality",
+        "description",
+        "condition_text",
+        "expected_value",
+        "criticality",
+        "criticality_basis",
+        "subsanability",
+        "subsanability_basis",
+        "confidence",
+        "evidence_status",
+        "review_status",
+        "requires_human_review",
+        "is_active",
+        "created_at",
+        "updated_at"
+      ],
+      "type": "object"
+    },
+    "PromptVersionSummary": {
+      "additionalProperties": false,
+      "properties": {
+        "content_sha256": {
+          "pattern": "^[a-f0-9]{64}$",
+          "type": "string"
+        },
+        "created_at": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "is_active": {
+          "type": "boolean"
+        },
+        "prompt_name": {
+          "type": "string"
+        },
+        "provider": {
+          "type": "string"
+        },
+        "semantic_version": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "prompt_name",
+        "semantic_version",
+        "content_sha256",
+        "provider",
+        "is_active",
+        "created_at"
+      ],
+      "type": "object"
+    },
+    "RejectedCandidateReason": {
+      "enum": [
+        "SCHEMA_INVALID",
+        "REJECTED_UNSUPPORTED",
+        "INVALID_SEGMENT",
+        "QUOTE_NOT_FOUND",
+        "OUTSIDE_SNAPSHOT",
+        "LOCATION_MISMATCH",
+        "FORBIDDEN_DECISION",
+        "EXACT_DUPLICATE"
+      ],
+      "type": "string"
+    },
+    "RejectedRequirementCandidate": {
+      "additionalProperties": false,
+      "properties": {
+        "batch_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "candidate_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "created_at": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "raw_candidate": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "rejection_message": {
+          "type": "string"
+        },
+        "rejection_reason": {
+          "$ref": "#/$defs/RejectedCandidateReason"
+        },
+        "run_id": {
+          "format": "uuid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "run_id",
+        "batch_id",
+        "candidate_id",
+        "rejection_reason",
+        "rejection_message",
+        "raw_candidate",
+        "created_at"
+      ],
+      "type": "object"
+    },
+    "RequirementBasis": {
+      "enum": ["EXPLICIT", "INFERRED", "UNKNOWN"],
+      "type": "string"
+    },
+    "RequirementCandidate": {
+      "additionalProperties": false,
+      "description": "Candidato producido por RequirementNormalizationAgent.",
+      "properties": {
+        "candidate_id": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "category": {
+          "$ref": "#/$defs/RequirementCategory"
+        },
+        "condition_text": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "confidence": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "type": "number"
+        },
+        "criticality": {
+          "$ref": "#/$defs/RequirementCriticality"
+        },
+        "criticality_basis": {
+          "$ref": "#/$defs/RequirementBasis"
+        },
+        "description": {
+          "maxLength": 2000,
+          "minLength": 1,
+          "type": "string"
+        },
+        "evidence": {
+          "items": {
+            "$ref": "#/$defs/RequirementCandidateEvidence"
+          },
+          "type": "array"
+        },
+        "expected_value": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ExpectedValue"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "modality": {
+          "$ref": "#/$defs/RequirementModality"
+        },
+        "requires_human_review": {
+          "type": "boolean"
+        },
+        "scope": {
+          "$ref": "#/$defs/RequirementScope"
+        },
+        "subsanability": {
+          "$ref": "#/$defs/RequirementSubsanability"
+        },
+        "subsanability_basis": {
+          "$ref": "#/$defs/RequirementBasis"
+        },
+        "uncertainty_reason": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "candidate_id",
+        "category",
+        "scope",
+        "modality",
+        "description",
+        "condition_text",
+        "expected_value",
+        "criticality",
+        "criticality_basis",
+        "subsanability",
+        "subsanability_basis",
+        "confidence",
+        "evidence",
+        "requires_human_review",
+        "uncertainty_reason"
+      ],
+      "type": "object"
+    },
+    "RequirementCandidateEvidence": {
+      "additionalProperties": false,
+      "description": "Evidencia propuesta por el agente para un candidato.",
+      "properties": {
+        "evidence_role": {
+          "$ref": "#/$defs/RequirementEvidenceRole"
+        },
+        "quote_end": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "quote_start": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "quoted_text": {
+          "maxLength": 2000,
+          "minLength": 1,
+          "type": "string"
+        },
+        "segment_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "source_location": {
+          "$ref": "#/$defs/SourceLocation"
+        }
+      },
+      "required": [
+        "segment_id",
+        "evidence_role",
+        "quoted_text",
+        "quote_start",
+        "quote_end",
+        "source_location"
+      ],
+      "type": "object"
+    },
+    "RequirementCategory": {
+      "description": "Categorias iniciales de requisitos.",
+      "enum": [
+        "LEGAL",
+        "FINANCIAL",
+        "ORGANIZATIONAL",
+        "EXPERIENCE",
+        "TECHNICAL",
+        "WORKFORCE",
+        "GUARANTEE",
+        "SCHEDULE",
+        "ECONOMIC",
+        "OPERATIONAL",
+        "DOCUMENTARY",
+        "RISK_AND_INELIGIBILITY"
+      ],
+      "type": "string"
+    },
+    "RequirementConsolidationAgentOutput": {
+      "additionalProperties": false,
+      "description": "Structured Output estricto de RequirementConsolidationAgent.",
+      "properties": {
+        "agent": {
+          "const": "RequirementConsolidationAgent",
+          "type": "string"
+        },
+        "process_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "prompt_version": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "relations": {
+          "items": {
+            "$ref": "#/$defs/RequirementRelationProposal"
+          },
+          "type": "array"
+        },
+        "schema_version": {
+          "const": "2.0.0",
+          "type": "string"
+        },
+        "warnings": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "schema_version",
+        "agent",
+        "prompt_version",
+        "process_id",
+        "relations",
+        "warnings"
+      ],
+      "type": "object"
+    },
+    "RequirementCriticality": {
+      "enum": ["BLOCKING", "HIGH", "MEDIUM", "LOW", "INFORMATIONAL", "UNKNOWN"],
+      "type": "string"
+    },
+    "RequirementDetail": {
+      "additionalProperties": false,
+      "properties": {
+        "category": {
+          "$ref": "#/$defs/RequirementCategory"
+        },
+        "condition_text": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "confidence": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "type": "number"
+        },
+        "created_at": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "criticality": {
+          "$ref": "#/$defs/RequirementCriticality"
+        },
+        "criticality_basis": {
+          "$ref": "#/$defs/RequirementBasis"
+        },
+        "description": {
+          "maxLength": 2000,
+          "minLength": 1,
+          "type": "string"
+        },
+        "documents": {
+          "items": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "evidence": {
+          "items": {
+            "$ref": "#/$defs/RequirementEvidence"
+          },
+          "type": "array"
+        },
+        "evidence_status": {
+          "$ref": "#/$defs/RequirementEvidenceStatus"
+        },
+        "expected_value": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ExpectedValue"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "is_active": {
+          "type": "boolean"
+        },
+        "modality": {
+          "$ref": "#/$defs/RequirementModality"
+        },
+        "normalization_run_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "process_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "prompt_version": {
+          "$ref": "#/$defs/PromptVersionSummary"
+        },
+        "relations": {
+          "items": {
+            "$ref": "#/$defs/RequirementRelation"
+          },
+          "type": "array"
+        },
+        "requires_human_review": {
+          "type": "boolean"
+        },
+        "review_status": {
+          "$ref": "#/$defs/RequirementReviewStatus"
+        },
+        "run": {
+          "$ref": "#/$defs/NormalizationRunSummary"
+        },
+        "scope": {
+          "$ref": "#/$defs/RequirementScope"
+        },
+        "stable_key": {
+          "pattern": "^[a-f0-9]{64}$",
+          "type": "string"
+        },
+        "subsanability": {
+          "$ref": "#/$defs/RequirementSubsanability"
+        },
+        "subsanability_basis": {
+          "$ref": "#/$defs/RequirementBasis"
+        },
+        "updated_at": {
+          "format": "date-time",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "process_id",
+        "normalization_run_id",
+        "stable_key",
+        "category",
+        "scope",
+        "modality",
+        "description",
+        "condition_text",
+        "expected_value",
+        "criticality",
+        "criticality_basis",
+        "subsanability",
+        "subsanability_basis",
+        "confidence",
+        "evidence_status",
+        "review_status",
+        "requires_human_review",
+        "is_active",
+        "created_at",
+        "updated_at",
+        "evidence",
+        "relations",
+        "run",
+        "prompt_version",
+        "documents"
+      ],
+      "type": "object"
+    },
+    "RequirementEvidence": {
+      "additionalProperties": false,
+      "description": "Evidencia validada asociada a un requisito persistido.",
+      "properties": {
+        "created_at": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "evidence_role": {
+          "$ref": "#/$defs/RequirementEvidenceRole"
+        },
+        "extraction_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "quote_end": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "quote_start": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "quoted_text": {
+          "maxLength": 2000,
+          "minLength": 1,
+          "type": "string"
+        },
+        "requirement_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "segment_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "source_location": {
+          "$ref": "#/$defs/SourceLocation"
+        },
+        "validation_status": {
+          "$ref": "#/$defs/RequirementEvidenceValidationStatus"
+        }
+      },
+      "required": [
+        "id",
+        "requirement_id",
+        "extraction_id",
+        "segment_id",
+        "evidence_role",
+        "quoted_text",
+        "quote_start",
+        "quote_end",
+        "source_location",
+        "validation_status",
+        "created_at"
+      ],
+      "type": "object"
+    },
+    "RequirementEvidenceRole": {
+      "enum": ["PRIMARY", "SUPPORTING", "CONFLICTING"],
+      "type": "string"
+    },
+    "RequirementEvidenceStatus": {
+      "enum": ["VALIDATED", "PARTIALLY_VALIDATED", "REJECTED_UNSUPPORTED", "UNKNOWN"],
+      "type": "string"
+    },
+    "RequirementEvidenceValidationStatus": {
+      "enum": [
+        "VALID",
+        "INVALID_SEGMENT",
+        "QUOTE_NOT_FOUND",
+        "OUTSIDE_SNAPSHOT",
+        "LOCATION_MISMATCH"
+      ],
+      "type": "string"
+    },
+    "RequirementList": {
+      "additionalProperties": false,
+      "properties": {
+        "items": {
+          "items": {
+            "$ref": "#/$defs/NormalizedRequirement"
+          },
+          "type": "array"
+        },
+        "limit": {
+          "exclusiveMinimum": 0,
+          "type": "integer"
+        },
+        "offset": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "process_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "total": {
+          "minimum": 0,
+          "type": "integer"
+        }
+      },
+      "required": ["process_id", "total", "limit", "offset", "items"],
+      "type": "object"
+    },
+    "RequirementModality": {
+      "enum": ["MANDATORY", "OPTIONAL", "CONDITIONAL", "PROHIBITED", "UNKNOWN"],
+      "type": "string"
+    },
+    "RequirementNormalizationAgentOutput": {
+      "additionalProperties": false,
+      "description": "Structured Output estricto de RequirementNormalizationAgent.",
+      "properties": {
+        "agent": {
+          "const": "RequirementNormalizationAgent",
+          "type": "string"
+        },
+        "batch_index": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "candidates": {
+          "items": {
+            "$ref": "#/$defs/RequirementCandidate"
+          },
+          "type": "array"
+        },
+        "process_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "prompt_version": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "schema_version": {
+          "const": "2.0.0",
+          "type": "string"
+        },
+        "warnings": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "schema_version",
+        "agent",
+        "prompt_version",
+        "process_id",
+        "batch_index",
+        "candidates",
+        "warnings"
+      ],
+      "type": "object"
+    },
+    "RequirementNormalizationStatus": {
+      "enum": [
+        "PENDING",
+        "PROCESSING",
+        "COMPLETED",
+        "COMPLETED_WITH_WARNINGS",
+        "FAILED",
+        "CANCELLED"
+      ],
+      "type": "string"
+    },
+    "RequirementRelation": {
+      "additionalProperties": false,
+      "description": "Relacion entre requisitos que requiere revision humana cuando es potencial.",
+      "properties": {
+        "confidence": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "type": "number"
+        },
+        "created_at": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "explanation": {
+          "type": "string"
+        },
+        "id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "normalization_run_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "process_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "relation_type": {
+          "$ref": "#/$defs/RequirementRelationType"
+        },
+        "requires_human_review": {
+          "type": "boolean"
+        },
+        "source_requirement_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "target_requirement_id": {
+          "format": "uuid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "process_id",
+        "normalization_run_id",
+        "source_requirement_id",
+        "target_requirement_id",
+        "relation_type",
+        "explanation",
+        "confidence",
+        "requires_human_review",
+        "created_at"
+      ],
+      "type": "object"
+    },
+    "RequirementRelationProposal": {
+      "additionalProperties": false,
+      "description": "Relacion propuesta por RequirementConsolidationAgent.",
+      "properties": {
+        "confidence": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "type": "number"
+        },
+        "evidence_segment_ids": {
+          "items": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "explanation": {
+          "maxLength": 2000,
+          "minLength": 1,
+          "type": "string"
+        },
+        "relation_type": {
+          "$ref": "#/$defs/RequirementRelationType"
+        },
+        "requires_human_review": {
+          "type": "boolean"
+        },
+        "source_candidate_id": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "target_candidate_id": {
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "source_candidate_id",
+        "target_candidate_id",
+        "relation_type",
+        "explanation",
+        "evidence_segment_ids",
+        "confidence",
+        "requires_human_review"
+      ],
+      "type": "object"
+    },
+    "RequirementRelationType": {
+      "enum": [
+        "INDEPENDENT",
+        "EXACT_DUPLICATE",
+        "POTENTIAL_DUPLICATE",
+        "POTENTIAL_CONFLICT",
+        "POTENTIAL_AMENDMENT"
+      ],
+      "type": "string"
+    },
+    "RequirementReviewStatus": {
+      "enum": ["PENDING", "IN_REVIEW", "ACCEPTED", "REJECTED"],
+      "type": "string"
+    },
+    "RequirementScope": {
+      "enum": [
+        "PROPOSAL_SUBMISSION",
+        "HABILITATING",
+        "SCORING",
+        "CONTRACT_EXECUTION",
+        "INFORMATIONAL",
+        "UNKNOWN"
+      ],
+      "type": "string"
+    },
+    "RequirementSubsanability": {
+      "enum": ["SUBSANABLE", "NON_SUBSANABLE", "CONDITIONAL", "UNKNOWN"],
+      "type": "string"
+    },
+    "SourceLocation": {
+      "additionalProperties": false,
+      "description": "Ubicacion normalizada dentro del segmento de origen.",
+      "properties": {
+        "line_end": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "line_start": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "page_number": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "paragraph_index": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "row_end": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "row_start": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "section": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "sheet_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "table_index": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "page_number",
+        "paragraph_index",
+        "table_index",
+        "sheet_name",
+        "row_start",
+        "row_end",
+        "line_start",
+        "line_end",
+        "section"
+      ],
+      "type": "object"
+    }
+  },
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "Contenedor para generar JSON Schema conjunto de Microfase 4.",
+  "properties": {
+    "agent_output": {
+      "$ref": "#/$defs/RequirementNormalizationAgentOutput"
+    },
+    "batch_summary": {
+      "$ref": "#/$defs/NormalizationBatchSummary"
+    },
+    "consolidation_output": {
+      "$ref": "#/$defs/RequirementConsolidationAgentOutput"
+    },
+    "create_request": {
+      "$ref": "#/$defs/NormalizationCreateRequest"
+    },
+    "create_response": {
+      "$ref": "#/$defs/NormalizationCreateResponse"
+    },
+    "job_summary": {
+      "$ref": "#/$defs/NormalizationJobSummary"
+    },
+    "normalized_requirement": {
+      "$ref": "#/$defs/NormalizedRequirement"
+    },
+    "prompt_version": {
+      "$ref": "#/$defs/PromptVersionSummary"
+    },
+    "rejected_candidate": {
+      "$ref": "#/$defs/RejectedRequirementCandidate"
+    },
+    "requirement_detail": {
+      "$ref": "#/$defs/RequirementDetail"
+    },
+    "requirement_evidence": {
+      "$ref": "#/$defs/RequirementEvidence"
+    },
+    "requirement_list": {
+      "$ref": "#/$defs/RequirementList"
+    },
+    "requirement_relation": {
+      "$ref": "#/$defs/RequirementRelation"
+    },
+    "retry_response": {
+      "$ref": "#/$defs/NormalizationRetryResponse"
+    },
+    "run_detail": {
+      "$ref": "#/$defs/NormalizationRunDetail"
+    },
+    "run_list": {
+      "$ref": "#/$defs/NormalizationRunList"
+    },
+    "run_summary": {
+      "$ref": "#/$defs/NormalizationRunSummary"
+    }
+  },
+  "required": [
+    "agent_output",
+    "consolidation_output",
+    "normalized_requirement",
+    "requirement_evidence",
+    "requirement_relation",
+    "rejected_candidate",
+    "prompt_version",
+    "job_summary",
+    "batch_summary",
+    "run_summary",
+    "run_detail",
+    "run_list",
+    "create_request",
+    "create_response",
+    "retry_response",
+    "requirement_list",
+    "requirement_detail"
+  ],
+  "type": "object"
+}

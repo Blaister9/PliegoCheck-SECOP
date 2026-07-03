@@ -58,12 +58,12 @@ export default function Home() {
     <main className="container">
       <header>
         <h1>PliegoCheck-SECOP</h1>
-        <p className="status-badge">Inventario y extraccion documental - Microfase 3</p>
+        <p className="status-badge">Normalizacion de requisitos - Microfase 4</p>
         <p className="lead">
           Plataforma multiagente de analisis <strong>GO / NO GO</strong> para procesos de
           contratacion publica publicados en SECOP II (Colombia). En esta fase permite crear
-          procesos manualmente, adjuntar documentos originales, inventariarlos y extraer texto
-          estructurado sin tomar decisiones de cumplimiento.
+          procesos manualmente, adjuntar documentos originales, extraer texto estructurado y
+          normalizar requisitos con evidencia trazable sin tomar decisiones de cumplimiento.
         </p>
         <nav className="actions" aria-label="Acciones principales">
           <Link className="button" href="/processes">
@@ -76,8 +76,8 @@ export default function Home() {
       </header>
 
       <aside className="notice" role="note" aria-label="Estado del proyecto">
-        <strong>Aviso:</strong> la extraccion es deterministica y todavia no evalua requisitos, no
-        consulta datos de SECOP II y no emite decisiones GO / NO GO.
+        <strong>Aviso:</strong> la normalizacion propone requisitos con IA para revision humana; no
+        evalua si una empresa cumple y no emite decisiones GO / NO GO.
       </aside>
 
       <section aria-labelledby="arquitectura">

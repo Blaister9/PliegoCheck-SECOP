@@ -68,7 +68,13 @@ PLIEGOCHECK_WORKER_MAX_ATTEMPTS=3
 - Los segmentos se guardan como texto y la web los renderiza en texto plano.
 - Un extractor nunca inventa contenido para llenar vacios.
 
+## Relacion con normalizacion
+
+Desde la Microfase 4, las extracciones `COMPLETED` y `COMPLETED_WITH_WARNINGS` son elegibles para
+normalizacion de requisitos. La extraccion sigue siendo deterministica: no decide que es un
+requisito, no llama IA y no produce GO / NO GO. Ver [requirement-normalization.md](requirement-normalization.md).
+
 ## Limitaciones
 
-OCR, clasificacion juridica, normalizacion de requisitos y decisiones quedan para microfases
+OCR, clasificacion juridica, evaluacion de cumplimiento y decisiones quedan para microfases
 posteriores.

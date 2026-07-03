@@ -102,15 +102,17 @@ flowchart TB
 
 La decisión de stack y sus alternativas están formalizadas en [docs/ADR-001-stack-and-architecture.md](docs/ADR-001-stack-and-architecture.md).
 
-## Estado actual - Microfase 3
+## Estado actual - Microfase 4
 
 Implementado: importacion manual de procesos, carga documental segura, almacenamiento local con
 SHA-256, cola transaccional inicial, extractores deterministas para PDF con texto, DOCX, XLSX, CSV y
-TXT, inventario documental, reintentos, segmentos paginados y preview en la web.
+TXT, inventario documental, reintentos, segmentos paginados, normalizacion de requisitos con OpenAI
+Responses API, Structured Outputs, prompts versionados, snapshot reproducible, batching
+deterministico, validacion de evidencia, candidatos rechazados, relaciones y UI de revision.
 
-No implementado todavia: OCR, normalizacion de requisitos, agentes de IA, integracion automatica con
-SECOP II, autenticacion, S3 real y motor GO / NO GO ejecutable. La extraccion no evalua requisitos ni
-produce decisiones.
+No implementado todavia: OCR, evaluacion de cumplimiento, perfil de empresa, integracion automatica
+con SECOP II, autenticacion, S3 real y motor GO / NO GO ejecutable. La normalizacion no evalua si una
+empresa cumple ni produce decisiones.
 
 ## Desarrollo local
 
@@ -127,6 +129,9 @@ uv sync --all-packages  # dependencias Python (workspace uv)
 | `pnpm dev:api` | API FastAPI con recarga (puerto 8000; OpenAPI en `/docs`) |
 | `pnpm worker:health` | Diagnóstico del worker (imprime JSON y termina) |
 | `pnpm worker:run-once` / `pnpm worker:drain` | Procesa uno o varios trabajos de extraccion documental |
+| `pnpm normalization:run-once` / `pnpm normalization:drain` | Procesa trabajos de normalizacion de requisitos |
+| `pnpm normalization:test` / `pnpm normalization:eval` | Pruebas y evals deterministas de normalizacion |
+| `pnpm normalization:smoke` | Smoke manual opcional contra OpenAI si hay clave autorizada |
 | `pnpm infra:up` / `pnpm infra:down` | PostgreSQL local para desarrollo |
 | `pnpm db:migrate` / `pnpm db:check` | Migraciones Alembic y verificación de divergencias |
 | `pnpm schemas:generate` | Regenera JSON Schema y tipos TS desde el modelo canónico Pydantic |
@@ -155,6 +160,8 @@ Guía completa en [docs/development.md](docs/development.md).
 | [docs/roadmap.md](docs/roadmap.md) | Roadmap incremental por microfases. |
 | [docs/manual-import.md](docs/manual-import.md) | Flujo de importación manual, validaciones y límites. |
 | [docs/ADR-002-manual-import-persistence.md](docs/ADR-002-manual-import-persistence.md) | Decisión de persistencia y almacenamiento local. |
+| [docs/ADR-004-requirement-normalization.md](docs/ADR-004-requirement-normalization.md) | Decisión de arquitectura para normalizacion con IA y evidencia. |
+| [docs/requirement-normalization.md](docs/requirement-normalization.md) | Operacion, API, prompts, provider, evals y limites de normalizacion. |
 
 ## Roadmap resumido
 

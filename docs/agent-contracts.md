@@ -117,40 +117,81 @@ Errores esperados comunes a todos: salida inválida contra esquema, timeout del 
 
 ## 5. RequirementNormalizationAgent
 
-- **Responsabilidad única:** convertir el contenido extraído en `Requirement`s normalizados según el esquema del [motor de decisión](decision-engine.md), con origen exacto (documento, página, sección).
-- **Entradas:** `DocumentExtraction`s de la `ProcessVersion`, taxonomía de categorías de [domain-model.md](domain-model.md).
-- **Salidas:** lista de requisitos normalizados con `status = UNKNOWN` inicial, criticidad y subsanabilidad propuestas solo cuando el pliego las hace explícitas.
+- **Responsabilidad única:** convertir el contenido extraido en candidatos de
+  `Requirement` normalizados, con evidencia exacta (documento, extraccion,
+  segmento, pagina/seccion y cita literal).
+- **Entradas:** snapshot inmutable de `ProcessDocument`, `DocumentExtraction` y
+  `DocumentExtractionSegment`; taxonomia de categorias de
+  [domain-model.md](domain-model.md).
+- **Salidas:** candidatos de requisitos con categoria, alcance, modalidad,
+  condicion, valor esperado, criticidad, subsanabilidad, confianza y evidencia
+  citada. La salida debe validar contra
+  `RequirementNormalizationAgentOutput`.
 - **Herramientas permitidas:** lectura de extracciones; consulta de la taxonomía de categorías.
 - **Datos prohibidos:** requisitos no presentes en los documentos; umbrales de otros procesos; valores esperados no escritos en el pliego.
-- **Condiciones de parada:** todo el contenido relevante recorrido y cada requisito con origen citado.
+- **Condiciones de parada:** todo el contenido relevante recorrido y cada candidato
+  con evidencia minima o rechazo explicito por insuficiencia de evidencia.
 - **Errores esperados:** requisitos duplicados entre documentos, redacción ambigua, referencias cruzadas rotas en el pliego.
 - **Escala a revisión humana cuando:** requisitos contradictorios entre pliego y adendas, o subsanabilidad indeterminable en requisitos bloqueantes.
-- **Qué no debe decidir:** cumplimiento (`status` queda `UNKNOWN`); la decisión final; subsanabilidad no explícita (queda `UNKNOWN`).
+- **Qué no debe decidir:** cumplimiento, valor de empresa, `GO`, `NO_GO`,
+  decision final, ni subsanabilidad no explicita (queda `UNKNOWN`).
 
 ```json
 {
-  "process_version_id": "PV-001",
-  "requirements": [
+  "batch_id": "BATCH-001",
+  "candidates": [
     {
-      "requirement_id": "REQ-001",
+      "candidate_id": "CAND-001",
       "category": "FINANCIAL",
-      "description": "Texto normalizado del requisito",
-      "source_document_id": "DOC-001",
-      "source_location": {"page": 12, "section": "3.2"},
-      "criticality": "BLOCKING",
+      "scope": "ORGANIZATION",
+      "modality": "REQUIREMENT",
+      "requirement_text": "El proponente debe acreditar liquidez mayor o igual a 1.2.",
+      "condition_text": null,
+      "expected_value": {
+        "raw_value": "1.2",
+        "normalized_number": 1.2,
+        "unit": "ratio",
+        "comparator": ">="
+      },
+      "requirement_basis": "EXPLICIT",
+      "criticality": "REQUIRES_REVIEW",
       "subsanability": "UNKNOWN",
-      "expected_value": null,
-      "company_value": null,
-      "status": "UNKNOWN",
-      "evidence_ids": [],
-      "confidence": 0.0,
-      "requires_human_review": false
+      "confidence": 0.82,
+      "evidence": [
+        {
+          "role": "PRIMARY",
+          "document_id": "DOC-001",
+          "extraction_id": "EXT-001",
+          "segment_id": "SEG-001",
+          "quote": "liquidez mayor o igual a 1.2",
+          "source_location": {"page": 12, "section": "3.2"}
+        }
+      ]
     }
   ],
-  "conflicts_detected": [],
-  "ambiguous_items": []
+  "rejected_candidates": []
 }
 ```
+
+## 5.1 RequirementConsolidationAgent
+
+- **Responsabilidad unica:** analizar requisitos ya validados y proponer relaciones de duplicidad,
+  conflicto o adenda potencial.
+- **Entradas:** candidatos/requisitos aceptados por `EvidenceValidator`, con evidencia minima.
+- **Salidas:** relaciones `INDEPENDENT`, `EXACT_DUPLICATE`, `POTENTIAL_DUPLICATE`,
+  `POTENTIAL_CONFLICT` o `POTENTIAL_AMENDMENT`.
+- **Herramientas permitidas:** ninguna.
+- **Datos prohibidos:** crear requisitos nuevos, eliminar evidencia, resolver juridicamente una
+  adenda, decidir que requisito gana o emitir cumplimiento.
+- **Condiciones de parada:** todos los candidatos recibidos comparados.
+- **Escala a revision humana cuando:** la relacion sea potencial, haya conflicto documental o exista
+  ambiguedad.
+
+## 5.2 EvidenceValidator
+
+No es un agente LLM. Es un componente deterministico que resuelve `segment_id`, verifica pertenencia
+al snapshot, valida cita, offsets y ubicacion, y rechaza candidatos sin soporte como
+`REJECTED_UNSUPPORTED`. No interpreta juridicamente el contenido ni decide cumplimiento.
 
 ## 6–11. Agentes evaluadores especializados
 
@@ -265,6 +306,8 @@ Los seis evaluadores comparten estructura de contrato; se listan sus diferencias
 | Clasificar documentos | DocumentInventoryAgent |
 | Extraer contenido | DocumentExtractionAgent |
 | Normalizar requisitos | RequirementNormalizationAgent |
+| Proponer duplicados/conflictos de requisitos | RequirementConsolidationAgent |
+| Validar citas de requisitos normalizados | EvidenceValidator (deterministico) |
 | Proponer cumplimiento por categoría | Evaluadores especializados (6–11) |
 | Verificar respaldo de evidencia | EvidenceVerificationAgent |
 | **Emitir la decisión final** | **Motor determinístico (no LLM)** |

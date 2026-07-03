@@ -8,8 +8,8 @@ Microfase 0: fundacion documental (completada)
 Microfase 1: esqueleto del monorepo (completada)
 Microfase 2: importacion manual de proceso y documentos (completada)
 Microfase 3: inventario y extraccion documental (completada)
-Microfase 4: normalizacion de requisitos (siguiente)
-Microfase 5: perfil de empresa y evidencias
+Microfase 4: normalizacion de requisitos (completada)
+Microfase 5: perfil de empresa y evidencias (siguiente)
 Microfase 6: evaluador financiero inicial
 Microfase 7: motor deterministico de decision
 Microfase 8: explicacion y reporte auditable
@@ -50,15 +50,17 @@ Microfase 10: autenticacion, multiempresa y operacion
 - **Fuera de alcance:** OCR, normalizacion de requisitos, evaluaciones LLM, `AgentRun`,
   `PromptVersion` y decisiones GO / NO GO.
 
-## Microfase 4 - Normalizacion de requisitos - siguiente
+## Microfase 4 - Normalizacion de requisitos - completada
 
 - **Objetivo:** convertir extracciones en requisitos normalizados trazables.
-- **Entregable previsto:** `RequirementNormalizationAgent`, Structured Outputs validadas, deteccion
-  de conflictos pliego/adendas y UI de revision de requisitos.
+- **Entregable:** `RequirementNormalizationAgent`, `RequirementConsolidationAgent`, Responses API,
+  Structured Outputs validadas, prompts versionados, snapshot reproducible, batching deterministico,
+  cola PostgreSQL, validacion de evidencia, candidatos rechazados, relaciones y UI de revision de
+  requisitos.
 - **Dependencias:** Microfase 3.
-- **Criterios de aceptacion:** de un proceso real se obtiene la lista de requisitos con documento,
-  pagina o seccion verificables manualmente; `status` inicial siempre `UNKNOWN`; salidas invalidas se
-  rechazan y quedan registradas.
+- **Criterios verificados:** de un proceso con extracciones se crea una ejecucion auditable; los
+  requisitos aceptados tienen evidencia validada; citas inexistentes se rechazan; no se emiten
+  decisiones GO / NO GO; provider real queda aislado y probado con mocks; evals sinteticos pasan.
 - **Fuera de alcance:** evaluacion de cumplimiento.
 
 ## Microfase 5 - Perfil de empresa y evidencias

@@ -10,6 +10,10 @@ El LLM **no asigna directamente el resultado final**. Los agentes extraen, norma
 
 Cada requisito normalizado que llega al motor debe contener, como mínimo:
 
+> Nota Microfase 4: la normalizacion actual solo persiste requisitos del proceso con evidencia del
+> pliego. No produce `status` de cumplimiento empresarial, `company_value` ni decisiones. Esos campos
+> pertenecen a microfases posteriores de evaluacion contra perfil de empresa.
+
 ```json
 {
   "requirement_id": "REQ-001",

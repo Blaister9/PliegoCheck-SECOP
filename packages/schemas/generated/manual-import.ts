@@ -30,6 +30,26 @@ export type ExtractionErrorCode =
   | "EXTRACTION_LIMIT_EXCEEDED"
   | "EXTRACTION_FAILED"
   | "DATABASE_ERROR";
+export type NormalizationErrorCode =
+  | "NORMALIZATION_DISABLED"
+  | "OPENAI_API_KEY_MISSING"
+  | "PROCESS_NOT_FOUND"
+  | "NORMALIZATION_RUN_NOT_FOUND"
+  | "REQUIREMENT_NOT_FOUND"
+  | "NO_ELIGIBLE_EXTRACTIONS"
+  | "NO_ELIGIBLE_SEGMENTS"
+  | "NORMALIZATION_ALREADY_ACTIVE"
+  | "NORMALIZATION_NOT_RETRYABLE"
+  | "NORMALIZATION_JOB_NOT_FOUND"
+  | "PROMPT_VERSION_NOT_FOUND"
+  | "PROMPT_INVALID"
+  | "PROVIDER_CONFIGURATION_ERROR"
+  | "PROVIDER_TRANSIENT_ERROR"
+  | "PROVIDER_RESPONSE_INVALID"
+  | "PROVIDER_REFUSAL"
+  | "PROVIDER_INCOMPLETE"
+  | "EVIDENCE_VALIDATION_FAILED"
+  | "DATABASE_ERROR";
 /**
  * Tipo documental declarado. La clasificacion automatica llega en Microfase 3.
  */
@@ -92,7 +112,7 @@ export interface ManualImport {
  * Error estructurado devuelto por la API. Nunca expone detalles internos.
  */
 export interface ApiError {
-  code: UploadErrorCode | ExtractionErrorCode;
+  code: UploadErrorCode | ExtractionErrorCode | NormalizationErrorCode;
   details?: {
     [k: string]: string;
   };

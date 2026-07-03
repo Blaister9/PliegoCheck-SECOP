@@ -1,7 +1,58 @@
 {
   "$defs": {
+    "ExpectedValue": {
+      "additionalProperties": false,
+      "description": "Valor exigido por el pliego cuando existe soporte explicito.",
+      "properties": {
+        "raw_text": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "unit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "value": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": ["value", "unit", "raw_text"],
+      "type": "object"
+    },
+    "RequirementBasis": {
+      "enum": ["EXPLICIT", "INFERRED", "UNKNOWN"],
+      "type": "string"
+    },
     "RequirementCategory": {
-      "description": "Categorias iniciales de requisitos (ver docs/domain-model.md).",
+      "description": "Categorias iniciales de requisitos.",
       "enum": [
         "LEGAL",
         "FINANCIAL",
@@ -19,177 +70,151 @@
       "type": "string"
     },
     "RequirementCriticality": {
-      "description": "Criticidad de un requisito (ver docs/decision-engine.md).",
-      "enum": ["BLOCKING", "HIGH", "MEDIUM", "LOW", "INFORMATIONAL"],
+      "enum": ["BLOCKING", "HIGH", "MEDIUM", "LOW", "INFORMATIONAL", "UNKNOWN"],
       "type": "string"
     },
-    "RequirementStatus": {
-      "description": "Estado de cumplimiento de un requisito (ver docs/decision-engine.md).",
+    "RequirementEvidenceStatus": {
+      "enum": ["VALIDATED", "PARTIALLY_VALIDATED", "REJECTED_UNSUPPORTED", "UNKNOWN"],
+      "type": "string"
+    },
+    "RequirementModality": {
+      "enum": ["MANDATORY", "OPTIONAL", "CONDITIONAL", "PROHIBITED", "UNKNOWN"],
+      "type": "string"
+    },
+    "RequirementReviewStatus": {
+      "enum": ["PENDING", "IN_REVIEW", "ACCEPTED", "REJECTED"],
+      "type": "string"
+    },
+    "RequirementScope": {
       "enum": [
-        "COMPLIES",
-        "DOES_NOT_COMPLY",
-        "PARTIAL",
-        "UNKNOWN",
-        "NOT_APPLICABLE",
-        "CONFLICTING_EVIDENCE"
+        "PROPOSAL_SUBMISSION",
+        "HABILITATING",
+        "SCORING",
+        "CONTRACT_EXECUTION",
+        "INFORMATIONAL",
+        "UNKNOWN"
       ],
       "type": "string"
     },
     "RequirementSubsanability": {
-      "description": "Subsanabilidad de un requisito (ver docs/decision-engine.md).",
       "enum": ["SUBSANABLE", "NON_SUBSANABLE", "CONDITIONAL", "UNKNOWN"],
       "type": "string"
-    },
-    "SourceLocation": {
-      "additionalProperties": false,
-      "description": "Ubicacion del requisito dentro del documento de origen.",
-      "properties": {
-        "page": {
-          "anyOf": [
-            {
-              "exclusiveMinimum": 0,
-              "type": "integer"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "description": "Pagina del documento de origen; cuando existe, debe ser mayor que cero."
-        },
-        "section": {
-          "anyOf": [
-            {
-              "type": "string"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "description": "Seccion o numeral del documento de origen (por ejemplo '3.2')."
-        }
-      },
-      "type": "object"
     }
   },
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "additionalProperties": false,
-  "description": "Requisito normalizado de un proceso, entrada del motor deterministico.",
+  "description": "Requisito persistido tras validacion deterministica de evidencia.",
   "properties": {
     "category": {
-      "$ref": "#/$defs/RequirementCategory",
-      "description": "Categoria del requisito."
+      "$ref": "#/$defs/RequirementCategory"
     },
-    "company_value": {
+    "condition_text": {
       "anyOf": [
         {
           "type": "string"
         },
         {
-          "type": "integer"
-        },
-        {
-          "type": "number"
-        },
-        {
-          "type": "boolean"
-        },
-        {
           "type": "null"
         }
-      ],
-      "description": "Valor acreditado por la empresa con evidencia; null cuando no se conoce. Nunca se rellena con valores plausibles."
+      ]
     },
     "confidence": {
-      "description": "Confianza del agente (0 a 1). Informativa: nunca sustituye la evidencia.",
       "maximum": 1.0,
       "minimum": 0.0,
       "type": "number"
     },
+    "created_at": {
+      "format": "date-time",
+      "type": "string"
+    },
     "criticality": {
-      "$ref": "#/$defs/RequirementCriticality",
-      "description": "Criticidad del requisito para la decision."
+      "$ref": "#/$defs/RequirementCriticality"
+    },
+    "criticality_basis": {
+      "$ref": "#/$defs/RequirementBasis"
     },
     "description": {
-      "description": "Texto normalizado del requisito, fiel al documento de origen.",
+      "maxLength": 2000,
       "minLength": 1,
       "type": "string"
     },
-    "evidence_ids": {
-      "description": "Identificadores de las evidencias que respaldan el status.",
-      "items": {
-        "type": "string"
-      },
-      "type": "array"
+    "evidence_status": {
+      "$ref": "#/$defs/RequirementEvidenceStatus"
     },
     "expected_value": {
       "anyOf": [
         {
-          "type": "string"
-        },
-        {
-          "type": "integer"
-        },
-        {
-          "type": "number"
-        },
-        {
-          "type": "boolean"
+          "$ref": "#/$defs/ExpectedValue"
         },
         {
           "type": "null"
         }
-      ],
-      "description": "Valor exigido por el pliego cuando el requisito es cuantificable; null cuando no aplica o no esta escrito explicitamente."
+      ]
     },
-    "requirement_id": {
-      "description": "Identificador unico del requisito dentro del proceso (por ejemplo 'REQ-001').",
-      "minLength": 1,
+    "id": {
+      "format": "uuid",
+      "type": "string"
+    },
+    "is_active": {
+      "type": "boolean"
+    },
+    "modality": {
+      "$ref": "#/$defs/RequirementModality"
+    },
+    "normalization_run_id": {
+      "format": "uuid",
+      "type": "string"
+    },
+    "process_id": {
+      "format": "uuid",
       "type": "string"
     },
     "requires_human_review": {
-      "description": "Marca el requisito para revision humana obligatoria.",
       "type": "boolean"
     },
-    "schema_version": {
-      "const": "1.0.0",
-      "description": "Version del contrato NormalizedRequirement.",
+    "review_status": {
+      "$ref": "#/$defs/RequirementReviewStatus"
+    },
+    "scope": {
+      "$ref": "#/$defs/RequirementScope"
+    },
+    "stable_key": {
+      "pattern": "^[a-f0-9]{64}$",
       "type": "string"
-    },
-    "source_document_id": {
-      "description": "Identificador del documento del que proviene el requisito.",
-      "minLength": 1,
-      "type": "string"
-    },
-    "source_location": {
-      "$ref": "#/$defs/SourceLocation",
-      "description": "Ubicacion exacta del requisito en el documento de origen."
-    },
-    "status": {
-      "$ref": "#/$defs/RequirementStatus",
-      "description": "Estado de cumplimiento; UNKNOWN cuando no hay evidencia suficiente."
     },
     "subsanability": {
-      "$ref": "#/$defs/RequirementSubsanability",
-      "description": "Subsanabilidad segun el pliego; UNKNOWN cuando no es determinable."
+      "$ref": "#/$defs/RequirementSubsanability"
+    },
+    "subsanability_basis": {
+      "$ref": "#/$defs/RequirementBasis"
+    },
+    "updated_at": {
+      "format": "date-time",
+      "type": "string"
     }
   },
   "required": [
-    "schema_version",
-    "requirement_id",
+    "id",
+    "process_id",
+    "normalization_run_id",
+    "stable_key",
     "category",
+    "scope",
+    "modality",
     "description",
-    "source_document_id",
-    "source_location",
-    "criticality",
-    "subsanability",
+    "condition_text",
     "expected_value",
-    "company_value",
-    "status",
-    "evidence_ids",
+    "criticality",
+    "criticality_basis",
+    "subsanability",
+    "subsanability_basis",
     "confidence",
-    "requires_human_review"
+    "evidence_status",
+    "review_status",
+    "requires_human_review",
+    "is_active",
+    "created_at",
+    "updated_at"
   ],
   "type": "object"
 }

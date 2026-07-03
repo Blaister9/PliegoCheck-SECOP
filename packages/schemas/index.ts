@@ -1,4 +1,4 @@
-export * from "./generated/normalized-requirement";
+export * from "./generated/requirement-normalization";
 export * from "./generated/normalized-requirement.enums";
 
 export type {
