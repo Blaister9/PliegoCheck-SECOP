@@ -76,6 +76,26 @@ export type CompanyErrorCode =
   | "SNAPSHOT_IMMUTABLE"
   | "SNAPSHOT_DIGEST_MISMATCH"
   | "DATABASE_ERROR";
+export type FinancialErrorCode =
+  | "FINANCIAL_EVALUATION_ALREADY_QUEUED"
+  | "FINANCIAL_EVALUATION_ALREADY_COMPLETED"
+  | "FINANCIAL_EVALUATION_NOT_FOUND"
+  | "FINANCIAL_EVALUATION_INPUT_NOT_READY"
+  | "FINANCIAL_REQUIREMENTS_NOT_FOUND"
+  | "COMPANY_SNAPSHOT_NOT_FOUND"
+  | "COMPANY_SNAPSHOT_NOT_PUBLISHED"
+  | "FINANCIAL_RULE_AMBIGUOUS"
+  | "FINANCIAL_RULE_UNSUPPORTED"
+  | "FINANCIAL_METRIC_MISSING"
+  | "FINANCIAL_PERIOD_NOT_RESOLVED"
+  | "FINANCIAL_UNIT_MISMATCH"
+  | "FINANCIAL_CURRENCY_MISMATCH"
+  | "FINANCIAL_DIVISION_BY_ZERO"
+  | "FINANCIAL_EVIDENCE_CONFLICT"
+  | "FINANCIAL_CALCULATION_FAILED"
+  | "FINANCIAL_EVALUATION_FAILED"
+  | "INVALID_FINANCIAL_OVERRIDE"
+  | "DATABASE_ERROR";
 /**
  * Tipo documental declarado. La clasificacion automatica llega en Microfase 3.
  */
@@ -138,7 +158,12 @@ export interface ManualImport {
  * Error estructurado devuelto por la API. Nunca expone detalles internos.
  */
 export interface ApiError {
-  code: UploadErrorCode | ExtractionErrorCode | NormalizationErrorCode | CompanyErrorCode;
+  code:
+    | UploadErrorCode
+    | ExtractionErrorCode
+    | NormalizationErrorCode
+    | CompanyErrorCode
+    | FinancialErrorCode;
   details?: {
     [k: string]: string;
   };

@@ -5,6 +5,8 @@ Uso::
     uv run pliegocheck-worker health
     uv run pliegocheck-worker run-once
     uv run pliegocheck-worker drain --max-jobs 10
+    uv run pliegocheck-worker financial-run-once
+    uv run pliegocheck-worker financial-drain --max-jobs 10
 
 Imprime el diagnostico en JSON por stdout (los logs van a stderr) y termina.
 """
@@ -15,6 +17,10 @@ import logging
 import sys
 
 from pliegocheck_worker import SERVICE_NAME, SERVICE_VERSION
+from pliegocheck_worker.financial.orchestrator import (
+    financial_drain,
+    financial_run_once,
+)
 from pliegocheck_worker.health import health_status
 from pliegocheck_worker.normalization.orchestrator import (
     normalization_drain,
@@ -66,6 +72,18 @@ def run_normalization_once(worker_id: str | None, provider: str | None) -> int:
 def run_normalization_drain(max_jobs: int, worker_id: str | None, provider: str | None) -> int:
     _validate_provider(provider)
     result = normalization_drain(max_jobs=max_jobs, worker_id=worker_id, provider_name=provider)
+    print(json.dumps(result, sort_keys=True))
+    return 0
+
+
+def run_financial_once(worker_id: str | None) -> int:
+    result = financial_run_once(worker_id=worker_id)
+    print(json.dumps(result, sort_keys=True))
+    return 0
+
+
+def run_financial_drain(max_jobs: int, worker_id: str | None) -> int:
+    result = financial_drain(max_jobs=max_jobs, worker_id=worker_id)
     print(json.dumps(result, sort_keys=True))
     return 0
 
@@ -160,6 +178,17 @@ def main(argv: list[str] | None = None) -> int:
     normalization_drain_parser.add_argument("--max-jobs", type=int, default=100)
     normalization_drain_parser.add_argument("--worker-id", default=None)
     normalization_drain_parser.add_argument("--provider", choices=["openai", "fake"], default=None)
+    financial_once = subparsers.add_parser(
+        "financial-run-once",
+        help="Procesa como maximo una evaluacion financiera",
+    )
+    financial_once.add_argument("--worker-id", default=None)
+    financial_drain_parser = subparsers.add_parser(
+        "financial-drain",
+        help="Procesa evaluaciones financieras pendientes y termina",
+    )
+    financial_drain_parser.add_argument("--max-jobs", type=int, default=100)
+    financial_drain_parser.add_argument("--worker-id", default=None)
     subparsers.add_parser(
         "normalization-smoke",
         help="Prueba manual opcional contra OpenAI con fixture sintetico",
@@ -176,6 +205,10 @@ def main(argv: list[str] | None = None) -> int:
         return run_normalization_once(args.worker_id, args.provider)
     if args.command == "normalization-drain":
         return run_normalization_drain(args.max_jobs, args.worker_id, args.provider)
+    if args.command == "financial-run-once":
+        return run_financial_once(args.worker_id)
+    if args.command == "financial-drain":
+        return run_financial_drain(args.max_jobs, args.worker_id)
     if args.command == "normalization-smoke":
         return run_normalization_smoke()
     parser.error(f"comando no reconocido: {args.command}")

@@ -74,7 +74,12 @@ def clean_database_and_storage(migrated_engine: Engine) -> Generator[None, None,
     with migrated_engine.begin() as connection:
         connection.execute(
             text(
-                "TRUNCATE TABLE requirement_evidence, requirement_relations, "
+                "TRUNCATE TABLE financial_evaluation_result_reviews, "
+                "financial_evaluation_results, financial_metric_calculations, "
+                "financial_evaluation_events, financial_evaluation_runs, "
+                "financial_evaluation_jobs, financial_requirement_rules, "
+                "financial_formula_versions, "
+                "requirement_evidence, requirement_relations, "
                 "rejected_requirement_candidates, requirements, "
                 "requirement_normalization_batches, requirement_normalization_runs, "
                 "requirement_normalization_jobs, prompt_versions, "

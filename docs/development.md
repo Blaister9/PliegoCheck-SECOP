@@ -1,6 +1,6 @@
 # Guia de desarrollo - PliegoCheck-SECOP
 
-Como trabajar en el monorepo tras la Microfase 5. Las decisiones de stack estan en
+Como trabajar en el monorepo tras la Microfase 6. Las decisiones de stack estan en
 [ADR-001](ADR-001-stack-and-architecture.md); la extraccion documental esta en
 [ADR-003](ADR-003-document-extraction.md); las reglas para agentes de programacion, en
 [AGENTS.md](../AGENTS.md).
@@ -47,6 +47,8 @@ docs/        Documentacion fundacional, guias y ADRs.
 - **Drenar cola:** `pnpm worker:drain -- --max-jobs 10`
 - **Procesar normalizacion:** `pnpm normalization:run-once`
 - **Drenar normalizaciones:** `pnpm normalization:drain -- --max-jobs 10`
+- **Procesar evaluacion financiera:** `pnpm financial:run-once`
+- **Drenar evaluaciones financieras:** `pnpm financial:drain -- --max-jobs 10`
 - **PostgreSQL:** `pnpm infra:up` publica PostgreSQL en `localhost:56543`
 - **Migraciones:** `pnpm db:migrate`; `pnpm db:check`
 
@@ -116,13 +118,16 @@ pnpm company:test
 pnpm company:snapshot-check
 pnpm normalization:test
 pnpm normalization:eval
+pnpm financial:test
+pnpm financial:eval
 pnpm schemas:check
 pnpm build
 ```
 
 La CI ejecuta instalacion reproducible, migraciones, `db:check`, contratos sincronizados, pruebas de
 perfil de empresa y snapshot, pruebas y evals de normalizacion, formato, lint, typecheck, pruebas,
-pruebas dedicadas de extraccion, build web y verificacion de repositorio sin cambios tras generar.
+pruebas y evals de evaluacion financiera, pruebas dedicadas de extraccion, build web y verificacion
+de repositorio sin cambios tras generar.
 
 ## Estado funcional real
 
@@ -148,7 +153,11 @@ Implementado:
 - carga de evidencias empresariales con SHA-256 y extraccion documental reutilizada;
 - vinculos dato-evidencia validados contra extracciones y segmentos;
 - completitud deterministica del perfil sin decision GO / NO GO;
-- snapshots inmutables de perfil para evaluaciones futuras.
+- snapshots inmutables de perfil para evaluaciones futuras;
+- evaluacion financiera deterministica por requisito contra snapshots publicados;
+- formulas financieras versionadas;
+- cola PostgreSQL y worker financiero;
+- revision manual auditada de resultados financieros.
 
-No implementado todavia: OCR, evaluacion de cumplimiento contra procesos, integracion automatica con
-SECOP II, autenticacion, S3 real y motor GO / NO GO ejecutable.
+No implementado todavia: OCR, evaluadores no financieros, integracion automatica con SECOP II,
+autenticacion, S3 real y motor GO / NO GO ejecutable.

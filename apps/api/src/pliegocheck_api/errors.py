@@ -7,6 +7,7 @@ from pliegocheck_schemas import (
     ApiError,
     CompanyErrorCode,
     ExtractionErrorCode,
+    FinancialErrorCode,
     NormalizationErrorCode,
     UploadErrorCode,
 )
@@ -17,7 +18,13 @@ class DomainError(Exception):
 
     def __init__(
         self,
-        code: UploadErrorCode | ExtractionErrorCode | NormalizationErrorCode | CompanyErrorCode,
+        code: (
+            UploadErrorCode
+            | ExtractionErrorCode
+            | NormalizationErrorCode
+            | CompanyErrorCode
+            | FinancialErrorCode
+        ),
         message: str,
         *,
         status_code: int = HTTPStatus.BAD_REQUEST,

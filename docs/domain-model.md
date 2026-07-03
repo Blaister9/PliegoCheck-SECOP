@@ -151,6 +151,21 @@ del documento SECOP que lo soporta.
 - **Puede inferirse:** estado de completitud calculado deterministicamente.
 - **Nunca debe inventarse:** datos faltantes; quedan ausentes o marcados como pendientes.
 
+### FinancialEvaluation
+**Proposito:** evaluacion deterministica inicial de requisitos financieros contra un
+`CompanyProfileSnapshot` publicado.
+
+- **Campos conceptuales:** job, run, digest de entrada, reglas financieras, formulas versionadas,
+  conteos por estado, resultados por requisito, calculos derivados, eventos y revisiones manuales.
+- **Relaciones:** referencia `Process`, ejecucion de normalizacion, `CompanyProfile`,
+  `CompanyProfileSnapshot`, `Requirement`s financieros y reglas usadas.
+- **Requiere evidencia:** cada resultado distinto de `UNKNOWN` debe provenir de metrica soportada o
+  verificada en el snapshot; la evidencia conflictiva produce `CONFLICTING_EVIDENCE`.
+- **Puede inferirse:** mapeo conservador de metrica, operador y periodo desde el requisito; si no es
+  claro queda `AMBIGUOUS`.
+- **Nunca debe inventarse:** metricas, periodos, valores exigidos, moneda, soportes ni cumplimiento.
+  No produce `GO`, `NO_GO` ni decision final.
+
 ### Evaluation
 **Propósito:** resultado de un agente evaluador especializado sobre un conjunto de requisitos de una versión del proceso contra un perfil de empresa.
 

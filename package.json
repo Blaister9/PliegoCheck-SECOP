@@ -20,6 +20,10 @@
     "normalization:smoke": "uv run pliegocheck-worker normalization-smoke",
     "company:test": "uv run pytest apps/api/tests/test_company_profile_api.py packages/schemas/tests/test_company_profile_contracts.py",
     "company:snapshot-check": "uv run pytest apps/api/tests/test_company_profile_api.py::test_company_profile_complete_flow",
+    "financial:test": "uv run pytest apps/api/tests/test_financial_evaluation_api.py apps/worker/tests/test_financial_evaluation.py packages/schemas/tests/test_financial_evaluation_contracts.py",
+    "financial:eval": "uv run pytest evals/financial-evaluation",
+    "financial:run-once": "uv run pliegocheck-worker financial-run-once",
+    "financial:drain": "uv run pliegocheck-worker financial-drain",
     "infra:up": "docker compose up -d postgres",
     "infra:down": "docker compose down",
     "db:migrate": "node scripts/db.mjs migrate",
@@ -33,7 +37,7 @@
     "test": "pnpm -r test && uv run pytest",
     "extraction:test": "uv run pytest apps/worker/tests && uv run pytest apps/api/tests/test_process_import.py",
     "build": "pnpm --filter @pliegocheck/web build",
-    "check": "pnpm schemas:check && pnpm company:test && pnpm company:snapshot-check && pnpm normalization:test && pnpm normalization:eval && pnpm format:check && pnpm lint && pnpm typecheck && pnpm test && pnpm build"
+    "check": "pnpm schemas:check && pnpm company:test && pnpm company:snapshot-check && pnpm normalization:test && pnpm normalization:eval && pnpm financial:test && pnpm financial:eval && pnpm format:check && pnpm lint && pnpm typecheck && pnpm test && pnpm build"
   },
   "devDependencies": {
     "@eslint/js": "^9.17.0",

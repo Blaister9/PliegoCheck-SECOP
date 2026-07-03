@@ -10,8 +10,8 @@ Microfase 2: importacion manual de proceso y documentos (completada)
 Microfase 3: inventario y extraccion documental (completada)
 Microfase 4: normalizacion de requisitos (completada)
 Microfase 5: perfil de empresa y evidencias (completada)
-Microfase 6: evaluador financiero inicial (siguiente)
-Microfase 7: motor deterministico de decision
+Microfase 6: evaluador financiero inicial (completada)
+Microfase 7: motor deterministico de decision (siguiente)
 Microfase 8: explicacion y reporte auditable
 Microfase 9: integracion con datos abiertos SECOP II
 Microfase 10: autenticacion, multiempresa y operacion
@@ -76,11 +76,14 @@ Microfase 10: autenticacion, multiempresa y operacion
   cambie.
 - **Fuera de alcance:** evaluacion automatica de cumplimiento contra requisitos de un proceso.
 
-## Microfase 6 - Evaluador financiero inicial
+## Microfase 6 - Evaluador financiero inicial - completada
 
 - **Objetivo:** primer evaluador vertical completo: requisitos financieros vs. perfil.
-- **Entregable previsto:** `FinancialEvaluationAgent`, comparaciones aritmeticas deterministas,
-  `Evaluation`, `Finding` y primera version de verificacion de evidencia.
+- **Entregable:** reglas financieras persistidas, formulas versionadas, resolucion de periodos,
+  comparaciones deterministicas contra snapshot publicado, cola PostgreSQL, worker, API, UI,
+  revision manual auditada, contratos compartidos, pruebas y evals.
+- **Criterios verificados:** los datos declarados sin soporte producen `UNKNOWN`; la evidencia
+  conflictiva produce `CONFLICTING_EVIDENCE`; la evaluacion no llama OpenAI ni emite decision global.
 - **Fuera de alcance:** los demas evaluadores y decision final.
 
 ## Microfase 7 - Motor deterministico de decision

@@ -15,6 +15,10 @@ const CONTRACTS = [
     output: "company-profile.ts",
   },
   {
+    schema: "financial-evaluation.schema.json",
+    output: "financial-evaluation.ts",
+  },
+  {
     schema: "normalized-requirement.schema.json",
     output: "normalized-requirement.ts",
   },
