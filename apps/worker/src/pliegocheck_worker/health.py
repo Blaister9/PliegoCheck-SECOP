@@ -2,6 +2,7 @@
 
 from pliegocheck_api.config import get_settings
 from pliegocheck_worker import SERVICE_NAME, SERVICE_VERSION
+from pliegocheck_worker.financial.orchestrator import financial_queue_connected
 from pliegocheck_worker.normalization.orchestrator import normalization_queue_connected
 from pliegocheck_worker.runner import queue_connected
 
@@ -11,6 +12,7 @@ def health_status() -> dict[str, str | bool]:
     settings = get_settings()
     connected = queue_connected()
     normalization_connected = normalization_queue_connected()
+    financial_connected = financial_queue_connected()
     return {
         "status": "ok" if connected else "error",
         "service": SERVICE_NAME,
@@ -18,6 +20,7 @@ def health_status() -> dict[str, str | bool]:
         "queue_connected": connected,
         "document_processing_enabled": connected,
         "company_evidence_extraction_enabled": connected,
+        "financial_evaluation_enabled": financial_connected,
         "requirement_normalization_enabled": (
             normalization_connected
             and (settings.ai_enabled or settings.allow_fake_normalization_provider)

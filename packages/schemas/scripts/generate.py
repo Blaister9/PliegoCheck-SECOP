@@ -50,6 +50,24 @@ from pliegocheck_schemas.document_extraction import (
     ExtractedSegmentType,
     ExtractionErrorCode,
 )
+from pliegocheck_schemas.financial_evaluation import (
+    FINANCIAL_EVALUATION_SCHEMA_VERSION,
+    FinancialCalculationStatus,
+    FinancialCompositeOperator,
+    FinancialErrorCode,
+    FinancialEvaluationContracts,
+    FinancialEvaluationJobStatus,
+    FinancialEvaluationResultStatus,
+    FinancialEvaluationReviewStatus,
+    FinancialEvaluationRunStatus,
+    FinancialExplanationCode,
+    FinancialMetricUsability,
+    FinancialOperator,
+    FinancialPeriodPolicy,
+    FinancialRuleMappingStatus,
+    FinancialRuleSourceBasis,
+    FinancialRuleType,
+)
 from pliegocheck_schemas.manual_import import (
     MANUAL_IMPORT_SCHEMA_VERSION,
     DocumentType,
@@ -332,9 +350,81 @@ def generate_company_profile_enums_ts() -> None:
     write_text(GENERATED_DIR / "company-profile.enums.ts", "\n".join(blocks))
 
 
+def generate_financial_evaluation_enums_ts() -> None:
+    blocks = [
+        TS_HEADER,
+        "export const FINANCIAL_EVALUATION_SCHEMA_VERSION = "
+        f'"{FINANCIAL_EVALUATION_SCHEMA_VERSION}";\n',
+        ts_const_block(
+            "FINANCIAL_EVALUATION_JOB_STATUS_VALUES",
+            "FinancialEvaluationJobStatusValue",
+            FinancialEvaluationJobStatus,
+        ),
+        ts_const_block(
+            "FINANCIAL_EVALUATION_RUN_STATUS_VALUES",
+            "FinancialEvaluationRunStatusValue",
+            FinancialEvaluationRunStatus,
+        ),
+        ts_const_block(
+            "FINANCIAL_EVALUATION_RESULT_STATUS_VALUES",
+            "FinancialEvaluationResultStatusValue",
+            FinancialEvaluationResultStatus,
+        ),
+        ts_const_block(
+            "FINANCIAL_EVALUATION_REVIEW_STATUS_VALUES",
+            "FinancialEvaluationReviewStatusValue",
+            FinancialEvaluationReviewStatus,
+        ),
+        ts_const_block("FINANCIAL_RULE_TYPE_VALUES", "FinancialRuleTypeValue", FinancialRuleType),
+        ts_const_block(
+            "FINANCIAL_RULE_MAPPING_STATUS_VALUES",
+            "FinancialRuleMappingStatusValue",
+            FinancialRuleMappingStatus,
+        ),
+        ts_const_block("FINANCIAL_OPERATOR_VALUES", "FinancialOperatorValue", FinancialOperator),
+        ts_const_block(
+            "FINANCIAL_PERIOD_POLICY_VALUES",
+            "FinancialPeriodPolicyValue",
+            FinancialPeriodPolicy,
+        ),
+        ts_const_block(
+            "FINANCIAL_METRIC_USABILITY_VALUES",
+            "FinancialMetricUsabilityValue",
+            FinancialMetricUsability,
+        ),
+        ts_const_block(
+            "FINANCIAL_CALCULATION_STATUS_VALUES",
+            "FinancialCalculationStatusValue",
+            FinancialCalculationStatus,
+        ),
+        ts_const_block(
+            "FINANCIAL_COMPOSITE_OPERATOR_VALUES",
+            "FinancialCompositeOperatorValue",
+            FinancialCompositeOperator,
+        ),
+        ts_const_block(
+            "FINANCIAL_RULE_SOURCE_BASIS_VALUES",
+            "FinancialRuleSourceBasisValue",
+            FinancialRuleSourceBasis,
+        ),
+        ts_const_block(
+            "FINANCIAL_EXPLANATION_CODE_VALUES",
+            "FinancialExplanationCodeValue",
+            FinancialExplanationCode,
+        ),
+        ts_const_block(
+            "FINANCIAL_ERROR_CODE_VALUES",
+            "FinancialErrorCodeValue",
+            FinancialErrorCode,
+        ),
+    ]
+    write_text(GENERATED_DIR / "financial-evaluation.enums.ts", "\n".join(blocks))
+
+
 def main() -> int:
     try:
         generate_json_schema(CompanyProfileContracts, "company-profile.schema.json")
+        generate_json_schema(FinancialEvaluationContracts, "financial-evaluation.schema.json")
         generate_json_schema(NormalizedRequirement, "normalized-requirement.schema.json")
         generate_json_schema(
             RequirementNormalizationContracts,
@@ -344,6 +434,7 @@ def main() -> int:
         generate_json_schema(DocumentExtractionContracts, "document-extraction.schema.json")
         generate_requirement_enums_ts()
         generate_company_profile_enums_ts()
+        generate_financial_evaluation_enums_ts()
         generate_manual_import_enums_ts()
         generate_document_extraction_enums_ts()
     except Exception as exc:  # el fallo debe ser visible y con codigo distinto de cero

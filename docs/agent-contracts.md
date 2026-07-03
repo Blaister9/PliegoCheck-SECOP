@@ -193,6 +193,14 @@ No es un agente LLM. Es un componente deterministico que resuelve `segment_id`, 
 al snapshot, valida cita, offsets y ubicacion, y rechaza candidatos sin soporte como
 `REJECTED_UNSUPPORTED`. No interpreta juridicamente el contenido ni decide cumplimiento.
 
+## 5.3 FinancialEvaluationEngine
+
+No es un agente LLM. En Microfase 6 reemplaza al futuro evaluador financiero LLM para el primer
+vertical financiero. Lee requisitos `FINANCIAL`, reglas financieras persistidas y un
+`CompanyProfileSnapshot` publicado; produce resultados por requisito con formulas versionadas,
+periodo resuelto, metricas usadas, evidencia y codigo de explicacion. No llama OpenAI, no modifica
+requisitos y no emite decision global.
+
 ## 6–11. Agentes evaluadores especializados
 
 Los seis evaluadores comparten estructura de contrato; se listan sus diferencias tras el contrato común.

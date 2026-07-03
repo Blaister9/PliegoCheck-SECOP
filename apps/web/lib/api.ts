@@ -34,6 +34,15 @@ import type {
   ExtractedSegmentType,
   DocumentUploadResponse,
   ExtractionRetryResponse,
+  FinancialEvaluationList,
+  FinancialEvaluationQueueResponse,
+  FinancialEvaluationRequest,
+  FinancialEvaluationResultDetail,
+  FinancialEvaluationResultList,
+  FinancialEvaluationResultReviewRequest,
+  FinancialEvaluationRunDetail,
+  FinancialRequirementRule,
+  FinancialRequirementRuleUpdate,
   NormalizationCreateRequest,
   NormalizationCreateResponse,
   NormalizationRetryResponse,
@@ -222,6 +231,76 @@ export function listRequirements(processId: string, normalizationRunId?: string)
 
 export function getRequirement(processId: string, requirementId: string) {
   return request<RequirementDetail>(`/processes/${processId}/requirements/${requirementId}`);
+}
+
+export function createFinancialEvaluation(processId: string, payload: FinancialEvaluationRequest) {
+  return request<FinancialEvaluationQueueResponse>(
+    `/processes/${processId}/financial-evaluations`,
+    {
+      method: "POST",
+      body: JSON.stringify(payload),
+    },
+  );
+}
+
+export function listFinancialEvaluations(processId: string) {
+  return request<FinancialEvaluationList>(
+    `/processes/${processId}/financial-evaluations?limit=20&offset=0`,
+  );
+}
+
+export function getFinancialEvaluation(processId: string, runId: string) {
+  return request<FinancialEvaluationRunDetail>(
+    `/processes/${processId}/financial-evaluations/${runId}`,
+  );
+}
+
+export function retryFinancialEvaluation(processId: string, runId: string) {
+  return request<FinancialEvaluationQueueResponse>(
+    `/processes/${processId}/financial-evaluations/${runId}/retry`,
+    { method: "POST", body: JSON.stringify({ force: true }) },
+  );
+}
+
+export function listFinancialEvaluationResults(processId: string, runId: string) {
+  return request<FinancialEvaluationResultList>(
+    `/processes/${processId}/financial-evaluations/${runId}/results?limit=100&offset=0`,
+  );
+}
+
+export function getFinancialEvaluationResult(processId: string, runId: string, resultId: string) {
+  return request<FinancialEvaluationResultDetail>(
+    `/processes/${processId}/financial-evaluations/${runId}/results/${resultId}`,
+  );
+}
+
+export function reviewFinancialEvaluationResult(
+  processId: string,
+  runId: string,
+  resultId: string,
+  payload: FinancialEvaluationResultReviewRequest,
+) {
+  return request<FinancialEvaluationResultDetail>(
+    `/processes/${processId}/financial-evaluations/${runId}/results/${resultId}/review`,
+    { method: "POST", body: JSON.stringify(payload) },
+  );
+}
+
+export function getFinancialRule(processId: string, requirementId: string) {
+  return request<FinancialRequirementRule>(
+    `/processes/${processId}/financial-requirements/${requirementId}/rule`,
+  );
+}
+
+export function updateFinancialRule(
+  processId: string,
+  requirementId: string,
+  payload: FinancialRequirementRuleUpdate,
+) {
+  return request<FinancialRequirementRule>(
+    `/processes/${processId}/financial-requirements/${requirementId}/rule`,
+    { method: "PATCH", body: JSON.stringify(payload) },
+  );
 }
 
 export function listCompanies(params: {

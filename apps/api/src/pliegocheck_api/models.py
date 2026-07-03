@@ -44,6 +44,17 @@ from pliegocheck_schemas import (
     DocumentType,
     DocumentUploadStatus,
     ExtractedSegmentType,
+    FinancialCalculationStatus,
+    FinancialEvaluationJobStatus,
+    FinancialEvaluationResultStatus,
+    FinancialEvaluationReviewStatus,
+    FinancialEvaluationRunStatus,
+    FinancialMetricType,
+    FinancialOperator,
+    FinancialPeriodPolicy,
+    FinancialRuleMappingStatus,
+    FinancialRuleSourceBasis,
+    FinancialRuleType,
     NormalizationProvider,
     ProcessSource,
     ProcessStatus,
@@ -136,6 +147,31 @@ COMPANY_EVIDENCE_VALIDATION_STATUS_VALUES = ", ".join(
     f"'{item.value}'" for item in CompanyEvidenceValidationStatus
 )
 COMPANY_SNAPSHOT_STATUS_VALUES = ", ".join(f"'{item.value}'" for item in CompanySnapshotStatus)
+FINANCIAL_EVALUATION_JOB_STATUS_VALUES = ", ".join(
+    f"'{item.value}'" for item in FinancialEvaluationJobStatus
+)
+FINANCIAL_EVALUATION_RUN_STATUS_VALUES = ", ".join(
+    f"'{item.value}'" for item in FinancialEvaluationRunStatus
+)
+FINANCIAL_EVALUATION_RESULT_STATUS_VALUES = ", ".join(
+    f"'{item.value}'" for item in FinancialEvaluationResultStatus
+)
+FINANCIAL_EVALUATION_REVIEW_STATUS_VALUES = ", ".join(
+    f"'{item.value}'" for item in FinancialEvaluationReviewStatus
+)
+FINANCIAL_RULE_TYPE_VALUES = ", ".join(f"'{item.value}'" for item in FinancialRuleType)
+FINANCIAL_RULE_MAPPING_STATUS_VALUES = ", ".join(
+    f"'{item.value}'" for item in FinancialRuleMappingStatus
+)
+FINANCIAL_OPERATOR_VALUES = ", ".join(f"'{item.value}'" for item in FinancialOperator)
+FINANCIAL_PERIOD_POLICY_VALUES = ", ".join(f"'{item.value}'" for item in FinancialPeriodPolicy)
+FINANCIAL_RULE_SOURCE_BASIS_VALUES = ", ".join(
+    f"'{item.value}'" for item in FinancialRuleSourceBasis
+)
+FINANCIAL_CALCULATION_STATUS_VALUES = ", ".join(
+    f"'{item.value}'" for item in FinancialCalculationStatus
+)
+FINANCIAL_METRIC_TYPE_VALUES = ", ".join(f"'{item.value}'" for item in FinancialMetricType)
 
 
 class Process(Base):
@@ -223,6 +259,16 @@ class Process(Base):
         back_populates="process",
         cascade="all, delete-orphan",
         order_by="Requirement.created_at",
+    )
+    financial_evaluation_jobs: Mapped[list["FinancialEvaluationJob"]] = relationship(
+        back_populates="process",
+        cascade="all, delete-orphan",
+        order_by="FinancialEvaluationJob.created_at",
+    )
+    financial_evaluation_runs: Mapped[list["FinancialEvaluationRun"]] = relationship(
+        back_populates="process",
+        cascade="all, delete-orphan",
+        order_by="FinancialEvaluationRun.created_at",
     )
 
 
@@ -1731,6 +1777,423 @@ class CompanyAuditEvent(Base):
     snapshot_version: Mapped[int | None] = mapped_column(Integer)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
     company: Mapped[CompanyProfile] = relationship(back_populates="audit_events")
+
+
+class FinancialFormulaVersion(Base):
+    __tablename__ = "financial_formula_versions"
+    __table_args__ = (
+        UniqueConstraint(
+            "formula_name", "semantic_version", name="uq_financial_formula_versions_name_version"
+        ),
+        CheckConstraint("btrim(formula_name) <> ''", name="ck_financial_formula_versions_name"),
+        CheckConstraint(
+            "btrim(semantic_version) <> ''", name="ck_financial_formula_versions_version"
+        ),
+        CheckConstraint("btrim(expression) <> ''", name="ck_financial_formula_versions_expression"),
+        CheckConstraint(
+            f"output_metric_type IN ({FINANCIAL_METRIC_TYPE_VALUES})",
+            name="ck_financial_formula_versions_output_metric",
+        ),
+        Index("ix_financial_formula_versions_active", "formula_name", "is_active"),
+    )
+
+    id: Mapped[UUID] = mapped_column(Uuid(as_uuid=True), primary_key=True, default=uuid4)
+    formula_name: Mapped[str] = mapped_column(String(128), nullable=False)
+    semantic_version: Mapped[str] = mapped_column(String(32), nullable=False)
+    expression: Mapped[str] = mapped_column(Text, nullable=False)
+    required_metric_types: Mapped[list[str]] = mapped_column(JSON, nullable=False, default=list)
+    output_metric_type: Mapped[str] = mapped_column(String(64), nullable=False)
+    output_unit: Mapped[str | None] = mapped_column(String(64))
+    rounding_policy: Mapped[str] = mapped_column(String(255), nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    is_active: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
+
+
+class FinancialRequirementRule(Base):
+    __tablename__ = "financial_requirement_rules"
+    __table_args__ = (
+        UniqueConstraint(
+            "normalization_run_id",
+            "requirement_id",
+            "version",
+            name="uq_financial_requirement_rules_version",
+        ),
+        CheckConstraint(
+            f"rule_type IN ({FINANCIAL_RULE_TYPE_VALUES})",
+            name="ck_financial_requirement_rules_type",
+        ),
+        CheckConstraint(
+            f"metric_type IS NULL OR metric_type IN ({FINANCIAL_METRIC_TYPE_VALUES})",
+            name="ck_financial_requirement_rules_metric",
+        ),
+        CheckConstraint(
+            f"operator IS NULL OR operator IN ({FINANCIAL_OPERATOR_VALUES})",
+            name="ck_financial_requirement_rules_operator",
+        ),
+        CheckConstraint(
+            f"period_policy IN ({FINANCIAL_PERIOD_POLICY_VALUES})",
+            name="ck_financial_requirement_rules_period_policy",
+        ),
+        CheckConstraint(
+            f"source_basis IN ({FINANCIAL_RULE_SOURCE_BASIS_VALUES})",
+            name="ck_financial_requirement_rules_source_basis",
+        ),
+        CheckConstraint(
+            f"mapping_status IN ({FINANCIAL_RULE_MAPPING_STATUS_VALUES})",
+            name="ck_financial_requirement_rules_mapping_status",
+        ),
+        CheckConstraint("version > 0", name="ck_financial_requirement_rules_version_positive"),
+        Index("ix_financial_requirement_rules_requirement_id", "requirement_id"),
+        Index("ix_financial_requirement_rules_run_id", "normalization_run_id"),
+        Index(
+            "ix_financial_requirement_rules_latest",
+            "normalization_run_id",
+            "requirement_id",
+            "version",
+        ),
+    )
+
+    id: Mapped[UUID] = mapped_column(Uuid(as_uuid=True), primary_key=True, default=uuid4)
+    requirement_id: Mapped[UUID] = mapped_column(
+        Uuid(as_uuid=True), ForeignKey("requirements.id", ondelete="CASCADE"), nullable=False
+    )
+    normalization_run_id: Mapped[UUID] = mapped_column(
+        Uuid(as_uuid=True),
+        ForeignKey("requirement_normalization_runs.id", ondelete="CASCADE"),
+        nullable=False,
+    )
+    rule_type: Mapped[str] = mapped_column(String(64), nullable=False)
+    metric_type: Mapped[str | None] = mapped_column(String(64))
+    operator: Mapped[str | None] = mapped_column(String(64))
+    required_value: Mapped[Decimal | None] = mapped_column(Numeric(28, 8))
+    required_min_value: Mapped[Decimal | None] = mapped_column(Numeric(28, 8))
+    required_max_value: Mapped[Decimal | None] = mapped_column(Numeric(28, 8))
+    unit: Mapped[str | None] = mapped_column(String(64))
+    currency: Mapped[str | None] = mapped_column(String(3))
+    period_policy: Mapped[str] = mapped_column(String(64), nullable=False)
+    period_year: Mapped[int | None] = mapped_column(Integer)
+    condition_group: Mapped[dict[str, Any]] = mapped_column(JSON, nullable=False, default=dict)
+    source_basis: Mapped[str] = mapped_column(String(64), nullable=False)
+    mapping_status: Mapped[str] = mapped_column(String(64), nullable=False)
+    mapping_warnings: Mapped[list[str]] = mapped_column(JSON, nullable=False, default=list)
+    requires_human_review: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
+    version: Mapped[int] = mapped_column(Integer, nullable=False, default=1)
+    is_manual_override: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
+    override_reason: Mapped[str | None] = mapped_column(Text)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
+    )
+
+
+class FinancialEvaluationJob(Base):
+    __tablename__ = "financial_evaluation_jobs"
+    __table_args__ = (
+        CheckConstraint(
+            f"status IN ({FINANCIAL_EVALUATION_JOB_STATUS_VALUES})",
+            name="ck_financial_evaluation_jobs_status",
+        ),
+        CheckConstraint("priority >= 0", name="ck_financial_evaluation_jobs_priority"),
+        CheckConstraint("attempt_count >= 0", name="ck_financial_evaluation_jobs_attempts"),
+        CheckConstraint("max_attempts > 0", name="ck_financial_evaluation_jobs_max_attempts"),
+        Index(
+            "ix_financial_evaluation_jobs_claim",
+            "status",
+            "available_at",
+            "priority",
+            "created_at",
+        ),
+        Index(
+            "ix_financial_evaluation_jobs_inputs",
+            "process_id",
+            "normalization_run_id",
+            "company_profile_snapshot_id",
+        ),
+        Index(
+            "uq_financial_evaluation_jobs_active_inputs",
+            "process_id",
+            "normalization_run_id",
+            "company_id",
+            "company_profile_snapshot_id",
+            unique=True,
+            postgresql_where=text("status IN ('PENDING', 'PROCESSING')"),
+        ),
+    )
+
+    id: Mapped[UUID] = mapped_column(Uuid(as_uuid=True), primary_key=True, default=uuid4)
+    process_id: Mapped[UUID] = mapped_column(
+        Uuid(as_uuid=True), ForeignKey("processes.id", ondelete="CASCADE"), nullable=False
+    )
+    normalization_run_id: Mapped[UUID] = mapped_column(
+        Uuid(as_uuid=True),
+        ForeignKey("requirement_normalization_runs.id", ondelete="CASCADE"),
+        nullable=False,
+    )
+    company_id: Mapped[UUID] = mapped_column(
+        Uuid(as_uuid=True), ForeignKey("company_profiles.id", ondelete="CASCADE"), nullable=False
+    )
+    company_profile_snapshot_id: Mapped[UUID] = mapped_column(
+        Uuid(as_uuid=True),
+        ForeignKey("company_profile_snapshots.id", ondelete="CASCADE"),
+        nullable=False,
+    )
+    run_id: Mapped[UUID | None] = mapped_column(Uuid(as_uuid=True))
+    status: Mapped[str] = mapped_column(
+        String(32), nullable=False, default=FinancialEvaluationJobStatus.PENDING.value
+    )
+    priority: Mapped[int] = mapped_column(Integer, nullable=False, default=100)
+    attempt_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    max_attempts: Mapped[int] = mapped_column(Integer, nullable=False, default=3)
+    available_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, server_default=func.now()
+    )
+    started_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    finished_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    locked_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    locked_by: Mapped[str | None] = mapped_column(String(128))
+    force: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
+    last_error_code: Mapped[str | None] = mapped_column(String(64))
+    last_error_message: Mapped[str | None] = mapped_column(String(1000))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
+    )
+
+    process: Mapped[Process] = relationship(back_populates="financial_evaluation_jobs")
+
+
+class FinancialEvaluationRun(Base):
+    __tablename__ = "financial_evaluation_runs"
+    __table_args__ = (
+        CheckConstraint(
+            f"status IN ({FINANCIAL_EVALUATION_RUN_STATUS_VALUES})",
+            name="ck_financial_evaluation_runs_status",
+        ),
+        CheckConstraint("input_digest ~ '^[a-f0-9]{64}$'", name="ck_financial_runs_digest"),
+        CheckConstraint("requirement_count >= 0", name="ck_financial_runs_requirement_count"),
+        CheckConstraint("evaluated_count >= 0", name="ck_financial_runs_evaluated_count"),
+        CheckConstraint("complies_count >= 0", name="ck_financial_runs_complies_count"),
+        CheckConstraint(
+            "does_not_comply_count >= 0", name="ck_financial_runs_does_not_comply_count"
+        ),
+        CheckConstraint("partial_count >= 0", name="ck_financial_runs_partial_count"),
+        CheckConstraint("unknown_count >= 0", name="ck_financial_runs_unknown_count"),
+        CheckConstraint("not_applicable_count >= 0", name="ck_financial_runs_not_applicable_count"),
+        CheckConstraint("conflicting_count >= 0", name="ck_financial_runs_conflicting_count"),
+        CheckConstraint("warning_count >= 0", name="ck_financial_runs_warning_count"),
+        Index("ix_financial_runs_process_company", "process_id", "company_id", "created_at"),
+        Index("ix_financial_runs_inputs", "process_id", "input_digest"),
+        Index("ix_financial_runs_snapshot", "company_profile_snapshot_id"),
+    )
+
+    id: Mapped[UUID] = mapped_column(Uuid(as_uuid=True), primary_key=True, default=uuid4)
+    job_id: Mapped[UUID] = mapped_column(
+        Uuid(as_uuid=True),
+        ForeignKey("financial_evaluation_jobs.id", ondelete="CASCADE"),
+        nullable=False,
+    )
+    process_id: Mapped[UUID] = mapped_column(
+        Uuid(as_uuid=True), ForeignKey("processes.id", ondelete="CASCADE"), nullable=False
+    )
+    normalization_run_id: Mapped[UUID] = mapped_column(
+        Uuid(as_uuid=True),
+        ForeignKey("requirement_normalization_runs.id", ondelete="CASCADE"),
+        nullable=False,
+    )
+    company_id: Mapped[UUID] = mapped_column(
+        Uuid(as_uuid=True), ForeignKey("company_profiles.id", ondelete="CASCADE"), nullable=False
+    )
+    company_profile_snapshot_id: Mapped[UUID] = mapped_column(
+        Uuid(as_uuid=True),
+        ForeignKey("company_profile_snapshots.id", ondelete="CASCADE"),
+        nullable=False,
+    )
+    status: Mapped[str] = mapped_column(
+        String(32), nullable=False, default=FinancialEvaluationRunStatus.PENDING.value
+    )
+    input_manifest: Mapped[dict[str, Any]] = mapped_column(JSON, nullable=False)
+    input_digest: Mapped[str] = mapped_column(String(64), nullable=False)
+    rule_version: Mapped[str] = mapped_column(String(32), nullable=False)
+    formula_versions: Mapped[dict[str, str]] = mapped_column(JSON, nullable=False, default=dict)
+    requirement_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    evaluated_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    complies_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    does_not_comply_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    partial_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    unknown_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    not_applicable_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    conflicting_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    warning_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    started_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    finished_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    error_code: Mapped[str | None] = mapped_column(String(64))
+    error_message: Mapped[str | None] = mapped_column(String(1000))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
+    )
+
+    process: Mapped[Process] = relationship(back_populates="financial_evaluation_runs")
+
+
+class FinancialMetricCalculation(Base):
+    __tablename__ = "financial_metric_calculations"
+    __table_args__ = (
+        CheckConstraint(
+            f"metric_type IN ({FINANCIAL_METRIC_TYPE_VALUES})",
+            name="ck_financial_metric_calculations_metric",
+        ),
+        CheckConstraint(
+            f"status IN ({FINANCIAL_CALCULATION_STATUS_VALUES})",
+            name="ck_financial_metric_calculations_status",
+        ),
+        Index("ix_financial_metric_calculations_run_id", "run_id"),
+        Index("ix_financial_metric_calculations_period_id", "financial_period_id"),
+    )
+
+    id: Mapped[UUID] = mapped_column(Uuid(as_uuid=True), primary_key=True, default=uuid4)
+    run_id: Mapped[UUID] = mapped_column(
+        Uuid(as_uuid=True), ForeignKey("financial_evaluation_runs.id", ondelete="CASCADE")
+    )
+    financial_period_id: Mapped[UUID | None] = mapped_column(Uuid(as_uuid=True))
+    metric_type: Mapped[str] = mapped_column(String(64), nullable=False)
+    formula_name: Mapped[str] = mapped_column(String(128), nullable=False)
+    formula_version: Mapped[str] = mapped_column(String(32), nullable=False)
+    input_values: Mapped[dict[str, Any]] = mapped_column(JSON, nullable=False)
+    raw_result: Mapped[Decimal | None] = mapped_column(Numeric(28, 8))
+    rounded_result: Mapped[Decimal | None] = mapped_column(Numeric(28, 8))
+    unit: Mapped[str | None] = mapped_column(String(64))
+    status: Mapped[str] = mapped_column(String(64), nullable=False)
+    warning_codes: Mapped[list[str]] = mapped_column(JSON, nullable=False, default=list)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+
+class FinancialEvaluationResult(Base):
+    __tablename__ = "financial_evaluation_results"
+    __table_args__ = (
+        UniqueConstraint("run_id", "requirement_id", name="uq_financial_results_run_requirement"),
+        CheckConstraint(
+            f"status IN ({FINANCIAL_EVALUATION_RESULT_STATUS_VALUES})",
+            name="ck_financial_evaluation_results_status",
+        ),
+        CheckConstraint(
+            f"review_status IN ({FINANCIAL_EVALUATION_REVIEW_STATUS_VALUES})",
+            name="ck_financial_evaluation_results_review_status",
+        ),
+        CheckConstraint(
+            f"metric_type IS NULL OR metric_type IN ({FINANCIAL_METRIC_TYPE_VALUES})",
+            name="ck_financial_evaluation_results_metric",
+        ),
+        CheckConstraint(
+            f"operator IS NULL OR operator IN ({FINANCIAL_OPERATOR_VALUES})",
+            name="ck_financial_evaluation_results_operator",
+        ),
+        Index("ix_financial_evaluation_results_run_id", "run_id"),
+        Index("ix_financial_evaluation_results_requirement_id", "requirement_id"),
+        Index("ix_financial_evaluation_results_status", "status"),
+        Index("ix_financial_evaluation_results_period_id", "financial_period_id"),
+        Index("ix_financial_evaluation_results_review", "review_status"),
+    )
+
+    id: Mapped[UUID] = mapped_column(Uuid(as_uuid=True), primary_key=True, default=uuid4)
+    run_id: Mapped[UUID] = mapped_column(
+        Uuid(as_uuid=True), ForeignKey("financial_evaluation_runs.id", ondelete="CASCADE")
+    )
+    requirement_id: Mapped[UUID] = mapped_column(
+        Uuid(as_uuid=True), ForeignKey("requirements.id", ondelete="CASCADE"), nullable=False
+    )
+    financial_rule_id: Mapped[UUID | None] = mapped_column(
+        Uuid(as_uuid=True), ForeignKey("financial_requirement_rules.id", ondelete="SET NULL")
+    )
+    status: Mapped[str] = mapped_column(String(64), nullable=False)
+    metric_type: Mapped[str | None] = mapped_column(String(64))
+    operator: Mapped[str | None] = mapped_column(String(64))
+    required_value: Mapped[Decimal | None] = mapped_column(Numeric(28, 8))
+    required_min_value: Mapped[Decimal | None] = mapped_column(Numeric(28, 8))
+    required_max_value: Mapped[Decimal | None] = mapped_column(Numeric(28, 8))
+    required_unit: Mapped[str | None] = mapped_column(String(64))
+    actual_value: Mapped[Decimal | None] = mapped_column(Numeric(28, 8))
+    actual_unit: Mapped[str | None] = mapped_column(String(64))
+    currency: Mapped[str | None] = mapped_column(String(3))
+    financial_period_id: Mapped[UUID | None] = mapped_column(Uuid(as_uuid=True))
+    calculation_id: Mapped[UUID | None] = mapped_column(
+        Uuid(as_uuid=True), ForeignKey("financial_metric_calculations.id", ondelete="SET NULL")
+    )
+    explanation_code: Mapped[str] = mapped_column(String(64), nullable=False)
+    explanation_parameters: Mapped[dict[str, Any]] = mapped_column(JSON, nullable=False)
+    metric_inputs: Mapped[list[dict[str, Any]]] = mapped_column(JSON, nullable=False, default=list)
+    evidence_refs: Mapped[dict[str, Any]] = mapped_column(JSON, nullable=False, default=dict)
+    requires_human_review: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
+    review_status: Mapped[str] = mapped_column(
+        String(32), nullable=False, default=FinancialEvaluationReviewStatus.PENDING.value
+    )
+    reviewed_status: Mapped[str | None] = mapped_column(String(64))
+    review_notes: Mapped[str | None] = mapped_column(Text)
+    reviewed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
+    )
+
+
+class FinancialEvaluationResultReview(Base):
+    __tablename__ = "financial_evaluation_result_reviews"
+    __table_args__ = (
+        CheckConstraint(
+            f"review_status IN ({FINANCIAL_EVALUATION_REVIEW_STATUS_VALUES})",
+            name="ck_financial_result_reviews_status",
+        ),
+        CheckConstraint(
+            "override_status IS NULL OR override_status IN "
+            f"({FINANCIAL_EVALUATION_RESULT_STATUS_VALUES})",
+            name="ck_financial_result_reviews_override_status",
+        ),
+        Index("ix_financial_result_reviews_result_id", "result_id"),
+        Index("ix_financial_result_reviews_reviewed_at", "reviewed_at"),
+    )
+
+    id: Mapped[UUID] = mapped_column(Uuid(as_uuid=True), primary_key=True, default=uuid4)
+    result_id: Mapped[UUID] = mapped_column(
+        Uuid(as_uuid=True),
+        ForeignKey("financial_evaluation_results.id", ondelete="CASCADE"),
+        nullable=False,
+    )
+    review_status: Mapped[str] = mapped_column(String(32), nullable=False)
+    override_status: Mapped[str | None] = mapped_column(String(64))
+    override_reason: Mapped[str | None] = mapped_column(Text)
+    original_status: Mapped[str] = mapped_column(String(64), nullable=False)
+    reviewer: Mapped[str] = mapped_column(String(128), nullable=False, default="local-user")
+    review_notes: Mapped[str | None] = mapped_column(Text)
+    reviewed_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now()
+    )
+
+
+class FinancialEvaluationEvent(Base):
+    __tablename__ = "financial_evaluation_events"
+    __table_args__ = (
+        Index("ix_financial_evaluation_events_run_id", "run_id"),
+        Index("ix_financial_evaluation_events_job_id", "job_id"),
+        Index("ix_financial_evaluation_events_type", "event_type"),
+    )
+
+    id: Mapped[UUID] = mapped_column(Uuid(as_uuid=True), primary_key=True, default=uuid4)
+    job_id: Mapped[UUID | None] = mapped_column(
+        Uuid(as_uuid=True), ForeignKey("financial_evaluation_jobs.id", ondelete="SET NULL")
+    )
+    run_id: Mapped[UUID | None] = mapped_column(
+        Uuid(as_uuid=True), ForeignKey("financial_evaluation_runs.id", ondelete="SET NULL")
+    )
+    process_id: Mapped[UUID] = mapped_column(
+        Uuid(as_uuid=True), ForeignKey("processes.id", ondelete="CASCADE"), nullable=False
+    )
+    company_id: Mapped[UUID | None] = mapped_column(
+        Uuid(as_uuid=True), ForeignKey("company_profiles.id", ondelete="SET NULL")
+    )
+    event_type: Mapped[str] = mapped_column(String(64), nullable=False)
+    summary: Mapped[str] = mapped_column(String(1000), nullable=False)
+    details: Mapped[dict[str, Any]] = mapped_column(JSON, nullable=False, default=dict)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
 
 class ImportEvent(Base):

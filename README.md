@@ -102,7 +102,7 @@ flowchart TB
 
 La decisión de stack y sus alternativas están formalizadas en [docs/ADR-001-stack-and-architecture.md](docs/ADR-001-stack-and-architecture.md).
 
-## Estado actual - Microfase 5
+## Estado actual - Microfase 6
 
 Implementado: importacion manual de procesos, carga documental segura, almacenamiento local con
 SHA-256, cola transaccional inicial, extractores deterministas para PDF con texto, DOCX, XLSX, CSV y
@@ -111,11 +111,13 @@ Responses API, Structured Outputs, prompts versionados, snapshot reproducible, b
 deterministico, validacion de evidencia, candidatos rechazados, relaciones, UI de revision de
 requisitos, perfiles de empresa, datos juridicos, RUP, UNSPSC, finanzas, experiencia, personal,
 certificaciones, capacidades, evidencias documentales reutilizando el pipeline de extraccion,
-vinculos dato-evidencia, completitud deterministica y snapshots inmutables de perfil.
+vinculos dato-evidencia, completitud deterministica, snapshots inmutables de perfil, evaluacion
+financiera inicial por requisito, formulas financieras versionadas, cola PostgreSQL, worker
+financiero, API, UI y revision manual auditada de resultados.
 
-No implementado todavia: OCR, evaluacion de cumplimiento contra procesos, evaluador financiero,
-integracion automatica con SECOP II, autenticacion, S3 real y motor GO / NO GO ejecutable. La
-completitud del perfil no evalua si una empresa cumple un proceso ni produce decisiones.
+No implementado todavia: OCR, evaluadores no financieros, integracion automatica con SECOP II,
+autenticacion, S3 real y motor GO / NO GO ejecutable. La evaluacion financiera no decide
+participacion global ni produce `GO` / `NO_GO`.
 
 ## Desarrollo local
 
@@ -136,6 +138,8 @@ uv sync --all-packages  # dependencias Python (workspace uv)
 | `pnpm normalization:test` / `pnpm normalization:eval` | Pruebas y evals deterministas de normalizacion |
 | `pnpm normalization:smoke` | Smoke manual opcional contra OpenAI si hay clave autorizada |
 | `pnpm company:test` / `pnpm company:snapshot-check` | Pruebas de perfil de empresa, evidencias y snapshot deterministico |
+| `pnpm financial:run-once` / `pnpm financial:drain` | Procesa trabajos de evaluacion financiera |
+| `pnpm financial:test` / `pnpm financial:eval` | Pruebas y evals deterministas de evaluacion financiera |
 | `pnpm infra:up` / `pnpm infra:down` | PostgreSQL local para desarrollo |
 | `pnpm db:migrate` / `pnpm db:check` | Migraciones Alembic y verificación de divergencias |
 | `pnpm schemas:generate` | Regenera JSON Schema y tipos TS desde el modelo canónico Pydantic |
@@ -170,6 +174,9 @@ Guía completa en [docs/development.md](docs/development.md).
 | [docs/company-profile.md](docs/company-profile.md) | Modelo operativo de perfil de empresa y completitud. |
 | [docs/company-evidence.md](docs/company-evidence.md) | Carga, extraccion y vinculacion dato-evidencia para soportes empresariales. |
 | [docs/company-profile-snapshots.md](docs/company-profile-snapshots.md) | Snapshots inmutables de perfil y uso futuro por evaluadores. |
+| [docs/ADR-006-financial-evaluation.md](docs/ADR-006-financial-evaluation.md) | Decision de arquitectura de evaluacion financiera inicial. |
+| [docs/financial-evaluation.md](docs/financial-evaluation.md) | Operacion, API, worker, revision y limites de evaluacion financiera. |
+| [docs/financial-formulas.md](docs/financial-formulas.md) | Formulas financieras versionadas y reglas de calculo. |
 
 ## Roadmap resumido
 

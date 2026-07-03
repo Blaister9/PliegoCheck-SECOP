@@ -2,9 +2,13 @@
 
 import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import type {
+  CompanyProfileList,
+  CompanyProfileSnapshotSummary,
   DocumentUploadResponse,
   ExtractedSegmentList,
   ExtractedSegmentType,
+  FinancialEvaluationList,
+  FinancialEvaluationResultList,
   NormalizationRunList,
   NormalizedRequirement,
   ProcessDetail,
@@ -15,6 +19,7 @@ import type {
 import { EXTRACTED_SEGMENT_TYPE_VALUES } from "@pliegocheck/schemas";
 import {
   ApiClientError,
+  createFinancialEvaluation,
   createRequirementNormalization,
   downloadUrl,
   enqueueDocumentExtraction,
@@ -23,8 +28,13 @@ import {
   getInventory,
   getProcess,
   getRequirement,
+  listCompanies,
+  listFinancialEvaluationResults,
+  listFinancialEvaluations,
   listRequirementNormalizations,
   listRequirements,
+  listSnapshots,
+  retryFinancialEvaluation,
   retryRequirementNormalization,
   uploadDocuments,
 } from "../../../lib/api";
@@ -34,6 +44,17 @@ export function ProcessDetailClient({ processId }: { processId: string }) {
   const [inventory, setInventory] = useState<ProcessInventory | null>(null);
   const [normalizations, setNormalizations] = useState<NormalizationRunList | null>(null);
   const [requirements, setRequirements] = useState<RequirementList | null>(null);
+  const [financialEvaluations, setFinancialEvaluations] = useState<FinancialEvaluationList | null>(
+    null,
+  );
+  const [financialResults, setFinancialResults] = useState<FinancialEvaluationResultList | null>(
+    null,
+  );
+  const [companies, setCompanies] = useState<CompanyProfileList | null>(null);
+  const [snapshots, setSnapshots] = useState<CompanyProfileSnapshotSummary[]>([]);
+  const [selectedFinancialRunId, setSelectedFinancialRunId] = useState("");
+  const [selectedCompanyId, setSelectedCompanyId] = useState("");
+  const [selectedSnapshotId, setSelectedSnapshotId] = useState("");
   const [selectedRequirement, setSelectedRequirement] = useState<RequirementDetail | null>(null);
   const [segments, setSegments] = useState<ExtractedSegmentList | null>(null);
   const [selectedDocument, setSelectedDocument] = useState<string | null>(null);
@@ -45,6 +66,7 @@ export function ProcessDetailClient({ processId }: { processId: string }) {
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
   const [normalizing, setNormalizing] = useState(false);
+  const [financialSubmitting, setFinancialSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   async function load() {
@@ -62,10 +84,20 @@ export function ProcessDetailClient({ processId }: { processId: string }) {
       const requirementsPayload = await listRequirements(processId, latestRun?.id).catch(
         () => null,
       );
+      const financialEvaluationsPayload = await listFinancialEvaluations(processId).catch(
+        () => null,
+      );
+      const latestFinancialRun = financialEvaluationsPayload?.items[0];
+      const financialResultsPayload = latestFinancialRun
+        ? await listFinancialEvaluationResults(processId, latestFinancialRun.id).catch(() => null)
+        : null;
       setProcess(processPayload);
       setInventory(inventoryPayload);
       setNormalizations(normalizationsPayload);
       setRequirements(requirementsPayload);
+      setFinancialEvaluations(financialEvaluationsPayload);
+      setFinancialResults(financialResultsPayload);
+      setSelectedFinancialRunId((current) => current || latestRun?.id || "");
     } catch (loadError) {
       setError(loadError instanceof ApiClientError ? loadError.message : "Error consultando API.");
     } finally {
@@ -186,6 +218,74 @@ export function ProcessDetailClient({ processId }: { processId: string }) {
     }
   }
 
+  async function loadCompaniesForFinancial() {
+    setError(null);
+    try {
+      setCompanies(await listCompanies({ limit: 100, offset: 0 }));
+    } catch (companyError) {
+      setError(
+        companyError instanceof ApiClientError
+          ? companyError.message
+          : "Error consultando empresas.",
+      );
+    }
+  }
+
+  async function chooseCompanyForFinancial(companyId: string) {
+    setSelectedCompanyId(companyId);
+    setSelectedSnapshotId("");
+    setSnapshots([]);
+    if (!companyId) return;
+    setError(null);
+    try {
+      const snapshotPayload = await listSnapshots(companyId);
+      setSnapshots(snapshotPayload.filter((snapshot) => snapshot.status === "PUBLISHED"));
+    } catch (snapshotError) {
+      setError(
+        snapshotError instanceof ApiClientError
+          ? snapshotError.message
+          : "Error consultando snapshots.",
+      );
+    }
+  }
+
+  async function startFinancialEvaluation(force = false) {
+    if (!selectedFinancialRunId || !selectedCompanyId || !selectedSnapshotId) return;
+    setFinancialSubmitting(true);
+    setError(null);
+    try {
+      await createFinancialEvaluation(processId, {
+        normalization_run_id: selectedFinancialRunId,
+        company_id: selectedCompanyId,
+        company_profile_snapshot_id: selectedSnapshotId,
+        force,
+      });
+      await load();
+    } catch (financialError) {
+      setError(
+        financialError instanceof ApiClientError
+          ? financialError.message
+          : "Error creando evaluacion financiera.",
+      );
+    } finally {
+      setFinancialSubmitting(false);
+    }
+  }
+
+  async function retryFinancialRun(runId: string) {
+    setError(null);
+    try {
+      await retryFinancialEvaluation(processId, runId);
+      await load();
+    } catch (retryError) {
+      setError(
+        retryError instanceof ApiClientError
+          ? retryError.message
+          : "Error reintentando evaluacion financiera.",
+      );
+    }
+  }
+
   if (loading)
     return (
       <main className="container">
@@ -260,6 +360,27 @@ export function ProcessDetailClient({ processId }: { processId: string }) {
           onSelect={(requirementId) => void openRequirement(requirementId)}
         />
         {selectedRequirement ? <RequirementDetailPanel requirement={selectedRequirement} /> : null}
+      </section>
+
+      <section>
+        <FinancialEvaluationPanel
+          normalizations={normalizations}
+          evaluations={financialEvaluations}
+          results={financialResults}
+          companies={companies}
+          snapshots={snapshots}
+          selectedNormalizationRunId={selectedFinancialRunId}
+          selectedCompanyId={selectedCompanyId}
+          selectedSnapshotId={selectedSnapshotId}
+          submitting={financialSubmitting}
+          onLoadCompanies={() => void loadCompaniesForFinancial()}
+          onSelectNormalization={setSelectedFinancialRunId}
+          onSelectCompany={(companyId) => void chooseCompanyForFinancial(companyId)}
+          onSelectSnapshot={setSelectedSnapshotId}
+          onCreate={() => void startFinancialEvaluation(false)}
+          onForce={() => void startFinancialEvaluation(true)}
+          onRetry={(runId) => void retryFinancialRun(runId)}
+        />
       </section>
 
       <section>
@@ -621,6 +742,188 @@ function RequirementDetailPanel({ requirement }: { requirement: RequirementDetai
         </>
       ) : null}
     </article>
+  );
+}
+
+function FinancialEvaluationPanel({
+  normalizations,
+  evaluations,
+  results,
+  companies,
+  snapshots,
+  selectedNormalizationRunId,
+  selectedCompanyId,
+  selectedSnapshotId,
+  submitting,
+  onLoadCompanies,
+  onSelectNormalization,
+  onSelectCompany,
+  onSelectSnapshot,
+  onCreate,
+  onForce,
+  onRetry,
+}: {
+  normalizations: NormalizationRunList | null;
+  evaluations: FinancialEvaluationList | null;
+  results: FinancialEvaluationResultList | null;
+  companies: CompanyProfileList | null;
+  snapshots: CompanyProfileSnapshotSummary[];
+  selectedNormalizationRunId: string;
+  selectedCompanyId: string;
+  selectedSnapshotId: string;
+  submitting: boolean;
+  onLoadCompanies: () => void;
+  onSelectNormalization: (runId: string) => void;
+  onSelectCompany: (companyId: string) => void;
+  onSelectSnapshot: (snapshotId: string) => void;
+  onCreate: () => void;
+  onForce: () => void;
+  onRetry: (runId: string) => void;
+}) {
+  const completedNormalizations = (normalizations?.items ?? []).filter((run) =>
+    ["COMPLETED", "COMPLETED_WITH_WARNINGS"].includes(run.status),
+  );
+  const canCreate =
+    Boolean(selectedNormalizationRunId) &&
+    Boolean(selectedCompanyId) &&
+    Boolean(selectedSnapshotId);
+  const latest = evaluations?.items[0];
+  return (
+    <div className="financial-panel">
+      <div className="section-heading">
+        <h2>Evaluacion financiera</h2>
+        <button type="button" className="button secondary" onClick={onLoadCompanies}>
+          Cargar empresas
+        </button>
+      </div>
+      <aside className="notice" role="note" aria-label="Avisos de evaluacion financiera">
+        <p>
+          La evaluacion financiera compara requisitos individuales contra un snapshot especifico de
+          la empresa.
+        </p>
+        <p>Este resultado no constituye una decision global GO / NO GO.</p>
+        <p>Los datos faltantes o no soportados producen UNKNOWN, no cumplimiento.</p>
+        <p>
+          Las revisiones manuales quedan auditadas y no alteran el resultado automatico original.
+        </p>
+      </aside>
+      <div className="form-grid">
+        <label>
+          Normalizacion
+          <select
+            value={selectedNormalizationRunId}
+            onChange={(event) => onSelectNormalization(event.target.value)}
+          >
+            <option value="">Seleccionar ejecucion</option>
+            {completedNormalizations.map((run) => (
+              <option key={run.id} value={run.id}>
+                {run.status} - {run.accepted_requirement_count} requisitos
+              </option>
+            ))}
+          </select>
+        </label>
+        <label>
+          Empresa
+          <select
+            value={selectedCompanyId}
+            onChange={(event) => onSelectCompany(event.target.value)}
+          >
+            <option value="">Seleccionar empresa</option>
+            {(companies?.items ?? []).map((company) => (
+              <option key={company.id} value={company.id}>
+                {company.legal_name} - {company.internal_reference}
+              </option>
+            ))}
+          </select>
+        </label>
+        <label>
+          Snapshot publicado
+          <select
+            value={selectedSnapshotId}
+            onChange={(event) => onSelectSnapshot(event.target.value)}
+            disabled={!selectedCompanyId}
+          >
+            <option value="">Seleccionar snapshot</option>
+            {snapshots.map((snapshot) => (
+              <option key={snapshot.id} value={snapshot.id}>
+                v{snapshot.version} - {snapshot.completeness_status}
+              </option>
+            ))}
+          </select>
+        </label>
+      </div>
+      <div className="document-actions">
+        <button type="button" onClick={onCreate} disabled={!canCreate || submitting}>
+          {submitting ? "Encolando..." : "Crear evaluacion financiera"}
+        </button>
+        <button
+          type="button"
+          className="button secondary"
+          onClick={onForce}
+          disabled={!canCreate || submitting}
+        >
+          Forzar nueva evaluacion
+        </button>
+      </div>
+      {latest ? (
+        <article className="run-summary">
+          <strong>Ultima evaluacion: {latest.status}</strong>
+          <p>
+            Requisitos: {latest.requirement_count} · Evaluados: {latest.evaluated_count} · Cumple:{" "}
+            {latest.complies_count} · No cumple: {latest.does_not_comply_count} · UNKNOWN:{" "}
+            {latest.unknown_count} · Conflictos: {latest.conflicting_count}
+          </p>
+          <p>
+            Snapshot: {latest.company_profile_snapshot_id} · Digest:{" "}
+            {latest.input_digest.slice(0, 12)}...
+          </p>
+          {latest.error_message ? <p className="error">{latest.error_message}</p> : null}
+          {latest.status === "FAILED" ? (
+            <button type="button" onClick={() => onRetry(latest.id)}>
+              Reintentar evaluacion
+            </button>
+          ) : null}
+        </article>
+      ) : (
+        <p className="empty-state">No hay evaluaciones financieras creadas.</p>
+      )}
+      {(results?.items ?? []).length > 0 ? (
+        <div className="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Resultado</th>
+                <th>Metrica</th>
+                <th>Valor requerido</th>
+                <th>Valor observado</th>
+                <th>Explicacion</th>
+                <th>Revision</th>
+              </tr>
+            </thead>
+            <tbody>
+              {(results?.items ?? []).map((result) => (
+                <tr key={result.id}>
+                  <td>{result.status}</td>
+                  <td>{result.metric_type ?? "UNKNOWN"}</td>
+                  <td>
+                    {result.operator ?? "-"} {result.required_value ?? "-"}{" "}
+                    {result.required_unit ?? ""}
+                  </td>
+                  <td>
+                    {result.actual_value ?? "UNKNOWN"} {result.actual_unit ?? ""}
+                  </td>
+                  <td>{result.explanation_code}</td>
+                  <td>
+                    {result.review_status}
+                    {result.requires_human_review ? " · requiere revision" : ""}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      ) : null}
+    </div>
   );
 }
 

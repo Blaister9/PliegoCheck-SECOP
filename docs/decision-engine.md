@@ -13,6 +13,10 @@ Cada requisito normalizado que llega al motor debe contener, como mínimo:
 > Nota Microfase 4: la normalizacion actual solo persiste requisitos del proceso con evidencia del
 > pliego. No produce `status` de cumplimiento empresarial, `company_value` ni decisiones. Esos campos
 > pertenecen a microfases posteriores de evaluacion contra perfil de empresa.
+>
+> Nota Microfase 6: la evaluacion financiera inicial ya produce estados por requisito financiero
+> contra un snapshot publicado de empresa. Estos estados son insumo futuro del motor; todavia no se
+> combinan en una decision global.
 
 ```json
 {

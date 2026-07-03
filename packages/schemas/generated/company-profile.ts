@@ -72,6 +72,7 @@ export type FinancialMetricType =
   | "REVENUE"
   | "OPERATING_PROFIT"
   | "NET_PROFIT"
+  | "INTEREST_EXPENSE"
   | "WORKING_CAPITAL"
   | "LIQUIDITY_RATIO"
   | "DEBT_RATIO"

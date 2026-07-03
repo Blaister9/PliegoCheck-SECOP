@@ -17,6 +17,7 @@ def test_health_status_reports_queue_state() -> None:
         "queue_connected": True,
         "document_processing_enabled": True,
         "company_evidence_extraction_enabled": True,
+        "financial_evaluation_enabled": True,
         "requirement_normalization_enabled": True,
         "normalization_provider": "fake",
         "normalization_model": "gpt-5.5-pro",
@@ -33,6 +34,7 @@ def test_cli_health_prints_json_and_exits_zero(capsys: pytest.CaptureFixture[str
     assert payload["queue_connected"] is True
     assert payload["document_processing_enabled"] is True
     assert payload["company_evidence_extraction_enabled"] is True
+    assert payload["financial_evaluation_enabled"] is True
     assert payload["requirement_normalization_enabled"] is True
 
 

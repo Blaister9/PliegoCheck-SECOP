@@ -59,6 +59,9 @@ Controles de seguridad, aislamiento y gobernanza de decisiones que la plataforma
 - **Provider falso aislado:** solo se habilita con `PLIEGOCHECK_ALLOW_FAKE_NORMALIZATION_PROVIDER`
   para tests/evals; no es seleccionable publicamente en operacion normal.
 - **Microfase 5 sin IA nueva:** la captura de perfil, completitud y vinculacion dato-evidencia son deterministicas. La extraccion de soportes empresariales reutiliza el pipeline documental local y no envia archivos originales a proveedores de IA.
+- **Microfase 6 sin IA:** la evaluacion financiera es deterministica. No llama OpenAI, no interpreta
+  libremente evidencia y solo usa requisitos normalizados, reglas persistidas y snapshots publicados.
+  Los overrides manuales quedan auditados y no cambian el resultado automatico original.
 
 ## 7. Gobernanza de la decisión
 

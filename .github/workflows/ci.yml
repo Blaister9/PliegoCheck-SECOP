@@ -103,6 +103,12 @@ jobs:
       - name: Evals deterministas de normalizacion
         run: pnpm normalization:eval
 
+      - name: Pruebas de evaluacion financiera
+        run: pnpm financial:test
+
+      - name: Evals deterministas de evaluacion financiera
+        run: pnpm financial:eval
+
       - name: Formato
         run: pnpm format:check
 

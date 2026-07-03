@@ -1,0 +1,167 @@
+// Archivo generado automaticamente por packages/schemas/scripts/generate.py.
+// No editar a mano: la definicion canonica son los modelos Pydantic de
+// packages/schemas/src/pliegocheck_schemas/.
+
+export const FINANCIAL_EVALUATION_SCHEMA_VERSION = "1.0.0";
+
+export const FINANCIAL_EVALUATION_JOB_STATUS_VALUES = [
+  "PENDING",
+  "PROCESSING",
+  "COMPLETED",
+  "COMPLETED_WITH_WARNINGS",
+  "FAILED",
+  "CANCELLED",
+] as const;
+export type FinancialEvaluationJobStatusValue =
+  (typeof FINANCIAL_EVALUATION_JOB_STATUS_VALUES)[number];
+
+export const FINANCIAL_EVALUATION_RUN_STATUS_VALUES = [
+  "PENDING",
+  "PROCESSING",
+  "COMPLETED",
+  "COMPLETED_WITH_WARNINGS",
+  "FAILED",
+  "CANCELLED",
+] as const;
+export type FinancialEvaluationRunStatusValue =
+  (typeof FINANCIAL_EVALUATION_RUN_STATUS_VALUES)[number];
+
+export const FINANCIAL_EVALUATION_RESULT_STATUS_VALUES = [
+  "COMPLIES",
+  "DOES_NOT_COMPLY",
+  "PARTIAL",
+  "UNKNOWN",
+  "NOT_APPLICABLE",
+  "CONFLICTING_EVIDENCE",
+] as const;
+export type FinancialEvaluationResultStatusValue =
+  (typeof FINANCIAL_EVALUATION_RESULT_STATUS_VALUES)[number];
+
+export const FINANCIAL_EVALUATION_REVIEW_STATUS_VALUES = [
+  "PENDING",
+  "CONFIRMED",
+  "OVERRIDDEN",
+  "REJECTED",
+] as const;
+export type FinancialEvaluationReviewStatusValue =
+  (typeof FINANCIAL_EVALUATION_REVIEW_STATUS_VALUES)[number];
+
+export const FINANCIAL_RULE_TYPE_VALUES = [
+  "DIRECT_METRIC",
+  "DERIVED_METRIC",
+  "RANGE",
+  "COMPOSITE_ALL",
+  "COMPOSITE_ANY",
+  "INFORMATIONAL",
+  "UNSUPPORTED",
+] as const;
+export type FinancialRuleTypeValue = (typeof FINANCIAL_RULE_TYPE_VALUES)[number];
+
+export const FINANCIAL_RULE_MAPPING_STATUS_VALUES = [
+  "MAPPED",
+  "PARTIALLY_MAPPED",
+  "AMBIGUOUS",
+  "UNSUPPORTED",
+  "INVALID",
+] as const;
+export type FinancialRuleMappingStatusValue = (typeof FINANCIAL_RULE_MAPPING_STATUS_VALUES)[number];
+
+export const FINANCIAL_OPERATOR_VALUES = [
+  "GREATER_THAN",
+  "GREATER_THAN_OR_EQUAL",
+  "LESS_THAN",
+  "LESS_THAN_OR_EQUAL",
+  "EQUAL",
+  "NOT_EQUAL",
+  "BETWEEN_INCLUSIVE",
+  "BETWEEN_EXCLUSIVE",
+  "EXISTS",
+  "NOT_EXISTS",
+] as const;
+export type FinancialOperatorValue = (typeof FINANCIAL_OPERATOR_VALUES)[number];
+
+export const FINANCIAL_PERIOD_POLICY_VALUES = [
+  "EXACT_YEAR",
+  "LATEST_AVAILABLE",
+  "LATEST_BEFORE_PROCESS_CLOSING",
+  "RUP_REFERENCE_PERIOD",
+  "MANUAL_SELECTION",
+  "UNKNOWN",
+] as const;
+export type FinancialPeriodPolicyValue = (typeof FINANCIAL_PERIOD_POLICY_VALUES)[number];
+
+export const FINANCIAL_METRIC_USABILITY_VALUES = [
+  "VERIFIED",
+  "SUPPORTED",
+  "DECLARED_ONLY",
+  "EXPIRED",
+  "REJECTED",
+  "CONFLICTING",
+  "MISSING",
+] as const;
+export type FinancialMetricUsabilityValue = (typeof FINANCIAL_METRIC_USABILITY_VALUES)[number];
+
+export const FINANCIAL_CALCULATION_STATUS_VALUES = [
+  "COMPLETED",
+  "MISSING_INPUT",
+  "DIVISION_BY_ZERO",
+  "UNIT_MISMATCH",
+  "CURRENCY_MISMATCH",
+  "CONFLICTING_INPUT",
+  "FAILED",
+] as const;
+export type FinancialCalculationStatusValue = (typeof FINANCIAL_CALCULATION_STATUS_VALUES)[number];
+
+export const FINANCIAL_COMPOSITE_OPERATOR_VALUES = ["ALL", "ANY"] as const;
+export type FinancialCompositeOperatorValue = (typeof FINANCIAL_COMPOSITE_OPERATOR_VALUES)[number];
+
+export const FINANCIAL_RULE_SOURCE_BASIS_VALUES = [
+  "EXPLICIT_EXPECTED_VALUE",
+  "EXPLICIT_DESCRIPTION",
+  "MANUAL_OVERRIDE",
+  "UNKNOWN",
+] as const;
+export type FinancialRuleSourceBasisValue = (typeof FINANCIAL_RULE_SOURCE_BASIS_VALUES)[number];
+
+export const FINANCIAL_EXPLANATION_CODE_VALUES = [
+  "VALUE_MEETS_MINIMUM",
+  "VALUE_BELOW_MINIMUM",
+  "VALUE_MEETS_MAXIMUM",
+  "VALUE_EXCEEDS_MAXIMUM",
+  "VALUE_WITHIN_RANGE",
+  "VALUE_OUTSIDE_RANGE",
+  "METRIC_MISSING",
+  "PERIOD_NOT_RESOLVED",
+  "DECLARED_VALUE_NOT_VERIFIED",
+  "EVIDENCE_CONFLICT",
+  "UNIT_MISMATCH",
+  "CURRENCY_MISMATCH",
+  "DIVISION_BY_ZERO",
+  "RULE_AMBIGUOUS",
+  "RULE_UNSUPPORTED",
+  "NOT_FINANCIAL_REQUIREMENT",
+] as const;
+export type FinancialExplanationCodeValue = (typeof FINANCIAL_EXPLANATION_CODE_VALUES)[number];
+
+export const FINANCIAL_ERROR_CODE_VALUES = [
+  "FINANCIAL_EVALUATION_ALREADY_QUEUED",
+  "FINANCIAL_EVALUATION_ALREADY_COMPLETED",
+  "FINANCIAL_EVALUATION_NOT_FOUND",
+  "FINANCIAL_EVALUATION_INPUT_NOT_READY",
+  "FINANCIAL_REQUIREMENTS_NOT_FOUND",
+  "COMPANY_SNAPSHOT_NOT_FOUND",
+  "COMPANY_SNAPSHOT_NOT_PUBLISHED",
+  "FINANCIAL_RULE_AMBIGUOUS",
+  "FINANCIAL_RULE_UNSUPPORTED",
+  "FINANCIAL_METRIC_MISSING",
+  "FINANCIAL_PERIOD_NOT_RESOLVED",
+  "FINANCIAL_UNIT_MISMATCH",
+  "FINANCIAL_CURRENCY_MISMATCH",
+  "FINANCIAL_DIVISION_BY_ZERO",
+  "FINANCIAL_EVIDENCE_CONFLICT",
+  "FINANCIAL_CALCULATION_FAILED",
+  "FINANCIAL_EVALUATION_FAILED",
+  "INVALID_FINANCIAL_OVERRIDE",
+  "DATABASE_ERROR",
+] as const;
+export type FinancialErrorCodeValue = (typeof FINANCIAL_ERROR_CODE_VALUES)[number];
