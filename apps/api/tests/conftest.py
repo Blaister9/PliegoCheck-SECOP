@@ -78,6 +78,13 @@ def clean_database_and_storage(migrated_engine: Engine) -> Generator[None, None,
                 "rejected_requirement_candidates, requirements, "
                 "requirement_normalization_batches, requirement_normalization_runs, "
                 "requirement_normalization_jobs, prompt_versions, "
+                "company_evidence_links, person_credentials, person_experience, "
+                "person_education, company_financial_metrics, rup_snapshots, "
+                "company_unspsc_codes, company_profile_snapshots, company_people, "
+                "company_legal_registrations, company_financial_periods, "
+                "company_experience_records, company_evidence_documents, "
+                "company_certifications, company_capabilities, company_audit_events, "
+                "company_profiles, "
                 "import_events, process_documents, processes "
                 "RESTART IDENTITY CASCADE"
             )

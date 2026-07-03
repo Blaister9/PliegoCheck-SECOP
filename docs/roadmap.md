@@ -9,8 +9,8 @@ Microfase 1: esqueleto del monorepo (completada)
 Microfase 2: importacion manual de proceso y documentos (completada)
 Microfase 3: inventario y extraccion documental (completada)
 Microfase 4: normalizacion de requisitos (completada)
-Microfase 5: perfil de empresa y evidencias (siguiente)
-Microfase 6: evaluador financiero inicial
+Microfase 5: perfil de empresa y evidencias (completada)
+Microfase 6: evaluador financiero inicial (siguiente)
 Microfase 7: motor deterministico de decision
 Microfase 8: explicacion y reporte auditable
 Microfase 9: integracion con datos abiertos SECOP II
@@ -63,12 +63,18 @@ Microfase 10: autenticacion, multiempresa y operacion
   decisiones GO / NO GO; provider real queda aislado y probado con mocks; evals sinteticos pasan.
 - **Fuera de alcance:** evaluacion de cumplimiento.
 
-## Microfase 5 - Perfil de empresa y evidencias
+## Microfase 5 - Perfil de empresa y evidencias - completada
 
 - **Objetivo:** capturar la capacidad real de la empresa con soporte documental.
-- **Entregable previsto:** `CompanyProfile`, `CompanyCapability`, `RequirementEvidence`, carga de
-  soportes con vigencias y UI de perfil.
-- **Fuera de alcance:** evaluacion automatica de los soportes.
+- **Entregable:** `CompanyProfile`, datos juridicos, RUP, UNSPSC, periodos y metricas financieras,
+  experiencia, personal, certificaciones, capacidades, carga de soportes empresariales reutilizando
+  el pipeline documental, vinculos dato-evidencia, completitud deterministica y snapshots
+  inmutables.
+- **Criterios verificados:** los identificadores se normalizan y enmascaran; las evidencias no
+  exponen rutas fisicas; las citas se validan contra extracciones y segmentos; la completitud nunca
+  decide cumplimiento; un snapshot publicado conserva digest estable aunque el perfil editable
+  cambie.
+- **Fuera de alcance:** evaluacion automatica de cumplimiento contra requisitos de un proceso.
 
 ## Microfase 6 - Evaluador financiero inicial
 

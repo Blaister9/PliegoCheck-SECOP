@@ -27,6 +27,8 @@ Controles de seguridad, aislamiento y gobernanza de decisiones que la plataforma
 - **Reprocesamiento por adendas:** cuando aparecen adendas o documentos nuevos se crea una `ProcessVersion` nueva y se reanaliza; las decisiones anteriores quedan asociadas a su versión original, nunca se sobrescriben.
 - **Carga manual segura (Microfase 2):** los documentos originales se guardan fuera de PostgreSQL, con `storage_key` relativa generada por servidor y SHA-256 calculado sobre los bytes originales. Las respuestas no exponen rutas físicas, temporales ni claves internas.
 - **Validación de archivos:** se rechazan rutas, nombres reservados, doble extensión peligrosa, formatos no permitidos, archivos vacíos, tamaños excesivos, `Content-Type` incoherente y firmas mágicas incompatibles cuando aplica. Los documentos todavía no se extraen ni se interpretan.
+- **Evidencias de empresa (Microfase 5):** los soportes empresariales reutilizan la misma validacion y almacenamiento inmutable; la API no expone rutas fisicas ni `storage_key`. Los identificadores tributarios y personales se normalizan para unicidad, pero se muestran enmascarados en listados y UI.
+- **Snapshots de perfil:** un snapshot publicado es inmutable y se valida por digest SHA-256 canonico. Las evaluaciones futuras deben referenciar una version especifica del perfil para evitar que cambios posteriores alteren resultados historicos.
 
 ## 5. Controles de extraccion documental
 
@@ -56,6 +58,7 @@ Controles de seguridad, aislamiento y gobernanza de decisiones que la plataforma
   error controlado cuando se solicita operacion real.
 - **Provider falso aislado:** solo se habilita con `PLIEGOCHECK_ALLOW_FAKE_NORMALIZATION_PROVIDER`
   para tests/evals; no es seleccionable publicamente en operacion normal.
+- **Microfase 5 sin IA nueva:** la captura de perfil, completitud y vinculacion dato-evidencia son deterministicas. La extraccion de soportes empresariales reutiliza el pipeline documental local y no envia archivos originales a proveedores de IA.
 
 ## 7. Gobernanza de la decisión
 

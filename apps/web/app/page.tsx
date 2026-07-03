@@ -1,4 +1,5 @@
 import {
+  COMPANY_PROFILE_SCHEMA_VERSION,
   NORMALIZED_REQUIREMENT_SCHEMA_VERSION,
   REQUIREMENT_CATEGORY_VALUES,
 } from "@pliegocheck/schemas";
@@ -58,12 +59,12 @@ export default function Home() {
     <main className="container">
       <header>
         <h1>PliegoCheck-SECOP</h1>
-        <p className="status-badge">Normalizacion de requisitos - Microfase 4</p>
+        <p className="status-badge">Perfil de empresa y evidencias - Microfase 5</p>
         <p className="lead">
           Plataforma multiagente de analisis <strong>GO / NO GO</strong> para procesos de
           contratacion publica publicados en SECOP II (Colombia). En esta fase permite crear
-          procesos manualmente, adjuntar documentos originales, extraer texto estructurado y
-          normalizar requisitos con evidencia trazable sin tomar decisiones de cumplimiento.
+          procesos manualmente, adjuntar documentos originales, normalizar requisitos con evidencia
+          trazable y construir perfiles de empresa con soportes y snapshots inmutables.
         </p>
         <nav className="actions" aria-label="Acciones principales">
           <Link className="button" href="/processes">
@@ -72,12 +73,18 @@ export default function Home() {
           <Link className="button secondary" href="/processes/new">
             Crear proceso
           </Link>
+          <Link className="button secondary" href="/companies">
+            Empresas
+          </Link>
+          <Link className="button secondary" href="/companies/new">
+            Crear empresa
+          </Link>
         </nav>
       </header>
 
       <aside className="notice" role="note" aria-label="Estado del proyecto">
-        <strong>Aviso:</strong> la normalizacion propone requisitos con IA para revision humana; no
-        evalua si una empresa cumple y no emite decisiones GO / NO GO.
+        <strong>Aviso:</strong> la completitud del perfil de empresa no evalua cumplimiento contra
+        procesos y no emite decisiones GO / NO GO.
       </aside>
 
       <section aria-labelledby="arquitectura">
@@ -116,7 +123,8 @@ export default function Home() {
           Primer contrato versionado: <code>NormalizedRequirement</code> v
           {NORMALIZED_REQUIREMENT_SCHEMA_VERSION}, con {REQUIREMENT_CATEGORY_VALUES.length}{" "}
           categorias de requisitos. Este dato proviene del paquete compartido{" "}
-          <code>@pliegocheck/schemas</code>, generado desde el modelo canonico.
+          <code>@pliegocheck/schemas</code>, generado desde el modelo canonico. Perfiles de empresa
+          usan <code>CompanyProfile</code> v{COMPANY_PROFILE_SCHEMA_VERSION}.
         </p>
       </section>
 

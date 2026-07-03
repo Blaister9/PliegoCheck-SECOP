@@ -7,7 +7,7 @@ from fastapi.responses import JSONResponse
 
 from pliegocheck_api.config import settings
 from pliegocheck_api.errors import DomainError
-from pliegocheck_api.routes import contracts, health, processes, requirements
+from pliegocheck_api.routes import companies, contracts, health, processes, requirements
 from pliegocheck_schemas import ApiError, UploadErrorCode
 
 app = FastAPI(
@@ -19,13 +19,14 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.allowed_web_origins,
     allow_credentials=False,
-    allow_methods=["GET", "POST", "OPTIONS"],
+    allow_methods=["GET", "POST", "PATCH", "OPTIONS"],
     allow_headers=["Content-Type"],
 )
 app.include_router(health.router)
 app.include_router(contracts.router)
 app.include_router(processes.router)
 app.include_router(requirements.router)
+app.include_router(companies.router)
 
 
 @app.exception_handler(DomainError)

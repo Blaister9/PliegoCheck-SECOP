@@ -1,5 +1,34 @@
 import type {
   ApiError,
+  CompanyCapability,
+  CompanyCapabilityCreate,
+  CompanyCertification,
+  CompanyCertificationCreate,
+  CompanyEvidenceDocumentMetadata,
+  CompanyEvidenceLink,
+  CompanyEvidenceLinkCreate,
+  CompanyEvidenceLinkReview,
+  CompanyEvidenceType,
+  CompanyExperienceCreate,
+  CompanyExperienceRecord,
+  CompanyFinancialMetric,
+  CompanyFinancialMetricCreate,
+  CompanyFinancialPeriod,
+  CompanyFinancialPeriodCreate,
+  CompanyLegalRegistration,
+  CompanyPerson,
+  CompanyPersonCreate,
+  CompanyProfileCompleteness,
+  CompanyProfileCreate,
+  CompanyProfileDetail,
+  CompanyProfileList,
+  CompanyProfileSnapshotCreate,
+  CompanyProfileSnapshotDetail,
+  CompanyProfileSnapshotSummary,
+  CompanyProfileStatus,
+  CompanyProfileUpdate,
+  CompanyUnspscCode,
+  CompanyUnspscCodeCreate,
   DocumentExtractionDetail,
   ExtractedSegmentList,
   ExtractedSegmentType,
@@ -195,6 +224,156 @@ export function getRequirement(processId: string, requirementId: string) {
   return request<RequirementDetail>(`/processes/${processId}/requirements/${requirementId}`);
 }
 
+export function listCompanies(params: {
+  limit?: number;
+  offset?: number;
+  status?: CompanyProfileStatus | "";
+  search?: string;
+}) {
+  const query = new URLSearchParams();
+  query.set("limit", String(params.limit ?? 20));
+  query.set("offset", String(params.offset ?? 0));
+  if (params.status) query.set("status", params.status);
+  if (params.search?.trim()) query.set("search", params.search.trim());
+  return request<CompanyProfileList>(`/companies?${query.toString()}`);
+}
+
+export function createCompany(payload: CompanyProfileCreate) {
+  return request<CompanyProfileDetail>("/companies", {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
+}
+
+export function getCompany(companyId: string) {
+  return request<CompanyProfileDetail>(`/companies/${companyId}`);
+}
+
+export function updateCompany(companyId: string, payload: CompanyProfileUpdate) {
+  return request<CompanyProfileDetail>(`/companies/${companyId}`, {
+    method: "PATCH",
+    body: JSON.stringify(payload),
+  });
+}
+
+export function archiveCompany(companyId: string) {
+  return request<CompanyProfileDetail>(`/companies/${companyId}/archive`, {
+    method: "POST",
+    body: JSON.stringify({}),
+  });
+}
+
+export function createLegalRegistration(companyId: string, payload: unknown) {
+  return request<CompanyLegalRegistration>(`/companies/${companyId}/legal-registrations`, {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
+}
+
+export function createRup(companyId: string, payload: unknown) {
+  return request(`/companies/${companyId}/rup`, {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
+}
+
+export function createUnspsc(companyId: string, payload: CompanyUnspscCodeCreate) {
+  return request<CompanyUnspscCode>(`/companies/${companyId}/unspsc`, {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
+}
+
+export function createFinancialPeriod(companyId: string, payload: CompanyFinancialPeriodCreate) {
+  return request<CompanyFinancialPeriod>(`/companies/${companyId}/financial-periods`, {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
+}
+
+export function createFinancialMetric(
+  companyId: string,
+  periodId: string,
+  payload: CompanyFinancialMetricCreate,
+) {
+  return request<CompanyFinancialMetric>(
+    `/companies/${companyId}/financial-periods/${periodId}/metrics`,
+    { method: "POST", body: JSON.stringify(payload) },
+  );
+}
+
+export function createExperience(companyId: string, payload: CompanyExperienceCreate) {
+  return request<CompanyExperienceRecord>(`/companies/${companyId}/experience`, {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
+}
+
+export function createPerson(companyId: string, payload: CompanyPersonCreate) {
+  return request<CompanyPerson>(`/companies/${companyId}/people`, {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
+}
+
+export function createCertification(companyId: string, payload: CompanyCertificationCreate) {
+  return request<CompanyCertification>(`/companies/${companyId}/certifications`, {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
+}
+
+export function createCapability(companyId: string, payload: CompanyCapabilityCreate) {
+  return request<CompanyCapability>(`/companies/${companyId}/capabilities`, {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
+}
+
+export function getCompleteness(companyId: string) {
+  return request<CompanyProfileCompleteness>(`/companies/${companyId}/completeness`);
+}
+
+export function listEvidenceDocuments(companyId: string) {
+  return request<CompanyEvidenceDocumentMetadata[]>(`/companies/${companyId}/evidence-documents`);
+}
+
+export function createEvidenceLink(companyId: string, payload: CompanyEvidenceLinkCreate) {
+  return request<CompanyEvidenceLink>(`/companies/${companyId}/evidence-links`, {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
+}
+
+export function reviewEvidenceLink(
+  companyId: string,
+  linkId: string,
+  payload: CompanyEvidenceLinkReview,
+) {
+  return request<CompanyEvidenceLink>(`/companies/${companyId}/evidence-links/${linkId}/review`, {
+    method: "PATCH",
+    body: JSON.stringify(payload),
+  });
+}
+
+export function listSnapshots(companyId: string) {
+  return request<CompanyProfileSnapshotSummary[]>(`/companies/${companyId}/snapshots`);
+}
+
+export function createSnapshot(companyId: string, payload: CompanyProfileSnapshotCreate) {
+  return request<CompanyProfileSnapshotDetail>(`/companies/${companyId}/snapshots`, {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
+}
+
+export function publishSnapshot(companyId: string, snapshotId: string) {
+  return request<CompanyProfileSnapshotDetail>(
+    `/companies/${companyId}/snapshots/${snapshotId}/publish`,
+    { method: "POST", body: JSON.stringify({}) },
+  );
+}
+
 export async function uploadDocuments(processId: string, files: File[]) {
   const form = new FormData();
   for (const file of files) {
@@ -220,6 +399,46 @@ export async function uploadDocuments(processId: string, files: File[]) {
   return (await response.json()) as DocumentUploadResponse;
 }
 
+export async function uploadCompanyEvidence(
+  companyId: string,
+  files: File[],
+  evidenceType: CompanyEvidenceType = "OTHER",
+  title?: string,
+) {
+  const form = new FormData();
+  for (const file of files) {
+    form.append("files", file);
+  }
+  const query = new URLSearchParams({ evidence_type: evidenceType });
+  if (title?.trim()) query.set("title", title.trim());
+  const response = await fetch(
+    `${apiBaseUrl()}/companies/${companyId}/evidence-documents?${query.toString()}`,
+    { method: "POST", body: form },
+  );
+  if (![201, 207, 400].includes(response.status)) {
+    let payload: ApiError | null = null;
+    try {
+      payload = (await response.json()) as ApiError;
+    } catch {
+      payload = null;
+    }
+    throw new ApiClientError(
+      payload?.message ?? "No fue posible cargar las evidencias.",
+      response.status,
+      payload,
+    );
+  }
+  return (await response.json()) as {
+    stored_count: number;
+    rejected_count: number;
+    results: Array<{ original_filename: string; upload_status: string }>;
+  };
+}
+
 export function downloadUrl(processId: string, documentId: string) {
   return `${apiBaseUrl()}/processes/${processId}/documents/${documentId}/download`;
+}
+
+export function companyEvidenceDownloadUrl(companyId: string, documentId: string) {
+  return `${apiBaseUrl()}/companies/${companyId}/evidence-documents/${documentId}/download`;
 }

@@ -29,6 +29,7 @@ from pydantic import (
     model_validator,
 )
 
+from pliegocheck_schemas.company_profile import CompanyErrorCode
 from pliegocheck_schemas.document_extraction import DocumentProcessingStatus, ExtractionErrorCode
 from pliegocheck_schemas.normalized_requirement import NormalizationErrorCode
 
@@ -94,7 +95,7 @@ class UploadErrorCode(StrEnum):
     DATABASE_ERROR = "DATABASE_ERROR"
 
 
-ApiErrorCode = UploadErrorCode | ExtractionErrorCode | NormalizationErrorCode
+ApiErrorCode = UploadErrorCode | ExtractionErrorCode | NormalizationErrorCode | CompanyErrorCode
 
 
 class ApiError(BaseModel):

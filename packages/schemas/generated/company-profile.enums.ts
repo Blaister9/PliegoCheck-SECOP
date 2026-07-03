@@ -1,0 +1,221 @@
+// Archivo generado automaticamente por packages/schemas/scripts/generate.py.
+// No editar a mano: la definicion canonica son los modelos Pydantic de
+// packages/schemas/src/pliegocheck_schemas/.
+
+export const COMPANY_PROFILE_SCHEMA_VERSION = "1.0.0";
+
+export const COMPANY_PROFILE_STATUS_VALUES = [
+  "DRAFT",
+  "INCOMPLETE",
+  "READY_FOR_REVIEW",
+  "ARCHIVED",
+] as const;
+export type CompanyProfileStatusValue = (typeof COMPANY_PROFILE_STATUS_VALUES)[number];
+
+export const COMPANY_RECORD_STATUS_VALUES = [
+  "DECLARED",
+  "SUPPORTED",
+  "VERIFIED",
+  "REJECTED",
+  "EXPIRED",
+  "NEEDS_REVIEW",
+] as const;
+export type CompanyRecordStatusValue = (typeof COMPANY_RECORD_STATUS_VALUES)[number];
+
+export const COMPANY_LEGAL_REGISTRATION_TYPE_VALUES = [
+  "RUT",
+  "CHAMBER_OF_COMMERCE",
+  "RUP",
+  "LEGAL_REPRESENTATION",
+  "TAX_REGISTRATION",
+  "OTHER",
+] as const;
+export type CompanyLegalRegistrationTypeValue =
+  (typeof COMPANY_LEGAL_REGISTRATION_TYPE_VALUES)[number];
+
+export const FINANCIAL_SOURCE_TYPE_VALUES = [
+  "FINANCIAL_STATEMENT",
+  "RUP",
+  "TAX_RETURN",
+  "MANAGEMENT_CERTIFICATION",
+  "OTHER",
+] as const;
+export type FinancialSourceTypeValue = (typeof FINANCIAL_SOURCE_TYPE_VALUES)[number];
+
+export const FINANCIAL_METRIC_TYPE_VALUES = [
+  "CURRENT_ASSETS",
+  "CURRENT_LIABILITIES",
+  "TOTAL_ASSETS",
+  "TOTAL_LIABILITIES",
+  "EQUITY",
+  "REVENUE",
+  "OPERATING_PROFIT",
+  "NET_PROFIT",
+  "WORKING_CAPITAL",
+  "LIQUIDITY_RATIO",
+  "DEBT_RATIO",
+  "INTEREST_COVERAGE",
+  "RETURN_ON_ASSETS",
+  "RETURN_ON_EQUITY",
+  "OTHER",
+] as const;
+export type FinancialMetricTypeValue = (typeof FINANCIAL_METRIC_TYPE_VALUES)[number];
+
+export const EXPERIENCE_EXECUTION_STATUS_VALUES = [
+  "PLANNED",
+  "IN_PROGRESS",
+  "COMPLETED",
+  "TERMINATED",
+  "SUSPENDED",
+  "UNKNOWN",
+] as const;
+export type ExperienceExecutionStatusValue = (typeof EXPERIENCE_EXECUTION_STATUS_VALUES)[number];
+
+export const PERSON_RELATIONSHIP_TYPE_VALUES = [
+  "EMPLOYEE",
+  "CONTRACTOR",
+  "PARTNER",
+  "ALLY",
+  "POTENTIAL",
+  "OTHER",
+] as const;
+export type PersonRelationshipTypeValue = (typeof PERSON_RELATIONSHIP_TYPE_VALUES)[number];
+
+export const PERSON_AVAILABILITY_STATUS_VALUES = [
+  "AVAILABLE",
+  "PARTIAL",
+  "UNAVAILABLE",
+  "UNKNOWN",
+] as const;
+export type PersonAvailabilityStatusValue = (typeof PERSON_AVAILABILITY_STATUS_VALUES)[number];
+
+export const PERSON_CREDENTIAL_TYPE_VALUES = [
+  "PROFESSIONAL_LICENSE",
+  "CERTIFICATION",
+  "COURSE",
+  "LANGUAGE",
+  "SECURITY_CLEARANCE",
+  "OTHER",
+] as const;
+export type PersonCredentialTypeValue = (typeof PERSON_CREDENTIAL_TYPE_VALUES)[number];
+
+export const COMPANY_CERTIFICATION_TYPE_VALUES = [
+  "ISO",
+  "QUALITY",
+  "SECURITY",
+  "CLOUD_PARTNER",
+  "MANUFACTURER_PARTNER",
+  "GOVERNMENT_REGISTRY",
+  "INDUSTRY",
+  "OTHER",
+] as const;
+export type CompanyCertificationTypeValue = (typeof COMPANY_CERTIFICATION_TYPE_VALUES)[number];
+
+export const COMPANY_CAPABILITY_CATEGORY_VALUES = [
+  "TECHNOLOGY",
+  "INFRASTRUCTURE",
+  "GEOGRAPHIC_COVERAGE",
+  "OPERATIONAL",
+  "SERVICE_CAPACITY",
+  "PLATFORM",
+  "SECURITY",
+  "QUALITY",
+  "OTHER",
+] as const;
+export type CompanyCapabilityCategoryValue = (typeof COMPANY_CAPABILITY_CATEGORY_VALUES)[number];
+
+export const COMPANY_EVIDENCE_TYPE_VALUES = [
+  "RUT",
+  "CHAMBER_CERTIFICATE",
+  "RUP",
+  "FINANCIAL_STATEMENT",
+  "TAX_RETURN",
+  "EXPERIENCE_CERTIFICATE",
+  "CONTRACT",
+  "ACT_START",
+  "COMPLETION_CERTIFICATE",
+  "LIQUIDATION_RECORD",
+  "CV",
+  "DIPLOMA",
+  "PROFESSIONAL_LICENSE",
+  "PERSON_CERTIFICATION",
+  "COMPANY_CERTIFICATION",
+  "INSURANCE",
+  "UNSPSC_SUPPORT",
+  "OTHER",
+] as const;
+export type CompanyEvidenceTypeValue = (typeof COMPANY_EVIDENCE_TYPE_VALUES)[number];
+
+export const COMPANY_EVIDENCE_REVIEW_STATUS_VALUES = [
+  "PENDING",
+  "SUPPORTED",
+  "VERIFIED",
+  "REJECTED",
+  "EXPIRED",
+  "NEEDS_REVIEW",
+] as const;
+export type CompanyEvidenceReviewStatusValue =
+  (typeof COMPANY_EVIDENCE_REVIEW_STATUS_VALUES)[number];
+
+export const COMPANY_EVIDENCE_SUBJECT_TYPE_VALUES = [
+  "COMPANY_PROFILE",
+  "LEGAL_REGISTRATION",
+  "RUP_SNAPSHOT",
+  "UNSPSC_CODE",
+  "FINANCIAL_PERIOD",
+  "FINANCIAL_METRIC",
+  "EXPERIENCE_RECORD",
+  "PERSON",
+  "PERSON_EDUCATION",
+  "PERSON_EXPERIENCE",
+  "PERSON_CREDENTIAL",
+  "COMPANY_CERTIFICATION",
+  "COMPANY_CAPABILITY",
+] as const;
+export type CompanyEvidenceSubjectTypeValue = (typeof COMPANY_EVIDENCE_SUBJECT_TYPE_VALUES)[number];
+
+export const COMPANY_EVIDENCE_ROLE_VALUES = ["PRIMARY", "SUPPORTING", "CONFLICTING"] as const;
+export type CompanyEvidenceRoleValue = (typeof COMPANY_EVIDENCE_ROLE_VALUES)[number];
+
+export const COMPANY_EVIDENCE_VALIDATION_STATUS_VALUES = [
+  "DOCUMENT_ONLY",
+  "VALID_SEGMENT",
+  "INVALID_SEGMENT",
+  "QUOTE_NOT_FOUND",
+  "LOCATION_MISMATCH",
+  "EXPIRED_EVIDENCE",
+] as const;
+export type CompanyEvidenceValidationStatusValue =
+  (typeof COMPANY_EVIDENCE_VALIDATION_STATUS_VALUES)[number];
+
+export const COMPANY_SNAPSHOT_STATUS_VALUES = ["DRAFT", "PUBLISHED", "SUPERSEDED"] as const;
+export type CompanySnapshotStatusValue = (typeof COMPANY_SNAPSHOT_STATUS_VALUES)[number];
+
+export const COMPANY_ERROR_CODE_VALUES = [
+  "COMPANY_NOT_FOUND",
+  "COMPANY_ARCHIVED",
+  "DUPLICATE_TAX_ID",
+  "INVALID_COMPANY_DATA",
+  "LEGAL_REGISTRATION_NOT_FOUND",
+  "RUP_SNAPSHOT_NOT_FOUND",
+  "FINANCIAL_PERIOD_NOT_FOUND",
+  "FINANCIAL_METRIC_NOT_FOUND",
+  "EXPERIENCE_RECORD_NOT_FOUND",
+  "PERSON_NOT_FOUND",
+  "CERTIFICATION_NOT_FOUND",
+  "CAPABILITY_NOT_FOUND",
+  "EVIDENCE_DOCUMENT_NOT_FOUND",
+  "EVIDENCE_LINK_NOT_FOUND",
+  "EVIDENCE_SUBJECT_NOT_FOUND",
+  "EVIDENCE_SUBJECT_COMPANY_MISMATCH",
+  "EVIDENCE_DOCUMENT_COMPANY_MISMATCH",
+  "EVIDENCE_QUOTE_NOT_FOUND",
+  "EVIDENCE_EXPIRED",
+  "PROFILE_INCOMPLETE",
+  "SNAPSHOT_NOT_FOUND",
+  "SNAPSHOT_ALREADY_PUBLISHED",
+  "SNAPSHOT_IMMUTABLE",
+  "SNAPSHOT_DIGEST_MISMATCH",
+  "DATABASE_ERROR",
+] as const;
+export type CompanyErrorCodeValue = (typeof COMPANY_ERROR_CODE_VALUES)[number];

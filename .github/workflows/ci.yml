@@ -91,6 +91,12 @@ jobs:
       - name: Contratos sincronizados
         run: pnpm schemas:check
 
+      - name: Pruebas de perfil de empresa
+        run: pnpm company:test
+
+      - name: Snapshot determinista de perfil de empresa
+        run: pnpm company:snapshot-check
+
       - name: Pruebas de normalizacion
         run: pnpm normalization:test
 

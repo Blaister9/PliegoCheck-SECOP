@@ -156,6 +156,19 @@ Decisiones concretas al materializar normalizacion de requisitos:
 | Evidencia | `EvidenceValidator` deterministico antes de persistir requisitos | Ningun requisito aceptado queda sin cita real. |
 | UI | Seccion `Requisitos normalizados` en detalle de proceso | Revision humana, evidencia y advertencias visibles desde la web. |
 
+## Registro de implementacion - Microfase 5 (2026-07-02)
+
+Decisiones concretas al materializar perfiles de empresa y evidencias:
+
+| Decision | Eleccion | Motivo |
+| --- | --- | --- |
+| Perfil editable | `CompanyProfile` con subentidades juridicas, RUP, UNSPSC, finanzas, experiencia, personal, certificaciones y capacidades | Separa datos declarados por dominio y evita tratar la empresa como un JSON opaco. |
+| Evidencias | `CompanyEvidenceDocument` reutiliza `ProcessDocument`, `DocumentProcessingJob`, `DocumentExtraction` y `ExtractedSegment` mediante un proceso tecnico oculto | Evita duplicar el pipeline documental y mantiene hashes, extraccion y segmentos en el modelo ya probado. |
+| Vinculacion | `CompanyEvidenceLink` conecta dato empresarial con documento, extraccion, segmento, cita y ubicacion | Mantiene trazabilidad dato -> evidencia antes de cualquier evaluacion. |
+| Completitud | Calculo deterministico `CompanyProfileCompleteness` sin decision GO / NO GO | La ausencia de soportes produce pendientes, no cumplimiento inferido. |
+| Snapshots | `CompanyProfileSnapshot` con payload canonico y digest SHA-256 | Las evaluaciones futuras referenciaran una version inmutable, no datos editables. |
+| Privacidad | Identificadores normalizados para unicidad y enmascarados en listados/UI | Reduce exposicion innecesaria de datos tributarios y personales. |
+
 ## Límites del MVP
 
 El MVP (Microfases 1–8 del [roadmap](roadmap.md)) **no incluye**:

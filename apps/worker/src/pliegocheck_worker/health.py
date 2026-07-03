@@ -17,6 +17,7 @@ def health_status() -> dict[str, str | bool]:
         "version": SERVICE_VERSION,
         "queue_connected": connected,
         "document_processing_enabled": connected,
+        "company_evidence_extraction_enabled": connected,
         "requirement_normalization_enabled": (
             normalization_connected
             and (settings.ai_enabled or settings.allow_fake_normalization_provider)

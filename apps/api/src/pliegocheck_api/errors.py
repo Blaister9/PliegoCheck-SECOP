@@ -5,6 +5,7 @@ from typing import Any
 
 from pliegocheck_schemas import (
     ApiError,
+    CompanyErrorCode,
     ExtractionErrorCode,
     NormalizationErrorCode,
     UploadErrorCode,
@@ -16,7 +17,7 @@ class DomainError(Exception):
 
     def __init__(
         self,
-        code: UploadErrorCode | ExtractionErrorCode | NormalizationErrorCode,
+        code: UploadErrorCode | ExtractionErrorCode | NormalizationErrorCode | CompanyErrorCode,
         message: str,
         *,
         status_code: int = HTTPStatus.BAD_REQUEST,
