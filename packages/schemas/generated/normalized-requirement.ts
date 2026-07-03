@@ -3,91 +3,69 @@
 // modelos Pydantic de packages/schemas/src/pliegocheck_schemas/.
 
 /**
- * Requisito normalizado de un proceso, entrada del motor deterministico.
+ * Categorias iniciales de requisitos.
+ */
+export type RequirementCategory =
+  | "LEGAL"
+  | "FINANCIAL"
+  | "ORGANIZATIONAL"
+  | "EXPERIENCE"
+  | "TECHNICAL"
+  | "WORKFORCE"
+  | "GUARANTEE"
+  | "SCHEDULE"
+  | "ECONOMIC"
+  | "OPERATIONAL"
+  | "DOCUMENTARY"
+  | "RISK_AND_INELIGIBILITY";
+export type RequirementCriticality =
+  "BLOCKING" | "HIGH" | "MEDIUM" | "LOW" | "INFORMATIONAL" | "UNKNOWN";
+export type RequirementBasis = "EXPLICIT" | "INFERRED" | "UNKNOWN";
+export type RequirementEvidenceStatus =
+  "VALIDATED" | "PARTIALLY_VALIDATED" | "REJECTED_UNSUPPORTED" | "UNKNOWN";
+export type RequirementModality =
+  "MANDATORY" | "OPTIONAL" | "CONDITIONAL" | "PROHIBITED" | "UNKNOWN";
+export type RequirementReviewStatus = "PENDING" | "IN_REVIEW" | "ACCEPTED" | "REJECTED";
+export type RequirementScope =
+  | "PROPOSAL_SUBMISSION"
+  | "HABILITATING"
+  | "SCORING"
+  | "CONTRACT_EXECUTION"
+  | "INFORMATIONAL"
+  | "UNKNOWN";
+export type RequirementSubsanability = "SUBSANABLE" | "NON_SUBSANABLE" | "CONDITIONAL" | "UNKNOWN";
+
+/**
+ * Requisito persistido tras validacion deterministica de evidencia.
  */
 export interface NormalizedRequirement {
-  /**
-   * Categoria del requisito.
-   */
-  category:
-    | "LEGAL"
-    | "FINANCIAL"
-    | "ORGANIZATIONAL"
-    | "EXPERIENCE"
-    | "TECHNICAL"
-    | "WORKFORCE"
-    | "GUARANTEE"
-    | "SCHEDULE"
-    | "ECONOMIC"
-    | "OPERATIONAL"
-    | "DOCUMENTARY"
-    | "RISK_AND_INELIGIBILITY";
-  /**
-   * Valor acreditado por la empresa con evidencia; null cuando no se conoce. Nunca se rellena con valores plausibles.
-   */
-  company_value: string | number | boolean | null;
-  /**
-   * Confianza del agente (0 a 1). Informativa: nunca sustituye la evidencia.
-   */
+  category: RequirementCategory;
+  condition_text: string | null;
   confidence: number;
-  /**
-   * Criticidad del requisito para la decision.
-   */
-  criticality: "BLOCKING" | "HIGH" | "MEDIUM" | "LOW" | "INFORMATIONAL";
-  /**
-   * Texto normalizado del requisito, fiel al documento de origen.
-   */
+  created_at: string;
+  criticality: RequirementCriticality;
+  criticality_basis: RequirementBasis;
   description: string;
-  /**
-   * Identificadores de las evidencias que respaldan el status.
-   */
-  evidence_ids: string[];
-  /**
-   * Valor exigido por el pliego cuando el requisito es cuantificable; null cuando no aplica o no esta escrito explicitamente.
-   */
-  expected_value: string | number | boolean | null;
-  /**
-   * Identificador unico del requisito dentro del proceso (por ejemplo 'REQ-001').
-   */
-  requirement_id: string;
-  /**
-   * Marca el requisito para revision humana obligatoria.
-   */
+  evidence_status: RequirementEvidenceStatus;
+  expected_value: ExpectedValue | null;
+  id: string;
+  is_active: boolean;
+  modality: RequirementModality;
+  normalization_run_id: string;
+  process_id: string;
   requires_human_review: boolean;
-  /**
-   * Version del contrato NormalizedRequirement.
-   */
-  schema_version: "1.0.0";
-  /**
-   * Identificador del documento del que proviene el requisito.
-   */
-  source_document_id: string;
-  source_location: SourceLocation;
-  /**
-   * Estado de cumplimiento; UNKNOWN cuando no hay evidencia suficiente.
-   */
-  status:
-    | "COMPLIES"
-    | "DOES_NOT_COMPLY"
-    | "PARTIAL"
-    | "UNKNOWN"
-    | "NOT_APPLICABLE"
-    | "CONFLICTING_EVIDENCE";
-  /**
-   * Subsanabilidad segun el pliego; UNKNOWN cuando no es determinable.
-   */
-  subsanability: "SUBSANABLE" | "NON_SUBSANABLE" | "CONDITIONAL" | "UNKNOWN";
+  review_status: RequirementReviewStatus;
+  scope: RequirementScope;
+  stable_key: string;
+  subsanability: RequirementSubsanability;
+  subsanability_basis: RequirementBasis;
+  updated_at: string;
 }
 /**
- * Ubicacion exacta del requisito en el documento de origen.
+ * Valor exigido por el pliego cuando existe soporte explicito.
  */
-export interface SourceLocation {
-  /**
-   * Pagina del documento de origen; cuando existe, debe ser mayor que cero.
-   */
-  page?: number | null;
-  /**
-   * Seccion o numeral del documento de origen (por ejemplo '3.2').
-   */
-  section?: string | null;
+export interface ExpectedValue {
+  raw_text: string | null;
+  unit: string | null;
+  value: string | number | boolean | null;
 }

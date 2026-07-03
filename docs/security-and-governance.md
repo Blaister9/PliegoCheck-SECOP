@@ -46,9 +46,16 @@ Controles de seguridad, aislamiento y gobernanza de decisiones que la plataforma
 ## 6. Seguridad frente a los modelos de IA
 
 - **Documentos externos tratados como datos, nunca como instrucciones.** Todo contenido documental se delimita como dato a analizar; los prompts lo declaran explícitamente ([agent-prompting-standard.md](agent-prompting-standard.md)).
-- **Resistencia básica a prompt injection documental:** validación de salidas contra esquema (Structured Outputs), verificación de citas por el `EvidenceVerificationAgent`, y rechazo de salidas que no validan. Un pliego no puede "ordenar" un `GO`.
+- **Resistencia básica a prompt injection documental:** validación de salidas contra esquema (Structured Outputs), verificación de citas por el `EvidenceValidator`, y rechazo de salidas que no validan. Un pliego no puede "ordenar" un `GO`.
 - **Herramientas autorizadas por agente:** cada agente solo dispone de las herramientas de su contrato ([agent-contracts.md](agent-contracts.md)); no hay herramientas globales.
 - **Límites de costo y tokens:** presupuesto máximo por ejecución y por análisis; al agotarse, el pipeline se detiene y escala, nunca degrada la calidad silenciosamente.
+- **Microfase 4 implementada:** la normalizacion usa Responses API con Structured Outputs,
+  `tools=[]`, prompts versionados, snapshot inmutable y `EvidenceValidator` deterministico. No se
+  suben archivos originales a OpenAI; solo segmentos seleccionados y metadata minima.
+- **IA deshabilitada por defecto:** `PLIEGOCHECK_AI_ENABLED=false`; la ausencia de clave produce un
+  error controlado cuando se solicita operacion real.
+- **Provider falso aislado:** solo se habilita con `PLIEGOCHECK_ALLOW_FAKE_NORMALIZATION_PROVIDER`
+  para tests/evals; no es seleccionable publicamente en operacion normal.
 
 ## 7. Gobernanza de la decisión
 

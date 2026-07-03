@@ -1,17 +1,28 @@
-"""Pruebas del contrato NormalizedRequirement: ejemplos, validaciones y enums."""
+"""Pruebas del contrato NormalizedRequirement v2."""
 
 import json
 from pathlib import Path
 from typing import Any
+from uuid import UUID
 
 import pytest
 from pydantic import ValidationError
 
 from pliegocheck_schemas import (
     NORMALIZED_REQUIREMENT_SCHEMA_VERSION,
+    ExpectedValue,
     NormalizedRequirement,
+    RequirementBasis,
+    RequirementCandidate,
+    RequirementCandidateEvidence,
     RequirementCategory,
-    RequirementStatus,
+    RequirementCriticality,
+    RequirementEvidenceRole,
+    RequirementModality,
+    RequirementNormalizationAgentOutput,
+    RequirementScope,
+    RequirementSubsanability,
+    SourceLocation,
 )
 
 EXAMPLES_DIR = Path(__file__).resolve().parent.parent / "examples"
@@ -23,17 +34,14 @@ def load_example(name: str) -> dict[str, Any]:
     return data
 
 
-def valid_payload() -> dict[str, Any]:
-    return load_example("normalized-requirement.valid.json")
-
-
 def test_valid_example_is_accepted() -> None:
-    requirement = NormalizedRequirement.model_validate(valid_payload())
-    assert requirement.schema_version == NORMALIZED_REQUIREMENT_SCHEMA_VERSION
-    assert requirement.requirement_id == "REQ-001"
+    requirement = NormalizedRequirement.model_validate(
+        load_example("normalized-requirement.valid.json")
+    )
+    assert NORMALIZED_REQUIREMENT_SCHEMA_VERSION == "2.0.0"
     assert requirement.category is RequirementCategory.FINANCIAL
-    assert requirement.status is RequirementStatus.UNKNOWN
-    assert requirement.evidence_ids == []
+    assert requirement.scope is RequirementScope.HABILITATING
+    assert requirement.modality is RequirementModality.MANDATORY
     assert requirement.requires_human_review is True
 
 
@@ -41,72 +49,77 @@ def test_invalid_example_is_rejected() -> None:
     with pytest.raises(ValidationError) as excinfo:
         NormalizedRequirement.model_validate(load_example("normalized-requirement.invalid.json"))
     failed_fields = {error["loc"][0] for error in excinfo.value.errors()}
-    assert {"requirement_id", "category", "description", "evidence_ids", "confidence"} <= (
-        failed_fields
+    assert {"id", "stable_key", "category", "description", "confidence"} <= failed_fields
+    assert any(error["loc"] == ("expected_value", "extra") for error in excinfo.value.errors())
+
+
+def test_requirement_extra_fields_are_rejected() -> None:
+    payload = load_example("normalized-requirement.valid.json")
+    payload["status"] = "COMPLIES"
+    with pytest.raises(ValidationError):
+        NormalizedRequirement.model_validate(payload)
+
+
+def test_agent_output_requires_structured_evidence() -> None:
+    output = RequirementNormalizationAgentOutput(
+        schema_version="2.0.0",
+        agent="RequirementNormalizationAgent",
+        prompt_version="1.0.0",
+        process_id=UUID("22222222-2222-2222-2222-222222222222"),
+        batch_index=0,
+        candidates=[
+            RequirementCandidate(
+                candidate_id="B000-C001",
+                category=RequirementCategory.FINANCIAL,
+                scope=RequirementScope.HABILITATING,
+                modality=RequirementModality.MANDATORY,
+                description="El proponente debe acreditar indice de liquidez minimo de 1.2.",
+                condition_text=None,
+                expected_value=ExpectedValue(value=1.2, unit=None, raw_text="1.2"),
+                criticality=RequirementCriticality.UNKNOWN,
+                criticality_basis=RequirementBasis.UNKNOWN,
+                subsanability=RequirementSubsanability.UNKNOWN,
+                subsanability_basis=RequirementBasis.UNKNOWN,
+                confidence=0.8,
+                evidence=[
+                    RequirementCandidateEvidence(
+                        segment_id=UUID("44444444-4444-4444-4444-444444444444"),
+                        evidence_role=RequirementEvidenceRole.PRIMARY,
+                        quoted_text="indice de liquidez minimo de 1.2",
+                        quote_start=None,
+                        quote_end=None,
+                        source_location=SourceLocation(
+                            page_number=1,
+                            paragraph_index=None,
+                            table_index=None,
+                            sheet_name=None,
+                            row_start=None,
+                            row_end=None,
+                            line_start=None,
+                            line_end=None,
+                            section=None,
+                        ),
+                    )
+                ],
+                requires_human_review=True,
+                uncertainty_reason=None,
+            )
+        ],
+        warnings=[],
     )
-    assert any(error["loc"] == ("source_location", "page") for error in excinfo.value.errors())
+    assert output.candidates[0].evidence[0].evidence_role is RequirementEvidenceRole.PRIMARY
 
 
-@pytest.mark.parametrize(
-    "field",
-    ["schema_version", "requirement_id", "status", "confidence", "requires_human_review"],
-)
-def test_top_level_fields_are_required(field: str) -> None:
-    payload = valid_payload()
-    del payload[field]
+def test_agent_output_rejects_decision_like_extra_fields() -> None:
+    payload = {
+        "schema_version": "2.0.0",
+        "agent": "RequirementNormalizationAgent",
+        "prompt_version": "1.0.0",
+        "process_id": "22222222-2222-2222-2222-222222222222",
+        "batch_index": 0,
+        "candidates": [],
+        "warnings": [],
+        "decision": "GO",
+    }
     with pytest.raises(ValidationError):
-        NormalizedRequirement.model_validate(payload)
-
-
-def test_blank_identifiers_are_rejected() -> None:
-    payload = valid_payload()
-    payload["requirement_id"] = "   "
-    with pytest.raises(ValidationError):
-        NormalizedRequirement.model_validate(payload)
-
-
-def test_confidence_out_of_range_is_rejected() -> None:
-    for value in (-0.1, 1.1):
-        payload = valid_payload()
-        payload["confidence"] = value
-        with pytest.raises(ValidationError):
-            NormalizedRequirement.model_validate(payload)
-
-
-def test_page_must_be_positive_when_present() -> None:
-    payload = valid_payload()
-    payload["source_location"] = {"page": 0, "section": "3.2"}
-    with pytest.raises(ValidationError):
-        NormalizedRequirement.model_validate(payload)
-    payload["source_location"] = {"page": None, "section": "3.2"}
-    assert NormalizedRequirement.model_validate(payload).source_location.page is None
-
-
-def test_unknown_schema_version_is_rejected() -> None:
-    payload = valid_payload()
-    payload["schema_version"] = "9.9.9"
-    with pytest.raises(ValidationError):
-        NormalizedRequirement.model_validate(payload)
-
-
-def test_enums_are_closed() -> None:
-    payload = valid_payload()
-    payload["status"] = "TAL_VEZ"
-    with pytest.raises(ValidationError):
-        NormalizedRequirement.model_validate(payload)
-
-
-def test_extra_fields_are_rejected() -> None:
-    payload = valid_payload()
-    payload["campo_inventado"] = "valor"
-    with pytest.raises(ValidationError):
-        NormalizedRequirement.model_validate(payload)
-
-
-def test_scalar_values_are_accepted_for_comparable_fields() -> None:
-    payload = valid_payload()
-    payload["expected_value"] = 1.2
-    payload["company_value"] = "certificado"
-    requirement = NormalizedRequirement.model_validate(payload)
-    assert requirement.expected_value == 1.2
-    assert requirement.company_value == "certificado"
+        RequirementNormalizationAgentOutput.model_validate(payload)

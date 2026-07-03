@@ -39,10 +39,22 @@ from pliegocheck_schemas.manual_import import (
 )
 from pliegocheck_schemas.normalized_requirement import (
     NORMALIZED_REQUIREMENT_SCHEMA_VERSION,
+    NormalizationErrorCode,
+    NormalizationProvider,
     NormalizedRequirement,
+    RejectedCandidateReason,
+    RequirementBasis,
     RequirementCategory,
     RequirementCriticality,
-    RequirementStatus,
+    RequirementEvidenceRole,
+    RequirementEvidenceStatus,
+    RequirementEvidenceValidationStatus,
+    RequirementModality,
+    RequirementNormalizationContracts,
+    RequirementNormalizationStatus,
+    RequirementRelationType,
+    RequirementReviewStatus,
+    RequirementScope,
     RequirementSubsanability,
 )
 
@@ -104,14 +116,63 @@ def generate_requirement_enums_ts() -> None:
         ts_const_block(
             "REQUIREMENT_CATEGORY_VALUES", "RequirementCategoryValue", RequirementCategory
         ),
-        ts_const_block("REQUIREMENT_STATUS_VALUES", "RequirementStatusValue", RequirementStatus),
+        ts_const_block("REQUIREMENT_SCOPE_VALUES", "RequirementScopeValue", RequirementScope),
+        ts_const_block(
+            "REQUIREMENT_MODALITY_VALUES", "RequirementModalityValue", RequirementModality
+        ),
         ts_const_block(
             "REQUIREMENT_CRITICALITY_VALUES", "RequirementCriticalityValue", RequirementCriticality
         ),
+        ts_const_block("REQUIREMENT_BASIS_VALUES", "RequirementBasisValue", RequirementBasis),
         ts_const_block(
             "REQUIREMENT_SUBSANABILITY_VALUES",
             "RequirementSubsanabilityValue",
             RequirementSubsanability,
+        ),
+        ts_const_block(
+            "REQUIREMENT_EVIDENCE_STATUS_VALUES",
+            "RequirementEvidenceStatusValue",
+            RequirementEvidenceStatus,
+        ),
+        ts_const_block(
+            "REQUIREMENT_REVIEW_STATUS_VALUES",
+            "RequirementReviewStatusValue",
+            RequirementReviewStatus,
+        ),
+        ts_const_block(
+            "REQUIREMENT_EVIDENCE_ROLE_VALUES",
+            "RequirementEvidenceRoleValue",
+            RequirementEvidenceRole,
+        ),
+        ts_const_block(
+            "REQUIREMENT_EVIDENCE_VALIDATION_STATUS_VALUES",
+            "RequirementEvidenceValidationStatusValue",
+            RequirementEvidenceValidationStatus,
+        ),
+        ts_const_block(
+            "REQUIREMENT_RELATION_TYPE_VALUES",
+            "RequirementRelationTypeValue",
+            RequirementRelationType,
+        ),
+        ts_const_block(
+            "NORMALIZATION_PROVIDER_VALUES",
+            "NormalizationProviderValue",
+            NormalizationProvider,
+        ),
+        ts_const_block(
+            "REQUIREMENT_NORMALIZATION_STATUS_VALUES",
+            "RequirementNormalizationStatusValue",
+            RequirementNormalizationStatus,
+        ),
+        ts_const_block(
+            "REJECTED_CANDIDATE_REASON_VALUES",
+            "RejectedCandidateReasonValue",
+            RejectedCandidateReason,
+        ),
+        ts_const_block(
+            "NORMALIZATION_ERROR_CODE_VALUES",
+            "NormalizationErrorCodeValue",
+            NormalizationErrorCode,
         ),
     ]
     write_text(GENERATED_DIR / "normalized-requirement.enums.ts", "\n".join(blocks))
@@ -174,6 +235,10 @@ def generate_document_extraction_enums_ts() -> None:
 def main() -> int:
     try:
         generate_json_schema(NormalizedRequirement, "normalized-requirement.schema.json")
+        generate_json_schema(
+            RequirementNormalizationContracts,
+            "requirement-normalization.schema.json",
+        )
         generate_json_schema(ManualImportContracts, "manual-import.schema.json")
         generate_json_schema(DocumentExtractionContracts, "document-extraction.schema.json")
         generate_requirement_enums_ts()

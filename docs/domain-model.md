@@ -76,22 +76,44 @@ Convenciones de este documento, aplicables a toda entidad:
 - **Nunca debe inventarse:** texto de páginas que no pudieron extraerse — se registran como fallidas.
 
 ### Requirement
-**Propósito:** requisito normalizado del proceso (habilitante, técnico, económico, etc.), unidad central del análisis. Su esquema operativo está en [decision-engine.md](decision-engine.md).
+**Proposito:** requisito normalizado del proceso (habilitante, tecnico, financiero,
+juridico, experiencia, personal, documental, tecnico-operativo u otro), unidad
+central del analisis posterior. En Microfase 4 no representa cumplimiento ni
+decision GO / NO GO; solo captura lo que el pliego exige y la evidencia textual
+que soporta esa exigencia. Su contrato operativo esta en
+[requirement-normalization.md](requirement-normalization.md).
 
-- **Campos conceptuales:** categoría, descripción normalizada, documento y ubicación de origen (página, sección), criticidad, subsanabilidad, valor esperado, estado de cumplimiento, confianza, indicador de revisión humana.
-- **Relaciones:** pertenece a una `ProcessVersion`; proviene de un `ProcessDocument`; tiene `RequirementEvidence`s y `Finding`s; es evaluado en `Evaluation`s.
-- **Requiere evidencia:** su existencia misma — todo requisito apunta a documento, página y sección de origen.
-- **Puede inferirse:** categoría y criticidad propuestas por el agente normalizador, marcadas con confianza.
-- **Nunca debe inventarse:** requisitos que no aparecen en los documentos; valores esperados no escritos en el pliego; subsanabilidad no determinable (queda `UNKNOWN`).
+- **Campos conceptuales:** categoria, alcance, modalidad, descripcion normalizada,
+  condicion aplicable, valor esperado, base normativa/procedimental, criticidad,
+  subsanabilidad, confianza del extractor, estado de revision humana, llave
+  estable y hash de evidencia.
+- **Relaciones:** pertenece a un `Process`; proviene de una ejecucion de
+  normalizacion; tiene `RequirementEvidence`s; puede tener `RequirementRelation`s
+  con duplicados, conflictos o adendas potenciales; sera evaluado en microfases
+  posteriores.
+- **Requiere evidencia:** su existencia misma; todo requisito aceptado apunta a
+  documento, extraccion, segmento, ubicacion y cita exacta verificable.
+- **Puede inferirse:** categoria, alcance, modalidad y criticidad propuestas por
+  el agente normalizador, siempre con trazabilidad y revision humana pendiente.
+- **Nunca debe inventarse:** requisitos que no aparecen en los documentos; valores
+  esperados no escritos en el pliego; subsanabilidad no determinable (queda
+  `UNKNOWN`); cumplimiento, `GO`, `NO_GO` o valor de empresa.
 
 ### RequirementEvidence
-**Propósito:** vínculo verificable entre un requisito y el soporte de la empresa (o del proceso) que lo acredita o contradice.
+**Proposito:** vinculo verificable entre un requisito normalizado y el fragmento
+del documento SECOP que lo soporta.
 
-- **Campos conceptuales:** tipo de evidencia, referencia al documento soporte y su ubicación, valor acreditado, sentido (soporta / contradice), fecha de validez.
-- **Relaciones:** conecta `Requirement` con documentos de `CompanyProfile` o `ProcessDocument`s.
+- **Campos conceptuales:** rol, documento, extraccion, segmento, ubicacion,
+  cita exacta, offsets, hash de cita, estado de validacion y detalle de error si
+  la evidencia fue rechazada.
+- **Relaciones:** conecta `Requirement` con `ProcessDocument` y
+  `DocumentExtractionSegment`; las evidencias de empresa se modelaran en
+  microfases posteriores.
 - **Requiere evidencia:** es evidencia por definición; sin documento asociado no existe.
-- **Puede inferirse:** nada.
-- **Nunca debe inventarse:** ninguna evidencia; una evidencia sin documento verificable es una violación del modelo.
+- **Puede inferirse:** nada; el validador solo confirma que la cita existe en el
+  segmento indicado.
+- **Nunca debe inventarse:** ninguna evidencia; una evidencia sin cita exacta y
+  documento verificable es una violacion del modelo.
 
 ### CompanyCapability
 **Propósito:** capacidad estructurada de la empresa (experiencia por tipo de obra/servicio, equipo disponible, capacidad operativa) usada para contrastar contra requisitos.
@@ -150,8 +172,10 @@ Convenciones de este documento, aplicables a toda entidad:
 ### PromptVersion
 **Propósito:** versión inmutable de un prompt de agente, para reproducibilidad.
 
-- **Campos conceptuales:** agente al que pertenece, versión, contenido, esquema de salida asociado, fecha, changelog.
-- **Relaciones:** referenciada por `AgentRun`s.
+- **Campos conceptuales:** agente al que pertenece, version, contenido,
+  esquema de salida asociado, hash SHA-256, estado activo, fecha, changelog.
+- **Relaciones:** referenciada por `AgentRun`s y por ejecuciones de
+  normalizacion de requisitos.
 - **Requiere evidencia:** n/a.
 - **Puede inferirse:** nada.
 - **Nunca debe inventarse:** n/a.

@@ -26,8 +26,9 @@ class Settings(BaseSettings):
     version: str = "0.1.0"
     title: str = "PliegoCheck-SECOP API"
     description: str = (
-        "API de PliegoCheck-SECOP. Microfase 3: importacion manual, inventario "
-        "y extraccion documental deterministica, sin evaluacion GO / NO GO."
+        "API de PliegoCheck-SECOP. Microfase 4: importacion manual, inventario, "
+        "extraccion documental deterministica y normalizacion de requisitos con evidencia, "
+        "sin evaluacion GO / NO GO."
     )
     database_url: str = Field(validation_alias="DATABASE_URL")
     storage_path: Path = Field(validation_alias="PLIEGOCHECK_STORAGE_PATH")
@@ -93,6 +94,72 @@ class Settings(BaseSettings):
         validation_alias="PLIEGOCHECK_WORKER_MAX_ATTEMPTS",
         ge=1,
         le=20,
+    )
+    ai_enabled: bool = Field(default=False, validation_alias="PLIEGOCHECK_AI_ENABLED")
+    openai_api_key: str | None = Field(default=None, validation_alias="OPENAI_API_KEY")
+    openai_normalization_model: str = Field(
+        default="gpt-5.5-pro",
+        validation_alias="OPENAI_NORMALIZATION_MODEL",
+    )
+    openai_normalization_reasoning_effort: str = Field(
+        default="high",
+        validation_alias="OPENAI_NORMALIZATION_REASONING_EFFORT",
+    )
+    openai_normalization_background: bool = Field(
+        default=True,
+        validation_alias="OPENAI_NORMALIZATION_BACKGROUND",
+    )
+    openai_normalization_max_output_tokens: int = Field(
+        default=16_000,
+        validation_alias="OPENAI_NORMALIZATION_MAX_OUTPUT_TOKENS",
+        ge=1_000,
+        le=200_000,
+    )
+    openai_normalization_timeout_seconds: int = Field(
+        default=600,
+        validation_alias="OPENAI_NORMALIZATION_TIMEOUT_SECONDS",
+        ge=10,
+        le=7_200,
+    )
+    openai_normalization_poll_interval_seconds: int = Field(
+        default=5,
+        validation_alias="OPENAI_NORMALIZATION_POLL_INTERVAL_SECONDS",
+        ge=1,
+        le=120,
+    )
+    openai_normalization_max_calls_per_run: int = Field(
+        default=50,
+        validation_alias="OPENAI_NORMALIZATION_MAX_CALLS_PER_RUN",
+        ge=1,
+        le=1_000,
+    )
+    openai_normalization_max_segments_per_batch: int = Field(
+        default=25,
+        validation_alias="OPENAI_NORMALIZATION_MAX_SEGMENTS_PER_BATCH",
+        ge=1,
+        le=200,
+    )
+    openai_normalization_max_characters_per_batch: int = Field(
+        default=40_000,
+        validation_alias="OPENAI_NORMALIZATION_MAX_CHARACTERS_PER_BATCH",
+        ge=1_000,
+        le=500_000,
+    )
+    openai_normalization_max_total_characters: int = Field(
+        default=500_000,
+        validation_alias="OPENAI_NORMALIZATION_MAX_TOTAL_CHARACTERS",
+        ge=1_000,
+        le=10_000_000,
+    )
+    openai_normalization_max_retries: int = Field(
+        default=3,
+        validation_alias="OPENAI_NORMALIZATION_MAX_RETRIES",
+        ge=0,
+        le=10,
+    )
+    allow_fake_normalization_provider: bool = Field(
+        default=False,
+        validation_alias="PLIEGOCHECK_ALLOW_FAKE_NORMALIZATION_PROVIDER",
     )
 
     @field_validator("allowed_web_origins", mode="before")

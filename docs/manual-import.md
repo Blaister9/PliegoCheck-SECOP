@@ -84,8 +84,9 @@ Las respuestas no exponen `storage_key`, rutas absolutas ni temporales. La desca
 documento pertenezca al proceso solicitado. Los eventos registran metadata minima, nunca bytes ni
 contenido documental.
 
-## Relacion con extraccion
+## Relacion con extraccion y normalizacion
 
 La carga manual conserva el original y dispara el trabajo de extraccion. Si el worker no se ejecuta,
-el documento queda `QUEUED`. La extraccion no emite `GO`, `NO_GO` ni requisitos normalizados; solo
-produce inventario, metadata, advertencias y segmentos trazables.
+el documento queda `QUEUED`. La extraccion produce inventario, metadata, advertencias y segmentos
+trazables. Desde la Microfase 4, esos segmentos pueden alimentar una normalizacion asincrona de
+requisitos, que tampoco emite `GO`, `NO_GO` ni cumplimiento empresarial.

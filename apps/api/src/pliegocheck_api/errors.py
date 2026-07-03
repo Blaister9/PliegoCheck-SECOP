@@ -3,7 +3,12 @@
 from http import HTTPStatus
 from typing import Any
 
-from pliegocheck_schemas import ApiError, ExtractionErrorCode, UploadErrorCode
+from pliegocheck_schemas import (
+    ApiError,
+    ExtractionErrorCode,
+    NormalizationErrorCode,
+    UploadErrorCode,
+)
 
 
 class DomainError(Exception):
@@ -11,7 +16,7 @@ class DomainError(Exception):
 
     def __init__(
         self,
-        code: UploadErrorCode | ExtractionErrorCode,
+        code: UploadErrorCode | ExtractionErrorCode | NormalizationErrorCode,
         message: str,
         *,
         status_code: int = HTTPStatus.BAD_REQUEST,

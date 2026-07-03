@@ -143,6 +143,19 @@ Decisiones concretas tomadas al implementar la importación manual:
 | Contratos | Pydantic canónico → JSON Schema → TypeScript | La web y la API consumen contratos de procesos, documentos y carga desde `packages/schemas`. |
 | Cola | Pospuesta | No hay extracción ni procesamiento asíncrono todavía; el worker informa `document_processing_enabled=false`. |
 
+## Registro de implementacion - Microfase 4 (2026-07-02)
+
+Decisiones concretas al materializar normalizacion de requisitos:
+
+| Decision | Eleccion | Motivo |
+| --- | --- | --- |
+| Provider IA | OpenAI Responses API via SDK oficial Python | Mantiene el stack objetivo y permite Structured Outputs. |
+| Aislamiento provider | `RequirementNormalizationProvider` con implementaciones OpenAI y fake | El dominio y el worker no dependen directamente del SDK. |
+| Prompts | Archivos versionados bajo `prompts/requirement-normalization/v1` y `prompt_versions` en PostgreSQL | Reproducibilidad y auditoria de contenido exacto. |
+| Snapshot | `input_manifest` + `input_digest` por run | Las extracciones nuevas no alteran ejecuciones historicas. |
+| Evidencia | `EvidenceValidator` deterministico antes de persistir requisitos | Ningun requisito aceptado queda sin cita real. |
+| UI | Seccion `Requisitos normalizados` en detalle de proceso | Revision humana, evidencia y advertencias visibles desde la web. |
+
 ## Límites del MVP
 
 El MVP (Microfases 1–8 del [roadmap](roadmap.md)) **no incluye**:

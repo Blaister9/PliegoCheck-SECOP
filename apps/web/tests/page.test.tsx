@@ -24,7 +24,7 @@ describe("pagina principal", () => {
   it("muestra el nombre del producto y el estado de la fase", () => {
     render(<Home />);
     expect(screen.getByRole("heading", { level: 1, name: "PliegoCheck-SECOP" })).toBeDefined();
-    expect(screen.getByText("Inventario y extraccion documental - Microfase 3")).toBeDefined();
+    expect(screen.getByText("Normalizacion de requisitos - Microfase 4")).toBeDefined();
     expect(screen.getByRole("link", { name: "Procesos importados" })).toBeDefined();
     expect(screen.getByRole("link", { name: "Crear proceso" })).toBeDefined();
   });
@@ -46,13 +46,13 @@ describe("pagina principal", () => {
   it("muestra el aviso de que no existe analisis de requisitos", () => {
     render(<Home />);
     expect(screen.getByRole("note", { name: "Estado del proyecto" }).textContent).toContain(
-      "todavia no evalua requisitos",
+      "no evalua si una empresa cumple",
     );
   });
 
   it("consume el paquete compartido de schemas", () => {
     render(<Home />);
-    expect(NORMALIZED_REQUIREMENT_SCHEMA_VERSION).toBe("1.0.0");
+    expect(NORMALIZED_REQUIREMENT_SCHEMA_VERSION).toBe("2.0.0");
     expect(REQUIREMENT_CATEGORY_VALUES.length).toBe(12);
     expect(
       screen.getAllByText(new RegExp(`v${NORMALIZED_REQUIREMENT_SCHEMA_VERSION}`)).length,
@@ -130,6 +130,8 @@ describe("detalle de proceso", () => {
     fetchMock
       .mockResolvedValueOnce(jsonResponse(processDetail()))
       .mockResolvedValueOnce(jsonResponse(processInventory()))
+      .mockResolvedValueOnce(jsonResponse(normalizationList()))
+      .mockResolvedValueOnce(jsonResponse(requirementList()))
       .mockResolvedValueOnce(
         jsonResponse(
           {
@@ -149,7 +151,9 @@ describe("detalle de proceso", () => {
         ),
       )
       .mockResolvedValueOnce(jsonResponse(processDetail()))
-      .mockResolvedValueOnce(jsonResponse(processInventory()));
+      .mockResolvedValueOnce(jsonResponse(processInventory()))
+      .mockResolvedValueOnce(jsonResponse(normalizationList()))
+      .mockResolvedValueOnce(jsonResponse(requirementList()));
 
     render(<ProcessDetailClient processId="11111111-1111-1111-1111-111111111111" />);
     expect(await screen.findByText("Proceso de prueba")).toBeDefined();
@@ -160,6 +164,7 @@ describe("detalle de proceso", () => {
     ).toBeDefined();
     expect(screen.getByText("pliego.pdf")).toBeDefined();
     expect(screen.getByText("Estado: QUEUED")).toBeDefined();
+    expect(screen.getByText("Requisitos normalizados")).toBeDefined();
     const file = new File(["contenido"], "nuevo.pdf", { type: "application/pdf" });
     fireEvent.change(screen.getByLabelText("Documentos"), { target: { files: [file] } });
     fireEvent.click(screen.getByRole("button", { name: "Cargar" }));
@@ -172,6 +177,8 @@ describe("detalle de proceso", () => {
     fetchMock
       .mockResolvedValueOnce(jsonResponse(processDetail()))
       .mockResolvedValueOnce(jsonResponse(processInventory("COMPLETED")))
+      .mockResolvedValueOnce(jsonResponse(normalizationList()))
+      .mockResolvedValueOnce(jsonResponse(requirementList()))
       .mockResolvedValueOnce(jsonResponse(segmentList()));
 
     render(<ProcessDetailClient processId="11111111-1111-1111-1111-111111111111" />);
@@ -179,6 +186,29 @@ describe("detalle de proceso", () => {
     fireEvent.click(screen.getByRole("button", { name: "Ver segmentos" }));
     expect(await screen.findByText("Segmentos 1-1 de 1")).toBeDefined();
     expect(screen.getByText("Linea extraida <script>alert(1)</script>")).toBeDefined();
+  });
+
+  it("muestra runs y detalle de evidencia de requisitos", async () => {
+    const fetchMock = vi.mocked(fetch);
+    fetchMock
+      .mockResolvedValueOnce(jsonResponse(processDetail()))
+      .mockResolvedValueOnce(jsonResponse(processInventory("COMPLETED")))
+      .mockResolvedValueOnce(jsonResponse(normalizationList("COMPLETED")))
+      .mockResolvedValueOnce(jsonResponse(requirementList()))
+      .mockResolvedValueOnce(jsonResponse(requirementDetail()));
+
+    render(<ProcessDetailClient processId="11111111-1111-1111-1111-111111111111" />);
+    expect(await screen.findByText("Ultima ejecucion: COMPLETED")).toBeDefined();
+    expect(
+      screen.getByText("El proponente debe acreditar indice de liquidez minimo de 1.2."),
+    ).toBeDefined();
+    fireEvent.click(
+      screen.getByRole("button", {
+        name: "El proponente debe acreditar indice de liquidez minimo de 1.2.",
+      }),
+    );
+    expect(await screen.findByText("Detalle del requisito")).toBeDefined();
+    expect(screen.getByText("indice de liquidez minimo de 1.2")).toBeDefined();
   });
 });
 
@@ -278,6 +308,125 @@ function segmentList() {
         created_at: "2026-07-02T00:00:00Z",
       },
     ],
+  };
+}
+
+function normalizationList(status = "PENDING") {
+  return {
+    process_id: "11111111-1111-1111-1111-111111111111",
+    total: 1,
+    limit: 20,
+    offset: 0,
+    items: [
+      {
+        id: "66666666-6666-6666-6666-666666666666",
+        job_id: "77777777-7777-7777-7777-777777777777",
+        process_id: "11111111-1111-1111-1111-111111111111",
+        status,
+        provider: "fake",
+        model: "gpt-5.5-pro",
+        reasoning_effort: "high",
+        prompt_version_id: "88888888-8888-8888-8888-888888888888",
+        consolidation_prompt_version_id: "99999999-9999-9999-9999-999999999999",
+        input_digest: "a".repeat(64),
+        source_extraction_ids: ["44444444-4444-4444-4444-444444444444"],
+        segment_count: 1,
+        batch_count: 1,
+        candidate_count: 1,
+        accepted_requirement_count: status === "COMPLETED" ? 1 : 0,
+        rejected_candidate_count: 0,
+        warning_count: 0,
+        input_tokens: 10,
+        output_tokens: 20,
+        reasoning_tokens: 0,
+        provider_response_ids: [],
+        started_at: null,
+        finished_at: null,
+        error_code: null,
+        error_message: null,
+        created_at: "2026-07-02T00:00:00Z",
+        updated_at: "2026-07-02T00:00:00Z",
+      },
+    ],
+  };
+}
+
+function requirementList() {
+  return {
+    process_id: "11111111-1111-1111-1111-111111111111",
+    total: 1,
+    limit: 50,
+    offset: 0,
+    items: [requirementBase()],
+  };
+}
+
+function requirementDetail() {
+  return {
+    ...requirementBase(),
+    evidence: [
+      {
+        id: "bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb",
+        requirement_id: "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
+        extraction_id: "44444444-4444-4444-4444-444444444444",
+        segment_id: "55555555-5555-5555-5555-555555555555",
+        evidence_role: "PRIMARY",
+        quoted_text: "indice de liquidez minimo de 1.2",
+        quote_start: null,
+        quote_end: null,
+        source_location: {
+          page_number: 1,
+          paragraph_index: null,
+          table_index: null,
+          sheet_name: null,
+          row_start: null,
+          row_end: null,
+          line_start: null,
+          line_end: null,
+          section: null,
+        },
+        validation_status: "VALID",
+        created_at: "2026-07-02T00:00:00Z",
+      },
+    ],
+    relations: [],
+    run: normalizationList("COMPLETED").items[0],
+    prompt_version: {
+      id: "88888888-8888-8888-8888-888888888888",
+      prompt_name: "requirement-normalization",
+      semantic_version: "1.0.0",
+      content_sha256: "b".repeat(64),
+      provider: "openai",
+      is_active: true,
+      created_at: "2026-07-02T00:00:00Z",
+    },
+    documents: [],
+  };
+}
+
+function requirementBase() {
+  return {
+    id: "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
+    process_id: "11111111-1111-1111-1111-111111111111",
+    normalization_run_id: "66666666-6666-6666-6666-666666666666",
+    stable_key: "c".repeat(64),
+    category: "FINANCIAL",
+    scope: "HABILITATING",
+    modality: "MANDATORY",
+    description: "El proponente debe acreditar indice de liquidez minimo de 1.2.",
+    condition_text: null,
+    expected_value: { value: 1.2, unit: null, raw_text: "1.2" },
+    criticality: "UNKNOWN",
+    criticality_basis: "UNKNOWN",
+    subsanability: "UNKNOWN",
+    subsanability_basis: "UNKNOWN",
+    confidence: 0.86,
+    evidence_status: "VALIDATED",
+    review_status: "PENDING",
+    requires_human_review: true,
+    is_active: true,
+    created_at: "2026-07-02T00:00:00Z",
+    updated_at: "2026-07-02T00:00:00Z",
   };
 }
 

@@ -5,11 +5,18 @@ import type {
   ExtractedSegmentType,
   DocumentUploadResponse,
   ExtractionRetryResponse,
+  NormalizationCreateRequest,
+  NormalizationCreateResponse,
+  NormalizationRetryResponse,
+  NormalizationRunDetail,
+  NormalizationRunList,
   ProcessInventory,
   ProcessCreate,
   ProcessDetail,
   ProcessList,
   ProcessStatus,
+  RequirementDetail,
+  RequirementList,
 } from "@pliegocheck/schemas";
 
 const DEFAULT_TIMEOUT_MS = 10_000;
@@ -141,6 +148,51 @@ export function getExtractionSegments(
   return request<ExtractedSegmentList>(
     `/processes/${processId}/documents/${documentId}/extraction/segments?${query.toString()}`,
   );
+}
+
+export function createRequirementNormalization(
+  processId: string,
+  payload: NormalizationCreateRequest = { force: false, document_ids: null },
+) {
+  return request<NormalizationCreateResponse>(
+    `/processes/${processId}/requirements/normalizations`,
+    {
+      method: "POST",
+      body: JSON.stringify(payload),
+    },
+  );
+}
+
+export function listRequirementNormalizations(processId: string) {
+  return request<NormalizationRunList>(
+    `/processes/${processId}/requirements/normalizations?limit=20&offset=0`,
+  );
+}
+
+export function getRequirementNormalization(processId: string, runId: string) {
+  return request<NormalizationRunDetail>(
+    `/processes/${processId}/requirements/normalizations/${runId}`,
+  );
+}
+
+export function retryRequirementNormalization(processId: string, runId: string) {
+  return request<NormalizationRetryResponse>(
+    `/processes/${processId}/requirements/normalizations/${runId}/retry`,
+    {
+      method: "POST",
+      body: JSON.stringify({}),
+    },
+  );
+}
+
+export function listRequirements(processId: string, normalizationRunId?: string) {
+  const query = new URLSearchParams({ limit: "50", offset: "0" });
+  if (normalizationRunId) query.set("normalization_run_id", normalizationRunId);
+  return request<RequirementList>(`/processes/${processId}/requirements?${query.toString()}`);
+}
+
+export function getRequirement(processId: string, requirementId: string) {
+  return request<RequirementDetail>(`/processes/${processId}/requirements/${requirementId}`);
 }
 
 export async function uploadDocuments(processId: string, files: File[]) {
