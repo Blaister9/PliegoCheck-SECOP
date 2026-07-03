@@ -11,6 +11,10 @@ const generatedDir = join(here, "..", "generated");
 
 const CONTRACTS = [
   {
+    schema: "company-profile.schema.json",
+    output: "company-profile.ts",
+  },
+  {
     schema: "normalized-requirement.schema.json",
     output: "normalized-requirement.ts",
   },

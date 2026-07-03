@@ -1,0 +1,4730 @@
+{
+  "$defs": {
+    "CompanyCapability": {
+      "additionalProperties": false,
+      "properties": {
+        "category": {
+          "$ref": "#/$defs/CompanyCapabilityCategory"
+        },
+        "company_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "created_at": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 5000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 500,
+          "minLength": 1,
+          "type": "string"
+        },
+        "status": {
+          "$ref": "#/$defs/CompanyRecordStatus",
+          "default": "DECLARED"
+        },
+        "territorial_scope": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "unit": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "updated_at": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "valid_from": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "valid_until": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "value": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": ["category", "name", "id", "company_id", "created_at", "updated_at"],
+      "type": "object"
+    },
+    "CompanyCapabilityCategory": {
+      "enum": [
+        "TECHNOLOGY",
+        "INFRASTRUCTURE",
+        "GEOGRAPHIC_COVERAGE",
+        "OPERATIONAL",
+        "SERVICE_CAPACITY",
+        "PLATFORM",
+        "SECURITY",
+        "QUALITY",
+        "OTHER"
+      ],
+      "type": "string"
+    },
+    "CompanyCapabilityCreate": {
+      "additionalProperties": false,
+      "properties": {
+        "category": {
+          "$ref": "#/$defs/CompanyCapabilityCategory"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 5000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "name": {
+          "maxLength": 500,
+          "minLength": 1,
+          "type": "string"
+        },
+        "status": {
+          "$ref": "#/$defs/CompanyRecordStatus",
+          "default": "DECLARED"
+        },
+        "territorial_scope": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "unit": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "valid_from": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "valid_until": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "value": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": ["category", "name"],
+      "type": "object"
+    },
+    "CompanyCapabilityUpdate": {
+      "additionalProperties": false,
+      "properties": {
+        "category": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CompanyCapabilityCategory"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 5000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "status": {
+          "$ref": "#/$defs/CompanyRecordStatus",
+          "default": "DECLARED"
+        },
+        "territorial_scope": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "unit": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "valid_from": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "valid_until": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "value": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "type": "object"
+    },
+    "CompanyCertification": {
+      "additionalProperties": false,
+      "properties": {
+        "certificate_number": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "certification_type": {
+          "$ref": "#/$defs/CompanyCertificationType"
+        },
+        "company_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "created_at": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "expires_at": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "issued_at": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "issuer": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "name": {
+          "maxLength": 500,
+          "minLength": 1,
+          "type": "string"
+        },
+        "scope": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "status": {
+          "$ref": "#/$defs/CompanyRecordStatus",
+          "default": "DECLARED"
+        },
+        "updated_at": {
+          "format": "date-time",
+          "type": "string"
+        }
+      },
+      "required": ["certification_type", "name", "id", "company_id", "created_at", "updated_at"],
+      "type": "object"
+    },
+    "CompanyCertificationCreate": {
+      "additionalProperties": false,
+      "properties": {
+        "certificate_number": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "certification_type": {
+          "$ref": "#/$defs/CompanyCertificationType"
+        },
+        "expires_at": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "issued_at": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "issuer": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "name": {
+          "maxLength": 500,
+          "minLength": 1,
+          "type": "string"
+        },
+        "scope": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "status": {
+          "$ref": "#/$defs/CompanyRecordStatus",
+          "default": "DECLARED"
+        }
+      },
+      "required": ["certification_type", "name"],
+      "type": "object"
+    },
+    "CompanyCertificationType": {
+      "enum": [
+        "ISO",
+        "QUALITY",
+        "SECURITY",
+        "CLOUD_PARTNER",
+        "MANUFACTURER_PARTNER",
+        "GOVERNMENT_REGISTRY",
+        "INDUSTRY",
+        "OTHER"
+      ],
+      "type": "string"
+    },
+    "CompanyCertificationUpdate": {
+      "additionalProperties": false,
+      "properties": {
+        "certificate_number": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "certification_type": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CompanyCertificationType"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "expires_at": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "issued_at": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "issuer": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "scope": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "status": {
+          "$ref": "#/$defs/CompanyRecordStatus",
+          "default": "DECLARED"
+        }
+      },
+      "type": "object"
+    },
+    "CompanyEvidenceDocumentMetadata": {
+      "additionalProperties": false,
+      "properties": {
+        "company_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "created_at": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "evidence_type": {
+          "$ref": "#/$defs/CompanyEvidenceType"
+        },
+        "expires_at": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "extension": {
+          "type": "string"
+        },
+        "id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "issued_at": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "issuer": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "original_filename": {
+          "type": "string"
+        },
+        "process_document_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "processing_status": {
+          "type": "string"
+        },
+        "review_status": {
+          "$ref": "#/$defs/CompanyEvidenceReviewStatus"
+        },
+        "sha256": {
+          "pattern": "^[a-f0-9]{64}$",
+          "type": "string"
+        },
+        "size_bytes": {
+          "exclusiveMinimum": 0,
+          "type": "integer"
+        },
+        "title": {
+          "type": "string"
+        },
+        "updated_at": {
+          "format": "date-time",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "company_id",
+        "process_document_id",
+        "evidence_type",
+        "title",
+        "original_filename",
+        "extension",
+        "size_bytes",
+        "sha256",
+        "issuer",
+        "issued_at",
+        "expires_at",
+        "review_status",
+        "processing_status",
+        "notes",
+        "created_at",
+        "updated_at"
+      ],
+      "type": "object"
+    },
+    "CompanyEvidenceLink": {
+      "additionalProperties": false,
+      "properties": {
+        "company_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "created_at": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "document_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "evidence_role": {
+          "$ref": "#/$defs/CompanyEvidenceRole",
+          "default": "PRIMARY"
+        },
+        "extraction_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "quoted_text": {
+          "anyOf": [
+            {
+              "maxLength": 5000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "review_status": {
+          "$ref": "#/$defs/CompanyEvidenceReviewStatus",
+          "default": "PENDING"
+        },
+        "segment_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "source_location": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "subject_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "subject_type": {
+          "$ref": "#/$defs/CompanyEvidenceSubjectType"
+        },
+        "updated_at": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "validation_status": {
+          "$ref": "#/$defs/CompanyEvidenceValidationStatus"
+        }
+      },
+      "required": [
+        "document_id",
+        "subject_type",
+        "subject_id",
+        "id",
+        "company_id",
+        "validation_status",
+        "created_at",
+        "updated_at"
+      ],
+      "type": "object"
+    },
+    "CompanyEvidenceLinkCreate": {
+      "additionalProperties": false,
+      "properties": {
+        "document_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "evidence_role": {
+          "$ref": "#/$defs/CompanyEvidenceRole",
+          "default": "PRIMARY"
+        },
+        "extraction_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "quoted_text": {
+          "anyOf": [
+            {
+              "maxLength": 5000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "review_status": {
+          "$ref": "#/$defs/CompanyEvidenceReviewStatus",
+          "default": "PENDING"
+        },
+        "segment_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "source_location": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "subject_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "subject_type": {
+          "$ref": "#/$defs/CompanyEvidenceSubjectType"
+        }
+      },
+      "required": ["document_id", "subject_type", "subject_id"],
+      "type": "object"
+    },
+    "CompanyEvidenceLinkReview": {
+      "additionalProperties": false,
+      "properties": {
+        "notes": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "review_status": {
+          "$ref": "#/$defs/CompanyEvidenceReviewStatus"
+        }
+      },
+      "required": ["review_status"],
+      "type": "object"
+    },
+    "CompanyEvidenceReviewStatus": {
+      "enum": ["PENDING", "SUPPORTED", "VERIFIED", "REJECTED", "EXPIRED", "NEEDS_REVIEW"],
+      "type": "string"
+    },
+    "CompanyEvidenceRole": {
+      "enum": ["PRIMARY", "SUPPORTING", "CONFLICTING"],
+      "type": "string"
+    },
+    "CompanyEvidenceSubjectType": {
+      "enum": [
+        "COMPANY_PROFILE",
+        "LEGAL_REGISTRATION",
+        "RUP_SNAPSHOT",
+        "UNSPSC_CODE",
+        "FINANCIAL_PERIOD",
+        "FINANCIAL_METRIC",
+        "EXPERIENCE_RECORD",
+        "PERSON",
+        "PERSON_EDUCATION",
+        "PERSON_EXPERIENCE",
+        "PERSON_CREDENTIAL",
+        "COMPANY_CERTIFICATION",
+        "COMPANY_CAPABILITY"
+      ],
+      "type": "string"
+    },
+    "CompanyEvidenceType": {
+      "enum": [
+        "RUT",
+        "CHAMBER_CERTIFICATE",
+        "RUP",
+        "FINANCIAL_STATEMENT",
+        "TAX_RETURN",
+        "EXPERIENCE_CERTIFICATE",
+        "CONTRACT",
+        "ACT_START",
+        "COMPLETION_CERTIFICATE",
+        "LIQUIDATION_RECORD",
+        "CV",
+        "DIPLOMA",
+        "PROFESSIONAL_LICENSE",
+        "PERSON_CERTIFICATION",
+        "COMPANY_CERTIFICATION",
+        "INSURANCE",
+        "UNSPSC_SUPPORT",
+        "OTHER"
+      ],
+      "type": "string"
+    },
+    "CompanyEvidenceUploadResponse": {
+      "additionalProperties": false,
+      "properties": {
+        "company_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "rejected_count": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "results": {
+          "items": {
+            "$ref": "#/$defs/CompanyEvidenceUploadResult"
+          },
+          "type": "array"
+        },
+        "stored_count": {
+          "minimum": 0,
+          "type": "integer"
+        }
+      },
+      "required": ["company_id", "results", "stored_count", "rejected_count"],
+      "type": "object"
+    },
+    "CompanyEvidenceUploadResult": {
+      "additionalProperties": false,
+      "properties": {
+        "document": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CompanyEvidenceDocumentMetadata"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "error": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "original_filename": {
+          "type": "string"
+        },
+        "upload_status": {
+          "enum": ["STORED", "REJECTED"],
+          "type": "string"
+        }
+      },
+      "required": ["original_filename", "upload_status"],
+      "type": "object"
+    },
+    "CompanyEvidenceValidationStatus": {
+      "enum": [
+        "DOCUMENT_ONLY",
+        "VALID_SEGMENT",
+        "INVALID_SEGMENT",
+        "QUOTE_NOT_FOUND",
+        "LOCATION_MISMATCH",
+        "EXPIRED_EVIDENCE"
+      ],
+      "type": "string"
+    },
+    "CompanyExperienceCreate": {
+      "additionalProperties": false,
+      "properties": {
+        "activities": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "attributable_value_formula": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "company_attributable_value": {
+          "anyOf": [
+            {
+              "minimum": 0.0,
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "company_participation_percentage": {
+          "anyOf": [
+            {
+              "maximum": 100.0,
+              "minimum": 0.0,
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "consortium_members": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "consortium_name": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "contract_reference": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "contract_title": {
+          "maxLength": 500,
+          "minLength": 1,
+          "type": "string"
+        },
+        "contract_type": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "contracting_party": {
+          "maxLength": 500,
+          "minLength": 1,
+          "type": "string"
+        },
+        "country": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "currency": {
+          "default": "COP",
+          "pattern": "^[A-Z]{3}$",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 5000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "end_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "execution_status": {
+          "$ref": "#/$defs/ExperienceExecutionStatus",
+          "default": "UNKNOWN"
+        },
+        "scope_tags": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "sector": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "start_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "status": {
+          "$ref": "#/$defs/CompanyRecordStatus",
+          "default": "DECLARED"
+        },
+        "total_contract_value": {
+          "anyOf": [
+            {
+              "minimum": 0.0,
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "unspsc_codes": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "required": ["contracting_party", "contract_title"],
+      "type": "object"
+    },
+    "CompanyExperienceRecord": {
+      "additionalProperties": false,
+      "properties": {
+        "activities": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "attributable_value_formula": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "company_attributable_value": {
+          "anyOf": [
+            {
+              "minimum": 0.0,
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "company_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "company_participation_percentage": {
+          "anyOf": [
+            {
+              "maximum": 100.0,
+              "minimum": 0.0,
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "consortium_members": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "consortium_name": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "contract_reference": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "contract_title": {
+          "maxLength": 500,
+          "minLength": 1,
+          "type": "string"
+        },
+        "contract_type": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "contracting_party": {
+          "maxLength": 500,
+          "minLength": 1,
+          "type": "string"
+        },
+        "country": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "created_at": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "currency": {
+          "default": "COP",
+          "pattern": "^[A-Z]{3}$",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 5000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "end_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "execution_status": {
+          "$ref": "#/$defs/ExperienceExecutionStatus",
+          "default": "UNKNOWN"
+        },
+        "id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "scope_tags": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "sector": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "start_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "status": {
+          "$ref": "#/$defs/CompanyRecordStatus",
+          "default": "DECLARED"
+        },
+        "total_contract_value": {
+          "anyOf": [
+            {
+              "minimum": 0.0,
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "unspsc_codes": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "updated_at": {
+          "format": "date-time",
+          "type": "string"
+        }
+      },
+      "required": [
+        "contracting_party",
+        "contract_title",
+        "id",
+        "company_id",
+        "created_at",
+        "updated_at"
+      ],
+      "type": "object"
+    },
+    "CompanyExperienceUpdate": {
+      "additionalProperties": false,
+      "properties": {
+        "activities": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "attributable_value_formula": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "company_attributable_value": {
+          "anyOf": [
+            {
+              "minimum": 0.0,
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "company_participation_percentage": {
+          "anyOf": [
+            {
+              "maximum": 100.0,
+              "minimum": 0.0,
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "consortium_members": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "consortium_name": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "contract_reference": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "contract_title": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "contract_type": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "contracting_party": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "country": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "currency": {
+          "default": "COP",
+          "pattern": "^[A-Z]{3}$",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 5000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "end_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "execution_status": {
+          "$ref": "#/$defs/ExperienceExecutionStatus",
+          "default": "UNKNOWN"
+        },
+        "scope_tags": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "sector": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "start_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "status": {
+          "$ref": "#/$defs/CompanyRecordStatus",
+          "default": "DECLARED"
+        },
+        "total_contract_value": {
+          "anyOf": [
+            {
+              "minimum": 0.0,
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "unspsc_codes": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "type": "object"
+    },
+    "CompanyFinancialMetric": {
+      "additionalProperties": false,
+      "properties": {
+        "calculation_version": {
+          "anyOf": [
+            {
+              "maxLength": 64,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "created_at": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "financial_period_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "formula": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "formula_inputs": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "is_calculated": {
+          "default": false,
+          "type": "boolean"
+        },
+        "metric_type": {
+          "$ref": "#/$defs/FinancialMetricType"
+        },
+        "source_value": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "status": {
+          "$ref": "#/$defs/CompanyRecordStatus",
+          "default": "DECLARED"
+        },
+        "unit": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "updated_at": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "value": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "required": ["metric_type", "value", "id", "financial_period_id", "created_at", "updated_at"],
+      "type": "object"
+    },
+    "CompanyFinancialMetricCreate": {
+      "additionalProperties": false,
+      "properties": {
+        "calculation_version": {
+          "anyOf": [
+            {
+              "maxLength": 64,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "formula": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "formula_inputs": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "is_calculated": {
+          "default": false,
+          "type": "boolean"
+        },
+        "metric_type": {
+          "$ref": "#/$defs/FinancialMetricType"
+        },
+        "source_value": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "status": {
+          "$ref": "#/$defs/CompanyRecordStatus",
+          "default": "DECLARED"
+        },
+        "unit": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "value": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "required": ["metric_type", "value"],
+      "type": "object"
+    },
+    "CompanyFinancialPeriod": {
+      "additionalProperties": false,
+      "properties": {
+        "company_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "created_at": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "currency": {
+          "default": "COP",
+          "pattern": "^[A-Z]{3}$",
+          "type": "string"
+        },
+        "id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "metrics": {
+          "items": {
+            "$ref": "#/$defs/CompanyFinancialMetric"
+          },
+          "type": "array"
+        },
+        "period_end": {
+          "format": "date",
+          "type": "string"
+        },
+        "period_start": {
+          "format": "date",
+          "type": "string"
+        },
+        "source_type": {
+          "$ref": "#/$defs/FinancialSourceType"
+        },
+        "status": {
+          "$ref": "#/$defs/CompanyRecordStatus",
+          "default": "DECLARED"
+        },
+        "updated_at": {
+          "format": "date-time",
+          "type": "string"
+        }
+      },
+      "required": [
+        "period_start",
+        "period_end",
+        "source_type",
+        "id",
+        "company_id",
+        "created_at",
+        "updated_at"
+      ],
+      "type": "object"
+    },
+    "CompanyFinancialPeriodCreate": {
+      "additionalProperties": false,
+      "properties": {
+        "currency": {
+          "default": "COP",
+          "pattern": "^[A-Z]{3}$",
+          "type": "string"
+        },
+        "period_end": {
+          "format": "date",
+          "type": "string"
+        },
+        "period_start": {
+          "format": "date",
+          "type": "string"
+        },
+        "source_type": {
+          "$ref": "#/$defs/FinancialSourceType"
+        },
+        "status": {
+          "$ref": "#/$defs/CompanyRecordStatus",
+          "default": "DECLARED"
+        }
+      },
+      "required": ["period_start", "period_end", "source_type"],
+      "type": "object"
+    },
+    "CompanyFinancialPeriodUpdate": {
+      "additionalProperties": false,
+      "properties": {
+        "currency": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Z]{3}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "period_end": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "period_start": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "source_type": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/FinancialSourceType"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "status": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CompanyRecordStatus"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "type": "object"
+    },
+    "CompanyLegalRegistration": {
+      "additionalProperties": false,
+      "properties": {
+        "company_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "created_at": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "declared_data": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "expires_at": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "issued_at": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "issuing_authority": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "registration_number": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "registration_type": {
+          "$ref": "#/$defs/CompanyLegalRegistrationType"
+        },
+        "status": {
+          "$ref": "#/$defs/CompanyRecordStatus",
+          "default": "DECLARED"
+        },
+        "updated_at": {
+          "format": "date-time",
+          "type": "string"
+        }
+      },
+      "required": ["registration_type", "id", "company_id", "created_at", "updated_at"],
+      "type": "object"
+    },
+    "CompanyLegalRegistrationType": {
+      "enum": [
+        "RUT",
+        "CHAMBER_OF_COMMERCE",
+        "RUP",
+        "LEGAL_REPRESENTATION",
+        "TAX_REGISTRATION",
+        "OTHER"
+      ],
+      "type": "string"
+    },
+    "CompanyPerson": {
+      "additionalProperties": false,
+      "properties": {
+        "availability_status": {
+          "$ref": "#/$defs/PersonAvailabilityStatus",
+          "default": "UNKNOWN"
+        },
+        "company_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "created_at": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "credentials": {
+          "items": {
+            "$ref": "#/$defs/PersonCredential"
+          },
+          "type": "array"
+        },
+        "education": {
+          "items": {
+            "$ref": "#/$defs/PersonEducation"
+          },
+          "type": "array"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "maxLength": 320,
+              "minLength": 3,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "experience": {
+          "items": {
+            "$ref": "#/$defs/PersonExperience"
+          },
+          "type": "array"
+        },
+        "full_name": {
+          "maxLength": 500,
+          "minLength": 1,
+          "type": "string"
+        },
+        "id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "identification_masked": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "identification_number": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "identification_type": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "phone": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "relationship_type": {
+          "$ref": "#/$defs/PersonRelationshipType",
+          "default": "OTHER"
+        },
+        "status": {
+          "$ref": "#/$defs/CompanyRecordStatus",
+          "default": "DECLARED"
+        },
+        "updated_at": {
+          "format": "date-time",
+          "type": "string"
+        }
+      },
+      "required": [
+        "full_name",
+        "id",
+        "company_id",
+        "identification_masked",
+        "created_at",
+        "updated_at"
+      ],
+      "type": "object"
+    },
+    "CompanyPersonCreate": {
+      "additionalProperties": false,
+      "properties": {
+        "availability_status": {
+          "$ref": "#/$defs/PersonAvailabilityStatus",
+          "default": "UNKNOWN"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "maxLength": 320,
+              "minLength": 3,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "full_name": {
+          "maxLength": 500,
+          "minLength": 1,
+          "type": "string"
+        },
+        "identification_number": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "identification_type": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "phone": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "relationship_type": {
+          "$ref": "#/$defs/PersonRelationshipType",
+          "default": "OTHER"
+        },
+        "status": {
+          "$ref": "#/$defs/CompanyRecordStatus",
+          "default": "DECLARED"
+        }
+      },
+      "required": ["full_name"],
+      "type": "object"
+    },
+    "CompanyPersonUpdate": {
+      "additionalProperties": false,
+      "properties": {
+        "availability_status": {
+          "$ref": "#/$defs/PersonAvailabilityStatus",
+          "default": "UNKNOWN"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "maxLength": 320,
+              "minLength": 3,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "full_name": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "identification_number": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "identification_type": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "phone": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "relationship_type": {
+          "$ref": "#/$defs/PersonRelationshipType",
+          "default": "OTHER"
+        },
+        "status": {
+          "$ref": "#/$defs/CompanyRecordStatus",
+          "default": "DECLARED"
+        }
+      },
+      "type": "object"
+    },
+    "CompanyProfileCompleteness": {
+      "additionalProperties": false,
+      "properties": {
+        "certifications_complete": {
+          "type": "boolean"
+        },
+        "company_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "conflicting_evidence_count": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "evidence_coverage": {
+          "anyOf": [
+            {
+              "maximum": 1.0,
+              "minimum": 0.0,
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            }
+          ]
+        },
+        "experience_complete": {
+          "type": "boolean"
+        },
+        "expired_evidence_count": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "financial_complete": {
+          "type": "boolean"
+        },
+        "generated_at": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "identity_complete": {
+          "type": "boolean"
+        },
+        "legal_registration_complete": {
+          "type": "boolean"
+        },
+        "missing_items": {
+          "items": {
+            "$ref": "#/$defs/CompanyProfileMissingItem"
+          },
+          "type": "array"
+        },
+        "personnel_complete": {
+          "type": "boolean"
+        },
+        "ready_for_review": {
+          "type": "boolean"
+        },
+        "rup_complete": {
+          "type": "boolean"
+        },
+        "unsupported_record_count": {
+          "minimum": 0,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "company_id",
+        "identity_complete",
+        "legal_registration_complete",
+        "rup_complete",
+        "financial_complete",
+        "experience_complete",
+        "personnel_complete",
+        "certifications_complete",
+        "evidence_coverage",
+        "expired_evidence_count",
+        "unsupported_record_count",
+        "conflicting_evidence_count",
+        "missing_items",
+        "ready_for_review",
+        "generated_at"
+      ],
+      "type": "object"
+    },
+    "CompanyProfileCreate": {
+      "additionalProperties": false,
+      "properties": {
+        "address": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "city": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "company_type": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "country": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "CO"
+        },
+        "department": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "economic_activity_codes": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "incorporation_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "legal_name": {
+          "maxLength": 500,
+          "minLength": 1,
+          "type": "string"
+        },
+        "legal_nature": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "primary_email": {
+          "anyOf": [
+            {
+              "maxLength": 320,
+              "minLength": 3,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "primary_phone": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "tax_id": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "tax_id_type": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "trade_name": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "website": {
+          "anyOf": [
+            {
+              "format": "uri",
+              "maxLength": 2083,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": ["legal_name"],
+      "type": "object"
+    },
+    "CompanyProfileDetail": {
+      "additionalProperties": false,
+      "properties": {
+        "address": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "archived_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "capabilities": {
+          "items": {
+            "$ref": "#/$defs/CompanyCapability"
+          },
+          "type": "array"
+        },
+        "certifications": {
+          "items": {
+            "$ref": "#/$defs/CompanyCertification"
+          },
+          "type": "array"
+        },
+        "city": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "company_type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "country": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "created_at": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "department": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "economic_activity_codes": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "evidence_documents": {
+          "items": {
+            "$ref": "#/$defs/CompanyEvidenceDocumentMetadata"
+          },
+          "type": "array"
+        },
+        "evidence_links": {
+          "items": {
+            "$ref": "#/$defs/CompanyEvidenceLink"
+          },
+          "type": "array"
+        },
+        "experience_records": {
+          "items": {
+            "$ref": "#/$defs/CompanyExperienceRecord"
+          },
+          "type": "array"
+        },
+        "financial_periods": {
+          "items": {
+            "$ref": "#/$defs/CompanyFinancialPeriod"
+          },
+          "type": "array"
+        },
+        "id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "incorporation_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "internal_reference": {
+          "type": "string"
+        },
+        "legal_name": {
+          "type": "string"
+        },
+        "legal_nature": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "legal_registrations": {
+          "items": {
+            "$ref": "#/$defs/CompanyLegalRegistration"
+          },
+          "type": "array"
+        },
+        "people": {
+          "items": {
+            "$ref": "#/$defs/CompanyPerson"
+          },
+          "type": "array"
+        },
+        "primary_email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "primary_phone": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "rup_snapshots": {
+          "items": {
+            "$ref": "#/$defs/RupSnapshot"
+          },
+          "type": "array"
+        },
+        "status": {
+          "$ref": "#/$defs/CompanyProfileStatus"
+        },
+        "tax_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "tax_id_masked": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "tax_id_type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "trade_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "unspsc_codes": {
+          "items": {
+            "$ref": "#/$defs/CompanyUnspscCode"
+          },
+          "type": "array"
+        },
+        "updated_at": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "website": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "internal_reference",
+        "legal_name",
+        "trade_name",
+        "tax_id",
+        "tax_id_masked",
+        "tax_id_type",
+        "company_type",
+        "legal_nature",
+        "incorporation_date",
+        "country",
+        "department",
+        "city",
+        "address",
+        "website",
+        "primary_email",
+        "primary_phone",
+        "economic_activity_codes",
+        "status",
+        "created_at",
+        "updated_at",
+        "archived_at"
+      ],
+      "type": "object"
+    },
+    "CompanyProfileList": {
+      "additionalProperties": false,
+      "properties": {
+        "items": {
+          "items": {
+            "$ref": "#/$defs/CompanyProfileSummary"
+          },
+          "type": "array"
+        },
+        "limit": {
+          "exclusiveMinimum": 0,
+          "type": "integer"
+        },
+        "offset": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "total": {
+          "minimum": 0,
+          "type": "integer"
+        }
+      },
+      "required": ["items", "total", "limit", "offset"],
+      "type": "object"
+    },
+    "CompanyProfileMissingItem": {
+      "additionalProperties": false,
+      "properties": {
+        "category": {
+          "type": "string"
+        },
+        "message": {
+          "type": "string"
+        },
+        "severity": {
+          "default": "WARNING",
+          "enum": ["INFO", "WARNING", "BLOCKING"],
+          "type": "string"
+        },
+        "subject_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "subject_type": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CompanyEvidenceSubjectType"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": ["category", "message"],
+      "type": "object"
+    },
+    "CompanyProfileSnapshotCreate": {
+      "additionalProperties": false,
+      "properties": {
+        "allow_incomplete": {
+          "default": false,
+          "type": "boolean"
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "type": "object"
+    },
+    "CompanyProfileSnapshotDetail": {
+      "additionalProperties": false,
+      "properties": {
+        "company_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "completeness_status": {
+          "type": "string"
+        },
+        "created_at": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "digest": {
+          "pattern": "^[a-f0-9]{64}$",
+          "type": "string"
+        },
+        "id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "payload": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "published_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "status": {
+          "$ref": "#/$defs/CompanySnapshotStatus"
+        },
+        "version": {
+          "exclusiveMinimum": 0,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id",
+        "company_id",
+        "version",
+        "status",
+        "digest",
+        "completeness_status",
+        "created_at",
+        "published_at",
+        "payload",
+        "notes"
+      ],
+      "type": "object"
+    },
+    "CompanyProfileSnapshotSummary": {
+      "additionalProperties": false,
+      "properties": {
+        "company_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "completeness_status": {
+          "type": "string"
+        },
+        "created_at": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "digest": {
+          "pattern": "^[a-f0-9]{64}$",
+          "type": "string"
+        },
+        "id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "published_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "status": {
+          "$ref": "#/$defs/CompanySnapshotStatus"
+        },
+        "version": {
+          "exclusiveMinimum": 0,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id",
+        "company_id",
+        "version",
+        "status",
+        "digest",
+        "completeness_status",
+        "created_at",
+        "published_at"
+      ],
+      "type": "object"
+    },
+    "CompanyProfileStatus": {
+      "enum": ["DRAFT", "INCOMPLETE", "READY_FOR_REVIEW", "ARCHIVED"],
+      "type": "string"
+    },
+    "CompanyProfileSummary": {
+      "additionalProperties": false,
+      "properties": {
+        "completeness_status": {
+          "type": "string"
+        },
+        "evidence_coverage": {
+          "anyOf": [
+            {
+              "maximum": 1.0,
+              "minimum": 0.0,
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            }
+          ]
+        },
+        "id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "internal_reference": {
+          "type": "string"
+        },
+        "legal_name": {
+          "type": "string"
+        },
+        "pending_evidence_count": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "status": {
+          "$ref": "#/$defs/CompanyProfileStatus"
+        },
+        "tax_id_masked": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "tax_id_type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "trade_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "updated_at": {
+          "format": "date-time",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "internal_reference",
+        "legal_name",
+        "trade_name",
+        "tax_id_masked",
+        "tax_id_type",
+        "status",
+        "completeness_status",
+        "evidence_coverage",
+        "pending_evidence_count",
+        "updated_at"
+      ],
+      "type": "object"
+    },
+    "CompanyProfileUpdate": {
+      "additionalProperties": false,
+      "properties": {
+        "address": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "city": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "company_type": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "country": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "department": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "economic_activity_codes": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "incorporation_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "legal_name": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "legal_nature": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "primary_email": {
+          "anyOf": [
+            {
+              "maxLength": 320,
+              "minLength": 3,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "primary_phone": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "status": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CompanyProfileStatus"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "tax_id": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "tax_id_type": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "trade_name": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "website": {
+          "anyOf": [
+            {
+              "format": "uri",
+              "maxLength": 2083,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "type": "object"
+    },
+    "CompanyRecordStatus": {
+      "enum": ["DECLARED", "SUPPORTED", "VERIFIED", "REJECTED", "EXPIRED", "NEEDS_REVIEW"],
+      "type": "string"
+    },
+    "CompanySnapshotStatus": {
+      "enum": ["DRAFT", "PUBLISHED", "SUPERSEDED"],
+      "type": "string"
+    },
+    "CompanyUnspscCode": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "maxLength": 500,
+          "minLength": 1,
+          "type": "string"
+        },
+        "company_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "created_at": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "source": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "status": {
+          "$ref": "#/$defs/CompanyRecordStatus",
+          "default": "DECLARED"
+        },
+        "updated_at": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "valid_from": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "valid_until": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": ["code", "id", "company_id", "created_at", "updated_at"],
+      "type": "object"
+    },
+    "CompanyUnspscCodeCreate": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "maxLength": 500,
+          "minLength": 1,
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "source": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "status": {
+          "$ref": "#/$defs/CompanyRecordStatus",
+          "default": "DECLARED"
+        },
+        "valid_from": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "valid_until": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": ["code"],
+      "type": "object"
+    },
+    "ExperienceExecutionStatus": {
+      "enum": ["PLANNED", "IN_PROGRESS", "COMPLETED", "TERMINATED", "SUSPENDED", "UNKNOWN"],
+      "type": "string"
+    },
+    "FinancialMetricType": {
+      "enum": [
+        "CURRENT_ASSETS",
+        "CURRENT_LIABILITIES",
+        "TOTAL_ASSETS",
+        "TOTAL_LIABILITIES",
+        "EQUITY",
+        "REVENUE",
+        "OPERATING_PROFIT",
+        "NET_PROFIT",
+        "WORKING_CAPITAL",
+        "LIQUIDITY_RATIO",
+        "DEBT_RATIO",
+        "INTEREST_COVERAGE",
+        "RETURN_ON_ASSETS",
+        "RETURN_ON_EQUITY",
+        "OTHER"
+      ],
+      "type": "string"
+    },
+    "FinancialSourceType": {
+      "enum": ["FINANCIAL_STATEMENT", "RUP", "TAX_RETURN", "MANAGEMENT_CERTIFICATION", "OTHER"],
+      "type": "string"
+    },
+    "LegalRegistrationCreate": {
+      "additionalProperties": false,
+      "properties": {
+        "declared_data": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "expires_at": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "issued_at": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "issuing_authority": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "registration_number": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "registration_type": {
+          "$ref": "#/$defs/CompanyLegalRegistrationType"
+        },
+        "status": {
+          "$ref": "#/$defs/CompanyRecordStatus",
+          "default": "DECLARED"
+        }
+      },
+      "required": ["registration_type"],
+      "type": "object"
+    },
+    "PersonAvailabilityStatus": {
+      "enum": ["AVAILABLE", "PARTIAL", "UNAVAILABLE", "UNKNOWN"],
+      "type": "string"
+    },
+    "PersonCredential": {
+      "additionalProperties": false,
+      "properties": {
+        "created_at": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "credential_number": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "credential_type": {
+          "$ref": "#/$defs/PersonCredentialType"
+        },
+        "expires_at": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "issued_at": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "issuer": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "name": {
+          "maxLength": 500,
+          "minLength": 1,
+          "type": "string"
+        },
+        "person_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "status": {
+          "$ref": "#/$defs/CompanyRecordStatus",
+          "default": "DECLARED"
+        },
+        "updated_at": {
+          "format": "date-time",
+          "type": "string"
+        }
+      },
+      "required": ["credential_type", "name", "id", "person_id", "created_at", "updated_at"],
+      "type": "object"
+    },
+    "PersonCredentialCreate": {
+      "additionalProperties": false,
+      "properties": {
+        "credential_number": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "credential_type": {
+          "$ref": "#/$defs/PersonCredentialType"
+        },
+        "expires_at": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "issued_at": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "issuer": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "name": {
+          "maxLength": 500,
+          "minLength": 1,
+          "type": "string"
+        },
+        "status": {
+          "$ref": "#/$defs/CompanyRecordStatus",
+          "default": "DECLARED"
+        }
+      },
+      "required": ["credential_type", "name"],
+      "type": "object"
+    },
+    "PersonCredentialType": {
+      "enum": [
+        "PROFESSIONAL_LICENSE",
+        "CERTIFICATION",
+        "COURSE",
+        "LANGUAGE",
+        "SECURITY_CLEARANCE",
+        "OTHER"
+      ],
+      "type": "string"
+    },
+    "PersonEducation": {
+      "additionalProperties": false,
+      "properties": {
+        "country": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "created_at": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "degree_type": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "graduation_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "institution": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "person_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "status": {
+          "$ref": "#/$defs/CompanyRecordStatus",
+          "default": "DECLARED"
+        },
+        "title": {
+          "maxLength": 500,
+          "minLength": 1,
+          "type": "string"
+        },
+        "updated_at": {
+          "format": "date-time",
+          "type": "string"
+        }
+      },
+      "required": ["title", "id", "person_id", "created_at", "updated_at"],
+      "type": "object"
+    },
+    "PersonEducationCreate": {
+      "additionalProperties": false,
+      "properties": {
+        "country": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "degree_type": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "graduation_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "institution": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "status": {
+          "$ref": "#/$defs/CompanyRecordStatus",
+          "default": "DECLARED"
+        },
+        "title": {
+          "maxLength": 500,
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": ["title"],
+      "type": "object"
+    },
+    "PersonExperience": {
+      "additionalProperties": false,
+      "properties": {
+        "created_at": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 5000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "end_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "organization": {
+          "maxLength": 500,
+          "minLength": 1,
+          "type": "string"
+        },
+        "person_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "role": {
+          "maxLength": 500,
+          "minLength": 1,
+          "type": "string"
+        },
+        "start_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "status": {
+          "$ref": "#/$defs/CompanyRecordStatus",
+          "default": "DECLARED"
+        },
+        "updated_at": {
+          "format": "date-time",
+          "type": "string"
+        }
+      },
+      "required": ["organization", "role", "id", "person_id", "created_at", "updated_at"],
+      "type": "object"
+    },
+    "PersonExperienceCreate": {
+      "additionalProperties": false,
+      "properties": {
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 5000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "end_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "organization": {
+          "maxLength": 500,
+          "minLength": 1,
+          "type": "string"
+        },
+        "role": {
+          "maxLength": 500,
+          "minLength": 1,
+          "type": "string"
+        },
+        "start_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "status": {
+          "$ref": "#/$defs/CompanyRecordStatus",
+          "default": "DECLARED"
+        }
+      },
+      "required": ["organization", "role"],
+      "type": "object"
+    },
+    "PersonRelationshipType": {
+      "enum": ["EMPLOYEE", "CONTRACTOR", "PARTNER", "ALLY", "POTENTIAL", "OTHER"],
+      "type": "string"
+    },
+    "RupSnapshot": {
+      "additionalProperties": false,
+      "properties": {
+        "company_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "created_at": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "experience_capacity": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "financial_capacity": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "financial_period_reference": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "issued_at": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "organization_capacity": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "raw_declared_data": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "registration_number": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "renewal_year": {
+          "anyOf": [
+            {
+              "maximum": 2200,
+              "minimum": 1900,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "status": {
+          "$ref": "#/$defs/CompanyRecordStatus",
+          "default": "DECLARED"
+        },
+        "technical_capacity": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "updated_at": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "valid_until": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": ["id", "company_id", "created_at", "updated_at"],
+      "type": "object"
+    },
+    "RupSnapshotCreate": {
+      "additionalProperties": false,
+      "properties": {
+        "experience_capacity": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "financial_capacity": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "financial_period_reference": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "issued_at": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "organization_capacity": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "raw_declared_data": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "registration_number": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "renewal_year": {
+          "anyOf": [
+            {
+              "maximum": 2200,
+              "minimum": 1900,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "status": {
+          "$ref": "#/$defs/CompanyRecordStatus",
+          "default": "DECLARED"
+        },
+        "technical_capacity": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "valid_until": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "type": "object"
+    }
+  },
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "Contenedor para generar un unico JSON Schema con defs compartidos.",
+  "properties": {
+    "capability": {
+      "$ref": "#/$defs/CompanyCapability"
+    },
+    "capability_create": {
+      "$ref": "#/$defs/CompanyCapabilityCreate"
+    },
+    "capability_update": {
+      "$ref": "#/$defs/CompanyCapabilityUpdate"
+    },
+    "certification": {
+      "$ref": "#/$defs/CompanyCertification"
+    },
+    "certification_create": {
+      "$ref": "#/$defs/CompanyCertificationCreate"
+    },
+    "certification_update": {
+      "$ref": "#/$defs/CompanyCertificationUpdate"
+    },
+    "company_profile_create": {
+      "$ref": "#/$defs/CompanyProfileCreate"
+    },
+    "company_profile_detail": {
+      "$ref": "#/$defs/CompanyProfileDetail"
+    },
+    "company_profile_list": {
+      "$ref": "#/$defs/CompanyProfileList"
+    },
+    "company_profile_summary": {
+      "$ref": "#/$defs/CompanyProfileSummary"
+    },
+    "company_profile_update": {
+      "$ref": "#/$defs/CompanyProfileUpdate"
+    },
+    "completeness": {
+      "$ref": "#/$defs/CompanyProfileCompleteness"
+    },
+    "evidence_document": {
+      "$ref": "#/$defs/CompanyEvidenceDocumentMetadata"
+    },
+    "evidence_link": {
+      "$ref": "#/$defs/CompanyEvidenceLink"
+    },
+    "evidence_link_create": {
+      "$ref": "#/$defs/CompanyEvidenceLinkCreate"
+    },
+    "evidence_link_review": {
+      "$ref": "#/$defs/CompanyEvidenceLinkReview"
+    },
+    "evidence_upload_response": {
+      "$ref": "#/$defs/CompanyEvidenceUploadResponse"
+    },
+    "experience_create": {
+      "$ref": "#/$defs/CompanyExperienceCreate"
+    },
+    "experience_record": {
+      "$ref": "#/$defs/CompanyExperienceRecord"
+    },
+    "experience_update": {
+      "$ref": "#/$defs/CompanyExperienceUpdate"
+    },
+    "financial_metric": {
+      "$ref": "#/$defs/CompanyFinancialMetric"
+    },
+    "financial_metric_create": {
+      "$ref": "#/$defs/CompanyFinancialMetricCreate"
+    },
+    "financial_period": {
+      "$ref": "#/$defs/CompanyFinancialPeriod"
+    },
+    "financial_period_create": {
+      "$ref": "#/$defs/CompanyFinancialPeriodCreate"
+    },
+    "financial_period_update": {
+      "$ref": "#/$defs/CompanyFinancialPeriodUpdate"
+    },
+    "legal_registration": {
+      "$ref": "#/$defs/CompanyLegalRegistration"
+    },
+    "legal_registration_create": {
+      "$ref": "#/$defs/LegalRegistrationCreate"
+    },
+    "missing_item": {
+      "$ref": "#/$defs/CompanyProfileMissingItem"
+    },
+    "person": {
+      "$ref": "#/$defs/CompanyPerson"
+    },
+    "person_create": {
+      "$ref": "#/$defs/CompanyPersonCreate"
+    },
+    "person_credential": {
+      "$ref": "#/$defs/PersonCredential"
+    },
+    "person_credential_create": {
+      "$ref": "#/$defs/PersonCredentialCreate"
+    },
+    "person_education": {
+      "$ref": "#/$defs/PersonEducation"
+    },
+    "person_education_create": {
+      "$ref": "#/$defs/PersonEducationCreate"
+    },
+    "person_experience": {
+      "$ref": "#/$defs/PersonExperience"
+    },
+    "person_experience_create": {
+      "$ref": "#/$defs/PersonExperienceCreate"
+    },
+    "person_update": {
+      "$ref": "#/$defs/CompanyPersonUpdate"
+    },
+    "rup_snapshot": {
+      "$ref": "#/$defs/RupSnapshot"
+    },
+    "rup_snapshot_create": {
+      "$ref": "#/$defs/RupSnapshotCreate"
+    },
+    "snapshot_create": {
+      "$ref": "#/$defs/CompanyProfileSnapshotCreate"
+    },
+    "snapshot_detail": {
+      "$ref": "#/$defs/CompanyProfileSnapshotDetail"
+    },
+    "snapshot_summary": {
+      "$ref": "#/$defs/CompanyProfileSnapshotSummary"
+    },
+    "unspsc_code": {
+      "$ref": "#/$defs/CompanyUnspscCode"
+    },
+    "unspsc_code_create": {
+      "$ref": "#/$defs/CompanyUnspscCodeCreate"
+    }
+  },
+  "required": [
+    "company_profile_create",
+    "company_profile_update",
+    "company_profile_summary",
+    "company_profile_detail",
+    "company_profile_list",
+    "legal_registration_create",
+    "legal_registration",
+    "rup_snapshot_create",
+    "rup_snapshot",
+    "unspsc_code_create",
+    "unspsc_code",
+    "financial_period_create",
+    "financial_period_update",
+    "financial_period",
+    "financial_metric_create",
+    "financial_metric",
+    "experience_create",
+    "experience_update",
+    "experience_record",
+    "person_create",
+    "person_update",
+    "person",
+    "person_education_create",
+    "person_education",
+    "person_experience_create",
+    "person_experience",
+    "person_credential_create",
+    "person_credential",
+    "certification_create",
+    "certification_update",
+    "certification",
+    "capability_create",
+    "capability_update",
+    "capability",
+    "evidence_document",
+    "evidence_upload_response",
+    "evidence_link_create",
+    "evidence_link_review",
+    "evidence_link",
+    "completeness",
+    "missing_item",
+    "snapshot_summary",
+    "snapshot_detail",
+    "snapshot_create"
+  ],
+  "type": "object"
+}

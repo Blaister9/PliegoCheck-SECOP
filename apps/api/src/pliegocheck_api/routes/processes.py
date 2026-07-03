@@ -340,7 +340,7 @@ def list_processes(
     status: StatusParam = None,
     search: SearchParam = None,
 ) -> ProcessList:
-    filters = []
+    filters: list[Any] = [Process.is_system.is_(False)]
     if status is not None:
         filters.append(Process.status == status.value)
     if search is not None:

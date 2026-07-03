@@ -102,17 +102,20 @@ flowchart TB
 
 La decisión de stack y sus alternativas están formalizadas en [docs/ADR-001-stack-and-architecture.md](docs/ADR-001-stack-and-architecture.md).
 
-## Estado actual - Microfase 4
+## Estado actual - Microfase 5
 
 Implementado: importacion manual de procesos, carga documental segura, almacenamiento local con
 SHA-256, cola transaccional inicial, extractores deterministas para PDF con texto, DOCX, XLSX, CSV y
 TXT, inventario documental, reintentos, segmentos paginados, normalizacion de requisitos con OpenAI
 Responses API, Structured Outputs, prompts versionados, snapshot reproducible, batching
-deterministico, validacion de evidencia, candidatos rechazados, relaciones y UI de revision.
+deterministico, validacion de evidencia, candidatos rechazados, relaciones, UI de revision de
+requisitos, perfiles de empresa, datos juridicos, RUP, UNSPSC, finanzas, experiencia, personal,
+certificaciones, capacidades, evidencias documentales reutilizando el pipeline de extraccion,
+vinculos dato-evidencia, completitud deterministica y snapshots inmutables de perfil.
 
-No implementado todavia: OCR, evaluacion de cumplimiento, perfil de empresa, integracion automatica
-con SECOP II, autenticacion, S3 real y motor GO / NO GO ejecutable. La normalizacion no evalua si una
-empresa cumple ni produce decisiones.
+No implementado todavia: OCR, evaluacion de cumplimiento contra procesos, evaluador financiero,
+integracion automatica con SECOP II, autenticacion, S3 real y motor GO / NO GO ejecutable. La
+completitud del perfil no evalua si una empresa cumple un proceso ni produce decisiones.
 
 ## Desarrollo local
 
@@ -132,6 +135,7 @@ uv sync --all-packages  # dependencias Python (workspace uv)
 | `pnpm normalization:run-once` / `pnpm normalization:drain` | Procesa trabajos de normalizacion de requisitos |
 | `pnpm normalization:test` / `pnpm normalization:eval` | Pruebas y evals deterministas de normalizacion |
 | `pnpm normalization:smoke` | Smoke manual opcional contra OpenAI si hay clave autorizada |
+| `pnpm company:test` / `pnpm company:snapshot-check` | Pruebas de perfil de empresa, evidencias y snapshot deterministico |
 | `pnpm infra:up` / `pnpm infra:down` | PostgreSQL local para desarrollo |
 | `pnpm db:migrate` / `pnpm db:check` | Migraciones Alembic y verificación de divergencias |
 | `pnpm schemas:generate` | Regenera JSON Schema y tipos TS desde el modelo canónico Pydantic |
@@ -162,6 +166,10 @@ Guía completa en [docs/development.md](docs/development.md).
 | [docs/ADR-002-manual-import-persistence.md](docs/ADR-002-manual-import-persistence.md) | Decisión de persistencia y almacenamiento local. |
 | [docs/ADR-004-requirement-normalization.md](docs/ADR-004-requirement-normalization.md) | Decisión de arquitectura para normalizacion con IA y evidencia. |
 | [docs/requirement-normalization.md](docs/requirement-normalization.md) | Operacion, API, prompts, provider, evals y limites de normalizacion. |
+| [docs/ADR-005-company-profile-evidence.md](docs/ADR-005-company-profile-evidence.md) | Decisiones de perfil de empresa, evidencias reutilizadas y snapshots. |
+| [docs/company-profile.md](docs/company-profile.md) | Modelo operativo de perfil de empresa y completitud. |
+| [docs/company-evidence.md](docs/company-evidence.md) | Carga, extraccion y vinculacion dato-evidencia para soportes empresariales. |
+| [docs/company-profile-snapshots.md](docs/company-profile-snapshots.md) | Snapshots inmutables de perfil y uso futuro por evaluadores. |
 
 ## Roadmap resumido
 

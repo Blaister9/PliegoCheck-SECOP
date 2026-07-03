@@ -1,6 +1,6 @@
 # Guia de desarrollo - PliegoCheck-SECOP
 
-Como trabajar en el monorepo tras la Microfase 4. Las decisiones de stack estan en
+Como trabajar en el monorepo tras la Microfase 5. Las decisiones de stack estan en
 [ADR-001](ADR-001-stack-and-architecture.md); la extraccion documental esta en
 [ADR-003](ADR-003-document-extraction.md); las reglas para agentes de programacion, en
 [AGENTS.md](../AGENTS.md).
@@ -28,9 +28,9 @@ Ambos comandos son reproducibles: `pnpm-lock.yaml` y `uv.lock` estan versionados
 
 ```text
 apps/
-  web/       Next.js + TypeScript. UI de importacion, inventario y preview de segmentos.
-  api/       FastAPI. Procesos, documentos, inventario, extracciones, salud y contratos.
-  worker/    CLI Python. Reclama trabajos y ejecuta extractores deterministas.
+  web/       Next.js + TypeScript. UI de procesos, requisitos, empresas y evidencias.
+  api/       FastAPI. Procesos, documentos, extracciones, requisitos, empresas y contratos.
+  worker/    CLI Python. Reclama trabajos y ejecuta extractores/normalizadores deterministas.
 packages/
   schemas/   Contratos compartidos. Pydantic -> JSON Schema -> TypeScript.
 scripts/     Automatizacion Node multiplataforma.
@@ -112,15 +112,17 @@ pnpm lint
 pnpm typecheck
 pnpm test
 pnpm extraction:test
+pnpm company:test
+pnpm company:snapshot-check
 pnpm normalization:test
 pnpm normalization:eval
 pnpm schemas:check
 pnpm build
 ```
 
-La CI ejecuta instalacion reproducible, migraciones, `db:check`, contratos sincronizados, pruebas y
-evals de normalizacion, formato, lint, typecheck, pruebas, pruebas dedicadas de extraccion, build web
-y verificacion de repositorio sin cambios tras generar.
+La CI ejecuta instalacion reproducible, migraciones, `db:check`, contratos sincronizados, pruebas de
+perfil de empresa y snapshot, pruebas y evals de normalizacion, formato, lint, typecheck, pruebas,
+pruebas dedicadas de extraccion, build web y verificacion de repositorio sin cambios tras generar.
 
 ## Estado funcional real
 
@@ -140,7 +142,13 @@ Implementado:
 - snapshot y batching deterministico;
 - validacion de evidencia;
 - requisitos, evidencias, relaciones y candidatos rechazados;
-- UI de revision de requisitos.
+- UI de revision de requisitos;
+- perfiles de empresa con datos juridicos, RUP, UNSPSC, finanzas, experiencia, personal,
+  certificaciones y capacidades;
+- carga de evidencias empresariales con SHA-256 y extraccion documental reutilizada;
+- vinculos dato-evidencia validados contra extracciones y segmentos;
+- completitud deterministica del perfil sin decision GO / NO GO;
+- snapshots inmutables de perfil para evaluaciones futuras.
 
-No implementado todavia: OCR, evaluacion de cumplimiento, perfil de empresa, integracion automatica
-con SECOP II, autenticacion, S3 real y motor GO / NO GO ejecutable.
+No implementado todavia: OCR, evaluacion de cumplimiento contra procesos, integracion automatica con
+SECOP II, autenticacion, S3 real y motor GO / NO GO ejecutable.

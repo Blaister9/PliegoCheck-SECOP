@@ -50,6 +50,32 @@ export type NormalizationErrorCode =
   | "PROVIDER_INCOMPLETE"
   | "EVIDENCE_VALIDATION_FAILED"
   | "DATABASE_ERROR";
+export type CompanyErrorCode =
+  | "COMPANY_NOT_FOUND"
+  | "COMPANY_ARCHIVED"
+  | "DUPLICATE_TAX_ID"
+  | "INVALID_COMPANY_DATA"
+  | "LEGAL_REGISTRATION_NOT_FOUND"
+  | "RUP_SNAPSHOT_NOT_FOUND"
+  | "FINANCIAL_PERIOD_NOT_FOUND"
+  | "FINANCIAL_METRIC_NOT_FOUND"
+  | "EXPERIENCE_RECORD_NOT_FOUND"
+  | "PERSON_NOT_FOUND"
+  | "CERTIFICATION_NOT_FOUND"
+  | "CAPABILITY_NOT_FOUND"
+  | "EVIDENCE_DOCUMENT_NOT_FOUND"
+  | "EVIDENCE_LINK_NOT_FOUND"
+  | "EVIDENCE_SUBJECT_NOT_FOUND"
+  | "EVIDENCE_SUBJECT_COMPANY_MISMATCH"
+  | "EVIDENCE_DOCUMENT_COMPANY_MISMATCH"
+  | "EVIDENCE_QUOTE_NOT_FOUND"
+  | "EVIDENCE_EXPIRED"
+  | "PROFILE_INCOMPLETE"
+  | "SNAPSHOT_NOT_FOUND"
+  | "SNAPSHOT_ALREADY_PUBLISHED"
+  | "SNAPSHOT_IMMUTABLE"
+  | "SNAPSHOT_DIGEST_MISMATCH"
+  | "DATABASE_ERROR";
 /**
  * Tipo documental declarado. La clasificacion automatica llega en Microfase 3.
  */
@@ -112,7 +138,7 @@ export interface ManualImport {
  * Error estructurado devuelto por la API. Nunca expone detalles internos.
  */
 export interface ApiError {
-  code: UploadErrorCode | ExtractionErrorCode | NormalizationErrorCode;
+  code: UploadErrorCode | ExtractionErrorCode | NormalizationErrorCode | CompanyErrorCode;
   details?: {
     [k: string]: string;
   };

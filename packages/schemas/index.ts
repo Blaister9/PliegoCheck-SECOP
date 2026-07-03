@@ -1,3 +1,5 @@
+export * from "./generated/company-profile";
+export * from "./generated/company-profile.enums";
 export * from "./generated/requirement-normalization";
 export * from "./generated/normalized-requirement.enums";
 

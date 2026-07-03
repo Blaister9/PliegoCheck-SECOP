@@ -33,8 +33,8 @@ Convenciones de este documento, aplicables a toda entidad:
 ### CompanyProfile
 **Propósito:** perfil de la empresa que evalúa participar: su capacidad jurídica, financiera, técnica y de experiencia.
 
-- **Campos conceptuales:** razón social, NIT, RUP (estado y clasificaciones), códigos UNSPSC inscritos, indicadores financieros por corte (liquidez, endeudamiento, capital de trabajo, patrimonio, etc.), fecha de corte de la información.
-- **Relaciones:** pertenece a una `Organization`; tiene `CompanyCapability`s y `RequirementEvidence`s; es sujeto de `Evaluation`s.
+- **Campos conceptuales:** razón social, NIT, RUP (estado y clasificaciones), códigos UNSPSC inscritos, indicadores financieros por corte (liquidez, endeudamiento, capital de trabajo, patrimonio, etc.), experiencia, personal, certificaciones, capacidades declaradas y fecha de corte de la información.
+- **Relaciones:** pertenece a una `Organization`; tiene `CompanyCapability`s, `CompanyEvidenceDocument`s, `CompanyEvidenceLink`s y `CompanyProfileSnapshot`s; es sujeto de `Evaluation`s.
 - **Requiere evidencia:** todos los indicadores financieros, el estado del RUP, la experiencia declarada — cada valor debe apuntar a un documento soporte (estados financieros, certificado RUP, certificaciones de experiencia).
 - **Puede inferirse:** indicadores derivados aritméticamente de valores con evidencia (p. ej. capital de trabajo = activo corriente − pasivo corriente), marcados como derivados.
 - **Nunca debe inventarse:** indicadores financieros, vigencia del RUP, códigos UNSPSC inscritos, montos de experiencia.
@@ -123,6 +123,33 @@ del documento SECOP que lo soporta.
 - **Requiere evidencia:** toda magnitud (montos de experiencia, certificaciones, hojas de vida del equipo).
 - **Puede inferirse:** agregaciones (p. ej. suma de experiencia por código UNSPSC), marcadas como derivadas.
 - **Nunca debe inventarse:** experiencia, certificaciones o equipo no soportados documentalmente.
+
+### CompanyEvidenceDocument
+**Proposito:** soporte documental de un perfil de empresa (RUT, RUP, estados financieros, certificado de experiencia, hoja de vida, diploma, certificacion o soporte UNSPSC) almacenado de forma inmutable.
+
+- **Campos conceptuales:** tipo de evidencia, nombre original, hash SHA-256, tamano, content type declarado/detectado, autoridad emisora, fechas de emision/vigencia, estado de revision y estado de extraccion.
+- **Relaciones:** pertenece a un `CompanyProfile`; reutiliza un `ProcessDocument` tecnico para pasar por el pipeline de `DocumentExtraction`; puede soportar muchos `CompanyEvidenceLink`s.
+- **Requiere evidencia:** es evidencia primaria; su integridad se verifica por hash y no se reemplaza en sitio.
+- **Puede inferirse:** tipo documental propuesto por usuario o extractor, siempre revisable.
+- **Nunca debe inventarse:** contenido, autoridad, vigencia o texto no extraido.
+
+### CompanyEvidenceLink
+**Proposito:** vinculo trazable entre un dato del perfil y una evidencia documental concreta.
+
+- **Campos conceptuales:** sujeto soportado (registro juridico, RUP, UNSPSC, periodo financiero, metrica, experiencia, persona, certificacion o capacidad), documento, extraccion, segmento, cita textual, ubicacion, rol, estado de validacion y estado de revision.
+- **Relaciones:** conecta `CompanyProfile` y sus subentidades con `CompanyEvidenceDocument`, `DocumentExtraction` y `ExtractedSegment`.
+- **Requiere evidencia:** documento asociado; cuando hay segmento/cita, la cita debe existir en el texto extraido.
+- **Puede inferirse:** nada; la validacion solo confirma pertenencia, ubicacion y cita.
+- **Nunca debe inventarse:** un soporte sin documento real o una cita no encontrada.
+
+### CompanyProfileSnapshot
+**Proposito:** version inmutable del perfil usada como base futura de evaluaciones contra procesos.
+
+- **Campos conceptuales:** version, estado (`DRAFT` o `PUBLISHED`), payload canonico, digest SHA-256, estado de completitud, fecha de creacion y publicacion.
+- **Relaciones:** pertenece a un `CompanyProfile`; futuras `Evaluation`s deben referenciar una version especifica, no el perfil editable.
+- **Requiere evidencia:** incluye solo referencias a evidencias y metadatos existentes al momento de crearse.
+- **Puede inferirse:** estado de completitud calculado deterministicamente.
+- **Nunca debe inventarse:** datos faltantes; quedan ausentes o marcados como pendientes.
 
 ### Evaluation
 **Propósito:** resultado de un agente evaluador especializado sobre un conjunto de requisitos de una versión del proceso contra un perfil de empresa.
@@ -213,6 +240,9 @@ erDiagram
     ProcessVersion ||--o{ Requirement : define
     Requirement ||--o{ RequirementEvidence : "se acredita con"
     CompanyProfile ||--o{ CompanyCapability : declara
+    CompanyProfile ||--o{ CompanyEvidenceDocument : soporta
+    CompanyEvidenceDocument ||--o{ CompanyEvidenceLink : vincula
+    CompanyProfile ||--o{ CompanyProfileSnapshot : versiona
     ProcessVersion ||--o{ Evaluation : "es evaluada en"
     CompanyProfile ||--o{ Evaluation : "es sujeto de"
     Evaluation ||--o{ Finding : produce

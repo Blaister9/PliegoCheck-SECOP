@@ -18,6 +18,28 @@ from pathlib import Path
 
 from pydantic import BaseModel
 
+from pliegocheck_schemas.company_profile import (
+    COMPANY_PROFILE_SCHEMA_VERSION,
+    CompanyCapabilityCategory,
+    CompanyCertificationType,
+    CompanyErrorCode,
+    CompanyEvidenceReviewStatus,
+    CompanyEvidenceRole,
+    CompanyEvidenceSubjectType,
+    CompanyEvidenceType,
+    CompanyEvidenceValidationStatus,
+    CompanyLegalRegistrationType,
+    CompanyProfileContracts,
+    CompanyProfileStatus,
+    CompanyRecordStatus,
+    CompanySnapshotStatus,
+    ExperienceExecutionStatus,
+    FinancialMetricType,
+    FinancialSourceType,
+    PersonAvailabilityStatus,
+    PersonCredentialType,
+    PersonRelationshipType,
+)
 from pliegocheck_schemas.document_extraction import (
     DOCUMENT_EXTRACTION_SCHEMA_VERSION,
     DocumentExtractionContracts,
@@ -232,8 +254,87 @@ def generate_document_extraction_enums_ts() -> None:
     write_text(GENERATED_DIR / "document-extraction.enums.ts", "\n".join(blocks))
 
 
+def generate_company_profile_enums_ts() -> None:
+    blocks = [
+        TS_HEADER,
+        f'export const COMPANY_PROFILE_SCHEMA_VERSION = "{COMPANY_PROFILE_SCHEMA_VERSION}";\n',
+        ts_const_block(
+            "COMPANY_PROFILE_STATUS_VALUES", "CompanyProfileStatusValue", CompanyProfileStatus
+        ),
+        ts_const_block(
+            "COMPANY_RECORD_STATUS_VALUES", "CompanyRecordStatusValue", CompanyRecordStatus
+        ),
+        ts_const_block(
+            "COMPANY_LEGAL_REGISTRATION_TYPE_VALUES",
+            "CompanyLegalRegistrationTypeValue",
+            CompanyLegalRegistrationType,
+        ),
+        ts_const_block(
+            "FINANCIAL_SOURCE_TYPE_VALUES", "FinancialSourceTypeValue", FinancialSourceType
+        ),
+        ts_const_block(
+            "FINANCIAL_METRIC_TYPE_VALUES", "FinancialMetricTypeValue", FinancialMetricType
+        ),
+        ts_const_block(
+            "EXPERIENCE_EXECUTION_STATUS_VALUES",
+            "ExperienceExecutionStatusValue",
+            ExperienceExecutionStatus,
+        ),
+        ts_const_block(
+            "PERSON_RELATIONSHIP_TYPE_VALUES",
+            "PersonRelationshipTypeValue",
+            PersonRelationshipType,
+        ),
+        ts_const_block(
+            "PERSON_AVAILABILITY_STATUS_VALUES",
+            "PersonAvailabilityStatusValue",
+            PersonAvailabilityStatus,
+        ),
+        ts_const_block(
+            "PERSON_CREDENTIAL_TYPE_VALUES", "PersonCredentialTypeValue", PersonCredentialType
+        ),
+        ts_const_block(
+            "COMPANY_CERTIFICATION_TYPE_VALUES",
+            "CompanyCertificationTypeValue",
+            CompanyCertificationType,
+        ),
+        ts_const_block(
+            "COMPANY_CAPABILITY_CATEGORY_VALUES",
+            "CompanyCapabilityCategoryValue",
+            CompanyCapabilityCategory,
+        ),
+        ts_const_block(
+            "COMPANY_EVIDENCE_TYPE_VALUES", "CompanyEvidenceTypeValue", CompanyEvidenceType
+        ),
+        ts_const_block(
+            "COMPANY_EVIDENCE_REVIEW_STATUS_VALUES",
+            "CompanyEvidenceReviewStatusValue",
+            CompanyEvidenceReviewStatus,
+        ),
+        ts_const_block(
+            "COMPANY_EVIDENCE_SUBJECT_TYPE_VALUES",
+            "CompanyEvidenceSubjectTypeValue",
+            CompanyEvidenceSubjectType,
+        ),
+        ts_const_block(
+            "COMPANY_EVIDENCE_ROLE_VALUES", "CompanyEvidenceRoleValue", CompanyEvidenceRole
+        ),
+        ts_const_block(
+            "COMPANY_EVIDENCE_VALIDATION_STATUS_VALUES",
+            "CompanyEvidenceValidationStatusValue",
+            CompanyEvidenceValidationStatus,
+        ),
+        ts_const_block(
+            "COMPANY_SNAPSHOT_STATUS_VALUES", "CompanySnapshotStatusValue", CompanySnapshotStatus
+        ),
+        ts_const_block("COMPANY_ERROR_CODE_VALUES", "CompanyErrorCodeValue", CompanyErrorCode),
+    ]
+    write_text(GENERATED_DIR / "company-profile.enums.ts", "\n".join(blocks))
+
+
 def main() -> int:
     try:
+        generate_json_schema(CompanyProfileContracts, "company-profile.schema.json")
         generate_json_schema(NormalizedRequirement, "normalized-requirement.schema.json")
         generate_json_schema(
             RequirementNormalizationContracts,
@@ -242,6 +343,7 @@ def main() -> int:
         generate_json_schema(ManualImportContracts, "manual-import.schema.json")
         generate_json_schema(DocumentExtractionContracts, "document-extraction.schema.json")
         generate_requirement_enums_ts()
+        generate_company_profile_enums_ts()
         generate_manual_import_enums_ts()
         generate_document_extraction_enums_ts()
     except Exception as exc:  # el fallo debe ser visible y con codigo distinto de cero

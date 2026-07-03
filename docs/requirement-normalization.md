@@ -3,6 +3,12 @@
 La Microfase 4 convierte extracciones documentales completadas en requisitos normalizados con
 evidencia trazable. No evalua cumplimiento empresarial y no produce decisiones GO / NO GO.
 
+Desde Microfase 5, los perfiles de empresa y sus evidencias viven en contratos y tablas separadas
+(`CompanyProfile`, `CompanyEvidenceDocument`, `CompanyEvidenceLink`, `CompanyProfileSnapshot`). La
+normalizacion de requisitos sigue siendo solo lectura sobre documentos del proceso: no consulta
+perfiles, no evalua soportes empresariales y no decide cumplimiento. La vinculacion entre requisitos
+y snapshots de empresa empieza en Microfase 6 con el evaluador financiero inicial.
+
 ## Flujo
 
 1. La API recibe `POST /processes/{process_id}/requirements/normalizations`.

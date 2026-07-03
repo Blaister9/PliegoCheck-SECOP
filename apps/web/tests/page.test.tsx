@@ -1,9 +1,13 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import {
+  COMPANY_PROFILE_SCHEMA_VERSION,
   NORMALIZED_REQUIREMENT_SCHEMA_VERSION,
   REQUIREMENT_CATEGORY_VALUES,
 } from "@pliegocheck/schemas";
+import { CompanyDetailClient } from "../app/companies/[id]/CompanyDetailClient";
+import CompaniesPage from "../app/companies/page";
+import NewCompanyPage from "../app/companies/new/page";
 import Home from "../app/page";
 import { ProcessDetailClient } from "../app/processes/[id]/ProcessDetailClient";
 import ProcessesPage from "../app/processes/page";
@@ -24,9 +28,11 @@ describe("pagina principal", () => {
   it("muestra el nombre del producto y el estado de la fase", () => {
     render(<Home />);
     expect(screen.getByRole("heading", { level: 1, name: "PliegoCheck-SECOP" })).toBeDefined();
-    expect(screen.getByText("Normalizacion de requisitos - Microfase 4")).toBeDefined();
+    expect(screen.getByText("Perfil de empresa y evidencias - Microfase 5")).toBeDefined();
     expect(screen.getByRole("link", { name: "Procesos importados" })).toBeDefined();
     expect(screen.getByRole("link", { name: "Crear proceso" })).toBeDefined();
+    expect(screen.getByRole("link", { name: "Empresas" })).toBeDefined();
+    expect(screen.getByRole("link", { name: "Crear empresa" })).toBeDefined();
   });
 
   it("expone los seis estados de decision", () => {
@@ -46,17 +52,94 @@ describe("pagina principal", () => {
   it("muestra el aviso de que no existe analisis de requisitos", () => {
     render(<Home />);
     expect(screen.getByRole("note", { name: "Estado del proyecto" }).textContent).toContain(
-      "no evalua si una empresa cumple",
+      "la completitud del perfil de empresa no evalua cumplimiento",
     );
   });
 
   it("consume el paquete compartido de schemas", () => {
     render(<Home />);
     expect(NORMALIZED_REQUIREMENT_SCHEMA_VERSION).toBe("2.0.0");
+    expect(COMPANY_PROFILE_SCHEMA_VERSION).toBe("1.0.0");
     expect(REQUIREMENT_CATEGORY_VALUES.length).toBe(12);
     expect(
       screen.getAllByText(new RegExp(`v${NORMALIZED_REQUIREMENT_SCHEMA_VERSION}`)).length,
     ).toBeGreaterThan(0);
+    expect(
+      screen.getAllByText(new RegExp(`v${COMPANY_PROFILE_SCHEMA_VERSION}`)).length,
+    ).toBeGreaterThan(0);
+  });
+});
+
+describe("empresas", () => {
+  it("muestra estado vacio real", async () => {
+    mockJson({ items: [], total: 0, limit: 20, offset: 0 });
+    render(<CompaniesPage />);
+    expect(await screen.findByText("No hay empresas registradas")).toBeDefined();
+  });
+
+  it("muestra empresas devueltas por la API con identificador enmascarado", async () => {
+    mockJson({
+      items: [
+        {
+          id: "10101010-1010-1010-1010-101010101010",
+          internal_reference: "CP-20260702-ABC12345",
+          legal_name: "Empresa Demo SAS",
+          trade_name: null,
+          tax_id_masked: "*****1234",
+          tax_id_type: "NIT",
+          status: "DRAFT",
+          completeness_status: "INCOMPLETE",
+          evidence_coverage: 0.25,
+          pending_evidence_count: 2,
+          updated_at: "2026-07-02T00:00:00Z",
+        },
+      ],
+      total: 1,
+      limit: 20,
+      offset: 0,
+    });
+    render(<CompaniesPage />);
+    expect(await screen.findByText("Empresa Demo SAS")).toBeDefined();
+    expect(screen.getByText("*****1234")).toBeDefined();
+  });
+});
+
+describe("crear empresa", () => {
+  it("envia formulario y redirige al detalle tras confirmacion API", async () => {
+    mockJson({ id: "10101010-1010-1010-1010-101010101010" });
+    render(<NewCompanyPage />);
+    fireEvent.change(screen.getByLabelText("Razon social *"), {
+      target: { value: "Empresa Demo SAS" },
+    });
+    fireEvent.change(screen.getByLabelText("NIT / identificacion"), {
+      target: { value: "900123456-7" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: "Crear empresa" }));
+    await waitFor(() =>
+      expect(pushMock).toHaveBeenCalledWith("/companies/10101010-1010-1010-1010-101010101010"),
+    );
+  });
+});
+
+describe("detalle de empresa", () => {
+  it("muestra advertencias, evidencia y snapshots sin exponer IDs completos", async () => {
+    const fetchMock = vi.mocked(fetch);
+    fetchMock
+      .mockResolvedValueOnce(jsonResponse(companyDetail()))
+      .mockResolvedValueOnce(jsonResponse([companyEvidence()]))
+      .mockResolvedValueOnce(jsonResponse(companyCompleteness()))
+      .mockResolvedValueOnce(jsonResponse([companySnapshot()]));
+
+    render(<CompanyDetailClient companyId="10101010-1010-1010-1010-101010101010" />);
+    expect(await screen.findByText("Empresa Demo SAS")).toBeDefined();
+    expect(screen.getByText(/La completitud del perfil no determina/)).toBeDefined();
+    expect(
+      screen.getByText(/Las evaluaciones futuras utilizaran una version especifica/),
+    ).toBeDefined();
+    expect(screen.getByText(/NIT \*\*\*\*\*1234/)).toBeDefined();
+    expect(screen.getByText("rut-demo.pdf")).toBeDefined();
+    expect(screen.getByText("Estado general: READY_FOR_REVIEW - Cobertura 100%")).toBeDefined();
+    expect(screen.getByText("Inmutable")).toBeDefined();
   });
 });
 
@@ -427,6 +510,100 @@ function requirementBase() {
     is_active: true,
     created_at: "2026-07-02T00:00:00Z",
     updated_at: "2026-07-02T00:00:00Z",
+  };
+}
+
+function companyDetail() {
+  return {
+    id: "10101010-1010-1010-1010-101010101010",
+    internal_reference: "CP-20260702-ABC12345",
+    legal_name: "Empresa Demo SAS",
+    trade_name: null,
+    tax_id: "9001234567",
+    tax_id_masked: "*****1234",
+    tax_id_type: "NIT",
+    company_type: "SAS",
+    legal_nature: "Privada",
+    incorporation_date: "2020-01-01",
+    country: "CO",
+    department: "Bogota",
+    city: "Bogota",
+    address: null,
+    website: null,
+    primary_email: "contacto@example.com",
+    primary_phone: null,
+    economic_activity_codes: ["6201"],
+    status: "DRAFT",
+    created_at: "2026-07-02T00:00:00Z",
+    updated_at: "2026-07-02T00:00:00Z",
+    archived_at: null,
+    legal_registrations: [],
+    rup_snapshots: [],
+    unspsc_codes: [],
+    financial_periods: [],
+    experience_records: [],
+    people: [],
+    certifications: [],
+    capabilities: [],
+    evidence_documents: [companyEvidence()],
+    evidence_links: [],
+  };
+}
+
+function companyEvidence() {
+  return {
+    id: "20202020-2020-2020-2020-202020202020",
+    company_id: "10101010-1010-1010-1010-101010101010",
+    process_document_id: "30303030-3030-3030-3030-303030303030",
+    evidence_type: "RUT",
+    title: "rut-demo.pdf",
+    original_filename: "rut-demo.pdf",
+    sha256: "a".repeat(64),
+    size_bytes: 1024,
+    declared_content_type: "application/pdf",
+    detected_content_type: "application/pdf",
+    storage_uri: null,
+    issued_at: null,
+    expires_at: null,
+    source_authority: "DIAN",
+    review_status: "VERIFIED",
+    processing_status: "COMPLETED",
+    latest_extraction_id: "40404040-4040-4040-4040-404040404040",
+    created_at: "2026-07-02T00:00:00Z",
+    updated_at: "2026-07-02T00:00:00Z",
+  };
+}
+
+function companyCompleteness() {
+  return {
+    company_id: "10101010-1010-1010-1010-101010101010",
+    identity_complete: true,
+    legal_registration_complete: true,
+    rup_complete: true,
+    financial_complete: true,
+    experience_complete: true,
+    personnel_complete: true,
+    certifications_complete: true,
+    evidence_coverage: 1,
+    expired_evidence_count: 0,
+    unsupported_record_count: 0,
+    conflicting_evidence_count: 0,
+    missing_items: [],
+    ready_for_review: true,
+    generated_at: "2026-07-02T00:00:00Z",
+  };
+}
+
+function companySnapshot() {
+  return {
+    id: "50505050-5050-5050-5050-505050505050",
+    company_id: "10101010-1010-1010-1010-101010101010",
+    version: 1,
+    status: "PUBLISHED",
+    digest: "b".repeat(64),
+    completeness_status: "READY_FOR_REVIEW",
+    created_at: "2026-07-02T00:00:00Z",
+    published_at: "2026-07-02T00:00:00Z",
   };
 }
 

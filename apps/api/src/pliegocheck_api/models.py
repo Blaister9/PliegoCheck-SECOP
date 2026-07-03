@@ -9,6 +9,7 @@ from sqlalchemy import (
     JSON,
     Boolean,
     CheckConstraint,
+    Date,
     DateTime,
     ForeignKey,
     Index,
@@ -25,6 +26,17 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from pliegocheck_api.db import Base
 from pliegocheck_schemas import (
+    CompanyCapabilityCategory,
+    CompanyCertificationType,
+    CompanyEvidenceReviewStatus,
+    CompanyEvidenceRole,
+    CompanyEvidenceSubjectType,
+    CompanyEvidenceType,
+    CompanyEvidenceValidationStatus,
+    CompanyLegalRegistrationType,
+    CompanyProfileStatus,
+    CompanyRecordStatus,
+    CompanySnapshotStatus,
     DocumentExtractionStatus,
     DocumentProcessingJobStatus,
     DocumentProcessingJobType,
@@ -101,6 +113,29 @@ REQUIREMENT_RELATION_TYPE_VALUES = ", ".join(
 REJECTED_CANDIDATE_REASON_VALUES = ", ".join(
     f"'{reason.value}'" for reason in RejectedCandidateReason
 )
+COMPANY_PROFILE_STATUS_VALUES = ", ".join(f"'{status.value}'" for status in CompanyProfileStatus)
+COMPANY_RECORD_STATUS_VALUES = ", ".join(f"'{status.value}'" for status in CompanyRecordStatus)
+COMPANY_LEGAL_REGISTRATION_TYPE_VALUES = ", ".join(
+    f"'{item.value}'" for item in CompanyLegalRegistrationType
+)
+COMPANY_CAPABILITY_CATEGORY_VALUES = ", ".join(
+    f"'{item.value}'" for item in CompanyCapabilityCategory
+)
+COMPANY_CERTIFICATION_TYPE_VALUES = ", ".join(
+    f"'{item.value}'" for item in CompanyCertificationType
+)
+COMPANY_EVIDENCE_TYPE_VALUES = ", ".join(f"'{item.value}'" for item in CompanyEvidenceType)
+COMPANY_EVIDENCE_REVIEW_STATUS_VALUES = ", ".join(
+    f"'{item.value}'" for item in CompanyEvidenceReviewStatus
+)
+COMPANY_EVIDENCE_SUBJECT_TYPE_VALUES = ", ".join(
+    f"'{item.value}'" for item in CompanyEvidenceSubjectType
+)
+COMPANY_EVIDENCE_ROLE_VALUES = ", ".join(f"'{item.value}'" for item in CompanyEvidenceRole)
+COMPANY_EVIDENCE_VALIDATION_STATUS_VALUES = ", ".join(
+    f"'{item.value}'" for item in CompanyEvidenceValidationStatus
+)
+COMPANY_SNAPSHOT_STATUS_VALUES = ", ".join(f"'{item.value}'" for item in CompanySnapshotStatus)
 
 
 class Process(Base):
@@ -121,6 +156,7 @@ class Process(Base):
         ),
         Index("ix_processes_created_at", "created_at"),
         Index("ix_processes_status", "status"),
+        Index("ix_processes_is_system", "is_system"),
         Index("ix_processes_internal_reference", "internal_reference", unique=True),
     )
 
@@ -146,6 +182,7 @@ class Process(Base):
         nullable=False,
         default=ProcessSource.MANUAL.value,
     )
+    is_system: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         nullable=False,
@@ -162,6 +199,11 @@ class Process(Base):
         back_populates="process",
         cascade="all, delete-orphan",
         order_by="ProcessDocument.created_at",
+    )
+    company_profiles: Mapped[list["CompanyProfile"]] = relationship(
+        back_populates="system_process",
+        cascade="all, delete-orphan",
+        order_by="CompanyProfile.created_at",
     )
     events: Mapped[list["ImportEvent"]] = relationship(
         back_populates="process",
@@ -251,6 +293,10 @@ class ProcessDocument(Base):
         back_populates="document",
         cascade="all, delete-orphan",
         order_by="DocumentExtraction.created_at",
+    )
+    company_evidence_document: Mapped["CompanyEvidenceDocument | None"] = relationship(
+        back_populates="process_document",
+        uselist=False,
     )
 
 
@@ -1024,6 +1070,667 @@ class RejectedRequirementCandidate(Base):
     )
 
     run: Mapped[RequirementNormalizationRun] = relationship(back_populates="rejected_candidates")
+
+
+class CompanyProfile(Base):
+    """Perfil mutable de una empresa local."""
+
+    __tablename__ = "company_profiles"
+    __table_args__ = (
+        CheckConstraint(
+            f"status IN ({COMPANY_PROFILE_STATUS_VALUES})",
+            name="ck_company_profiles_status",
+        ),
+        CheckConstraint("btrim(legal_name) <> ''", name="ck_company_profiles_legal_name"),
+        Index("ix_company_profiles_internal_reference", "internal_reference", unique=True),
+        Index("ix_company_profiles_tax_id", "tax_id"),
+        Index("ix_company_profiles_status", "status"),
+        UniqueConstraint("tax_id_type", "tax_id", name="uq_company_profiles_tax_id"),
+    )
+
+    id: Mapped[UUID] = mapped_column(Uuid(as_uuid=True), primary_key=True, default=uuid4)
+    system_process_id: Mapped[UUID] = mapped_column(
+        Uuid(as_uuid=True),
+        ForeignKey("processes.id", ondelete="CASCADE"),
+        nullable=False,
+        unique=True,
+    )
+    internal_reference: Mapped[str] = mapped_column(String(64), nullable=False)
+    legal_name: Mapped[str] = mapped_column(String(500), nullable=False)
+    trade_name: Mapped[str | None] = mapped_column(String(500))
+    tax_id: Mapped[str | None] = mapped_column(String(128))
+    tax_id_type: Mapped[str | None] = mapped_column(String(64))
+    company_type: Mapped[str | None] = mapped_column(String(128))
+    legal_nature: Mapped[str | None] = mapped_column(String(128))
+    incorporation_date: Mapped[datetime | None] = mapped_column(Date)
+    country: Mapped[str | None] = mapped_column(String(64), default="CO")
+    department: Mapped[str | None] = mapped_column(String(128))
+    city: Mapped[str | None] = mapped_column(String(128))
+    address: Mapped[str | None] = mapped_column(String(500))
+    website: Mapped[str | None] = mapped_column(String(2083))
+    primary_email: Mapped[str | None] = mapped_column(String(320))
+    primary_phone: Mapped[str | None] = mapped_column(String(128))
+    economic_activity_codes: Mapped[list[str]] = mapped_column(JSON, nullable=False, default=list)
+    status: Mapped[str] = mapped_column(
+        String(32),
+        nullable=False,
+        default=CompanyProfileStatus.DRAFT.value,
+    )
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        nullable=False,
+        server_default=func.now(),
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        nullable=False,
+        server_default=func.now(),
+        onupdate=func.now(),
+    )
+    archived_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+
+    system_process: Mapped[Process] = relationship(back_populates="company_profiles")
+    legal_registrations: Mapped[list["CompanyLegalRegistration"]] = relationship(
+        back_populates="company", cascade="all, delete-orphan"
+    )
+    rup_snapshots: Mapped[list["RupSnapshot"]] = relationship(
+        back_populates="company", cascade="all, delete-orphan"
+    )
+    unspsc_codes: Mapped[list["CompanyUnspscCode"]] = relationship(
+        back_populates="company", cascade="all, delete-orphan"
+    )
+    financial_periods: Mapped[list["CompanyFinancialPeriod"]] = relationship(
+        back_populates="company", cascade="all, delete-orphan"
+    )
+    experience_records: Mapped[list["CompanyExperienceRecord"]] = relationship(
+        back_populates="company", cascade="all, delete-orphan"
+    )
+    people: Mapped[list["CompanyPerson"]] = relationship(
+        back_populates="company", cascade="all, delete-orphan"
+    )
+    certifications: Mapped[list["CompanyCertification"]] = relationship(
+        back_populates="company", cascade="all, delete-orphan"
+    )
+    capabilities: Mapped[list["CompanyCapability"]] = relationship(
+        back_populates="company", cascade="all, delete-orphan"
+    )
+    evidence_documents: Mapped[list["CompanyEvidenceDocument"]] = relationship(
+        back_populates="company", cascade="all, delete-orphan"
+    )
+    evidence_links: Mapped[list["CompanyEvidenceLink"]] = relationship(
+        back_populates="company", cascade="all, delete-orphan"
+    )
+    snapshots: Mapped[list["CompanyProfileSnapshot"]] = relationship(
+        back_populates="company", cascade="all, delete-orphan"
+    )
+    audit_events: Mapped[list["CompanyAuditEvent"]] = relationship(
+        back_populates="company", cascade="all, delete-orphan"
+    )
+
+
+class CompanyLegalRegistration(Base):
+    __tablename__ = "company_legal_registrations"
+    __table_args__ = (
+        CheckConstraint(
+            f"registration_type IN ({COMPANY_LEGAL_REGISTRATION_TYPE_VALUES})",
+            name="ck_company_legal_registrations_type",
+        ),
+        CheckConstraint(
+            f"status IN ({COMPANY_RECORD_STATUS_VALUES})",
+            name="ck_company_legal_registrations_status",
+        ),
+        CheckConstraint(
+            "expires_at IS NULL OR issued_at IS NULL OR expires_at >= issued_at",
+            name="ck_company_legal_registrations_dates",
+        ),
+        Index("ix_company_legal_registrations_company_id", "company_id"),
+    )
+
+    id: Mapped[UUID] = mapped_column(Uuid(as_uuid=True), primary_key=True, default=uuid4)
+    company_id: Mapped[UUID] = mapped_column(
+        Uuid(as_uuid=True), ForeignKey("company_profiles.id", ondelete="CASCADE"), nullable=False
+    )
+    registration_type: Mapped[str] = mapped_column(String(64), nullable=False)
+    registration_number: Mapped[str | None] = mapped_column(String(255))
+    issuing_authority: Mapped[str | None] = mapped_column(String(500))
+    issued_at: Mapped[datetime | None] = mapped_column(Date)
+    expires_at: Mapped[datetime | None] = mapped_column(Date)
+    status: Mapped[str] = mapped_column(
+        String(32), nullable=False, default=CompanyRecordStatus.DECLARED.value
+    )
+    declared_data: Mapped[dict[str, Any]] = mapped_column(JSON, nullable=False, default=dict)
+    notes: Mapped[str | None] = mapped_column(Text)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
+    )
+
+    company: Mapped[CompanyProfile] = relationship(back_populates="legal_registrations")
+
+
+class RupSnapshot(Base):
+    __tablename__ = "rup_snapshots"
+    __table_args__ = (
+        CheckConstraint(
+            f"status IN ({COMPANY_RECORD_STATUS_VALUES})",
+            name="ck_rup_snapshots_status",
+        ),
+        CheckConstraint(
+            "valid_until IS NULL OR issued_at IS NULL OR valid_until >= issued_at",
+            name="ck_rup_snapshots_dates",
+        ),
+        Index("ix_rup_snapshots_company_id", "company_id"),
+    )
+
+    id: Mapped[UUID] = mapped_column(Uuid(as_uuid=True), primary_key=True, default=uuid4)
+    company_id: Mapped[UUID] = mapped_column(
+        Uuid(as_uuid=True), ForeignKey("company_profiles.id", ondelete="CASCADE"), nullable=False
+    )
+    registration_number: Mapped[str | None] = mapped_column(String(255))
+    issued_at: Mapped[datetime | None] = mapped_column(Date)
+    valid_until: Mapped[datetime | None] = mapped_column(Date)
+    renewal_year: Mapped[int | None] = mapped_column(Integer)
+    status: Mapped[str] = mapped_column(
+        String(32), nullable=False, default=CompanyRecordStatus.DECLARED.value
+    )
+    financial_period_reference: Mapped[str | None] = mapped_column(String(255))
+    organization_capacity: Mapped[Decimal | None] = mapped_column(Numeric(24, 4))
+    technical_capacity: Mapped[Decimal | None] = mapped_column(Numeric(24, 4))
+    financial_capacity: Mapped[Decimal | None] = mapped_column(Numeric(24, 4))
+    experience_capacity: Mapped[Decimal | None] = mapped_column(Numeric(24, 4))
+    raw_declared_data: Mapped[dict[str, Any]] = mapped_column(JSON, nullable=False, default=dict)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
+    )
+
+    company: Mapped[CompanyProfile] = relationship(back_populates="rup_snapshots")
+
+
+class CompanyUnspscCode(Base):
+    __tablename__ = "company_unspsc_codes"
+    __table_args__ = (
+        CheckConstraint(
+            f"status IN ({COMPANY_RECORD_STATUS_VALUES})",
+            name="ck_company_unspsc_codes_status",
+        ),
+        CheckConstraint("btrim(code) <> ''", name="ck_company_unspsc_codes_code"),
+        UniqueConstraint("company_id", "code", "valid_until", name="uq_company_unspsc_codes_code"),
+        Index("ix_company_unspsc_codes_company_id", "company_id"),
+    )
+
+    id: Mapped[UUID] = mapped_column(Uuid(as_uuid=True), primary_key=True, default=uuid4)
+    company_id: Mapped[UUID] = mapped_column(
+        Uuid(as_uuid=True), ForeignKey("company_profiles.id", ondelete="CASCADE"), nullable=False
+    )
+    code: Mapped[str] = mapped_column(String(64), nullable=False)
+    description: Mapped[str | None] = mapped_column(String(500))
+    source: Mapped[str | None] = mapped_column(String(255))
+    valid_from: Mapped[datetime | None] = mapped_column(Date)
+    valid_until: Mapped[datetime | None] = mapped_column(Date)
+    status: Mapped[str] = mapped_column(
+        String(32), nullable=False, default=CompanyRecordStatus.DECLARED.value
+    )
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
+    )
+
+    company: Mapped[CompanyProfile] = relationship(back_populates="unspsc_codes")
+
+
+class CompanyFinancialPeriod(Base):
+    __tablename__ = "company_financial_periods"
+    __table_args__ = (
+        CheckConstraint(
+            f"status IN ({COMPANY_RECORD_STATUS_VALUES})",
+            name="ck_company_financial_periods_status",
+        ),
+        CheckConstraint("period_end >= period_start", name="ck_company_financial_periods_dates"),
+        Index("ix_company_financial_periods_company_id", "company_id"),
+    )
+
+    id: Mapped[UUID] = mapped_column(Uuid(as_uuid=True), primary_key=True, default=uuid4)
+    company_id: Mapped[UUID] = mapped_column(
+        Uuid(as_uuid=True), ForeignKey("company_profiles.id", ondelete="CASCADE"), nullable=False
+    )
+    period_start: Mapped[datetime] = mapped_column(Date, nullable=False)
+    period_end: Mapped[datetime] = mapped_column(Date, nullable=False)
+    currency: Mapped[str] = mapped_column(String(3), nullable=False)
+    source_type: Mapped[str] = mapped_column(String(64), nullable=False)
+    status: Mapped[str] = mapped_column(
+        String(32), nullable=False, default=CompanyRecordStatus.DECLARED.value
+    )
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
+    )
+
+    company: Mapped[CompanyProfile] = relationship(back_populates="financial_periods")
+    metrics: Mapped[list["CompanyFinancialMetric"]] = relationship(
+        back_populates="financial_period", cascade="all, delete-orphan"
+    )
+
+
+class CompanyFinancialMetric(Base):
+    __tablename__ = "company_financial_metrics"
+    __table_args__ = (
+        CheckConstraint(
+            f"status IN ({COMPANY_RECORD_STATUS_VALUES})",
+            name="ck_company_financial_metrics_status",
+        ),
+        Index("ix_company_financial_metrics_period_id", "financial_period_id"),
+    )
+
+    id: Mapped[UUID] = mapped_column(Uuid(as_uuid=True), primary_key=True, default=uuid4)
+    financial_period_id: Mapped[UUID] = mapped_column(
+        Uuid(as_uuid=True),
+        ForeignKey("company_financial_periods.id", ondelete="CASCADE"),
+        nullable=False,
+    )
+    metric_type: Mapped[str] = mapped_column(String(64), nullable=False)
+    value: Mapped[Decimal] = mapped_column(Numeric(28, 8), nullable=False)
+    unit: Mapped[str | None] = mapped_column(String(64))
+    source_value: Mapped[str | None] = mapped_column(String(500))
+    is_calculated: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
+    formula: Mapped[str | None] = mapped_column(Text)
+    formula_inputs: Mapped[dict[str, Any]] = mapped_column(JSON, nullable=False, default=dict)
+    calculation_version: Mapped[str | None] = mapped_column(String(64))
+    status: Mapped[str] = mapped_column(
+        String(32), nullable=False, default=CompanyRecordStatus.DECLARED.value
+    )
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
+    )
+
+    financial_period: Mapped[CompanyFinancialPeriod] = relationship(back_populates="metrics")
+
+
+class CompanyExperienceRecord(Base):
+    __tablename__ = "company_experience_records"
+    __table_args__ = (
+        CheckConstraint(
+            f"status IN ({COMPANY_RECORD_STATUS_VALUES})",
+            name="ck_company_experience_records_status",
+        ),
+        CheckConstraint(
+            "end_date IS NULL OR start_date IS NULL OR end_date >= start_date",
+            name="ck_company_experience_records_dates",
+        ),
+        CheckConstraint(
+            "company_participation_percentage IS NULL OR "
+            "(company_participation_percentage >= 0 AND company_participation_percentage <= 100)",
+            name="ck_company_experience_records_percentage",
+        ),
+        Index("ix_company_experience_records_company_id", "company_id"),
+    )
+
+    id: Mapped[UUID] = mapped_column(Uuid(as_uuid=True), primary_key=True, default=uuid4)
+    company_id: Mapped[UUID] = mapped_column(
+        Uuid(as_uuid=True), ForeignKey("company_profiles.id", ondelete="CASCADE"), nullable=False
+    )
+    contract_reference: Mapped[str | None] = mapped_column(String(255))
+    contracting_party: Mapped[str] = mapped_column(String(500), nullable=False)
+    contract_title: Mapped[str] = mapped_column(String(500), nullable=False)
+    description: Mapped[str | None] = mapped_column(Text)
+    country: Mapped[str | None] = mapped_column(String(128))
+    sector: Mapped[str | None] = mapped_column(String(255))
+    contract_type: Mapped[str | None] = mapped_column(String(255))
+    start_date: Mapped[datetime | None] = mapped_column(Date)
+    end_date: Mapped[datetime | None] = mapped_column(Date)
+    execution_status: Mapped[str] = mapped_column(String(64), nullable=False)
+    total_contract_value: Mapped[Decimal | None] = mapped_column(Numeric(28, 2))
+    currency: Mapped[str] = mapped_column(String(3), nullable=False, default="COP")
+    company_participation_percentage: Mapped[Decimal | None] = mapped_column(Numeric(6, 3))
+    company_attributable_value: Mapped[Decimal | None] = mapped_column(Numeric(28, 2))
+    attributable_value_formula: Mapped[str | None] = mapped_column(Text)
+    consortium_name: Mapped[str | None] = mapped_column(String(500))
+    consortium_members: Mapped[list[str]] = mapped_column(JSON, nullable=False, default=list)
+    unspsc_codes: Mapped[list[str]] = mapped_column(JSON, nullable=False, default=list)
+    activities: Mapped[list[str]] = mapped_column(JSON, nullable=False, default=list)
+    scope_tags: Mapped[list[str]] = mapped_column(JSON, nullable=False, default=list)
+    status: Mapped[str] = mapped_column(
+        String(32), nullable=False, default=CompanyRecordStatus.DECLARED.value
+    )
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
+    )
+
+    company: Mapped[CompanyProfile] = relationship(back_populates="experience_records")
+
+
+class CompanyPerson(Base):
+    __tablename__ = "company_people"
+    __table_args__ = (
+        CheckConstraint(
+            f"status IN ({COMPANY_RECORD_STATUS_VALUES})",
+            name="ck_company_people_status",
+        ),
+        Index("ix_company_people_company_id", "company_id"),
+    )
+
+    id: Mapped[UUID] = mapped_column(Uuid(as_uuid=True), primary_key=True, default=uuid4)
+    company_id: Mapped[UUID] = mapped_column(
+        Uuid(as_uuid=True), ForeignKey("company_profiles.id", ondelete="CASCADE"), nullable=False
+    )
+    full_name: Mapped[str] = mapped_column(String(500), nullable=False)
+    identification_type: Mapped[str | None] = mapped_column(String(64))
+    identification_number: Mapped[str | None] = mapped_column(String(128))
+    email: Mapped[str | None] = mapped_column(String(320))
+    phone: Mapped[str | None] = mapped_column(String(128))
+    relationship_type: Mapped[str] = mapped_column(String(64), nullable=False)
+    availability_status: Mapped[str] = mapped_column(String(64), nullable=False)
+    status: Mapped[str] = mapped_column(
+        String(32), nullable=False, default=CompanyRecordStatus.DECLARED.value
+    )
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
+    )
+
+    company: Mapped[CompanyProfile] = relationship(back_populates="people")
+    education: Mapped[list["PersonEducation"]] = relationship(
+        back_populates="person", cascade="all, delete-orphan"
+    )
+    experience: Mapped[list["PersonExperience"]] = relationship(
+        back_populates="person", cascade="all, delete-orphan"
+    )
+    credentials: Mapped[list["PersonCredential"]] = relationship(
+        back_populates="person", cascade="all, delete-orphan"
+    )
+
+
+class PersonEducation(Base):
+    __tablename__ = "person_education"
+    id: Mapped[UUID] = mapped_column(Uuid(as_uuid=True), primary_key=True, default=uuid4)
+    person_id: Mapped[UUID] = mapped_column(
+        Uuid(as_uuid=True), ForeignKey("company_people.id", ondelete="CASCADE"), nullable=False
+    )
+    degree_type: Mapped[str | None] = mapped_column(String(255))
+    title: Mapped[str] = mapped_column(String(500), nullable=False)
+    institution: Mapped[str | None] = mapped_column(String(500))
+    graduation_date: Mapped[datetime | None] = mapped_column(Date)
+    country: Mapped[str | None] = mapped_column(String(128))
+    status: Mapped[str] = mapped_column(
+        String(32), nullable=False, default=CompanyRecordStatus.DECLARED.value
+    )
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
+    )
+    person: Mapped[CompanyPerson] = relationship(back_populates="education")
+
+
+class PersonExperience(Base):
+    __tablename__ = "person_experience"
+    __table_args__ = (
+        CheckConstraint(
+            "end_date IS NULL OR start_date IS NULL OR end_date >= start_date",
+            name="ck_person_experience_dates",
+        ),
+    )
+    id: Mapped[UUID] = mapped_column(Uuid(as_uuid=True), primary_key=True, default=uuid4)
+    person_id: Mapped[UUID] = mapped_column(
+        Uuid(as_uuid=True), ForeignKey("company_people.id", ondelete="CASCADE"), nullable=False
+    )
+    organization: Mapped[str] = mapped_column(String(500), nullable=False)
+    role: Mapped[str] = mapped_column(String(500), nullable=False)
+    description: Mapped[str | None] = mapped_column(Text)
+    start_date: Mapped[datetime | None] = mapped_column(Date)
+    end_date: Mapped[datetime | None] = mapped_column(Date)
+    status: Mapped[str] = mapped_column(
+        String(32), nullable=False, default=CompanyRecordStatus.DECLARED.value
+    )
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
+    )
+    person: Mapped[CompanyPerson] = relationship(back_populates="experience")
+
+
+class PersonCredential(Base):
+    __tablename__ = "person_credentials"
+    __table_args__ = (
+        CheckConstraint(
+            "expires_at IS NULL OR issued_at IS NULL OR expires_at >= issued_at",
+            name="ck_person_credentials_dates",
+        ),
+    )
+    id: Mapped[UUID] = mapped_column(Uuid(as_uuid=True), primary_key=True, default=uuid4)
+    person_id: Mapped[UUID] = mapped_column(
+        Uuid(as_uuid=True), ForeignKey("company_people.id", ondelete="CASCADE"), nullable=False
+    )
+    credential_type: Mapped[str] = mapped_column(String(64), nullable=False)
+    name: Mapped[str] = mapped_column(String(500), nullable=False)
+    issuer: Mapped[str | None] = mapped_column(String(500))
+    credential_number: Mapped[str | None] = mapped_column(String(255))
+    issued_at: Mapped[datetime | None] = mapped_column(Date)
+    expires_at: Mapped[datetime | None] = mapped_column(Date)
+    status: Mapped[str] = mapped_column(
+        String(32), nullable=False, default=CompanyRecordStatus.DECLARED.value
+    )
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
+    )
+    person: Mapped[CompanyPerson] = relationship(back_populates="credentials")
+
+
+class CompanyCertification(Base):
+    __tablename__ = "company_certifications"
+    __table_args__ = (
+        CheckConstraint(
+            f"certification_type IN ({COMPANY_CERTIFICATION_TYPE_VALUES})",
+            name="ck_company_certifications_type",
+        ),
+        CheckConstraint(
+            f"status IN ({COMPANY_RECORD_STATUS_VALUES})",
+            name="ck_company_certifications_status",
+        ),
+        CheckConstraint(
+            "expires_at IS NULL OR issued_at IS NULL OR expires_at >= issued_at",
+            name="ck_company_certifications_dates",
+        ),
+        Index("ix_company_certifications_company_id", "company_id"),
+    )
+    id: Mapped[UUID] = mapped_column(Uuid(as_uuid=True), primary_key=True, default=uuid4)
+    company_id: Mapped[UUID] = mapped_column(
+        Uuid(as_uuid=True), ForeignKey("company_profiles.id", ondelete="CASCADE"), nullable=False
+    )
+    certification_type: Mapped[str] = mapped_column(String(64), nullable=False)
+    name: Mapped[str] = mapped_column(String(500), nullable=False)
+    issuer: Mapped[str | None] = mapped_column(String(500))
+    certificate_number: Mapped[str | None] = mapped_column(String(255))
+    scope: Mapped[str | None] = mapped_column(Text)
+    issued_at: Mapped[datetime | None] = mapped_column(Date)
+    expires_at: Mapped[datetime | None] = mapped_column(Date)
+    status: Mapped[str] = mapped_column(
+        String(32), nullable=False, default=CompanyRecordStatus.DECLARED.value
+    )
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
+    )
+    company: Mapped[CompanyProfile] = relationship(back_populates="certifications")
+
+
+class CompanyCapability(Base):
+    __tablename__ = "company_capabilities"
+    __table_args__ = (
+        CheckConstraint(
+            f"category IN ({COMPANY_CAPABILITY_CATEGORY_VALUES})",
+            name="ck_company_capabilities_category",
+        ),
+        CheckConstraint(
+            f"status IN ({COMPANY_RECORD_STATUS_VALUES})",
+            name="ck_company_capabilities_status",
+        ),
+        Index("ix_company_capabilities_company_id", "company_id"),
+    )
+    id: Mapped[UUID] = mapped_column(Uuid(as_uuid=True), primary_key=True, default=uuid4)
+    company_id: Mapped[UUID] = mapped_column(
+        Uuid(as_uuid=True), ForeignKey("company_profiles.id", ondelete="CASCADE"), nullable=False
+    )
+    category: Mapped[str] = mapped_column(String(64), nullable=False)
+    name: Mapped[str] = mapped_column(String(500), nullable=False)
+    description: Mapped[str | None] = mapped_column(Text)
+    value: Mapped[str | None] = mapped_column(String(500))
+    unit: Mapped[str | None] = mapped_column(String(64))
+    territorial_scope: Mapped[str | None] = mapped_column(String(500))
+    valid_from: Mapped[datetime | None] = mapped_column(Date)
+    valid_until: Mapped[datetime | None] = mapped_column(Date)
+    status: Mapped[str] = mapped_column(
+        String(32), nullable=False, default=CompanyRecordStatus.DECLARED.value
+    )
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
+    )
+    company: Mapped[CompanyProfile] = relationship(back_populates="capabilities")
+
+
+class CompanyEvidenceDocument(Base):
+    __tablename__ = "company_evidence_documents"
+    __table_args__ = (
+        UniqueConstraint("company_id", "process_document_id", name="uq_company_evidence_document"),
+        UniqueConstraint("company_id", "sha256", name="uq_company_evidence_sha256"),
+        CheckConstraint(
+            f"evidence_type IN ({COMPANY_EVIDENCE_TYPE_VALUES})",
+            name="ck_company_evidence_documents_type",
+        ),
+        CheckConstraint(
+            f"review_status IN ({COMPANY_EVIDENCE_REVIEW_STATUS_VALUES})",
+            name="ck_company_evidence_documents_review_status",
+        ),
+        Index("ix_company_evidence_documents_company_id", "company_id"),
+    )
+    id: Mapped[UUID] = mapped_column(Uuid(as_uuid=True), primary_key=True, default=uuid4)
+    company_id: Mapped[UUID] = mapped_column(
+        Uuid(as_uuid=True), ForeignKey("company_profiles.id", ondelete="CASCADE"), nullable=False
+    )
+    process_document_id: Mapped[UUID] = mapped_column(
+        Uuid(as_uuid=True), ForeignKey("process_documents.id", ondelete="CASCADE"), nullable=False
+    )
+    evidence_type: Mapped[str] = mapped_column(String(64), nullable=False)
+    title: Mapped[str] = mapped_column(String(500), nullable=False)
+    issuer: Mapped[str | None] = mapped_column(String(500))
+    issued_at: Mapped[datetime | None] = mapped_column(Date)
+    expires_at: Mapped[datetime | None] = mapped_column(Date)
+    review_status: Mapped[str] = mapped_column(
+        String(32), nullable=False, default=CompanyEvidenceReviewStatus.PENDING.value
+    )
+    sha256: Mapped[str] = mapped_column(String(64), nullable=False)
+    notes: Mapped[str | None] = mapped_column(Text)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
+    )
+    company: Mapped[CompanyProfile] = relationship(back_populates="evidence_documents")
+    process_document: Mapped[ProcessDocument] = relationship(
+        back_populates="company_evidence_document"
+    )
+
+
+class CompanyEvidenceLink(Base):
+    __tablename__ = "company_evidence_links"
+    __table_args__ = (
+        CheckConstraint(
+            f"subject_type IN ({COMPANY_EVIDENCE_SUBJECT_TYPE_VALUES})",
+            name="ck_company_evidence_links_subject_type",
+        ),
+        CheckConstraint(
+            f"evidence_role IN ({COMPANY_EVIDENCE_ROLE_VALUES})",
+            name="ck_company_evidence_links_role",
+        ),
+        CheckConstraint(
+            f"validation_status IN ({COMPANY_EVIDENCE_VALIDATION_STATUS_VALUES})",
+            name="ck_company_evidence_links_validation_status",
+        ),
+        CheckConstraint(
+            f"review_status IN ({COMPANY_EVIDENCE_REVIEW_STATUS_VALUES})",
+            name="ck_company_evidence_links_review_status",
+        ),
+        Index("ix_company_evidence_links_company_id", "company_id"),
+        Index("ix_company_evidence_links_subject", "subject_type", "subject_id"),
+    )
+    id: Mapped[UUID] = mapped_column(Uuid(as_uuid=True), primary_key=True, default=uuid4)
+    company_id: Mapped[UUID] = mapped_column(
+        Uuid(as_uuid=True), ForeignKey("company_profiles.id", ondelete="CASCADE"), nullable=False
+    )
+    document_id: Mapped[UUID] = mapped_column(
+        Uuid(as_uuid=True),
+        ForeignKey("company_evidence_documents.id", ondelete="CASCADE"),
+        nullable=False,
+    )
+    subject_type: Mapped[str] = mapped_column(String(64), nullable=False)
+    subject_id: Mapped[UUID] = mapped_column(Uuid(as_uuid=True), nullable=False)
+    extraction_id: Mapped[UUID | None] = mapped_column(
+        Uuid(as_uuid=True), ForeignKey("document_extractions.id", ondelete="SET NULL")
+    )
+    segment_id: Mapped[UUID | None] = mapped_column(
+        Uuid(as_uuid=True), ForeignKey("extracted_segments.id", ondelete="SET NULL")
+    )
+    evidence_role: Mapped[str] = mapped_column(String(32), nullable=False)
+    quoted_text: Mapped[str | None] = mapped_column(Text)
+    source_location: Mapped[dict[str, Any]] = mapped_column(JSON, nullable=False, default=dict)
+    validation_status: Mapped[str] = mapped_column(String(64), nullable=False)
+    review_status: Mapped[str] = mapped_column(
+        String(32), nullable=False, default=CompanyEvidenceReviewStatus.PENDING.value
+    )
+    notes: Mapped[str | None] = mapped_column(Text)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
+    )
+    company: Mapped[CompanyProfile] = relationship(back_populates="evidence_links")
+
+
+class CompanyProfileSnapshot(Base):
+    __tablename__ = "company_profile_snapshots"
+    __table_args__ = (
+        UniqueConstraint("company_id", "version", name="uq_company_profile_snapshots_version"),
+        CheckConstraint(
+            f"status IN ({COMPANY_SNAPSHOT_STATUS_VALUES})",
+            name="ck_company_profile_snapshots_status",
+        ),
+        CheckConstraint("digest ~ '^[a-f0-9]{64}$'", name="ck_company_profile_snapshots_digest"),
+        Index("ix_company_profile_snapshots_company_id", "company_id"),
+    )
+    id: Mapped[UUID] = mapped_column(Uuid(as_uuid=True), primary_key=True, default=uuid4)
+    company_id: Mapped[UUID] = mapped_column(
+        Uuid(as_uuid=True), ForeignKey("company_profiles.id", ondelete="CASCADE"), nullable=False
+    )
+    version: Mapped[int] = mapped_column(Integer, nullable=False)
+    status: Mapped[str] = mapped_column(
+        String(32), nullable=False, default=CompanySnapshotStatus.DRAFT.value
+    )
+    digest: Mapped[str] = mapped_column(String(64), nullable=False)
+    payload: Mapped[dict[str, Any]] = mapped_column(JSON, nullable=False)
+    completeness_status: Mapped[str] = mapped_column(String(64), nullable=False)
+    notes: Mapped[str | None] = mapped_column(Text)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    published_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    company: Mapped[CompanyProfile] = relationship(back_populates="snapshots")
+
+
+class CompanyAuditEvent(Base):
+    __tablename__ = "company_audit_events"
+    __table_args__ = (Index("ix_company_audit_events_company_id", "company_id"),)
+    id: Mapped[UUID] = mapped_column(Uuid(as_uuid=True), primary_key=True, default=uuid4)
+    company_id: Mapped[UUID] = mapped_column(
+        Uuid(as_uuid=True), ForeignKey("company_profiles.id", ondelete="CASCADE"), nullable=False
+    )
+    event_type: Mapped[str] = mapped_column(String(64), nullable=False)
+    entity_type: Mapped[str] = mapped_column(String(64), nullable=False)
+    entity_id: Mapped[UUID | None] = mapped_column(Uuid(as_uuid=True))
+    actor: Mapped[str] = mapped_column(String(128), nullable=False, default="local-user")
+    summary: Mapped[str] = mapped_column(String(1000), nullable=False)
+    details: Mapped[dict[str, Any]] = mapped_column(JSON, nullable=False, default=dict)
+    snapshot_version: Mapped[int | None] = mapped_column(Integer)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    company: Mapped[CompanyProfile] = relationship(back_populates="audit_events")
 
 
 class ImportEvent(Base):
