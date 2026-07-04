@@ -169,6 +169,16 @@ Decisiones concretas al materializar perfiles de empresa y evidencias:
 | Snapshots | `CompanyProfileSnapshot` con payload canonico y digest SHA-256 | Las evaluaciones futuras referenciaran una version inmutable, no datos editables. |
 | Privacidad | Identificadores normalizados para unicidad y enmascarados en listados/UI | Reduce exposicion innecesaria de datos tributarios y personales. |
 
+## Registro de implementacion - Microfase 7 (2026-07-04)
+
+| Decision | Eleccion | Motivo |
+| --- | --- | --- |
+| Motor | `apps/api/src/pliegocheck_api/decision` como paquete puro y tipado | La decision queda separada de IA, base de datos y reloj global. |
+| Politica | JSON versionado en `config/decision-policies/v1` + snapshot en PostgreSQL | Permite reproducibilidad, hash estable e inmutabilidad historica. |
+| Adaptadores | Registro con unico adaptador real `FINANCIAL` | Evita inventar cobertura de dominios aun no implementados. |
+| Cola | `decision_jobs` con `FOR UPDATE SKIP LOCKED` | Mantiene el patron de extraccion, normalizacion y evaluacion financiera. |
+| UI | Seccion `Decision preliminar` en el detalle de proceso | Muestra limitaciones, readiness, reglas, acciones y review sin presentar dictamen juridico. |
+
 ## Límites del MVP
 
 El MVP (Microfases 1–8 del [roadmap](roadmap.md)) **no incluye**:

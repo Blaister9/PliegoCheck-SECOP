@@ -24,6 +24,11 @@
     "financial:eval": "uv run pytest evals/financial-evaluation",
     "financial:run-once": "uv run pliegocheck-worker financial-run-once",
     "financial:drain": "uv run pliegocheck-worker financial-drain",
+    "decision:policy-check": "uv run pytest apps/worker/tests/test_decision_worker.py::test_policy_loads_with_stable_hash apps/worker/tests/test_decision_worker.py::test_policy_rejects_positive_uncertainty_behavior apps/worker/tests/test_decision_worker.py::test_policy_rejects_incomplete_precedence",
+    "decision:test": "uv run pytest apps/worker/tests/test_decision_worker.py apps/api/tests/test_decision_api.py packages/schemas/tests/test_decision_contracts.py",
+    "decision:eval": "uv run pytest evals/decision-engine",
+    "decision:run-once": "uv run pliegocheck-worker decision-run-once",
+    "decision:drain": "uv run pliegocheck-worker decision-drain",
     "infra:up": "docker compose up -d postgres",
     "infra:down": "docker compose down",
     "db:migrate": "node scripts/db.mjs migrate",
@@ -37,7 +42,7 @@
     "test": "pnpm -r test && uv run pytest",
     "extraction:test": "uv run pytest apps/worker/tests && uv run pytest apps/api/tests/test_process_import.py",
     "build": "pnpm --filter @pliegocheck/web build",
-    "check": "pnpm schemas:check && pnpm company:test && pnpm company:snapshot-check && pnpm normalization:test && pnpm normalization:eval && pnpm financial:test && pnpm financial:eval && pnpm format:check && pnpm lint && pnpm typecheck && pnpm test && pnpm build"
+    "check": "pnpm schemas:check && pnpm company:test && pnpm company:snapshot-check && pnpm normalization:test && pnpm normalization:eval && pnpm financial:test && pnpm financial:eval && pnpm decision:policy-check && pnpm decision:test && pnpm decision:eval && pnpm format:check && pnpm lint && pnpm typecheck && pnpm test && pnpm build"
   },
   "devDependencies": {
     "@eslint/js": "^9.17.0",

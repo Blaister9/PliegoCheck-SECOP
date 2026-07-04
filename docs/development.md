@@ -1,6 +1,6 @@
 # Guia de desarrollo - PliegoCheck-SECOP
 
-Como trabajar en el monorepo tras la Microfase 6. Las decisiones de stack estan en
+Como trabajar en el monorepo tras la Microfase 7. Las decisiones de stack estan en
 [ADR-001](ADR-001-stack-and-architecture.md); la extraccion documental esta en
 [ADR-003](ADR-003-document-extraction.md); las reglas para agentes de programacion, en
 [AGENTS.md](../AGENTS.md).
@@ -49,6 +49,8 @@ docs/        Documentacion fundacional, guias y ADRs.
 - **Drenar normalizaciones:** `pnpm normalization:drain -- --max-jobs 10`
 - **Procesar evaluacion financiera:** `pnpm financial:run-once`
 - **Drenar evaluaciones financieras:** `pnpm financial:drain -- --max-jobs 10`
+- **Procesar decision preliminar:** `pnpm decision:run-once`
+- **Drenar decisiones:** `pnpm decision:drain -- --max-jobs 10`
 - **PostgreSQL:** `pnpm infra:up` publica PostgreSQL en `localhost:56543`
 - **Migraciones:** `pnpm db:migrate`; `pnpm db:check`
 
@@ -120,14 +122,17 @@ pnpm normalization:test
 pnpm normalization:eval
 pnpm financial:test
 pnpm financial:eval
+pnpm decision:policy-check
+pnpm decision:test
+pnpm decision:eval
 pnpm schemas:check
 pnpm build
 ```
 
 La CI ejecuta instalacion reproducible, migraciones, `db:check`, contratos sincronizados, pruebas de
 perfil de empresa y snapshot, pruebas y evals de normalizacion, formato, lint, typecheck, pruebas,
-pruebas y evals de evaluacion financiera, pruebas dedicadas de extraccion, build web y verificacion
-de repositorio sin cambios tras generar.
+pruebas y evals de evaluacion financiera, politica/pruebas/evals de decision, pruebas dedicadas de
+extraccion, build web y verificacion de repositorio sin cambios tras generar.
 
 ## Estado funcional real
 
@@ -157,7 +162,11 @@ Implementado:
 - evaluacion financiera deterministica por requisito contra snapshots publicados;
 - formulas financieras versionadas;
 - cola PostgreSQL y worker financiero;
-- revision manual auditada de resultados financieros.
+- revision manual auditada de resultados financieros;
+- decision preliminar deterministica con politica versionada `pliegocheck-default` 1.0.0;
+- hallazgos canonicos, cobertura por categoria, reglas, acciones y review/override auditados;
+- worker `decision-run-once` / `decision-drain`, API y UI de decision preliminar.
 
 No implementado todavia: OCR, evaluadores no financieros, integracion automatica con SECOP II,
-autenticacion, S3 real y motor GO / NO GO ejecutable.
+autenticacion y S3 real. Mientras solo exista el adaptador financiero, los requisitos obligatorios
+de otras categorias permanecen `NOT_EVALUATED` y bloquean `GO`.

@@ -62,12 +62,18 @@ Controles de seguridad, aislamiento y gobernanza de decisiones que la plataforma
 - **Microfase 6 sin IA:** la evaluacion financiera es deterministica. No llama OpenAI, no interpreta
   libremente evidencia y solo usa requisitos normalizados, reglas persistidas y snapshots publicados.
   Los overrides manuales quedan auditados y no cambian el resultado automatico original.
+- **Microfase 7 sin IA:** el motor de decision preliminar no llama OpenAI ni ningun modelo. Consume
+  hallazgos canonicos, cobertura y una politica versionada; las categorias sin adaptador quedan
+  `NOT_EVALUATED` y no se interpretan como cumplimiento.
 
 ## 7. Gobernanza de la decisión
 
 - **Revisión humana obligatoria para decisiones críticas:** evidencia contradictoria, ambigüedad jurídica, causales insubsanables y cualquier `requires_human_review` bloquean la decisión definitiva hasta `HumanReview`.
 - **Prohibición de afirmar certeza jurídica:** el sistema presenta análisis y evidencia; nunca afirma que una interpretación jurídica es definitiva. El resultado es apoyo a la decisión, no dictamen.
 - **Gestión de cambios en reglas:** las reglas del motor determinístico cambian solo mediante nueva versión (`DecisionRule`) con changelog y revisión; los cambios nunca son retroactivos sobre decisiones emitidas.
+- **Decision preliminar:** `DecisionRun.engine_outcome` conserva el resultado automatico original.
+  `reviewed_outcome` y `effective_outcome` registran confirmaciones u overrides humanos sin
+  recalcular historicos.
 
 ## 8. Amenazas específicas y mitigaciones
 

@@ -11,8 +11,8 @@ Microfase 3: inventario y extraccion documental (completada)
 Microfase 4: normalizacion de requisitos (completada)
 Microfase 5: perfil de empresa y evidencias (completada)
 Microfase 6: evaluador financiero inicial (completada)
-Microfase 7: motor deterministico de decision (siguiente)
-Microfase 8: explicacion y reporte auditable
+Microfase 7: motor deterministico de decision (completada)
+Microfase 8: evaluadores especializados juridico, tecnico y de experiencia (siguiente)
 Microfase 9: integracion con datos abiertos SECOP II
 Microfase 10: autenticacion, multiempresa y operacion
 ```
@@ -89,14 +89,17 @@ Microfase 10: autenticacion, multiempresa y operacion
 ## Microfase 7 - Motor deterministico de decision
 
 - **Objetivo:** implementar el motor de [decision-engine.md](decision-engine.md).
-- **Entregable previsto:** reglas versionadas, `Decision` persistida y tests exhaustivos de reglas.
-- **Criterios de aceptacion:** misma entrada + misma version de reglas produce la misma decision; sin
-  evidencia critica nunca emite `GO`.
+- **Entregable:** contratos compartidos, politica versionada, hallazgo canonico, adaptador
+  financiero, cobertura, reglas, motor puro, cola PostgreSQL, worker, API, UI, acciones, review,
+  overrides, pruebas, evals y documentacion.
+- **Criterios verificados:** misma entrada + misma version de reglas produce la misma decision; sin
+  cobertura obligatoria completa no emite `GO`; categorias sin adaptador quedan `NOT_EVALUATED`.
 
-## Microfase 8 - Explicacion y reporte auditable
+## Microfase 8 - Evaluadores especializados juridico, tecnico y de experiencia
 
-- **Objetivo:** comunicar la decision con evidencia navegable.
-- **Entregable previsto:** reporte auditable, flujo de `HumanReview` y exportacion.
+- **Objetivo:** ampliar la cobertura del motor con evaluadores no financieros.
+- **Entregable previsto:** adaptadores y evaluadores juridico, tecnico y de experiencia, con
+  evidencia trazable y sin decision por IA.
 
 ## Microfase 9 - Integracion con datos abiertos SECOP II
 

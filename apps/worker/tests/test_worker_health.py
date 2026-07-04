@@ -21,6 +21,9 @@ def test_health_status_reports_queue_state() -> None:
         "requirement_normalization_enabled": True,
         "normalization_provider": "fake",
         "normalization_model": "gpt-5.5-pro",
+        "decision_engine_enabled": True,
+        "decision_policy_version": "1.0.0",
+        "available_decision_adapters": ["FINANCIAL"],
     }
 
 

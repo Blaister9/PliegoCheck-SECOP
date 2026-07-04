@@ -20,6 +20,9 @@
             },
             {
               "$ref": "#/$defs/FinancialErrorCode"
+            },
+            {
+              "$ref": "#/$defs/DecisionErrorCode"
             }
           ]
         },
@@ -63,6 +66,26 @@
         "SNAPSHOT_IMMUTABLE",
         "SNAPSHOT_DIGEST_MISMATCH",
         "DATABASE_ERROR"
+      ],
+      "type": "string"
+    },
+    "DecisionErrorCode": {
+      "enum": [
+        "DECISION_ALREADY_QUEUED",
+        "DECISION_ALREADY_COMPLETED",
+        "DECISION_NOT_FOUND",
+        "DECISION_INPUT_NOT_READY",
+        "DECISION_POLICY_NOT_FOUND",
+        "DECISION_POLICY_INVALID",
+        "DECISION_NORMALIZATION_NOT_COMPLETED",
+        "DECISION_COMPANY_SNAPSHOT_NOT_PUBLISHED",
+        "DECISION_FINANCIAL_EVALUATION_NOT_COMPLETED",
+        "DECISION_INPUT_MISMATCH",
+        "DECISION_COVERAGE_INCOMPLETE",
+        "DECISION_RULE_EVALUATION_FAILED",
+        "DECISION_ENGINE_FAILED",
+        "INVALID_DECISION_OVERRIDE",
+        "DECISION_ACTION_NOT_FOUND"
       ],
       "type": "string"
     },

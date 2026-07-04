@@ -17,6 +17,10 @@ import logging
 import sys
 
 from pliegocheck_worker import SERVICE_NAME, SERVICE_VERSION
+from pliegocheck_worker.decision.orchestrator import (
+    decision_drain,
+    decision_run_once,
+)
 from pliegocheck_worker.financial.orchestrator import (
     financial_drain,
     financial_run_once,
@@ -84,6 +88,18 @@ def run_financial_once(worker_id: str | None) -> int:
 
 def run_financial_drain(max_jobs: int, worker_id: str | None) -> int:
     result = financial_drain(max_jobs=max_jobs, worker_id=worker_id)
+    print(json.dumps(result, sort_keys=True))
+    return 0
+
+
+def run_decision_once(worker_id: str | None) -> int:
+    result = decision_run_once(worker_id=worker_id)
+    print(json.dumps(result, sort_keys=True))
+    return 0
+
+
+def run_decision_drain(max_jobs: int, worker_id: str | None) -> int:
+    result = decision_drain(max_jobs=max_jobs, worker_id=worker_id)
     print(json.dumps(result, sort_keys=True))
     return 0
 
@@ -189,6 +205,17 @@ def main(argv: list[str] | None = None) -> int:
     )
     financial_drain_parser.add_argument("--max-jobs", type=int, default=100)
     financial_drain_parser.add_argument("--worker-id", default=None)
+    decision_once = subparsers.add_parser(
+        "decision-run-once",
+        help="Procesa como maximo una decision preliminar",
+    )
+    decision_once.add_argument("--worker-id", default=None)
+    decision_drain_parser = subparsers.add_parser(
+        "decision-drain",
+        help="Procesa decisiones pendientes y termina",
+    )
+    decision_drain_parser.add_argument("--max-jobs", type=int, default=100)
+    decision_drain_parser.add_argument("--worker-id", default=None)
     subparsers.add_parser(
         "normalization-smoke",
         help="Prueba manual opcional contra OpenAI con fixture sintetico",
@@ -209,6 +236,10 @@ def main(argv: list[str] | None = None) -> int:
         return run_financial_once(args.worker_id)
     if args.command == "financial-drain":
         return run_financial_drain(args.max_jobs, args.worker_id)
+    if args.command == "decision-run-once":
+        return run_decision_once(args.worker_id)
+    if args.command == "decision-drain":
+        return run_decision_drain(args.max_jobs, args.worker_id)
     if args.command == "normalization-smoke":
         return run_normalization_smoke()
     parser.error(f"comando no reconocido: {args.command}")

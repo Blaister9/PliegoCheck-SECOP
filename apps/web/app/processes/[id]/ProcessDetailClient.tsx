@@ -17,6 +17,7 @@ import type {
   RequirementList,
 } from "@pliegocheck/schemas";
 import { EXTRACTED_SEGMENT_TYPE_VALUES } from "@pliegocheck/schemas";
+import { DecisionPanel } from "./DecisionPanel";
 import {
   ApiClientError,
   createFinancialEvaluation,
@@ -382,6 +383,8 @@ export function ProcessDetailClient({ processId }: { processId: string }) {
           onRetry={(runId) => void retryFinancialRun(runId)}
         />
       </section>
+
+      <DecisionPanel processId={processId} />
 
       <section>
         <div className="section-heading">

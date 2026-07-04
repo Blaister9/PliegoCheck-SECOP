@@ -216,6 +216,7 @@ describe("detalle de proceso", () => {
       .mockResolvedValueOnce(jsonResponse(normalizationList()))
       .mockResolvedValueOnce(jsonResponse(requirementList()))
       .mockResolvedValueOnce(jsonResponse(financialEvaluationList()))
+      .mockResolvedValueOnce(jsonResponse(decisionList()))
       .mockResolvedValueOnce(
         jsonResponse(
           {
@@ -238,7 +239,8 @@ describe("detalle de proceso", () => {
       .mockResolvedValueOnce(jsonResponse(processInventory()))
       .mockResolvedValueOnce(jsonResponse(normalizationList()))
       .mockResolvedValueOnce(jsonResponse(requirementList()))
-      .mockResolvedValueOnce(jsonResponse(financialEvaluationList()));
+      .mockResolvedValueOnce(jsonResponse(financialEvaluationList()))
+      .mockResolvedValueOnce(jsonResponse(decisionList()));
 
     render(<ProcessDetailClient processId="11111111-1111-1111-1111-111111111111" />);
     expect(await screen.findByText("Proceso de prueba")).toBeDefined();
@@ -266,6 +268,7 @@ describe("detalle de proceso", () => {
       .mockResolvedValueOnce(jsonResponse(normalizationList()))
       .mockResolvedValueOnce(jsonResponse(requirementList()))
       .mockResolvedValueOnce(jsonResponse(financialEvaluationList()))
+      .mockResolvedValueOnce(jsonResponse(decisionList()))
       .mockResolvedValueOnce(jsonResponse(segmentList()));
 
     render(<ProcessDetailClient processId="11111111-1111-1111-1111-111111111111" />);
@@ -283,6 +286,7 @@ describe("detalle de proceso", () => {
       .mockResolvedValueOnce(jsonResponse(normalizationList("COMPLETED")))
       .mockResolvedValueOnce(jsonResponse(requirementList()))
       .mockResolvedValueOnce(jsonResponse(financialEvaluationList()))
+      .mockResolvedValueOnce(jsonResponse(decisionList()))
       .mockResolvedValueOnce(jsonResponse(requirementDetail()));
 
     render(<ProcessDetailClient processId="11111111-1111-1111-1111-111111111111" />);
@@ -450,6 +454,15 @@ function requirementList() {
 }
 
 function financialEvaluationList() {
+  return {
+    items: [],
+    total: 0,
+    limit: 20,
+    offset: 0,
+  };
+}
+
+function decisionList() {
   return {
     items: [],
     total: 0,

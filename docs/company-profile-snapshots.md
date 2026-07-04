@@ -24,3 +24,6 @@ completitud calculada. No incluye rutas fisicas de almacenamiento.
   incompletos con `allow_incomplete=true`.
 - Las evaluaciones de Microfase 6 y posteriores deben referenciar `company_snapshot_id` o version
   equivalente, nunca datos editables sin version.
+- La decision preliminar de Microfase 7 referencia siempre un snapshot publicado. El digest de ese
+  snapshot participa en el manifiesto de entrada e idempotencia del `DecisionRun`; cambios posteriores
+  del perfil no recalculan historicos.

@@ -17,6 +17,11 @@ Cada requisito normalizado que llega al motor debe contener, como mínimo:
 > Nota Microfase 6: la evaluacion financiera inicial ya produce estados por requisito financiero
 > contra un snapshot publicado de empresa. Estos estados son insumo futuro del motor; todavia no se
 > combinan en una decision global.
+>
+> Nota Microfase 7: el motor ejecutable ya combina requisitos normalizados, snapshot publicado,
+> evaluacion financiera completada y politica versionada. Actualmente solo existe el adaptador
+> especializado `FINANCIAL`; los requisitos obligatorios de otras categorias se materializan como
+> `NOT_EVALUATED` y bloquean `GO`.
 
 ```json
 {
@@ -99,6 +104,12 @@ Las siguientes reglas son **principios de diseño del motor, no interpretación 
 
 Precedencia conceptual: `NO_CARGAR` > `NO_GO` > `PENDIENTE_INFORMACION` > `BUSCAR_ALIADO` > `GO_CONDICIONADO` > `GO`. La revisión humana (R7) suspende la emisión de la decisión definitiva, no altera la precedencia.
 
+La implementacion Microfase 7 usa esta precedencia unica en la politica
+`pliegocheck-default` 1.0.0. `NO_CARGAR` exige `submission_blocker=true` explicito. `BUSCAR_ALIADO`
+exige `partner_solvable=true` explicito. `GO_CONDICIONADO` exige brecha remediable y codigos de
+condicion. `PENDIENTE_INFORMACION` domina sobre resultados positivos cuando hay `UNKNOWN`,
+`NOT_EVALUATED`, `PARTIAL` sin condicion, conflicto critico o revision humana pendiente.
+
 ## Flujo del motor (pseudocódigo conceptual)
 
 No es código ejecutable; es la especificación del comportamiento.
@@ -163,6 +174,20 @@ Toda decisión emitida incluye:
 - Estado de revisión humana.
 
 Con esto, cualquier decisión es reproducible y auditable: misma entrada + misma versión de reglas ⇒ misma salida.
+
+## Implementacion Microfase 7
+
+- Contratos canonicos en `packages/schemas/src/pliegocheck_schemas/decision.py`, generados a JSON
+  Schema y TypeScript.
+- Politica versionada en `config/decision-policies/v1/policy.json` y snapshot persistido en
+  `decision_policy_versions`.
+- Motor puro `DeterministicDecisionEngine`: sin I/O, sin base de datos, sin reloj global y sin IA.
+- Worker `decision-run-once` / `decision-drain`: reclama jobs con `FOR UPDATE SKIP LOCKED`, carga
+  inputs, crea hallazgos `NOT_EVALUATED` para categorias sin adaptador, ejecuta reglas y persiste
+  findings, reglas, acciones, eventos y resultado.
+- API: readiness, crear, listar, detalle, retry, review/override y actualizacion de acciones.
+- UI: seccion "Decision preliminar" en el detalle del proceso, con avisos obligatorios, readiness,
+  historial, cobertura, reglas, hallazgos, acciones, eventos y revision.
 
 ## Relación con los agentes
 
