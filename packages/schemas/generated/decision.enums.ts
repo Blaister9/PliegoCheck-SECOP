@@ -1,0 +1,160 @@
+// Archivo generado automaticamente por packages/schemas/scripts/generate.py.
+// No editar a mano: la definicion canonica son los modelos Pydantic de
+// packages/schemas/src/pliegocheck_schemas/.
+
+export const DECISION_SCHEMA_VERSION = "1.0.0";
+
+export const DECISION_OUTCOME_VALUES = [
+  "NO_CARGAR",
+  "NO_GO",
+  "PENDIENTE_INFORMACION",
+  "BUSCAR_ALIADO",
+  "GO_CONDICIONADO",
+  "GO",
+] as const;
+export type DecisionOutcomeValue = (typeof DECISION_OUTCOME_VALUES)[number];
+
+export const DECISION_JOB_STATUS_VALUES = [
+  "PENDING",
+  "PROCESSING",
+  "COMPLETED",
+  "COMPLETED_WITH_WARNINGS",
+  "FAILED",
+  "CANCELLED",
+] as const;
+export type DecisionJobStatusValue = (typeof DECISION_JOB_STATUS_VALUES)[number];
+
+export const DECISION_RUN_STATUS_VALUES = [
+  "PENDING",
+  "PROCESSING",
+  "COMPLETED",
+  "COMPLETED_WITH_WARNINGS",
+  "FAILED",
+  "CANCELLED",
+] as const;
+export type DecisionRunStatusValue = (typeof DECISION_RUN_STATUS_VALUES)[number];
+
+export const DECISION_FINDING_OUTCOME_VALUES = [
+  "COMPLIES",
+  "DOES_NOT_COMPLY",
+  "PARTIAL",
+  "UNKNOWN",
+  "NOT_APPLICABLE",
+  "CONFLICTING_EVIDENCE",
+  "NOT_EVALUATED",
+] as const;
+export type DecisionFindingOutcomeValue = (typeof DECISION_FINDING_OUTCOME_VALUES)[number];
+
+export const DECISION_EVALUATION_DOMAIN_VALUES = [
+  "FINANCIAL",
+  "ORGANIZATIONAL",
+  "LEGAL",
+  "EXPERIENCE",
+  "TECHNICAL",
+  "WORKFORCE",
+  "DOCUMENTARY",
+  "GUARANTEE",
+  "SCHEDULE",
+  "ECONOMIC",
+  "OPERATIONAL",
+  "RISK_AND_INELIGIBILITY",
+  "OTHER",
+] as const;
+export type DecisionEvaluationDomainValue = (typeof DECISION_EVALUATION_DOMAIN_VALUES)[number];
+
+export const DECISION_FINDING_APPLICABILITY_VALUES = [
+  "MANDATORY",
+  "OPTIONAL",
+  "INFORMATIONAL",
+  "NOT_APPLICABLE",
+] as const;
+export type DecisionFindingApplicabilityValue =
+  (typeof DECISION_FINDING_APPLICABILITY_VALUES)[number];
+
+export const DECISION_FINDING_SOURCE_TYPE_VALUES = [
+  "FINANCIAL_EVALUATION",
+  "SYNTHETIC",
+  "MISSING_ADAPTER",
+] as const;
+export type DecisionFindingSourceTypeValue = (typeof DECISION_FINDING_SOURCE_TYPE_VALUES)[number];
+
+export const DECISION_COVERAGE_STATUS_VALUES = [
+  "COMPLETE",
+  "PARTIAL",
+  "MISSING",
+  "NOT_REQUIRED",
+] as const;
+export type DecisionCoverageStatusValue = (typeof DECISION_COVERAGE_STATUS_VALUES)[number];
+
+export const DECISION_RULE_STATUS_VALUES = [
+  "TRIGGERED",
+  "NOT_TRIGGERED",
+  "NOT_APPLICABLE",
+  "INDETERMINATE",
+] as const;
+export type DecisionRuleStatusValue = (typeof DECISION_RULE_STATUS_VALUES)[number];
+
+export const DECISION_REVIEW_ACTION_VALUES = ["CONFIRM", "OVERRIDE", "REJECT"] as const;
+export type DecisionReviewActionValue = (typeof DECISION_REVIEW_ACTION_VALUES)[number];
+
+export const DECISION_ACTION_TYPE_VALUES = [
+  "PROVIDE_INFORMATION",
+  "RESOLVE_CONFLICT",
+  "REVIEW_REQUIREMENT",
+  "REVIEW_EVIDENCE",
+  "CORRECT_FINANCIAL_GAP",
+  "SEEK_PARTNER",
+  "COMPLETE_MANDATORY_EVALUATION",
+  "CONFIRM_SUBSANABILITY",
+  "DO_NOT_SUBMIT",
+  "OTHER",
+] as const;
+export type DecisionActionTypeValue = (typeof DECISION_ACTION_TYPE_VALUES)[number];
+
+export const DECISION_ACTION_PRIORITY_VALUES = ["CRITICAL", "HIGH", "MEDIUM", "LOW"] as const;
+export type DecisionActionPriorityValue = (typeof DECISION_ACTION_PRIORITY_VALUES)[number];
+
+export const DECISION_ACTION_STATUS_VALUES = [
+  "OPEN",
+  "ACKNOWLEDGED",
+  "RESOLVED",
+  "DISMISSED",
+] as const;
+export type DecisionActionStatusValue = (typeof DECISION_ACTION_STATUS_VALUES)[number];
+
+export const DECISION_REASON_CODE_VALUES = [
+  "FULL_MANDATORY_COVERAGE",
+  "MANDATORY_REQUIREMENT_NOT_EVALUATED",
+  "MANDATORY_REQUIREMENT_UNKNOWN",
+  "MANDATORY_REQUIREMENT_PARTIAL",
+  "MANDATORY_REQUIREMENT_UNRESOLVED",
+  "BLOCKING_REQUIREMENT_FAILED",
+  "NON_SUBSANABLE_REQUIREMENT_FAILED",
+  "CRITICAL_EVIDENCE_CONFLICT",
+  "PARTNER_SOLVABLE_GAP_CONFIRMED",
+  "REMEDIABLE_CONDITION_PENDING",
+  "SUBMISSION_BLOCKER_CONFIRMED",
+  "ALL_MANDATORY_REQUIREMENTS_COMPLY",
+  "HUMAN_REVIEW_PENDING",
+  "ADAPTER_NOT_AVAILABLE",
+] as const;
+export type DecisionReasonCodeValue = (typeof DECISION_REASON_CODE_VALUES)[number];
+
+export const DECISION_ERROR_CODE_VALUES = [
+  "DECISION_ALREADY_QUEUED",
+  "DECISION_ALREADY_COMPLETED",
+  "DECISION_NOT_FOUND",
+  "DECISION_INPUT_NOT_READY",
+  "DECISION_POLICY_NOT_FOUND",
+  "DECISION_POLICY_INVALID",
+  "DECISION_NORMALIZATION_NOT_COMPLETED",
+  "DECISION_COMPANY_SNAPSHOT_NOT_PUBLISHED",
+  "DECISION_FINANCIAL_EVALUATION_NOT_COMPLETED",
+  "DECISION_INPUT_MISMATCH",
+  "DECISION_COVERAGE_INCOMPLETE",
+  "DECISION_RULE_EVALUATION_FAILED",
+  "DECISION_ENGINE_FAILED",
+  "INVALID_DECISION_OVERRIDE",
+  "DECISION_ACTION_NOT_FOUND",
+] as const;
+export type DecisionErrorCodeValue = (typeof DECISION_ERROR_CODE_VALUES)[number];

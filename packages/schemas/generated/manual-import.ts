@@ -96,6 +96,22 @@ export type FinancialErrorCode =
   | "FINANCIAL_EVALUATION_FAILED"
   | "INVALID_FINANCIAL_OVERRIDE"
   | "DATABASE_ERROR";
+export type DecisionErrorCode =
+  | "DECISION_ALREADY_QUEUED"
+  | "DECISION_ALREADY_COMPLETED"
+  | "DECISION_NOT_FOUND"
+  | "DECISION_INPUT_NOT_READY"
+  | "DECISION_POLICY_NOT_FOUND"
+  | "DECISION_POLICY_INVALID"
+  | "DECISION_NORMALIZATION_NOT_COMPLETED"
+  | "DECISION_COMPANY_SNAPSHOT_NOT_PUBLISHED"
+  | "DECISION_FINANCIAL_EVALUATION_NOT_COMPLETED"
+  | "DECISION_INPUT_MISMATCH"
+  | "DECISION_COVERAGE_INCOMPLETE"
+  | "DECISION_RULE_EVALUATION_FAILED"
+  | "DECISION_ENGINE_FAILED"
+  | "INVALID_DECISION_OVERRIDE"
+  | "DECISION_ACTION_NOT_FOUND";
 /**
  * Tipo documental declarado. La clasificacion automatica llega en Microfase 3.
  */
@@ -163,7 +179,8 @@ export interface ApiError {
     | ExtractionErrorCode
     | NormalizationErrorCode
     | CompanyErrorCode
-    | FinancialErrorCode;
+    | FinancialErrorCode
+    | DecisionErrorCode;
   details?: {
     [k: string]: string;
   };

@@ -37,6 +37,17 @@ from pliegocheck_schemas import (
     CompanyProfileStatus,
     CompanyRecordStatus,
     CompanySnapshotStatus,
+    DecisionActionPriority,
+    DecisionActionStatus,
+    DecisionActionType,
+    DecisionFindingApplicability,
+    DecisionFindingOutcome,
+    DecisionFindingSourceType,
+    DecisionJobStatus,
+    DecisionOutcome,
+    DecisionReviewAction,
+    DecisionRuleStatus,
+    DecisionRunStatus,
     DocumentExtractionStatus,
     DocumentProcessingJobStatus,
     DocumentProcessingJobType,
@@ -172,6 +183,21 @@ FINANCIAL_CALCULATION_STATUS_VALUES = ", ".join(
     f"'{item.value}'" for item in FinancialCalculationStatus
 )
 FINANCIAL_METRIC_TYPE_VALUES = ", ".join(f"'{item.value}'" for item in FinancialMetricType)
+DECISION_OUTCOME_VALUES = ", ".join(f"'{item.value}'" for item in DecisionOutcome)
+DECISION_JOB_STATUS_VALUES = ", ".join(f"'{item.value}'" for item in DecisionJobStatus)
+DECISION_RUN_STATUS_VALUES = ", ".join(f"'{item.value}'" for item in DecisionRunStatus)
+DECISION_FINDING_OUTCOME_VALUES = ", ".join(f"'{item.value}'" for item in DecisionFindingOutcome)
+DECISION_FINDING_APPLICABILITY_VALUES = ", ".join(
+    f"'{item.value}'" for item in DecisionFindingApplicability
+)
+DECISION_FINDING_SOURCE_TYPE_VALUES = ", ".join(
+    f"'{item.value}'" for item in DecisionFindingSourceType
+)
+DECISION_RULE_STATUS_VALUES = ", ".join(f"'{item.value}'" for item in DecisionRuleStatus)
+DECISION_REVIEW_ACTION_VALUES = ", ".join(f"'{item.value}'" for item in DecisionReviewAction)
+DECISION_ACTION_TYPE_VALUES = ", ".join(f"'{item.value}'" for item in DecisionActionType)
+DECISION_ACTION_PRIORITY_VALUES = ", ".join(f"'{item.value}'" for item in DecisionActionPriority)
+DECISION_ACTION_STATUS_VALUES = ", ".join(f"'{item.value}'" for item in DecisionActionStatus)
 
 
 class Process(Base):
@@ -2225,3 +2251,386 @@ class ImportEvent(Base):
 
     process: Mapped[Process] = relationship(back_populates="events")
     document: Mapped[ProcessDocument | None] = relationship(back_populates="events")
+
+
+class DecisionPolicyVersion(Base):
+    """Snapshot inmutable de una version de la politica de decision."""
+
+    __tablename__ = "decision_policy_versions"
+    __table_args__ = (
+        UniqueConstraint(
+            "policy_name", "semantic_version", name="uq_decision_policy_versions_name_version"
+        ),
+        CheckConstraint(
+            "content_sha256 ~ '^[a-f0-9]{64}$'", name="ck_decision_policy_versions_hash"
+        ),
+        CheckConstraint("btrim(policy_name) <> ''", name="ck_decision_policy_versions_name"),
+        Index("ix_decision_policy_versions_active", "policy_name", "is_active"),
+    )
+
+    id: Mapped[UUID] = mapped_column(Uuid(as_uuid=True), primary_key=True, default=uuid4)
+    policy_name: Mapped[str] = mapped_column(String(128), nullable=False)
+    semantic_version: Mapped[str] = mapped_column(String(32), nullable=False)
+    content_sha256: Mapped[str] = mapped_column(String(64), nullable=False)
+    policy_payload: Mapped[dict[str, Any]] = mapped_column(JSON, nullable=False)
+    engine_version: Mapped[str] = mapped_column(String(32), nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    is_active: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
+
+
+class DecisionJob(Base):
+    """Trabajo de decision en la cola PostgreSQL."""
+
+    __tablename__ = "decision_jobs"
+    __table_args__ = (
+        CheckConstraint(
+            f"status IN ({DECISION_JOB_STATUS_VALUES})", name="ck_decision_jobs_status"
+        ),
+        CheckConstraint("priority >= 0", name="ck_decision_jobs_priority"),
+        CheckConstraint("attempt_count >= 0", name="ck_decision_jobs_attempts"),
+        CheckConstraint("max_attempts > 0", name="ck_decision_jobs_max_attempts"),
+        Index("ix_decision_jobs_claim", "status", "available_at", "priority", "created_at"),
+        Index("ix_decision_jobs_process", "process_id"),
+        Index("ix_decision_jobs_company", "company_id"),
+        Index(
+            "uq_decision_jobs_active_inputs",
+            "process_id",
+            "normalization_run_id",
+            "company_id",
+            "company_profile_snapshot_id",
+            "financial_evaluation_run_id",
+            unique=True,
+            postgresql_where=text("status IN ('PENDING', 'PROCESSING')"),
+        ),
+    )
+
+    id: Mapped[UUID] = mapped_column(Uuid(as_uuid=True), primary_key=True, default=uuid4)
+    process_id: Mapped[UUID] = mapped_column(
+        Uuid(as_uuid=True), ForeignKey("processes.id", ondelete="CASCADE"), nullable=False
+    )
+    normalization_run_id: Mapped[UUID] = mapped_column(
+        Uuid(as_uuid=True),
+        ForeignKey("requirement_normalization_runs.id", ondelete="CASCADE"),
+        nullable=False,
+    )
+    company_id: Mapped[UUID] = mapped_column(
+        Uuid(as_uuid=True), ForeignKey("company_profiles.id", ondelete="CASCADE"), nullable=False
+    )
+    company_profile_snapshot_id: Mapped[UUID] = mapped_column(
+        Uuid(as_uuid=True),
+        ForeignKey("company_profile_snapshots.id", ondelete="CASCADE"),
+        nullable=False,
+    )
+    financial_evaluation_run_id: Mapped[UUID] = mapped_column(
+        Uuid(as_uuid=True),
+        ForeignKey("financial_evaluation_runs.id", ondelete="CASCADE"),
+        nullable=False,
+    )
+    run_id: Mapped[UUID | None] = mapped_column(Uuid(as_uuid=True))
+    status: Mapped[str] = mapped_column(
+        String(32), nullable=False, default=DecisionJobStatus.PENDING.value
+    )
+    priority: Mapped[int] = mapped_column(Integer, nullable=False, default=100)
+    attempt_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    max_attempts: Mapped[int] = mapped_column(Integer, nullable=False, default=3)
+    available_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, server_default=func.now()
+    )
+    started_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    finished_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    locked_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    locked_by: Mapped[str | None] = mapped_column(String(128))
+    force: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
+    last_error_code: Mapped[str | None] = mapped_column(String(64))
+    last_error_message: Mapped[str | None] = mapped_column(String(1000))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
+    )
+
+
+class DecisionRun(Base):
+    """Ejecucion inmutable del motor de decision con snapshot de inputs."""
+
+    __tablename__ = "decision_runs"
+    __table_args__ = (
+        CheckConstraint(
+            f"status IN ({DECISION_RUN_STATUS_VALUES})", name="ck_decision_runs_status"
+        ),
+        CheckConstraint(
+            f"engine_outcome IS NULL OR engine_outcome IN ({DECISION_OUTCOME_VALUES})",
+            name="ck_decision_runs_engine_outcome",
+        ),
+        CheckConstraint(
+            f"reviewed_outcome IS NULL OR reviewed_outcome IN ({DECISION_OUTCOME_VALUES})",
+            name="ck_decision_runs_reviewed_outcome",
+        ),
+        CheckConstraint(
+            f"effective_outcome IS NULL OR effective_outcome IN ({DECISION_OUTCOME_VALUES})",
+            name="ck_decision_runs_effective_outcome",
+        ),
+        CheckConstraint("input_digest ~ '^[a-f0-9]{64}$'", name="ck_decision_runs_digest"),
+        CheckConstraint("requirement_count >= 0", name="ck_decision_runs_requirement_count"),
+        CheckConstraint("finding_count >= 0", name="ck_decision_runs_finding_count"),
+        CheckConstraint("action_count >= 0", name="ck_decision_runs_action_count"),
+        CheckConstraint("warning_count >= 0", name="ck_decision_runs_warning_count"),
+        Index("ix_decision_runs_process_company", "process_id", "company_id", "created_at"),
+        Index("ix_decision_runs_inputs", "process_id", "input_digest"),
+        Index("ix_decision_runs_snapshot", "company_profile_snapshot_id"),
+        Index("ix_decision_runs_outcome", "effective_outcome"),
+        Index("ix_decision_runs_policy", "policy_version_id"),
+    )
+
+    id: Mapped[UUID] = mapped_column(Uuid(as_uuid=True), primary_key=True, default=uuid4)
+    job_id: Mapped[UUID] = mapped_column(
+        Uuid(as_uuid=True), ForeignKey("decision_jobs.id", ondelete="CASCADE"), nullable=False
+    )
+    process_id: Mapped[UUID] = mapped_column(
+        Uuid(as_uuid=True), ForeignKey("processes.id", ondelete="CASCADE"), nullable=False
+    )
+    normalization_run_id: Mapped[UUID] = mapped_column(
+        Uuid(as_uuid=True),
+        ForeignKey("requirement_normalization_runs.id", ondelete="CASCADE"),
+        nullable=False,
+    )
+    company_id: Mapped[UUID] = mapped_column(
+        Uuid(as_uuid=True), ForeignKey("company_profiles.id", ondelete="CASCADE"), nullable=False
+    )
+    company_profile_snapshot_id: Mapped[UUID] = mapped_column(
+        Uuid(as_uuid=True),
+        ForeignKey("company_profile_snapshots.id", ondelete="CASCADE"),
+        nullable=False,
+    )
+    financial_evaluation_run_id: Mapped[UUID] = mapped_column(
+        Uuid(as_uuid=True),
+        ForeignKey("financial_evaluation_runs.id", ondelete="CASCADE"),
+        nullable=False,
+    )
+    policy_version_id: Mapped[UUID] = mapped_column(
+        Uuid(as_uuid=True),
+        ForeignKey("decision_policy_versions.id", ondelete="RESTRICT"),
+        nullable=False,
+    )
+    status: Mapped[str] = mapped_column(
+        String(32), nullable=False, default=DecisionRunStatus.PENDING.value
+    )
+    engine_outcome: Mapped[str | None] = mapped_column(String(32))
+    reviewed_outcome: Mapped[str | None] = mapped_column(String(32))
+    effective_outcome: Mapped[str | None] = mapped_column(String(32))
+    reason_codes: Mapped[list[str]] = mapped_column(JSON, nullable=False, default=list)
+    input_manifest: Mapped[dict[str, Any]] = mapped_column(JSON, nullable=False)
+    input_digest: Mapped[str] = mapped_column(String(64), nullable=False)
+    engine_version: Mapped[str] = mapped_column(String(32), nullable=False)
+    effective_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    coverage_summary: Mapped[dict[str, Any]] = mapped_column(JSON, nullable=False, default=dict)
+    requirement_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    finding_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    action_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    warning_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    warnings: Mapped[list[str]] = mapped_column(JSON, nullable=False, default=list)
+    requires_human_review: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
+    started_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    finished_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    error_code: Mapped[str | None] = mapped_column(String(64))
+    error_message: Mapped[str | None] = mapped_column(String(1000))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
+    )
+
+    policy_version: Mapped[DecisionPolicyVersion] = relationship()
+
+
+class DecisionInputFindingSnapshot(Base):
+    """Hallazgo canonico persistido como parte del snapshot del run."""
+
+    __tablename__ = "decision_input_findings"
+    __table_args__ = (
+        UniqueConstraint(
+            "decision_run_id", "source_finding_key", name="uq_decision_findings_run_key"
+        ),
+        CheckConstraint(
+            f"outcome IN ({DECISION_FINDING_OUTCOME_VALUES})",
+            name="ck_decision_findings_outcome",
+        ),
+        CheckConstraint(
+            f"applicability IN ({DECISION_FINDING_APPLICABILITY_VALUES})",
+            name="ck_decision_findings_applicability",
+        ),
+        CheckConstraint(
+            f"source_type IN ({DECISION_FINDING_SOURCE_TYPE_VALUES})",
+            name="ck_decision_findings_source_type",
+        ),
+        Index("ix_decision_findings_run", "decision_run_id"),
+        Index("ix_decision_findings_requirement", "requirement_id"),
+        Index("ix_decision_findings_outcome", "outcome"),
+    )
+
+    id: Mapped[UUID] = mapped_column(Uuid(as_uuid=True), primary_key=True, default=uuid4)
+    decision_run_id: Mapped[UUID] = mapped_column(
+        Uuid(as_uuid=True), ForeignKey("decision_runs.id", ondelete="CASCADE"), nullable=False
+    )
+    source_finding_key: Mapped[str] = mapped_column(String(128), nullable=False)
+    requirement_id: Mapped[UUID] = mapped_column(
+        Uuid(as_uuid=True), ForeignKey("requirements.id", ondelete="CASCADE"), nullable=False
+    )
+    category: Mapped[str] = mapped_column(String(64), nullable=False)
+    scope: Mapped[str] = mapped_column(String(64), nullable=False)
+    modality: Mapped[str] = mapped_column(String(64), nullable=False)
+    criticality: Mapped[str] = mapped_column(String(32), nullable=False)
+    criticality_basis: Mapped[str] = mapped_column(String(32), nullable=False)
+    subsanability: Mapped[str] = mapped_column(String(32), nullable=False)
+    subsanability_basis: Mapped[str] = mapped_column(String(32), nullable=False)
+    evaluation_domain: Mapped[str] = mapped_column(String(32), nullable=False)
+    source_type: Mapped[str] = mapped_column(String(32), nullable=False)
+    source_run_id: Mapped[UUID | None] = mapped_column(Uuid(as_uuid=True))
+    source_result_id: Mapped[UUID | None] = mapped_column(Uuid(as_uuid=True))
+    outcome: Mapped[str] = mapped_column(String(32), nullable=False)
+    applicability: Mapped[str] = mapped_column(String(32), nullable=False)
+    evidence_quality: Mapped[str | None] = mapped_column(String(64))
+    review_status: Mapped[str | None] = mapped_column(String(32))
+    requires_human_review: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
+    is_blocking: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
+    is_remediable: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
+    partner_solvable: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
+    submission_blocker: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
+    condition_codes: Mapped[list[str]] = mapped_column(JSON, nullable=False, default=list)
+    warning_codes: Mapped[list[str]] = mapped_column(JSON, nullable=False, default=list)
+    evidence_references: Mapped[list[dict[str, Any]]] = mapped_column(
+        JSON, nullable=False, default=list
+    )
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+
+class DecisionRuleEvaluationRecord(Base):
+    """Evaluacion trazable de una regla dentro de un run."""
+
+    __tablename__ = "decision_rule_evaluations"
+    __table_args__ = (
+        UniqueConstraint("decision_run_id", "rule_code", name="uq_decision_rules_run_code"),
+        CheckConstraint(
+            f"status IN ({DECISION_RULE_STATUS_VALUES})", name="ck_decision_rules_status"
+        ),
+        CheckConstraint(
+            f"suggested_outcome IS NULL OR suggested_outcome IN ({DECISION_OUTCOME_VALUES})",
+            name="ck_decision_rules_suggested_outcome",
+        ),
+        Index("ix_decision_rules_run", "decision_run_id"),
+        Index("ix_decision_rules_code", "rule_code"),
+    )
+
+    id: Mapped[UUID] = mapped_column(Uuid(as_uuid=True), primary_key=True, default=uuid4)
+    decision_run_id: Mapped[UUID] = mapped_column(
+        Uuid(as_uuid=True), ForeignKey("decision_runs.id", ondelete="CASCADE"), nullable=False
+    )
+    rule_code: Mapped[str] = mapped_column(String(64), nullable=False)
+    rule_version: Mapped[str] = mapped_column(String(32), nullable=False)
+    priority: Mapped[int] = mapped_column(Integer, nullable=False)
+    status: Mapped[str] = mapped_column(String(32), nullable=False)
+    suggested_outcome: Mapped[str | None] = mapped_column(String(32))
+    fact_payload: Mapped[dict[str, Any]] = mapped_column(JSON, nullable=False, default=dict)
+    requirement_ids: Mapped[list[str]] = mapped_column(JSON, nullable=False, default=list)
+    finding_ids: Mapped[list[str]] = mapped_column(JSON, nullable=False, default=list)
+    reason_code: Mapped[str | None] = mapped_column(String(64))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+
+class DecisionActionItemRecord(Base):
+    """Accion requerida generada deterministicamente por el motor."""
+
+    __tablename__ = "decision_action_items"
+    __table_args__ = (
+        CheckConstraint(
+            f"action_type IN ({DECISION_ACTION_TYPE_VALUES})", name="ck_decision_actions_type"
+        ),
+        CheckConstraint(
+            f"priority IN ({DECISION_ACTION_PRIORITY_VALUES})", name="ck_decision_actions_priority"
+        ),
+        CheckConstraint(
+            f"status IN ({DECISION_ACTION_STATUS_VALUES})", name="ck_decision_actions_status"
+        ),
+        Index("ix_decision_actions_run", "decision_run_id"),
+        Index("ix_decision_actions_status", "status"),
+    )
+
+    id: Mapped[UUID] = mapped_column(Uuid(as_uuid=True), primary_key=True, default=uuid4)
+    decision_run_id: Mapped[UUID] = mapped_column(
+        Uuid(as_uuid=True), ForeignKey("decision_runs.id", ondelete="CASCADE"), nullable=False
+    )
+    action_type: Mapped[str] = mapped_column(String(64), nullable=False)
+    priority: Mapped[str] = mapped_column(String(32), nullable=False)
+    title_code: Mapped[str] = mapped_column(String(128), nullable=False)
+    description_code: Mapped[str] = mapped_column(String(128), nullable=False)
+    parameters: Mapped[dict[str, Any]] = mapped_column(JSON, nullable=False, default=dict)
+    requirement_ids: Mapped[list[str]] = mapped_column(JSON, nullable=False, default=list)
+    finding_ids: Mapped[list[str]] = mapped_column(JSON, nullable=False, default=list)
+    due_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    status: Mapped[str] = mapped_column(
+        String(32), nullable=False, default=DecisionActionStatus.OPEN.value
+    )
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
+    )
+
+
+class DecisionReview(Base):
+    """Revision u override manual auditado de un run de decision."""
+
+    __tablename__ = "decision_reviews"
+    __table_args__ = (
+        CheckConstraint(
+            f"action IN ({DECISION_REVIEW_ACTION_VALUES})", name="ck_decision_reviews_action"
+        ),
+        CheckConstraint(
+            f"original_outcome IN ({DECISION_OUTCOME_VALUES})",
+            name="ck_decision_reviews_original_outcome",
+        ),
+        CheckConstraint(
+            f"reviewed_outcome IS NULL OR reviewed_outcome IN ({DECISION_OUTCOME_VALUES})",
+            name="ck_decision_reviews_reviewed_outcome",
+        ),
+        Index("ix_decision_reviews_run", "decision_run_id"),
+    )
+
+    id: Mapped[UUID] = mapped_column(Uuid(as_uuid=True), primary_key=True, default=uuid4)
+    decision_run_id: Mapped[UUID] = mapped_column(
+        Uuid(as_uuid=True), ForeignKey("decision_runs.id", ondelete="CASCADE"), nullable=False
+    )
+    action: Mapped[str] = mapped_column(String(32), nullable=False)
+    original_outcome: Mapped[str] = mapped_column(String(32), nullable=False)
+    reviewed_outcome: Mapped[str | None] = mapped_column(String(32))
+    reason: Mapped[str | None] = mapped_column(Text)
+    reviewer_reference: Mapped[str] = mapped_column(
+        String(128), nullable=False, default="local-user"
+    )
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+
+class DecisionEvent(Base):
+    """Evento de auditoria del ciclo de decision, sin contenido sensible."""
+
+    __tablename__ = "decision_events"
+    __table_args__ = (
+        Index("ix_decision_events_run", "run_id"),
+        Index("ix_decision_events_job", "job_id"),
+        Index("ix_decision_events_type", "event_type"),
+    )
+
+    id: Mapped[UUID] = mapped_column(Uuid(as_uuid=True), primary_key=True, default=uuid4)
+    job_id: Mapped[UUID | None] = mapped_column(
+        Uuid(as_uuid=True), ForeignKey("decision_jobs.id", ondelete="SET NULL")
+    )
+    run_id: Mapped[UUID | None] = mapped_column(
+        Uuid(as_uuid=True), ForeignKey("decision_runs.id", ondelete="SET NULL")
+    )
+    process_id: Mapped[UUID] = mapped_column(
+        Uuid(as_uuid=True), ForeignKey("processes.id", ondelete="CASCADE"), nullable=False
+    )
+    company_id: Mapped[UUID | None] = mapped_column(
+        Uuid(as_uuid=True), ForeignKey("company_profiles.id", ondelete="SET NULL")
+    )
+    event_type: Mapped[str] = mapped_column(String(64), nullable=False)
+    summary: Mapped[str] = mapped_column(String(1000), nullable=False)
+    details: Mapped[dict[str, Any]] = mapped_column(JSON, nullable=False, default=dict)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())

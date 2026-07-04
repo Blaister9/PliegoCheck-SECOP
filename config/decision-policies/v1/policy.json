@@ -1,0 +1,47 @@
+{
+  "policy_name": "pliegocheck-default",
+  "semantic_version": "1.0.0",
+  "required_categories_mode": "ALL_MANDATORY_PRESENT",
+  "required_outcomes": ["COMPLIES", "NOT_APPLICABLE"],
+  "precedence": [
+    "NO_CARGAR",
+    "NO_GO",
+    "PENDIENTE_INFORMACION",
+    "BUSCAR_ALIADO",
+    "GO_CONDICIONADO",
+    "GO"
+  ],
+  "blocking_criticalities": ["BLOCKING", "HIGH"],
+  "positive_review_requirements": {
+    "block_positive_outcomes_on_pending_critical_review": true
+  },
+  "unknown_behavior": "PENDIENTE_INFORMACION",
+  "conflict_behavior": "PENDIENTE_INFORMACION",
+  "partial_behavior": "PENDIENTE_INFORMACION",
+  "optional_requirement_behavior": "WARN_ONLY",
+  "not_applicable_behavior": "EXCLUDE",
+  "go_requirements": {
+    "require_full_mandatory_coverage": true,
+    "require_all_mandatory_comply": true,
+    "forbid_pending_human_review": true,
+    "forbid_conflicts": true
+  },
+  "go_conditioned_requirements": {
+    "require_full_mandatory_coverage": true,
+    "require_explicit_condition_codes": true,
+    "require_action_per_gap": true
+  },
+  "partner_requirements": {
+    "require_explicit_partner_solvable": true,
+    "forbid_unresolved_critical_conflicts": true
+  },
+  "no_go_requirements": {
+    "criticalities": ["BLOCKING", "HIGH"],
+    "require_mandatory_applicable": true,
+    "exclude_remediable_with_condition": true,
+    "exclude_partner_solvable": true
+  },
+  "no_cargar_requirements": {
+    "require_explicit_submission_blocker": true
+  }
+}

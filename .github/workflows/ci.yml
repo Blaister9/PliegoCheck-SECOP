@@ -109,6 +109,15 @@ jobs:
       - name: Evals deterministas de evaluacion financiera
         run: pnpm financial:eval
 
+      - name: Politica de decision valida
+        run: pnpm decision:policy-check
+
+      - name: Pruebas de decision deterministica
+        run: pnpm decision:test
+
+      - name: Evals deterministas de decision
+        run: pnpm decision:eval
+
       - name: Formato
         run: pnpm format:check
 

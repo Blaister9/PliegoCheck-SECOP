@@ -1,0 +1,1580 @@
+{
+  "$defs": {
+    "DecisionActionItem": {
+      "additionalProperties": false,
+      "properties": {
+        "action_type": {
+          "$ref": "#/$defs/DecisionActionType"
+        },
+        "created_at": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "decision_run_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "description_code": {
+          "maxLength": 2000,
+          "minLength": 1,
+          "type": "string"
+        },
+        "due_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "finding_ids": {
+          "items": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "parameters": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "priority": {
+          "$ref": "#/$defs/DecisionActionPriority"
+        },
+        "requirement_ids": {
+          "items": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "status": {
+          "$ref": "#/$defs/DecisionActionStatus"
+        },
+        "title_code": {
+          "maxLength": 2000,
+          "minLength": 1,
+          "type": "string"
+        },
+        "updated_at": {
+          "format": "date-time",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "decision_run_id",
+        "action_type",
+        "priority",
+        "title_code",
+        "description_code",
+        "due_at",
+        "status",
+        "created_at",
+        "updated_at"
+      ],
+      "type": "object"
+    },
+    "DecisionActionPriority": {
+      "enum": ["CRITICAL", "HIGH", "MEDIUM", "LOW"],
+      "type": "string"
+    },
+    "DecisionActionStatus": {
+      "enum": ["OPEN", "ACKNOWLEDGED", "RESOLVED", "DISMISSED"],
+      "type": "string"
+    },
+    "DecisionActionType": {
+      "enum": [
+        "PROVIDE_INFORMATION",
+        "RESOLVE_CONFLICT",
+        "REVIEW_REQUIREMENT",
+        "REVIEW_EVIDENCE",
+        "CORRECT_FINANCIAL_GAP",
+        "SEEK_PARTNER",
+        "COMPLETE_MANDATORY_EVALUATION",
+        "CONFIRM_SUBSANABILITY",
+        "DO_NOT_SUBMIT",
+        "OTHER"
+      ],
+      "type": "string"
+    },
+    "DecisionActionUpdateRequest": {
+      "additionalProperties": false,
+      "properties": {
+        "note": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "status": {
+          "$ref": "#/$defs/DecisionActionStatus"
+        }
+      },
+      "required": ["status"],
+      "type": "object"
+    },
+    "DecisionCoverageCategory": {
+      "additionalProperties": false,
+      "properties": {
+        "adapter_available": {
+          "type": "boolean"
+        },
+        "category": {
+          "type": "string"
+        },
+        "coverage_status": {
+          "$ref": "#/$defs/DecisionCoverageStatus"
+        },
+        "evaluated_total": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "mandatory_total": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "not_evaluated_total": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "outcomes": {
+          "additionalProperties": {
+            "type": "integer"
+          },
+          "type": "object"
+        },
+        "requirements_total": {
+          "minimum": 0,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "category",
+        "requirements_total",
+        "mandatory_total",
+        "evaluated_total",
+        "not_evaluated_total",
+        "adapter_available",
+        "coverage_status"
+      ],
+      "type": "object"
+    },
+    "DecisionCoverageStatus": {
+      "enum": ["COMPLETE", "PARTIAL", "MISSING", "NOT_REQUIRED"],
+      "type": "string"
+    },
+    "DecisionCoverageSummary": {
+      "additionalProperties": false,
+      "description": "Cobertura mediante conteos claros; nunca un score ni probabilidad.",
+      "properties": {
+        "blocking_failure_total": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "categories": {
+          "items": {
+            "$ref": "#/$defs/DecisionCoverageCategory"
+          },
+          "type": "array"
+        },
+        "complies_total": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "conflicting_total": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "does_not_comply_total": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "evaluated_total": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "human_review_pending_total": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "mandatory_applicable_total": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "not_applicable_total": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "not_evaluated_total": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "optional_total": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "partial_total": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "partner_gap_total": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "remediable_gap_total": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "requirements_total": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "submission_blocker_total": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "unknown_total": {
+          "minimum": 0,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "requirements_total",
+        "mandatory_applicable_total",
+        "optional_total",
+        "evaluated_total",
+        "not_evaluated_total",
+        "complies_total",
+        "does_not_comply_total",
+        "partial_total",
+        "unknown_total",
+        "not_applicable_total",
+        "conflicting_total",
+        "blocking_failure_total",
+        "remediable_gap_total",
+        "partner_gap_total",
+        "submission_blocker_total",
+        "human_review_pending_total"
+      ],
+      "type": "object"
+    },
+    "DecisionEvaluationDomain": {
+      "enum": [
+        "FINANCIAL",
+        "ORGANIZATIONAL",
+        "LEGAL",
+        "EXPERIENCE",
+        "TECHNICAL",
+        "WORKFORCE",
+        "DOCUMENTARY",
+        "GUARANTEE",
+        "SCHEDULE",
+        "ECONOMIC",
+        "OPERATIONAL",
+        "RISK_AND_INELIGIBILITY",
+        "OTHER"
+      ],
+      "type": "string"
+    },
+    "DecisionFindingApplicability": {
+      "enum": ["MANDATORY", "OPTIONAL", "INFORMATIONAL", "NOT_APPLICABLE"],
+      "type": "string"
+    },
+    "DecisionFindingOutcome": {
+      "description": "Outcome canonico de un hallazgo de entrada.",
+      "enum": [
+        "COMPLIES",
+        "DOES_NOT_COMPLY",
+        "PARTIAL",
+        "UNKNOWN",
+        "NOT_APPLICABLE",
+        "CONFLICTING_EVIDENCE",
+        "NOT_EVALUATED"
+      ],
+      "type": "string"
+    },
+    "DecisionFindingSourceType": {
+      "enum": ["FINANCIAL_EVALUATION", "SYNTHETIC", "MISSING_ADAPTER"],
+      "type": "string"
+    },
+    "DecisionInputFinding": {
+      "additionalProperties": false,
+      "description": "Hallazgo canonico de entrada al motor. Nunca modifica la fuente.",
+      "properties": {
+        "applicability": {
+          "$ref": "#/$defs/DecisionFindingApplicability"
+        },
+        "category": {
+          "type": "string"
+        },
+        "condition_codes": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "created_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "criticality": {
+          "type": "string"
+        },
+        "criticality_basis": {
+          "type": "string"
+        },
+        "evaluation_domain": {
+          "$ref": "#/$defs/DecisionEvaluationDomain"
+        },
+        "evidence_quality": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "evidence_references": {
+          "items": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "is_blocking": {
+          "default": false,
+          "type": "boolean"
+        },
+        "is_remediable": {
+          "default": false,
+          "type": "boolean"
+        },
+        "modality": {
+          "type": "string"
+        },
+        "outcome": {
+          "$ref": "#/$defs/DecisionFindingOutcome"
+        },
+        "partner_solvable": {
+          "default": false,
+          "type": "boolean"
+        },
+        "requirement_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "requirement_stable_key": {
+          "pattern": "^[a-f0-9]{64}$",
+          "type": "string"
+        },
+        "requires_human_review": {
+          "default": false,
+          "type": "boolean"
+        },
+        "review_status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "scope": {
+          "type": "string"
+        },
+        "source_result_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "source_run_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "source_type": {
+          "$ref": "#/$defs/DecisionFindingSourceType"
+        },
+        "submission_blocker": {
+          "default": false,
+          "type": "boolean"
+        },
+        "subsanability": {
+          "type": "string"
+        },
+        "subsanability_basis": {
+          "type": "string"
+        },
+        "warning_codes": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "id",
+        "requirement_id",
+        "requirement_stable_key",
+        "category",
+        "scope",
+        "modality",
+        "criticality",
+        "criticality_basis",
+        "subsanability",
+        "subsanability_basis",
+        "evaluation_domain",
+        "source_type",
+        "source_run_id",
+        "source_result_id",
+        "outcome",
+        "applicability"
+      ],
+      "type": "object"
+    },
+    "DecisionJobStatus": {
+      "enum": [
+        "PENDING",
+        "PROCESSING",
+        "COMPLETED",
+        "COMPLETED_WITH_WARNINGS",
+        "FAILED",
+        "CANCELLED"
+      ],
+      "type": "string"
+    },
+    "DecisionJobSummary": {
+      "additionalProperties": false,
+      "properties": {
+        "attempt_count": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "company_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "company_profile_snapshot_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "created_at": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "financial_evaluation_run_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "force": {
+          "type": "boolean"
+        },
+        "id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "last_error_code": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "max_attempts": {
+          "exclusiveMinimum": 0,
+          "type": "integer"
+        },
+        "normalization_run_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "process_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "status": {
+          "$ref": "#/$defs/DecisionJobStatus"
+        },
+        "updated_at": {
+          "format": "date-time",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "process_id",
+        "normalization_run_id",
+        "company_id",
+        "company_profile_snapshot_id",
+        "financial_evaluation_run_id",
+        "status",
+        "attempt_count",
+        "max_attempts",
+        "force",
+        "created_at",
+        "updated_at"
+      ],
+      "type": "object"
+    },
+    "DecisionOutcome": {
+      "description": "Resultados finales permitidos, en orden de precedencia descendente.",
+      "enum": [
+        "NO_CARGAR",
+        "NO_GO",
+        "PENDIENTE_INFORMACION",
+        "BUSCAR_ALIADO",
+        "GO_CONDICIONADO",
+        "GO"
+      ],
+      "type": "string"
+    },
+    "DecisionPolicySummary": {
+      "additionalProperties": false,
+      "properties": {
+        "content_sha256": {
+          "pattern": "^[a-f0-9]{64}$",
+          "type": "string"
+        },
+        "created_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "engine_version": {
+          "maxLength": 2000,
+          "minLength": 1,
+          "type": "string"
+        },
+        "id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "is_active": {
+          "type": "boolean"
+        },
+        "policy_name": {
+          "maxLength": 2000,
+          "minLength": 1,
+          "type": "string"
+        },
+        "semantic_version": {
+          "maxLength": 2000,
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "policy_name",
+        "semantic_version",
+        "content_sha256",
+        "engine_version",
+        "is_active"
+      ],
+      "type": "object"
+    },
+    "DecisionQueueResponse": {
+      "additionalProperties": false,
+      "properties": {
+        "job": {
+          "$ref": "#/$defs/DecisionJobSummary"
+        },
+        "reused_existing_run": {
+          "default": false,
+          "type": "boolean"
+        },
+        "run": {
+          "$ref": "#/$defs/DecisionRunSummary"
+        }
+      },
+      "required": ["job", "run"],
+      "type": "object"
+    },
+    "DecisionReadiness": {
+      "additionalProperties": false,
+      "description": "Diagnostico previo. No ejecuta el motor.",
+      "properties": {
+        "available_adapters": {
+          "items": {
+            "$ref": "#/$defs/DecisionEvaluationDomain"
+          },
+          "type": "array"
+        },
+        "go_blocked_by_coverage": {
+          "type": "boolean"
+        },
+        "input_errors": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "inputs_valid": {
+          "type": "boolean"
+        },
+        "max_possible_outcome": {
+          "$ref": "#/$defs/DecisionOutcome"
+        },
+        "not_evaluated_mandatory_count": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "policy": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/DecisionPolicySummary"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "process_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "required_categories": {
+          "items": {
+            "$ref": "#/$defs/DecisionReadinessCategory"
+          },
+          "type": "array"
+        },
+        "warnings": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "process_id",
+        "inputs_valid",
+        "not_evaluated_mandatory_count",
+        "max_possible_outcome",
+        "go_blocked_by_coverage"
+      ],
+      "type": "object"
+    },
+    "DecisionReadinessCategory": {
+      "additionalProperties": false,
+      "properties": {
+        "adapter_available": {
+          "type": "boolean"
+        },
+        "category": {
+          "type": "string"
+        },
+        "mandatory_total": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "requirements_total": {
+          "minimum": 0,
+          "type": "integer"
+        }
+      },
+      "required": ["category", "requirements_total", "mandatory_total", "adapter_available"],
+      "type": "object"
+    },
+    "DecisionReasonCode": {
+      "description": "Codigos deterministicos de explicacion. La UI los traduce a mensajes.",
+      "enum": [
+        "FULL_MANDATORY_COVERAGE",
+        "MANDATORY_REQUIREMENT_NOT_EVALUATED",
+        "MANDATORY_REQUIREMENT_UNKNOWN",
+        "MANDATORY_REQUIREMENT_PARTIAL",
+        "MANDATORY_REQUIREMENT_UNRESOLVED",
+        "BLOCKING_REQUIREMENT_FAILED",
+        "NON_SUBSANABLE_REQUIREMENT_FAILED",
+        "CRITICAL_EVIDENCE_CONFLICT",
+        "PARTNER_SOLVABLE_GAP_CONFIRMED",
+        "REMEDIABLE_CONDITION_PENDING",
+        "SUBMISSION_BLOCKER_CONFIRMED",
+        "ALL_MANDATORY_REQUIREMENTS_COMPLY",
+        "HUMAN_REVIEW_PENDING",
+        "ADAPTER_NOT_AVAILABLE"
+      ],
+      "type": "string"
+    },
+    "DecisionRequest": {
+      "additionalProperties": false,
+      "properties": {
+        "company_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "company_profile_snapshot_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "financial_evaluation_run_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "force": {
+          "default": false,
+          "type": "boolean"
+        },
+        "normalization_run_id": {
+          "format": "uuid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "normalization_run_id",
+        "company_id",
+        "company_profile_snapshot_id",
+        "financial_evaluation_run_id"
+      ],
+      "type": "object"
+    },
+    "DecisionRetryRequest": {
+      "additionalProperties": false,
+      "properties": {
+        "force": {
+          "default": false,
+          "type": "boolean"
+        }
+      },
+      "type": "object"
+    },
+    "DecisionReviewAction": {
+      "enum": ["CONFIRM", "OVERRIDE", "REJECT"],
+      "type": "string"
+    },
+    "DecisionReviewRecord": {
+      "additionalProperties": false,
+      "properties": {
+        "action": {
+          "$ref": "#/$defs/DecisionReviewAction"
+        },
+        "created_at": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "decision_run_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "original_outcome": {
+          "$ref": "#/$defs/DecisionOutcome"
+        },
+        "reason": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "reviewed_outcome": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/DecisionOutcome"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "reviewer_reference": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "decision_run_id",
+        "action",
+        "original_outcome",
+        "reviewed_outcome",
+        "reason",
+        "reviewer_reference",
+        "created_at"
+      ],
+      "type": "object"
+    },
+    "DecisionReviewRequest": {
+      "additionalProperties": false,
+      "properties": {
+        "action": {
+          "$ref": "#/$defs/DecisionReviewAction"
+        },
+        "reason": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "reviewed_outcome": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/DecisionOutcome"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": ["action"],
+      "type": "object"
+    },
+    "DecisionReviewResponse": {
+      "additionalProperties": false,
+      "properties": {
+        "review": {
+          "$ref": "#/$defs/DecisionReviewRecord"
+        },
+        "run": {
+          "$ref": "#/$defs/DecisionRunSummary"
+        }
+      },
+      "required": ["run", "review"],
+      "type": "object"
+    },
+    "DecisionRuleEvaluation": {
+      "additionalProperties": false,
+      "properties": {
+        "created_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "fact_payload": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "finding_ids": {
+          "items": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "priority": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "reason_code": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/DecisionReasonCode"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "requirement_ids": {
+          "items": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "rule_code": {
+          "maxLength": 2000,
+          "minLength": 1,
+          "type": "string"
+        },
+        "rule_version": {
+          "maxLength": 2000,
+          "minLength": 1,
+          "type": "string"
+        },
+        "status": {
+          "$ref": "#/$defs/DecisionRuleStatus"
+        },
+        "suggested_outcome": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/DecisionOutcome"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "rule_code",
+        "rule_version",
+        "priority",
+        "status",
+        "suggested_outcome",
+        "reason_code"
+      ],
+      "type": "object"
+    },
+    "DecisionRuleStatus": {
+      "enum": ["TRIGGERED", "NOT_TRIGGERED", "NOT_APPLICABLE", "INDETERMINATE"],
+      "type": "string"
+    },
+    "DecisionRunDetail": {
+      "additionalProperties": false,
+      "properties": {
+        "action_count": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "actions": {
+          "items": {
+            "$ref": "#/$defs/DecisionActionItem"
+          },
+          "type": "array"
+        },
+        "company_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "company_profile_snapshot_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "coverage": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/DecisionCoverageSummary"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "created_at": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "effective_outcome": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/DecisionOutcome"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "engine_outcome": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/DecisionOutcome"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "engine_version": {
+          "maxLength": 2000,
+          "minLength": 1,
+          "type": "string"
+        },
+        "error_code": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "error_message": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "events": {
+          "items": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "financial_evaluation_run_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "finding_count": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "findings": {
+          "items": {
+            "$ref": "#/$defs/DecisionInputFinding"
+          },
+          "type": "array"
+        },
+        "finished_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "input_digest": {
+          "pattern": "^[a-f0-9]{64}$",
+          "type": "string"
+        },
+        "input_manifest": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "job": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/DecisionJobSummary"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "job_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "normalization_run_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "policy": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/DecisionPolicySummary"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "policy_name": {
+          "type": "string"
+        },
+        "policy_version": {
+          "type": "string"
+        },
+        "process_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "reason_codes": {
+          "items": {
+            "$ref": "#/$defs/DecisionReasonCode"
+          },
+          "type": "array"
+        },
+        "requirement_count": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "requires_human_review": {
+          "type": "boolean"
+        },
+        "reviewed_outcome": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/DecisionOutcome"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "reviews": {
+          "items": {
+            "$ref": "#/$defs/DecisionReviewRecord"
+          },
+          "type": "array"
+        },
+        "rule_evaluations": {
+          "items": {
+            "$ref": "#/$defs/DecisionRuleEvaluation"
+          },
+          "type": "array"
+        },
+        "started_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "status": {
+          "$ref": "#/$defs/DecisionRunStatus"
+        },
+        "updated_at": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "warning_count": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "warnings": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "id",
+        "job_id",
+        "process_id",
+        "normalization_run_id",
+        "company_id",
+        "company_profile_snapshot_id",
+        "financial_evaluation_run_id",
+        "policy_name",
+        "policy_version",
+        "status",
+        "engine_outcome",
+        "reviewed_outcome",
+        "effective_outcome",
+        "input_digest",
+        "engine_version",
+        "requirement_count",
+        "finding_count",
+        "action_count",
+        "warning_count",
+        "requires_human_review",
+        "started_at",
+        "finished_at",
+        "error_code",
+        "error_message",
+        "created_at",
+        "updated_at"
+      ],
+      "type": "object"
+    },
+    "DecisionRunList": {
+      "additionalProperties": false,
+      "properties": {
+        "items": {
+          "items": {
+            "$ref": "#/$defs/DecisionRunSummary"
+          },
+          "type": "array"
+        },
+        "limit": {
+          "exclusiveMinimum": 0,
+          "type": "integer"
+        },
+        "offset": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "total": {
+          "minimum": 0,
+          "type": "integer"
+        }
+      },
+      "required": ["items", "total", "limit", "offset"],
+      "type": "object"
+    },
+    "DecisionRunStatus": {
+      "enum": [
+        "PENDING",
+        "PROCESSING",
+        "COMPLETED",
+        "COMPLETED_WITH_WARNINGS",
+        "FAILED",
+        "CANCELLED"
+      ],
+      "type": "string"
+    },
+    "DecisionRunSummary": {
+      "additionalProperties": false,
+      "properties": {
+        "action_count": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "company_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "company_profile_snapshot_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "created_at": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "effective_outcome": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/DecisionOutcome"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "engine_outcome": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/DecisionOutcome"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "engine_version": {
+          "maxLength": 2000,
+          "minLength": 1,
+          "type": "string"
+        },
+        "error_code": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "error_message": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "financial_evaluation_run_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "finding_count": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "finished_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "input_digest": {
+          "pattern": "^[a-f0-9]{64}$",
+          "type": "string"
+        },
+        "job_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "normalization_run_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "policy_name": {
+          "type": "string"
+        },
+        "policy_version": {
+          "type": "string"
+        },
+        "process_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "reason_codes": {
+          "items": {
+            "$ref": "#/$defs/DecisionReasonCode"
+          },
+          "type": "array"
+        },
+        "requirement_count": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "requires_human_review": {
+          "type": "boolean"
+        },
+        "reviewed_outcome": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/DecisionOutcome"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "started_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "status": {
+          "$ref": "#/$defs/DecisionRunStatus"
+        },
+        "updated_at": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "warning_count": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "warnings": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "id",
+        "job_id",
+        "process_id",
+        "normalization_run_id",
+        "company_id",
+        "company_profile_snapshot_id",
+        "financial_evaluation_run_id",
+        "policy_name",
+        "policy_version",
+        "status",
+        "engine_outcome",
+        "reviewed_outcome",
+        "effective_outcome",
+        "input_digest",
+        "engine_version",
+        "requirement_count",
+        "finding_count",
+        "action_count",
+        "warning_count",
+        "requires_human_review",
+        "started_at",
+        "finished_at",
+        "error_code",
+        "error_message",
+        "created_at",
+        "updated_at"
+      ],
+      "type": "object"
+    }
+  },
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "Contenedor para generar JSON Schema con defs compartidos.",
+  "properties": {
+    "action_item": {
+      "$ref": "#/$defs/DecisionActionItem"
+    },
+    "action_update_request": {
+      "$ref": "#/$defs/DecisionActionUpdateRequest"
+    },
+    "coverage_category": {
+      "$ref": "#/$defs/DecisionCoverageCategory"
+    },
+    "coverage_summary": {
+      "$ref": "#/$defs/DecisionCoverageSummary"
+    },
+    "input_finding": {
+      "$ref": "#/$defs/DecisionInputFinding"
+    },
+    "job_summary": {
+      "$ref": "#/$defs/DecisionJobSummary"
+    },
+    "policy_summary": {
+      "$ref": "#/$defs/DecisionPolicySummary"
+    },
+    "queue_response": {
+      "$ref": "#/$defs/DecisionQueueResponse"
+    },
+    "readiness": {
+      "$ref": "#/$defs/DecisionReadiness"
+    },
+    "request": {
+      "$ref": "#/$defs/DecisionRequest"
+    },
+    "retry_request": {
+      "$ref": "#/$defs/DecisionRetryRequest"
+    },
+    "review_record": {
+      "$ref": "#/$defs/DecisionReviewRecord"
+    },
+    "review_request": {
+      "$ref": "#/$defs/DecisionReviewRequest"
+    },
+    "review_response": {
+      "$ref": "#/$defs/DecisionReviewResponse"
+    },
+    "rule_evaluation": {
+      "$ref": "#/$defs/DecisionRuleEvaluation"
+    },
+    "run_detail": {
+      "$ref": "#/$defs/DecisionRunDetail"
+    },
+    "run_list": {
+      "$ref": "#/$defs/DecisionRunList"
+    },
+    "run_summary": {
+      "$ref": "#/$defs/DecisionRunSummary"
+    },
+    "schema_version": {
+      "const": "1.0.0",
+      "default": "1.0.0",
+      "type": "string"
+    }
+  },
+  "required": [
+    "input_finding",
+    "coverage_category",
+    "coverage_summary",
+    "rule_evaluation",
+    "action_item",
+    "action_update_request",
+    "job_summary",
+    "run_summary",
+    "run_detail",
+    "request",
+    "retry_request",
+    "queue_response",
+    "review_request",
+    "review_response",
+    "review_record",
+    "readiness",
+    "policy_summary",
+    "run_list"
+  ],
+  "type": "object"
+}

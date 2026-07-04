@@ -6,6 +6,7 @@ from typing import Any
 from pliegocheck_schemas import (
     ApiError,
     CompanyErrorCode,
+    DecisionErrorCode,
     ExtractionErrorCode,
     FinancialErrorCode,
     NormalizationErrorCode,
@@ -24,6 +25,7 @@ class DomainError(Exception):
             | NormalizationErrorCode
             | CompanyErrorCode
             | FinancialErrorCode
+            | DecisionErrorCode
         ),
         message: str,
         *,

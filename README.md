@@ -102,7 +102,7 @@ flowchart TB
 
 La decisión de stack y sus alternativas están formalizadas en [docs/ADR-001-stack-and-architecture.md](docs/ADR-001-stack-and-architecture.md).
 
-## Estado actual - Microfase 6
+## Estado actual - Microfase 7
 
 Implementado: importacion manual de procesos, carga documental segura, almacenamiento local con
 SHA-256, cola transaccional inicial, extractores deterministas para PDF con texto, DOCX, XLSX, CSV y
@@ -113,11 +113,14 @@ requisitos, perfiles de empresa, datos juridicos, RUP, UNSPSC, finanzas, experie
 certificaciones, capacidades, evidencias documentales reutilizando el pipeline de extraccion,
 vinculos dato-evidencia, completitud deterministica, snapshots inmutables de perfil, evaluacion
 financiera inicial por requisito, formulas financieras versionadas, cola PostgreSQL, worker
-financiero, API, UI y revision manual auditada de resultados.
+financiero, API, UI y revision manual auditada de resultados, motor deterministico de decision
+preliminar, politica versionada, cobertura por categoria, reglas de precedencia, cola PostgreSQL de
+decision, acciones, review/override auditados, evals y UI de decision preliminar.
 
 No implementado todavia: OCR, evaluadores no financieros, integracion automatica con SECOP II,
-autenticacion, S3 real y motor GO / NO GO ejecutable. La evaluacion financiera no decide
-participacion global ni produce `GO` / `NO_GO`.
+autenticacion y S3 real. Actualmente el unico adaptador especializado disponible para el motor es
+`FINANCIAL`; los requisitos obligatorios de otras categorias quedan `NOT_EVALUATED`, por lo que no
+pueden producir `GO`.
 
 ## Desarrollo local
 
@@ -140,6 +143,8 @@ uv sync --all-packages  # dependencias Python (workspace uv)
 | `pnpm company:test` / `pnpm company:snapshot-check` | Pruebas de perfil de empresa, evidencias y snapshot deterministico |
 | `pnpm financial:run-once` / `pnpm financial:drain` | Procesa trabajos de evaluacion financiera |
 | `pnpm financial:test` / `pnpm financial:eval` | Pruebas y evals deterministas de evaluacion financiera |
+| `pnpm decision:run-once` / `pnpm decision:drain` | Procesa trabajos de decision preliminar |
+| `pnpm decision:policy-check` / `pnpm decision:test` / `pnpm decision:eval` | Politica, pruebas y evals del motor de decision |
 | `pnpm infra:up` / `pnpm infra:down` | PostgreSQL local para desarrollo |
 | `pnpm db:migrate` / `pnpm db:check` | Migraciones Alembic y verificación de divergencias |
 | `pnpm schemas:generate` | Regenera JSON Schema y tipos TS desde el modelo canónico Pydantic |
@@ -177,6 +182,10 @@ Guía completa en [docs/development.md](docs/development.md).
 | [docs/ADR-006-financial-evaluation.md](docs/ADR-006-financial-evaluation.md) | Decision de arquitectura de evaluacion financiera inicial. |
 | [docs/financial-evaluation.md](docs/financial-evaluation.md) | Operacion, API, worker, revision y limites de evaluacion financiera. |
 | [docs/financial-formulas.md](docs/financial-formulas.md) | Formulas financieras versionadas y reglas de calculo. |
+| [docs/ADR-007-deterministic-decision-engine.md](docs/ADR-007-deterministic-decision-engine.md) | Decision de arquitectura del motor deterministico preliminar. |
+| [docs/decision-policy.md](docs/decision-policy.md) | Politica versionada, snapshot, digest e idempotencia. |
+| [docs/decision-rules.md](docs/decision-rules.md) | Reglas, cobertura, hallazgos canonicos y acciones. |
+| [docs/decision-outcomes.md](docs/decision-outcomes.md) | Significado y precedencia de resultados. |
 
 ## Roadmap resumido
 
@@ -190,7 +199,7 @@ Guía completa en [docs/development.md](docs/development.md).
 | 5 | Perfil de empresa y evidencias |
 | 6 | Evaluador financiero inicial |
 | 7 | Motor determinístico de decisión |
-| 8 | Explicación y reporte auditable |
+| 8 | Evaluadores especializados juridico, tecnico y de experiencia |
 | 9 | Integración con datos abiertos SECOP II |
 | 10 | Autenticación, multiempresa y operación |
 

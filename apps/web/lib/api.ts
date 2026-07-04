@@ -29,6 +29,15 @@ import type {
   CompanyProfileUpdate,
   CompanyUnspscCode,
   CompanyUnspscCodeCreate,
+  DecisionActionItem,
+  DecisionActionStatus,
+  DecisionQueueResponse,
+  DecisionReadiness,
+  DecisionRequest,
+  DecisionReviewRequest,
+  DecisionReviewResponse,
+  DecisionRunDetail,
+  DecisionRunList,
   DocumentExtractionDetail,
   ExtractedSegmentList,
   ExtractedSegmentType,
@@ -300,6 +309,68 @@ export function updateFinancialRule(
   return request<FinancialRequirementRule>(
     `/processes/${processId}/financial-requirements/${requirementId}/rule`,
     { method: "PATCH", body: JSON.stringify(payload) },
+  );
+}
+
+export function getDecisionReadiness(
+  processId: string,
+  params: {
+    normalization_run_id: string;
+    company_profile_snapshot_id: string;
+    financial_evaluation_run_id: string;
+  },
+) {
+  const query = new URLSearchParams(params);
+  return request<DecisionReadiness>(
+    `/processes/${processId}/decision-readiness?${query.toString()}`,
+  );
+}
+
+export function createDecision(processId: string, payload: DecisionRequest) {
+  return request<DecisionQueueResponse>(`/processes/${processId}/decisions`, {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
+}
+
+export function listDecisions(processId: string, params: { limit?: number; offset?: number } = {}) {
+  const query = new URLSearchParams();
+  query.set("limit", String(params.limit ?? 20));
+  query.set("offset", String(params.offset ?? 0));
+  return request<DecisionRunList>(`/processes/${processId}/decisions?${query.toString()}`);
+}
+
+export function getDecision(processId: string, decisionRunId: string) {
+  return request<DecisionRunDetail>(`/processes/${processId}/decisions/${decisionRunId}`);
+}
+
+export function retryDecision(processId: string, decisionRunId: string) {
+  return request<DecisionQueueResponse>(
+    `/processes/${processId}/decisions/${decisionRunId}/retry`,
+    { method: "POST", body: JSON.stringify({}) },
+  );
+}
+
+export function reviewDecision(
+  processId: string,
+  decisionRunId: string,
+  payload: DecisionReviewRequest,
+) {
+  return request<DecisionReviewResponse>(
+    `/processes/${processId}/decisions/${decisionRunId}/review`,
+    { method: "POST", body: JSON.stringify(payload) },
+  );
+}
+
+export function updateDecisionAction(
+  processId: string,
+  decisionRunId: string,
+  actionId: string,
+  status: DecisionActionStatus,
+) {
+  return request<DecisionActionItem>(
+    `/processes/${processId}/decisions/${decisionRunId}/actions/${actionId}`,
+    { method: "PATCH", body: JSON.stringify({ status }) },
   );
 }
 

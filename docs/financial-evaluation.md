@@ -77,4 +77,7 @@ requisito.
 - No hay decision global `GO / NO GO`.
 - No hay llamadas a OpenAI durante la evaluacion financiera.
 - El mapeo de reglas es conservador y deja `UNKNOWN` cuando el requisito no es claro.
+- En Microfase 7 estos resultados alimentan el adaptador financiero del motor de decision
+  preliminar. El adaptador transforma estados y overrides sin reinterpretar calculos, sin inventar
+  subsanabilidad y sin marcar brechas como aliables.
 - Los demas evaluadores quedan fuera de esta microfase.

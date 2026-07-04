@@ -40,6 +40,25 @@ from pliegocheck_schemas.company_profile import (
     PersonCredentialType,
     PersonRelationshipType,
 )
+from pliegocheck_schemas.decision import (
+    DECISION_SCHEMA_VERSION,
+    DecisionActionPriority,
+    DecisionActionStatus,
+    DecisionActionType,
+    DecisionContracts,
+    DecisionCoverageStatus,
+    DecisionErrorCode,
+    DecisionEvaluationDomain,
+    DecisionFindingApplicability,
+    DecisionFindingOutcome,
+    DecisionFindingSourceType,
+    DecisionJobStatus,
+    DecisionOutcome,
+    DecisionReasonCode,
+    DecisionReviewAction,
+    DecisionRuleStatus,
+    DecisionRunStatus,
+)
 from pliegocheck_schemas.document_extraction import (
     DOCUMENT_EXTRACTION_SCHEMA_VERSION,
     DocumentExtractionContracts,
@@ -421,6 +440,65 @@ def generate_financial_evaluation_enums_ts() -> None:
     write_text(GENERATED_DIR / "financial-evaluation.enums.ts", "\n".join(blocks))
 
 
+def generate_decision_enums_ts() -> None:
+    blocks = [
+        TS_HEADER,
+        f'export const DECISION_SCHEMA_VERSION = "{DECISION_SCHEMA_VERSION}";\n',
+        ts_const_block("DECISION_OUTCOME_VALUES", "DecisionOutcomeValue", DecisionOutcome),
+        ts_const_block("DECISION_JOB_STATUS_VALUES", "DecisionJobStatusValue", DecisionJobStatus),
+        ts_const_block("DECISION_RUN_STATUS_VALUES", "DecisionRunStatusValue", DecisionRunStatus),
+        ts_const_block(
+            "DECISION_FINDING_OUTCOME_VALUES",
+            "DecisionFindingOutcomeValue",
+            DecisionFindingOutcome,
+        ),
+        ts_const_block(
+            "DECISION_EVALUATION_DOMAIN_VALUES",
+            "DecisionEvaluationDomainValue",
+            DecisionEvaluationDomain,
+        ),
+        ts_const_block(
+            "DECISION_FINDING_APPLICABILITY_VALUES",
+            "DecisionFindingApplicabilityValue",
+            DecisionFindingApplicability,
+        ),
+        ts_const_block(
+            "DECISION_FINDING_SOURCE_TYPE_VALUES",
+            "DecisionFindingSourceTypeValue",
+            DecisionFindingSourceType,
+        ),
+        ts_const_block(
+            "DECISION_COVERAGE_STATUS_VALUES",
+            "DecisionCoverageStatusValue",
+            DecisionCoverageStatus,
+        ),
+        ts_const_block(
+            "DECISION_RULE_STATUS_VALUES", "DecisionRuleStatusValue", DecisionRuleStatus
+        ),
+        ts_const_block(
+            "DECISION_REVIEW_ACTION_VALUES", "DecisionReviewActionValue", DecisionReviewAction
+        ),
+        ts_const_block(
+            "DECISION_ACTION_TYPE_VALUES", "DecisionActionTypeValue", DecisionActionType
+        ),
+        ts_const_block(
+            "DECISION_ACTION_PRIORITY_VALUES",
+            "DecisionActionPriorityValue",
+            DecisionActionPriority,
+        ),
+        ts_const_block(
+            "DECISION_ACTION_STATUS_VALUES",
+            "DecisionActionStatusValue",
+            DecisionActionStatus,
+        ),
+        ts_const_block(
+            "DECISION_REASON_CODE_VALUES", "DecisionReasonCodeValue", DecisionReasonCode
+        ),
+        ts_const_block("DECISION_ERROR_CODE_VALUES", "DecisionErrorCodeValue", DecisionErrorCode),
+    ]
+    write_text(GENERATED_DIR / "decision.enums.ts", "\n".join(blocks))
+
+
 def main() -> int:
     try:
         generate_json_schema(CompanyProfileContracts, "company-profile.schema.json")
@@ -432,6 +510,8 @@ def main() -> int:
         )
         generate_json_schema(ManualImportContracts, "manual-import.schema.json")
         generate_json_schema(DocumentExtractionContracts, "document-extraction.schema.json")
+        generate_json_schema(DecisionContracts, "decision.schema.json")
+        generate_decision_enums_ts()
         generate_requirement_enums_ts()
         generate_company_profile_enums_ts()
         generate_financial_evaluation_enums_ts()

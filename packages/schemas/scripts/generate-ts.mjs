@@ -34,6 +34,10 @@ const CONTRACTS = [
     schema: "document-extraction.schema.json",
     output: "document-extraction.ts",
   },
+  {
+    schema: "decision.schema.json",
+    output: "decision.ts",
+  },
 ];
 
 function banner(schemaFile) {

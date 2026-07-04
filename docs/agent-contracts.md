@@ -201,6 +201,16 @@ vertical financiero. Lee requisitos `FINANCIAL`, reglas financieras persistidas 
 periodo resuelto, metricas usadas, evidencia y codigo de explicacion. No llama OpenAI, no modifica
 requisitos y no emite decision global.
 
+## 5.4 DeterministicDecisionEngine
+
+No es un agente LLM. En Microfase 7 consume hallazgos canonicos de evaluadores especializados,
+cobertura y una politica versionada para producir una decision preliminar. No llama OpenAI, no usa
+confianza probabilistica y no accede directamente a la base de datos. El worker construye el snapshot
+de entrada; el motor solo aplica reglas puras con `effective_at` inyectado.
+
+Actualmente solo hay adaptador especializado real para `FINANCIAL`. Todo requisito obligatorio sin
+adaptador queda `NOT_EVALUATED`; esa ausencia de evaluacion nunca se interpreta como cumplimiento.
+
 ## 6–11. Agentes evaluadores especializados
 
 Los seis evaluadores comparten estructura de contrato; se listan sus diferencias tras el contrato común.

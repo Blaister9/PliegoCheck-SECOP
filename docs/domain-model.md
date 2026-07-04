@@ -193,6 +193,13 @@ del documento SECOP que lo soporta.
 - **Puede inferirse:** nada — la decisión es producto determinístico de reglas versionadas.
 - **Nunca debe inventarse:** una decisión sin cadena completa requisito → evidencia → evaluación → regla.
 
+Implementacion Microfase 7: la decision persistida es preliminar y se modela como `DecisionRun`.
+Referencia un `Process`, una normalizacion completada, un `CompanyProfileSnapshot` publicado, una
+evaluacion financiera completada y un `DecisionPolicyVersion`. El resultado automatico queda en
+`engine_outcome`; las revisiones humanas usan `reviewed_outcome` y `effective_outcome` sin sobrescribir
+el resultado original. Las acciones (`DecisionActionItem`) son tareas abiertas, reconocidas,
+resueltas o descartadas; cambiar una accion no recalcula el run historico.
+
 ### DecisionRule
 **Propósito:** versión inmutable del conjunto de reglas del motor determinístico usado para producir decisiones.
 
@@ -201,6 +208,10 @@ del documento SECOP que lo soporta.
 - **Requiere evidencia:** n/a (artefacto del sistema, versionado en el repositorio).
 - **Puede inferirse:** nada.
 - **Nunca debe inventarse:** n/a; las reglas solo cambian por gestión de cambios documentada.
+
+Implementacion Microfase 7: las reglas estan en codigo tipado y la politica en
+`config/decision-policies/v1/policy.json`. Cada ejecucion persiste `DecisionRuleEvaluation` con
+hechos, requisitos, hallazgos, prioridad, razon y resultado sugerido.
 
 ### AgentRun
 **Propósito:** registro de una ejecución concreta de un agente de IA: qué modelo, qué prompt, qué entradas, qué salida, qué costo.
