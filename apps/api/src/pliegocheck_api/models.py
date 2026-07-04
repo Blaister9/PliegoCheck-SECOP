@@ -26,6 +26,8 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from pliegocheck_api.db import Base
 from pliegocheck_schemas import (
+    AuthRoleName,
+    AuthUserStatus,
     CompanyCapabilityCategory,
     CompanyCertificationType,
     CompanyEvidenceReviewStatus,
@@ -218,6 +220,8 @@ DECISION_REPORT_PACKAGE_STATUS_VALUES = ", ".join(
 DECISION_REPORT_ARTIFACT_TYPE_VALUES = ", ".join(
     f"'{item.value}'" for item in DecisionReportArtifactType
 )
+AUTH_USER_STATUS_VALUES = ", ".join(f"'{item.value}'" for item in AuthUserStatus)
+AUTH_ROLE_NAME_VALUES = ", ".join(f"'{item.value}'" for item in AuthRoleName)
 SPECIALIZED_DOMAIN_VALUES = ", ".join(f"'{item.value}'" for item in SpecializedEvaluationDomain)
 SPECIALIZED_JOB_STATUS_VALUES = ", ".join(
     f"'{item.value}'" for item in SpecializedEvaluationJobStatus
@@ -3240,4 +3244,149 @@ class DecisionReportEvent(Base):
     event_type: Mapped[str] = mapped_column(String(64), nullable=False)
     summary: Mapped[str] = mapped_column(String(1000), nullable=False)
     details: Mapped[dict[str, Any]] = mapped_column(JSON, nullable=False, default=dict)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+
+class AuthUser(Base):
+    """Usuario local para piloto controlado."""
+
+    __tablename__ = "auth_users"
+    __table_args__ = (
+        CheckConstraint(f"status IN ({AUTH_USER_STATUS_VALUES})", name="ck_auth_users_status"),
+        CheckConstraint("failed_login_attempts >= 0", name="ck_auth_users_failed_login_attempts"),
+        Index("ix_auth_users_email", "email", unique=True),
+        Index("ix_auth_users_status", "status"),
+    )
+
+    id: Mapped[UUID] = mapped_column(Uuid(as_uuid=True), primary_key=True, default=uuid4)
+    email: Mapped[str] = mapped_column(String(320), nullable=False)
+    display_name: Mapped[str] = mapped_column(String(255), nullable=False)
+    password_hash: Mapped[str] = mapped_column(String(512), nullable=False)
+    status: Mapped[str] = mapped_column(String(32), nullable=False, default=AuthUserStatus.ACTIVE)
+    failed_login_attempts: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    locked_until: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    last_login_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
+    )
+    disabled_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+
+
+class AuthRole(Base):
+    """Rol operativo con nombre cerrado."""
+
+    __tablename__ = "auth_roles"
+    __table_args__ = (
+        CheckConstraint(f"name IN ({AUTH_ROLE_NAME_VALUES})", name="ck_auth_roles_name"),
+        Index("ix_auth_roles_name", "name", unique=True),
+    )
+
+    id: Mapped[UUID] = mapped_column(Uuid(as_uuid=True), primary_key=True, default=uuid4)
+    name: Mapped[str] = mapped_column(String(32), nullable=False)
+    description: Mapped[str] = mapped_column(String(500), nullable=False, default="")
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+
+class AuthUserRole(Base):
+    """Asignacion usuario-rol."""
+
+    __tablename__ = "auth_user_roles"
+    __table_args__ = (
+        UniqueConstraint("user_id", "role_id", name="uq_auth_user_roles_user_role"),
+        Index("ix_auth_user_roles_user", "user_id"),
+        Index("ix_auth_user_roles_role", "role_id"),
+    )
+
+    id: Mapped[UUID] = mapped_column(Uuid(as_uuid=True), primary_key=True, default=uuid4)
+    user_id: Mapped[UUID] = mapped_column(
+        Uuid(as_uuid=True), ForeignKey("auth_users.id", ondelete="CASCADE"), nullable=False
+    )
+    role_id: Mapped[UUID] = mapped_column(
+        Uuid(as_uuid=True), ForeignKey("auth_roles.id", ondelete="CASCADE"), nullable=False
+    )
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+
+class AuthSession(Base):
+    """Sesion persistida. Solo guarda hash del token."""
+
+    __tablename__ = "auth_sessions"
+    __table_args__ = (
+        CheckConstraint(
+            "session_token_hash ~ '^[a-f0-9]{64}$'", name="ck_auth_sessions_token_hash"
+        ),
+        CheckConstraint(
+            "ip_hash IS NULL OR ip_hash ~ '^[a-f0-9]{64}$'", name="ck_auth_sessions_ip"
+        ),
+        CheckConstraint(
+            "user_agent_hash IS NULL OR user_agent_hash ~ '^[a-f0-9]{64}$'",
+            name="ck_auth_sessions_user_agent",
+        ),
+        Index("ix_auth_sessions_token_hash", "session_token_hash", unique=True),
+        Index("ix_auth_sessions_user", "user_id"),
+        Index("ix_auth_sessions_expires", "expires_at"),
+    )
+
+    id: Mapped[UUID] = mapped_column(Uuid(as_uuid=True), primary_key=True, default=uuid4)
+    user_id: Mapped[UUID] = mapped_column(
+        Uuid(as_uuid=True), ForeignKey("auth_users.id", ondelete="CASCADE"), nullable=False
+    )
+    session_token_hash: Mapped[str] = mapped_column(String(64), nullable=False)
+    expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    last_seen_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    revoked_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    ip_hash: Mapped[str | None] = mapped_column(String(64))
+    user_agent_hash: Mapped[str | None] = mapped_column(String(64))
+
+
+class AuthLoginEvent(Base):
+    """Evento tecnico de login sin secretos."""
+
+    __tablename__ = "auth_login_events"
+    __table_args__ = (
+        Index("ix_auth_login_events_user", "user_id"),
+        Index("ix_auth_login_events_email_hash", "email_hash"),
+        Index("ix_auth_login_events_created_at", "created_at"),
+    )
+
+    id: Mapped[UUID] = mapped_column(Uuid(as_uuid=True), primary_key=True, default=uuid4)
+    user_id: Mapped[UUID | None] = mapped_column(
+        Uuid(as_uuid=True), ForeignKey("auth_users.id", ondelete="SET NULL")
+    )
+    email_hash: Mapped[str] = mapped_column(String(64), nullable=False)
+    success: Mapped[bool] = mapped_column(Boolean, nullable=False)
+    failure_reason: Mapped[str | None] = mapped_column(String(64))
+    ip_hash: Mapped[str | None] = mapped_column(String(64))
+    user_agent_hash: Mapped[str | None] = mapped_column(String(64))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+
+class OperationalAuditEvent(Base):
+    """Auditoria operacional sanitizada."""
+
+    __tablename__ = "operational_audit_events"
+    __table_args__ = (
+        Index("ix_operational_audit_events_actor", "actor_user_id"),
+        Index("ix_operational_audit_events_type", "event_type"),
+        Index("ix_operational_audit_events_entity", "entity_type", "entity_id"),
+        Index("ix_operational_audit_events_created_at", "created_at"),
+    )
+
+    id: Mapped[UUID] = mapped_column(Uuid(as_uuid=True), primary_key=True, default=uuid4)
+    actor_user_id: Mapped[UUID | None] = mapped_column(
+        Uuid(as_uuid=True), ForeignKey("auth_users.id", ondelete="SET NULL")
+    )
+    actor_email_hash: Mapped[str | None] = mapped_column(String(64))
+    event_type: Mapped[str] = mapped_column(String(64), nullable=False)
+    entity_type: Mapped[str | None] = mapped_column(String(64))
+    entity_id: Mapped[UUID | None] = mapped_column(Uuid(as_uuid=True))
+    action: Mapped[str] = mapped_column(String(128), nullable=False)
+    status: Mapped[str] = mapped_column(String(32), nullable=False)
+    ip_hash: Mapped[str | None] = mapped_column(String(64))
+    user_agent_hash: Mapped[str | None] = mapped_column(String(64))
+    event_metadata: Mapped[dict[str, Any]] = mapped_column(
+        "metadata", JSON, nullable=False, default=dict
+    )
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())

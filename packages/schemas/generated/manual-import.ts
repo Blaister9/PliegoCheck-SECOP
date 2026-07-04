@@ -126,6 +126,18 @@ export type DecisionReportErrorCode =
   | "DECISION_REPORT_PACKAGE_NOT_FOUND"
   | "DECISION_REPORT_DIGEST_MISMATCH"
   | "DECISION_REPORT_FAILED";
+export type AuthErrorCode =
+  | "AUTH_REQUIRED"
+  | "AUTH_INVALID_CREDENTIALS"
+  | "AUTH_SESSION_EXPIRED"
+  | "AUTH_PERMISSION_DENIED"
+  | "AUTH_USER_DISABLED"
+  | "AUTH_USER_LOCKED"
+  | "AUTH_PASSWORD_TOO_SHORT"
+  | "AUTH_INVALID_CURRENT_PASSWORD"
+  | "AUTH_CONFIG_INVALID"
+  | "AUTH_USER_NOT_FOUND"
+  | "AUTH_EMAIL_ALREADY_EXISTS";
 /**
  * Tipo documental declarado. La clasificacion automatica llega en Microfase 3.
  */
@@ -195,7 +207,8 @@ export interface ApiError {
     | CompanyErrorCode
     | FinancialErrorCode
     | DecisionErrorCode
-    | DecisionReportErrorCode;
+    | DecisionReportErrorCode
+    | AuthErrorCode;
   details?: {
     [k: string]: string;
   };

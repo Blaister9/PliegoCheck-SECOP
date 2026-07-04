@@ -53,6 +53,12 @@ jobs:
       OPENAI_NORMALIZATION_MAX_RETRIES: "3"
       PLIEGOCHECK_ALLOW_FAKE_NORMALIZATION_PROVIDER: "true"
       PLIEGOCHECK_ALLOWED_WEB_ORIGINS: http://localhost:3000
+      PLIEGOCHECK_CORS_ALLOWED_ORIGINS: http://localhost:3000
+      PLIEGOCHECK_ENVIRONMENT: test
+      PLIEGOCHECK_AUTH_ENABLED: "false"
+      PLIEGOCHECK_AUTH_SECRET_KEY: ""
+      PLIEGOCHECK_SECURITY_HEADERS_ENABLED: "true"
+      PLIEGOCHECK_PILOT_MODE: "false"
       NEXT_PUBLIC_API_BASE_URL: http://localhost:8000
     steps:
       - name: Checkout
@@ -90,6 +96,15 @@ jobs:
 
       - name: Contratos sincronizados
         run: pnpm schemas:check
+
+      - name: Pruebas de autenticacion y permisos
+        run: pnpm auth:test
+
+      - name: Pruebas operativas
+        run: pnpm ops:test
+
+      - name: Eval de preparacion de piloto
+        run: pnpm pilot:eval
 
       - name: Pruebas de perfil de empresa
         run: pnpm company:test

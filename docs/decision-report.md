@@ -41,6 +41,10 @@ pnpm report:eval
 
 ## API
 
+En Microfase 10 estos endpoints requieren sesion valida cuando `PLIEGOCHECK_AUTH_ENABLED=true`.
+La autorizacion se evalua por permisos de rol; los errores incluyen `request_id` y se auditan cuando
+corresponde.
+
 - `POST /processes/{process_id}/decision-reports`
 - `GET /processes/{process_id}/decision-reports`
 - `GET /processes/{process_id}/decision-reports/{package_id}`

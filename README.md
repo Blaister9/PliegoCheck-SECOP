@@ -102,7 +102,7 @@ flowchart TB
 
 La decisión de stack y sus alternativas están formalizadas en [docs/ADR-001-stack-and-architecture.md](docs/ADR-001-stack-and-architecture.md).
 
-## Estado actual - Microfase 9
+## Estado actual - Microfase 10
 
 Implementado: importacion manual de procesos, carga documental segura, almacenamiento local con
 SHA-256, cola transaccional inicial, extractores deterministas para PDF con texto, DOCX, XLSX, CSV y
@@ -125,6 +125,9 @@ La Microfase 9 agrega reporte ejecutivo y paquete de decision: contratos compart
 CSV/manifest/ZIP, descargas API, panel web, pruebas y evals. El reporte resume una decision
 preliminar completada; no recalcula evaluaciones, no modifica acciones y no reemplaza revision
 juridica ni decision humana.
+La Microfase 10 agrega autenticacion local, sesiones HttpOnly, roles y permisos, proteccion de API
+y web, auditoria operacional, headers de seguridad, readiness operativo, scripts de backup local,
+pantallas admin minimas y checklist de piloto.
 
 No implementado todavia: OCR, integracion automatica con SECOP II, autenticacion y S3 real.
 Categorias fuera de los adaptadores financiero, juridico, experiencia y tecnico quedan
@@ -157,6 +160,9 @@ uv sync --all-packages  # dependencias Python (workspace uv)
 | `pnpm decision:policy-check` / `pnpm decision:test` / `pnpm decision:eval` | Politica, pruebas y evals del motor de decision |
 | `pnpm report:run-once` / `pnpm report:drain` | Procesa trabajos de reporte ejecutivo y paquete de decision |
 | `pnpm report:test` / `pnpm report:eval` | Pruebas y evals deterministas de reportes |
+| `pnpm auth:test` / `pnpm pilot:eval` | Pruebas de autenticacion y eval de preparacion de piloto |
+| `pnpm auth:create-admin` / `pnpm auth:list-users` | CLI administrativo de usuarios locales |
+| `pnpm ops:backup` / `pnpm ops:restore` | Backup y restore local controlado |
 | `pnpm infra:up` / `pnpm infra:down` | PostgreSQL local para desarrollo |
 | `pnpm db:migrate` / `pnpm db:check` | Migraciones Alembic y verificación de divergencias |
 | `pnpm schemas:generate` | Regenera JSON Schema y tipos TS desde el modelo canónico Pydantic |
@@ -207,6 +213,13 @@ Guía completa en [docs/development.md](docs/development.md).
 | [docs/decision-report.md](docs/decision-report.md) | Operacion, API, worker y limites del reporte ejecutivo. |
 | [docs/decision-package.md](docs/decision-package.md) | Contenido, manifest, ZIP e idempotencia del paquete. |
 | [docs/report-artifacts.md](docs/report-artifacts.md) | Seguridad, storage, templates y evals de artefactos. |
+| [docs/ADR-010-operational-hardening-auth.md](docs/ADR-010-operational-hardening-auth.md) | Decision de autenticacion local y endurecimiento operativo. |
+| [docs/authentication.md](docs/authentication.md) | Login, sesiones, cookies y primer admin. |
+| [docs/authorization.md](docs/authorization.md) | Roles y permisos. |
+| [docs/operations-runbook.md](docs/operations-runbook.md) | Operacion local/piloto, health y auditoria. |
+| [docs/pilot-readiness-checklist.md](docs/pilot-readiness-checklist.md) | Checklist pre-piloto. |
+| [docs/security-hardening.md](docs/security-hardening.md) | Controles de seguridad implementados. |
+| [docs/backup-restore.md](docs/backup-restore.md) | Backup y restore local. |
 
 ## Roadmap resumido
 
@@ -222,6 +235,7 @@ Guía completa en [docs/development.md](docs/development.md).
 | 7 | Motor determinístico de decisión |
 | 8 | Evaluadores especializados juridico, tecnico y de experiencia |
 | 9 | Reporte ejecutivo y paquete de decision |
-| 10 | Autenticación, multiempresa y operación |
+| 10 | Endurecimiento operativo, autenticacion y preparacion de piloto |
+| 11 | Piloto controlado end-to-end con datos sinteticos y retroalimentacion |
 
 Detalle completo en [docs/roadmap.md](docs/roadmap.md).

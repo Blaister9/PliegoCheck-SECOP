@@ -1,5 +1,12 @@
 import type {
   ApiError,
+  AuthCurrentUser,
+  AuthLoginRequest,
+  AuthLoginResponse,
+  AuthUserCreateRequest,
+  AuthUserList,
+  OperationalAuditEventList,
+  SystemConfigSummary,
   CompanyCapability,
   CompanyCapabilityCreate,
   CompanyCertification,
@@ -105,6 +112,7 @@ async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
     const response = await fetch(`${apiBaseUrl()}${path}`, {
       ...init,
       signal: controller.signal,
+      credentials: "include",
       headers:
         init.body instanceof FormData
           ? init.headers
@@ -135,6 +143,43 @@ async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
   } finally {
     clearTimeout(timeout);
   }
+}
+
+export function login(payload: AuthLoginRequest) {
+  return request<AuthLoginResponse>("/auth/login", {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
+}
+
+export function logout() {
+  return request<{ status: string }>("/auth/logout", {
+    method: "POST",
+    body: JSON.stringify({}),
+  });
+}
+
+export function getCurrentUser() {
+  return request<AuthCurrentUser>("/auth/me");
+}
+
+export function listAdminUsers() {
+  return request<AuthUserList>("/admin/users?limit=50&offset=0");
+}
+
+export function createAdminUser(payload: AuthUserCreateRequest) {
+  return request<AuthUserList>("/admin/users", {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
+}
+
+export function listAuditEvents() {
+  return request<OperationalAuditEventList>("/admin/audit-events?limit=50&offset=0");
+}
+
+export function getSystemConfig() {
+  return request<SystemConfigSummary>("/admin/system-config");
 }
 
 export function listProcesses(params: {
@@ -674,6 +719,7 @@ export async function uploadDocuments(processId: string, files: File[]) {
   const response = await fetch(`${apiBaseUrl()}/processes/${processId}/documents`, {
     method: "POST",
     body: form,
+    credentials: "include",
   });
   if (![201, 207, 400].includes(response.status)) {
     let payload: ApiError | null = null;
@@ -705,7 +751,7 @@ export async function uploadCompanyEvidence(
   if (title?.trim()) query.set("title", title.trim());
   const response = await fetch(
     `${apiBaseUrl()}/companies/${companyId}/evidence-documents?${query.toString()}`,
-    { method: "POST", body: form },
+    { method: "POST", body: form, credentials: "include" },
   );
   if (![201, 207, 400].includes(response.status)) {
     let payload: ApiError | null = null;

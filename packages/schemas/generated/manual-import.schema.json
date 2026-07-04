@@ -26,6 +26,9 @@
             },
             {
               "$ref": "#/$defs/DecisionReportErrorCode"
+            },
+            {
+              "$ref": "#/$defs/AuthErrorCode"
             }
           ]
         },
@@ -41,6 +44,22 @@
       },
       "required": ["code", "message"],
       "type": "object"
+    },
+    "AuthErrorCode": {
+      "enum": [
+        "AUTH_REQUIRED",
+        "AUTH_INVALID_CREDENTIALS",
+        "AUTH_SESSION_EXPIRED",
+        "AUTH_PERMISSION_DENIED",
+        "AUTH_USER_DISABLED",
+        "AUTH_USER_LOCKED",
+        "AUTH_PASSWORD_TOO_SHORT",
+        "AUTH_INVALID_CURRENT_PASSWORD",
+        "AUTH_CONFIG_INVALID",
+        "AUTH_USER_NOT_FOUND",
+        "AUTH_EMAIL_ALREADY_EXISTS"
+      ],
+      "type": "string"
     },
     "CompanyErrorCode": {
       "enum": [

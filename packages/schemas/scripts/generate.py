@@ -18,6 +18,15 @@ from pathlib import Path
 
 from pydantic import BaseModel
 
+from pliegocheck_schemas.auth import (
+    AUTH_SCHEMA_VERSION,
+    AuthContracts,
+    AuthErrorCode,
+    AuthPermission,
+    AuthRoleName,
+    AuthUserStatus,
+    OperationalAuditEventType,
+)
 from pliegocheck_schemas.company_profile import (
     COMPANY_PROFILE_SCHEMA_VERSION,
     CompanyCapabilityCategory,
@@ -552,6 +561,23 @@ def generate_decision_report_enums_ts() -> None:
     write_text(GENERATED_DIR / "decision-report.enums.ts", "\n".join(blocks))
 
 
+def generate_auth_enums_ts() -> None:
+    blocks = [
+        TS_HEADER,
+        f'export const AUTH_SCHEMA_VERSION = "{AUTH_SCHEMA_VERSION}";\n',
+        ts_const_block("AUTH_USER_STATUS_VALUES", "AuthUserStatusValue", AuthUserStatus),
+        ts_const_block("AUTH_ROLE_NAME_VALUES", "AuthRoleNameValue", AuthRoleName),
+        ts_const_block("AUTH_PERMISSION_VALUES", "AuthPermissionValue", AuthPermission),
+        ts_const_block("AUTH_ERROR_CODE_VALUES", "AuthErrorCodeValue", AuthErrorCode),
+        ts_const_block(
+            "OPERATIONAL_AUDIT_EVENT_TYPE_VALUES",
+            "OperationalAuditEventTypeValue",
+            OperationalAuditEventType,
+        ),
+    ]
+    write_text(GENERATED_DIR / "auth.enums.ts", "\n".join(blocks))
+
+
 def generate_specialized_evaluation_enums_ts() -> None:
     blocks = [
         TS_HEADER,
@@ -633,9 +659,11 @@ def main() -> int:
         generate_json_schema(DocumentExtractionContracts, "document-extraction.schema.json")
         generate_json_schema(DecisionContracts, "decision.schema.json")
         generate_json_schema(DecisionReportContracts, "decision-report.schema.json")
+        generate_json_schema(AuthContracts, "auth.schema.json")
         generate_json_schema(SpecializedEvaluationContracts, "specialized-evaluation.schema.json")
         generate_decision_enums_ts()
         generate_decision_report_enums_ts()
+        generate_auth_enums_ts()
         generate_specialized_evaluation_enums_ts()
         generate_requirement_enums_ts()
         generate_company_profile_enums_ts()

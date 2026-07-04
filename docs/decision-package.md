@@ -46,3 +46,9 @@ Proceso -> DecisionRun -> input manifest -> DecisionReportJob -> DecisionReportP
 
 La matriz CSV mantiene filas con requisito, estado, criticidad, fuente del hallazgo, evidencia,
 reglas y accion asociada cuando exista.
+
+## Acceso operativo
+
+En Microfase 10 la descarga y previsualizacion del paquete quedan detras de autenticacion local
+cuando `PLIEGOCHECK_AUTH_ENABLED=true`. La proteccion no cambia los artefactos ni el digest del
+paquete; solo controla quien puede generarlos o descargarlos.

@@ -14,7 +14,8 @@ Microfase 6: evaluador financiero inicial (completada)
 Microfase 7: motor deterministico de decision (completada)
 Microfase 8: evaluadores especializados juridico, tecnico y de experiencia (completada)
 Microfase 9: reporte ejecutivo y paquete de decision (completada)
-Microfase 10: endurecimiento operativo, autenticacion y preparacion de piloto
+Microfase 10: endurecimiento operativo, autenticacion y preparacion de piloto (completada)
+Microfase 11: piloto controlado end-to-end con datos sinteticos y retroalimentacion (siguiente)
 ```
 
 ## Microfase 0 - Fundacion documental - completada
@@ -118,8 +119,15 @@ Microfase 10: endurecimiento operativo, autenticacion y preparacion de piloto
 ## Microfase 10 - Endurecimiento operativo, autenticacion y preparacion de piloto
 
 - **Objetivo:** operacion multiusuario y multiorganizacion segura.
-- **Entregable previsto:** autenticacion, roles, aislamiento por organizacion, limites de costo,
-  observabilidad, storage S3-compatible, preparacion de piloto y despliegue reproducible.
+- **Entregable:** autenticacion local, roles, permisos, sesiones HttpOnly, proteccion API/web,
+  auditoria operacional, configuracion validada, headers, readiness, backup local, pantallas admin,
+  eval de piloto, pruebas, CI y documentacion.
+
+## Microfase 11 - Piloto controlado end-to-end con datos sinteticos y retroalimentacion
+
+- **Objetivo:** ejecutar un piloto completo con datos sinteticos y feedback de uso.
+- **Entregable previsto:** guion de demo, casos sinteticos, medicion de tiempos, retroalimentacion
+  de usuarios, bugs priorizados y decision de alcance para siguiente iteracion.
 
 ## Despues del MVP
 
