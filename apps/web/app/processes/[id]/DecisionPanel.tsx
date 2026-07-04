@@ -235,8 +235,8 @@ export function DecisionPanel({ processId }: { processId: string }) {
         </p>
         <p>La ausencia de evaluación en una dimensión nunca se interpreta como cumplimiento.</p>
         <p>
-          Actualmente el único adaptador especializado disponible es el financiero; los demás
-          requisitos obligatorios permanecen como NOT_EVALUATED.
+          Los adaptadores disponibles son financiero, jurídico, experiencia y técnico cuando sus
+          evaluaciones determinísticas ya fueron completadas.
         </p>
         <p>
           El resultado no constituye un concepto jurídico ni garantiza habilitación o adjudicación.

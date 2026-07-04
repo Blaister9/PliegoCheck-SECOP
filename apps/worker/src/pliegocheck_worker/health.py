@@ -8,6 +8,7 @@ from pliegocheck_worker.decision.orchestrator import decision_queue_connected
 from pliegocheck_worker.financial.orchestrator import financial_queue_connected
 from pliegocheck_worker.normalization.orchestrator import normalization_queue_connected
 from pliegocheck_worker.runner import queue_connected
+from pliegocheck_worker.specialized.orchestrator import specialized_queue_connected
 
 
 def _decision_policy_version() -> str | None:
@@ -24,6 +25,7 @@ def health_status() -> dict[str, str | bool | list[str] | None]:
     connected = queue_connected()
     normalization_connected = normalization_queue_connected()
     financial_connected = financial_queue_connected()
+    specialized_connected = specialized_queue_connected()
     decision_connected = decision_queue_connected()
     decision_policy = _decision_policy_version()
     return {
@@ -39,6 +41,8 @@ def health_status() -> dict[str, str | bool | list[str] | None]:
         "document_processing_enabled": connected,
         "company_evidence_extraction_enabled": connected,
         "financial_evaluation_enabled": financial_connected,
+        "specialized_evaluators_enabled": specialized_connected,
+        "available_specialized_evaluators": ["LEGAL", "EXPERIENCE", "TECHNICAL"],
         "requirement_normalization_enabled": (
             normalization_connected
             and (settings.ai_enabled or settings.allow_fake_normalization_provider)

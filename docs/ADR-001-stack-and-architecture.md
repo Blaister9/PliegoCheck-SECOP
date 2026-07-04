@@ -4,6 +4,20 @@
 - **Fecha:** 2026-07-01
 - **Decisores:** Equipo PliegoCheck
 
+## Actualizacion de implementacion - Microfase 8 (2026-07-04)
+
+| Decision | Eleccion | Motivo |
+| --- | --- | --- |
+| Evaluadores | Paquete deterministico `specialized_evaluation` sin IA | Mantiene separada la inferencia documental de la decision final. |
+| Dominios | `LEGAL`, `EXPERIENCE` y `TECHNICAL` | Cubre requisitos no financieros comunes sin hardcodear un pliego concreto. |
+| Reglas | `SpecializedRequirementRule` persistida por requisito | Permite auditabilidad, override manual y versionamiento de mapeo. |
+| Cola | `specialized_evaluation_jobs` con `FOR UPDATE SKIP LOCKED` | Reutiliza el patron transaccional de workers existentes. |
+| Adaptadores | `SPECIALIZED_EVALUATION` hacia hallazgos canonicos | El motor de decision conserva una sola politica y una sola precedencia. |
+| UI | Panel `Evaluadores especializados` | Expone readiness, encolado, resultados y revision sin presentar dictamen juridico. |
+
+La Microfase 9 queda definida como reporte ejecutivo y paquete de decision. La integracion
+automatica con datos abiertos SECOP II permanece fuera del alcance inmediato.
+
 ## Contexto
 
 PliegoCheck-SECOP debe evolucionar de un repositorio vacío a una plataforma multiagente que analice procesos de SECOP II y produzca decisiones GO / NO GO auditables. El sistema combina tres naturalezas de trabajo distintas:
@@ -185,6 +199,6 @@ El MVP (Microfases 1–8 del [roadmap](roadmap.md)) **no incluye**:
 
 - Integración automática con datos abiertos SECOP II (llega en Microfase 9; antes, carga manual).
 - Autenticación completa y multiempresa en producción (Microfase 10).
-- Todos los evaluadores especializados: el MVP arranca con el evaluador financiero como primer vertical completo.
+- Evaluadores fuera de financiero, juridico, experiencia y tecnico.
 - Procesamiento OCR avanzado de documentos escaneados de baja calidad (se registra como limitación y escala a revisión humana).
 - Alta disponibilidad, autoescalado o multi-región.

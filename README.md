@@ -102,7 +102,7 @@ flowchart TB
 
 La decisión de stack y sus alternativas están formalizadas en [docs/ADR-001-stack-and-architecture.md](docs/ADR-001-stack-and-architecture.md).
 
-## Estado actual - Microfase 7
+## Estado actual - Microfase 8
 
 Implementado: importacion manual de procesos, carga documental segura, almacenamiento local con
 SHA-256, cola transaccional inicial, extractores deterministas para PDF con texto, DOCX, XLSX, CSV y
@@ -116,11 +116,14 @@ financiera inicial por requisito, formulas financieras versionadas, cola Postgre
 financiero, API, UI y revision manual auditada de resultados, motor deterministico de decision
 preliminar, politica versionada, cobertura por categoria, reglas de precedencia, cola PostgreSQL de
 decision, acciones, review/override auditados, evals y UI de decision preliminar.
+Tambien estan implementados los evaluadores especializados deterministas juridico, de experiencia
+y tecnico: reglas persistidas por requisito, resolucion contra snapshot publicado, cola PostgreSQL,
+worker, API, UI, revision auditada, adaptadores hacia el motor de decision, contratos compartidos,
+pruebas y evals.
 
-No implementado todavia: OCR, evaluadores no financieros, integracion automatica con SECOP II,
-autenticacion y S3 real. Actualmente el unico adaptador especializado disponible para el motor es
-`FINANCIAL`; los requisitos obligatorios de otras categorias quedan `NOT_EVALUATED`, por lo que no
-pueden producir `GO`.
+No implementado todavia: OCR, integracion automatica con SECOP II, autenticacion y S3 real.
+Categorias fuera de los adaptadores financiero, juridico, experiencia y tecnico quedan
+`NOT_EVALUATED`, por lo que no pueden producir `GO`.
 
 ## Desarrollo local
 
@@ -143,6 +146,8 @@ uv sync --all-packages  # dependencias Python (workspace uv)
 | `pnpm company:test` / `pnpm company:snapshot-check` | Pruebas de perfil de empresa, evidencias y snapshot deterministico |
 | `pnpm financial:run-once` / `pnpm financial:drain` | Procesa trabajos de evaluacion financiera |
 | `pnpm financial:test` / `pnpm financial:eval` | Pruebas y evals deterministas de evaluacion financiera |
+| `pnpm specialized:run-once` / `pnpm specialized:drain` | Procesa trabajos de evaluadores juridico, experiencia y tecnico |
+| `pnpm specialized:test` / `pnpm specialized:eval` | Pruebas y evals deterministas de evaluadores especializados |
 | `pnpm decision:run-once` / `pnpm decision:drain` | Procesa trabajos de decision preliminar |
 | `pnpm decision:policy-check` / `pnpm decision:test` / `pnpm decision:eval` | Politica, pruebas y evals del motor de decision |
 | `pnpm infra:up` / `pnpm infra:down` | PostgreSQL local para desarrollo |
@@ -183,6 +188,11 @@ Guía completa en [docs/development.md](docs/development.md).
 | [docs/financial-evaluation.md](docs/financial-evaluation.md) | Operacion, API, worker, revision y limites de evaluacion financiera. |
 | [docs/financial-formulas.md](docs/financial-formulas.md) | Formulas financieras versionadas y reglas de calculo. |
 | [docs/ADR-007-deterministic-decision-engine.md](docs/ADR-007-deterministic-decision-engine.md) | Decision de arquitectura del motor deterministico preliminar. |
+| [docs/ADR-008-specialized-evaluators.md](docs/ADR-008-specialized-evaluators.md) | Decision de arquitectura para evaluadores juridico, experiencia y tecnico. |
+| [docs/specialized-evaluators.md](docs/specialized-evaluators.md) | Operacion, API, worker, evidencias y limites de evaluadores especializados. |
+| [docs/legal-evaluation.md](docs/legal-evaluation.md) | Reglas juridicas deterministas y criterios de incertidumbre. |
+| [docs/experience-evaluation.md](docs/experience-evaluation.md) | Reglas de experiencia, valor, conteo, UNSPSC y actividad. |
+| [docs/technical-evaluation.md](docs/technical-evaluation.md) | Reglas tecnicas, personal, certificaciones, cobertura y capacidades. |
 | [docs/decision-policy.md](docs/decision-policy.md) | Politica versionada, snapshot, digest e idempotencia. |
 | [docs/decision-rules.md](docs/decision-rules.md) | Reglas, cobertura, hallazgos canonicos y acciones. |
 | [docs/decision-outcomes.md](docs/decision-outcomes.md) | Significado y precedencia de resultados. |
@@ -200,7 +210,7 @@ Guía completa en [docs/development.md](docs/development.md).
 | 6 | Evaluador financiero inicial |
 | 7 | Motor determinístico de decisión |
 | 8 | Evaluadores especializados juridico, tecnico y de experiencia |
-| 9 | Integración con datos abiertos SECOP II |
+| 9 | Reporte ejecutivo y paquete de decision |
 | 10 | Autenticación, multiempresa y operación |
 
 Detalle completo en [docs/roadmap.md](docs/roadmap.md).

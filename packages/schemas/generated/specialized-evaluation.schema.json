@@ -1,0 +1,1661 @@
+{
+  "$defs": {
+    "SpecializedEvaluationDomain": {
+      "enum": [
+        "LEGAL",
+        "EXPERIENCE",
+        "TECHNICAL",
+        "WORKFORCE",
+        "DOCUMENTARY",
+        "GUARANTEE",
+        "OPERATIONAL",
+        "ORGANIZATIONAL",
+        "RISK"
+      ],
+      "type": "string"
+    },
+    "SpecializedEvaluationEvidence": {
+      "additionalProperties": false,
+      "properties": {
+        "company_evidence_document_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "company_evidence_link_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "created_at": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "evidence_type": {
+          "type": "string"
+        },
+        "extracted_segment_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "quoted_text": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "requirement_evidence_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "result_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "source_location": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "validation_status": {
+          "$ref": "#/$defs/SpecializedEvidenceValidationStatus"
+        }
+      },
+      "required": ["id", "result_id", "evidence_type", "validation_status", "created_at"],
+      "type": "object"
+    },
+    "SpecializedEvaluationJobStatus": {
+      "enum": [
+        "PENDING",
+        "PROCESSING",
+        "COMPLETED",
+        "COMPLETED_WITH_WARNINGS",
+        "FAILED",
+        "CANCELLED"
+      ],
+      "type": "string"
+    },
+    "SpecializedEvaluationJobSummary": {
+      "additionalProperties": false,
+      "properties": {
+        "attempt_count": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "company_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "company_profile_snapshot_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "created_at": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "domain": {
+          "$ref": "#/$defs/SpecializedEvaluationDomain"
+        },
+        "force": {
+          "type": "boolean"
+        },
+        "id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "last_error_code": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "max_attempts": {
+          "exclusiveMinimum": 0,
+          "type": "integer"
+        },
+        "normalization_run_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "process_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "status": {
+          "$ref": "#/$defs/SpecializedEvaluationJobStatus"
+        },
+        "updated_at": {
+          "format": "date-time",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "process_id",
+        "normalization_run_id",
+        "company_id",
+        "company_profile_snapshot_id",
+        "domain",
+        "status",
+        "attempt_count",
+        "max_attempts",
+        "force",
+        "created_at",
+        "updated_at"
+      ],
+      "type": "object"
+    },
+    "SpecializedEvaluationList": {
+      "additionalProperties": false,
+      "properties": {
+        "items": {
+          "items": {
+            "$ref": "#/$defs/SpecializedEvaluationRunSummary"
+          },
+          "type": "array"
+        },
+        "limit": {
+          "exclusiveMinimum": 0,
+          "type": "integer"
+        },
+        "offset": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "total": {
+          "minimum": 0,
+          "type": "integer"
+        }
+      },
+      "required": ["items", "total", "limit", "offset"],
+      "type": "object"
+    },
+    "SpecializedEvaluationQueueResponse": {
+      "additionalProperties": false,
+      "properties": {
+        "job": {
+          "$ref": "#/$defs/SpecializedEvaluationJobSummary"
+        },
+        "run": {
+          "$ref": "#/$defs/SpecializedEvaluationRunSummary"
+        }
+      },
+      "required": ["job", "run"],
+      "type": "object"
+    },
+    "SpecializedEvaluationReadiness": {
+      "additionalProperties": false,
+      "properties": {
+        "ambiguous_count": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "available_domains": {
+          "items": {
+            "$ref": "#/$defs/SpecializedEvaluationDomain"
+          },
+          "type": "array"
+        },
+        "company_profile_snapshot_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "domain": {
+          "$ref": "#/$defs/SpecializedEvaluationDomain"
+        },
+        "evaluable_count": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "normalization_run_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "process_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "requirement_count": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "rules": {
+          "items": {
+            "$ref": "#/$defs/SpecializedRequirementRule"
+          },
+          "type": "array"
+        },
+        "snapshot_published": {
+          "type": "boolean"
+        },
+        "unsupported_count": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "warnings": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "process_id",
+        "normalization_run_id",
+        "company_profile_snapshot_id",
+        "domain",
+        "available_domains",
+        "requirement_count",
+        "evaluable_count",
+        "ambiguous_count",
+        "unsupported_count",
+        "snapshot_published"
+      ],
+      "type": "object"
+    },
+    "SpecializedEvaluationRequest": {
+      "additionalProperties": false,
+      "properties": {
+        "company_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "company_profile_snapshot_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "domain": {
+          "$ref": "#/$defs/SpecializedEvaluationDomain"
+        },
+        "force": {
+          "default": false,
+          "type": "boolean"
+        },
+        "normalization_run_id": {
+          "format": "uuid",
+          "type": "string"
+        }
+      },
+      "required": ["normalization_run_id", "company_id", "company_profile_snapshot_id", "domain"],
+      "type": "object"
+    },
+    "SpecializedEvaluationResult": {
+      "additionalProperties": false,
+      "properties": {
+        "actual_value": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "created_at": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "domain": {
+          "$ref": "#/$defs/SpecializedEvaluationDomain"
+        },
+        "expected_value": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "explanation_code": {
+          "$ref": "#/$defs/SpecializedExplanationCode"
+        },
+        "explanation_parameters": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "operator": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SpecializedOperator"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "requirement_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "requires_human_review": {
+          "default": false,
+          "type": "boolean"
+        },
+        "review_notes": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "review_status": {
+          "$ref": "#/$defs/SpecializedEvaluationReviewStatus",
+          "default": "PENDING"
+        },
+        "reviewed_status": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SpecializedEvaluationResultStatus"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "rule_type": {
+          "$ref": "#/$defs/SpecializedRuleType"
+        },
+        "run_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "source_record_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "source_record_type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "specialized_rule_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "status": {
+          "$ref": "#/$defs/SpecializedEvaluationResultStatus"
+        },
+        "subject": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "unit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "updated_at": {
+          "format": "date-time",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "run_id",
+        "requirement_id",
+        "specialized_rule_id",
+        "domain",
+        "status",
+        "rule_type",
+        "subject",
+        "operator",
+        "explanation_code",
+        "created_at",
+        "updated_at"
+      ],
+      "type": "object"
+    },
+    "SpecializedEvaluationResultDetail": {
+      "additionalProperties": false,
+      "properties": {
+        "actual_value": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "created_at": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "domain": {
+          "$ref": "#/$defs/SpecializedEvaluationDomain"
+        },
+        "evidence": {
+          "items": {
+            "$ref": "#/$defs/SpecializedEvaluationEvidence"
+          },
+          "type": "array"
+        },
+        "expected_value": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "explanation_code": {
+          "$ref": "#/$defs/SpecializedExplanationCode"
+        },
+        "explanation_parameters": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "operator": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SpecializedOperator"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "requirement": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "requirement_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "requires_human_review": {
+          "default": false,
+          "type": "boolean"
+        },
+        "review_notes": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "review_status": {
+          "$ref": "#/$defs/SpecializedEvaluationReviewStatus",
+          "default": "PENDING"
+        },
+        "reviewed_status": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SpecializedEvaluationResultStatus"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "reviews": {
+          "items": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "rule": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SpecializedRequirementRule"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "rule_type": {
+          "$ref": "#/$defs/SpecializedRuleType"
+        },
+        "run_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "source_record_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "source_record_type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "specialized_rule_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "status": {
+          "$ref": "#/$defs/SpecializedEvaluationResultStatus"
+        },
+        "subject": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "unit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "updated_at": {
+          "format": "date-time",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "run_id",
+        "requirement_id",
+        "specialized_rule_id",
+        "domain",
+        "status",
+        "rule_type",
+        "subject",
+        "operator",
+        "explanation_code",
+        "created_at",
+        "updated_at"
+      ],
+      "type": "object"
+    },
+    "SpecializedEvaluationResultList": {
+      "additionalProperties": false,
+      "properties": {
+        "items": {
+          "items": {
+            "$ref": "#/$defs/SpecializedEvaluationResult"
+          },
+          "type": "array"
+        },
+        "limit": {
+          "exclusiveMinimum": 0,
+          "type": "integer"
+        },
+        "offset": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "total": {
+          "minimum": 0,
+          "type": "integer"
+        }
+      },
+      "required": ["items", "total", "limit", "offset"],
+      "type": "object"
+    },
+    "SpecializedEvaluationResultReviewRequest": {
+      "additionalProperties": false,
+      "properties": {
+        "override_reason": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "override_result": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SpecializedEvaluationResultStatus"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "review_notes": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "review_status": {
+          "$ref": "#/$defs/SpecializedEvaluationReviewStatus"
+        }
+      },
+      "required": ["review_status"],
+      "type": "object"
+    },
+    "SpecializedEvaluationResultStatus": {
+      "enum": [
+        "COMPLIES",
+        "DOES_NOT_COMPLY",
+        "PARTIAL",
+        "UNKNOWN",
+        "NOT_APPLICABLE",
+        "CONFLICTING_EVIDENCE"
+      ],
+      "type": "string"
+    },
+    "SpecializedEvaluationRetryRequest": {
+      "additionalProperties": false,
+      "properties": {
+        "force": {
+          "default": false,
+          "type": "boolean"
+        }
+      },
+      "type": "object"
+    },
+    "SpecializedEvaluationReviewStatus": {
+      "enum": ["PENDING", "CONFIRMED", "OVERRIDDEN", "REJECTED"],
+      "type": "string"
+    },
+    "SpecializedEvaluationRunDetail": {
+      "additionalProperties": false,
+      "properties": {
+        "company_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "company_profile_snapshot_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "complies_count": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "conflicting_count": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "created_at": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "does_not_comply_count": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "domain": {
+          "$ref": "#/$defs/SpecializedEvaluationDomain"
+        },
+        "error_code": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "error_message": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "evaluated_count": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "events": {
+          "items": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "finished_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "input_digest": {
+          "pattern": "^[a-f0-9]{64}$",
+          "type": "string"
+        },
+        "input_manifest": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "job": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SpecializedEvaluationJobSummary"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "job_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "normalization_run_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "not_applicable_count": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "partial_count": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "process_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "requirement_count": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "results": {
+          "items": {
+            "$ref": "#/$defs/SpecializedEvaluationResult"
+          },
+          "type": "array"
+        },
+        "rule_version": {
+          "maxLength": 2000,
+          "minLength": 1,
+          "type": "string"
+        },
+        "rules": {
+          "items": {
+            "$ref": "#/$defs/SpecializedRequirementRule"
+          },
+          "type": "array"
+        },
+        "started_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "status": {
+          "$ref": "#/$defs/SpecializedEvaluationRunStatus"
+        },
+        "unknown_count": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "updated_at": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "warning_count": {
+          "minimum": 0,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id",
+        "job_id",
+        "process_id",
+        "normalization_run_id",
+        "company_id",
+        "company_profile_snapshot_id",
+        "domain",
+        "status",
+        "input_digest",
+        "rule_version",
+        "requirement_count",
+        "evaluated_count",
+        "complies_count",
+        "does_not_comply_count",
+        "partial_count",
+        "unknown_count",
+        "not_applicable_count",
+        "conflicting_count",
+        "warning_count",
+        "started_at",
+        "finished_at",
+        "error_code",
+        "error_message",
+        "created_at",
+        "updated_at",
+        "input_manifest"
+      ],
+      "type": "object"
+    },
+    "SpecializedEvaluationRunStatus": {
+      "enum": [
+        "PENDING",
+        "PROCESSING",
+        "COMPLETED",
+        "COMPLETED_WITH_WARNINGS",
+        "FAILED",
+        "CANCELLED"
+      ],
+      "type": "string"
+    },
+    "SpecializedEvaluationRunSummary": {
+      "additionalProperties": false,
+      "properties": {
+        "company_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "company_profile_snapshot_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "complies_count": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "conflicting_count": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "created_at": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "does_not_comply_count": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "domain": {
+          "$ref": "#/$defs/SpecializedEvaluationDomain"
+        },
+        "error_code": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "error_message": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "evaluated_count": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "finished_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "input_digest": {
+          "pattern": "^[a-f0-9]{64}$",
+          "type": "string"
+        },
+        "job_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "normalization_run_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "not_applicable_count": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "partial_count": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "process_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "requirement_count": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "rule_version": {
+          "maxLength": 2000,
+          "minLength": 1,
+          "type": "string"
+        },
+        "started_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "status": {
+          "$ref": "#/$defs/SpecializedEvaluationRunStatus"
+        },
+        "unknown_count": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "updated_at": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "warning_count": {
+          "minimum": 0,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id",
+        "job_id",
+        "process_id",
+        "normalization_run_id",
+        "company_id",
+        "company_profile_snapshot_id",
+        "domain",
+        "status",
+        "input_digest",
+        "rule_version",
+        "requirement_count",
+        "evaluated_count",
+        "complies_count",
+        "does_not_comply_count",
+        "partial_count",
+        "unknown_count",
+        "not_applicable_count",
+        "conflicting_count",
+        "warning_count",
+        "started_at",
+        "finished_at",
+        "error_code",
+        "error_message",
+        "created_at",
+        "updated_at"
+      ],
+      "type": "object"
+    },
+    "SpecializedEvidenceValidationStatus": {
+      "enum": [
+        "VERIFIED",
+        "SUPPORTED",
+        "DECLARED_ONLY",
+        "EXPIRED",
+        "REJECTED",
+        "CONFLICTING",
+        "MISSING"
+      ],
+      "type": "string"
+    },
+    "SpecializedExplanationCode": {
+      "enum": [
+        "REQUIREMENT_COMPLIES",
+        "REQUIREMENT_NOT_MET",
+        "REQUIREMENT_PARTIAL",
+        "RULE_AMBIGUOUS",
+        "RULE_UNSUPPORTED",
+        "DATA_MISSING",
+        "DECLARED_ONLY_NOT_ACCEPTED",
+        "EVIDENCE_EXPIRED",
+        "EVIDENCE_REJECTED",
+        "EVIDENCE_CONFLICT",
+        "CURRENCY_MISMATCH",
+        "ACTIVITY_NOT_COMPARABLE",
+        "UNSPSC_NOT_COMPARABLE",
+        "CONSORTIUM_PERCENTAGE_MISSING",
+        "RECORD_NOT_COMPLETED",
+        "NOT_APPLICABLE_DOMAIN"
+      ],
+      "type": "string"
+    },
+    "SpecializedOperator": {
+      "enum": [
+        "EXISTS",
+        "NOT_EXISTS",
+        "EQUAL",
+        "NOT_EQUAL",
+        "CONTAINS",
+        "GREATER_THAN",
+        "GREATER_THAN_OR_EQUAL",
+        "LESS_THAN",
+        "LESS_THAN_OR_EQUAL",
+        "BETWEEN_INCLUSIVE",
+        "IN_SET",
+        "ALL_OF",
+        "ANY_OF"
+      ],
+      "type": "string"
+    },
+    "SpecializedRequirementRule": {
+      "additionalProperties": false,
+      "properties": {
+        "condition_group": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "created_at": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "currency": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "domain": {
+          "$ref": "#/$defs/SpecializedEvaluationDomain"
+        },
+        "expected_max_value": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "expected_min_value": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "expected_value": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "is_manual_override": {
+          "default": false,
+          "type": "boolean"
+        },
+        "manual_override_payload": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "mapping_status": {
+          "$ref": "#/$defs/SpecializedRuleMappingStatus"
+        },
+        "mapping_warnings": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "normalization_run_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "operator": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SpecializedOperator"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "period_policy": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "requirement_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "requires_human_review": {
+          "default": false,
+          "type": "boolean"
+        },
+        "rule_type": {
+          "$ref": "#/$defs/SpecializedRuleType"
+        },
+        "source_basis": {
+          "$ref": "#/$defs/SpecializedRuleSourceBasis"
+        },
+        "subject": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "unit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "updated_at": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "version": {
+          "exclusiveMinimum": 0,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id",
+        "requirement_id",
+        "normalization_run_id",
+        "domain",
+        "rule_type",
+        "subject",
+        "operator",
+        "source_basis",
+        "mapping_status",
+        "version",
+        "created_at",
+        "updated_at"
+      ],
+      "type": "object"
+    },
+    "SpecializedRequirementRuleUpdate": {
+      "additionalProperties": false,
+      "properties": {
+        "condition_group": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "currency": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "domain": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SpecializedEvaluationDomain"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "expected_max_value": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "expected_min_value": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "expected_value": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "mapping_warnings": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "operator": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SpecializedOperator"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "override_reason": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "period_policy": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "requires_human_review": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "rule_type": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SpecializedRuleType"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "subject": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "unit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "type": "object"
+    },
+    "SpecializedRuleMappingStatus": {
+      "enum": ["MAPPED", "PARTIALLY_MAPPED", "AMBIGUOUS", "UNSUPPORTED", "INVALID"],
+      "type": "string"
+    },
+    "SpecializedRuleSourceBasis": {
+      "enum": ["EXPLICIT_EXPECTED_VALUE", "EXPLICIT_DESCRIPTION", "MANUAL_OVERRIDE", "UNKNOWN"],
+      "type": "string"
+    },
+    "SpecializedRuleType": {
+      "enum": [
+        "DOCUMENT_EXISTS",
+        "REGISTRATION_EXISTS",
+        "REGISTRATION_VALID",
+        "CERTIFICATION_EXISTS",
+        "CERTIFICATION_VALID",
+        "EXPERIENCE_EXISTS",
+        "EXPERIENCE_COUNT",
+        "EXPERIENCE_VALUE",
+        "EXPERIENCE_DURATION",
+        "EXPERIENCE_UNSPSC",
+        "EXPERIENCE_ACTIVITY",
+        "PERSON_ROLE_EXISTS",
+        "PERSON_CREDENTIAL_EXISTS",
+        "PERSON_EXPERIENCE_YEARS",
+        "CAPABILITY_EXISTS",
+        "CAPABILITY_VALUE",
+        "COVERAGE_EXISTS",
+        "COMPOSITE_ALL",
+        "COMPOSITE_ANY",
+        "INFORMATIONAL",
+        "UNSUPPORTED"
+      ],
+      "type": "string"
+    }
+  },
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "evaluation_list": {
+      "$ref": "#/$defs/SpecializedEvaluationList"
+    },
+    "evidence": {
+      "$ref": "#/$defs/SpecializedEvaluationEvidence"
+    },
+    "job": {
+      "$ref": "#/$defs/SpecializedEvaluationJobSummary"
+    },
+    "queue_response": {
+      "$ref": "#/$defs/SpecializedEvaluationQueueResponse"
+    },
+    "readiness": {
+      "$ref": "#/$defs/SpecializedEvaluationReadiness"
+    },
+    "request": {
+      "$ref": "#/$defs/SpecializedEvaluationRequest"
+    },
+    "result": {
+      "$ref": "#/$defs/SpecializedEvaluationResult"
+    },
+    "result_detail": {
+      "$ref": "#/$defs/SpecializedEvaluationResultDetail"
+    },
+    "result_list": {
+      "$ref": "#/$defs/SpecializedEvaluationResultList"
+    },
+    "retry_request": {
+      "$ref": "#/$defs/SpecializedEvaluationRetryRequest"
+    },
+    "review_request": {
+      "$ref": "#/$defs/SpecializedEvaluationResultReviewRequest"
+    },
+    "rule": {
+      "$ref": "#/$defs/SpecializedRequirementRule"
+    },
+    "rule_update": {
+      "$ref": "#/$defs/SpecializedRequirementRuleUpdate"
+    },
+    "run_detail": {
+      "$ref": "#/$defs/SpecializedEvaluationRunDetail"
+    },
+    "run_summary": {
+      "$ref": "#/$defs/SpecializedEvaluationRunSummary"
+    },
+    "schema_version": {
+      "const": "1.0.0",
+      "default": "1.0.0",
+      "type": "string"
+    }
+  },
+  "required": [
+    "rule",
+    "rule_update",
+    "evidence",
+    "result",
+    "result_detail",
+    "job",
+    "run_summary",
+    "run_detail",
+    "request",
+    "retry_request",
+    "queue_response",
+    "review_request",
+    "evaluation_list",
+    "result_list",
+    "readiness"
+  ],
+  "type": "object"
+}

@@ -90,6 +90,7 @@ class DecisionFindingApplicability(StrEnum):
 
 class DecisionFindingSourceType(StrEnum):
     FINANCIAL_EVALUATION = "FINANCIAL_EVALUATION"
+    SPECIALIZED_EVALUATION = "SPECIALIZED_EVALUATION"
     SYNTHETIC = "SYNTHETIC"
     MISSING_ADAPTER = "MISSING_ADAPTER"
 

@@ -82,6 +82,16 @@ from pliegocheck_schemas import (
     RequirementReviewStatus,
     RequirementScope,
     RequirementSubsanability,
+    SpecializedEvaluationDomain,
+    SpecializedEvaluationJobStatus,
+    SpecializedEvaluationResultStatus,
+    SpecializedEvaluationReviewStatus,
+    SpecializedEvaluationRunStatus,
+    SpecializedEvidenceValidationStatus,
+    SpecializedOperator,
+    SpecializedRuleMappingStatus,
+    SpecializedRuleSourceBasis,
+    SpecializedRuleType,
 )
 
 PROCESS_STATUS_VALUES = ", ".join(f"'{status.value}'" for status in ProcessStatus)
@@ -198,6 +208,30 @@ DECISION_REVIEW_ACTION_VALUES = ", ".join(f"'{item.value}'" for item in Decision
 DECISION_ACTION_TYPE_VALUES = ", ".join(f"'{item.value}'" for item in DecisionActionType)
 DECISION_ACTION_PRIORITY_VALUES = ", ".join(f"'{item.value}'" for item in DecisionActionPriority)
 DECISION_ACTION_STATUS_VALUES = ", ".join(f"'{item.value}'" for item in DecisionActionStatus)
+SPECIALIZED_DOMAIN_VALUES = ", ".join(f"'{item.value}'" for item in SpecializedEvaluationDomain)
+SPECIALIZED_JOB_STATUS_VALUES = ", ".join(
+    f"'{item.value}'" for item in SpecializedEvaluationJobStatus
+)
+SPECIALIZED_RUN_STATUS_VALUES = ", ".join(
+    f"'{item.value}'" for item in SpecializedEvaluationRunStatus
+)
+SPECIALIZED_RESULT_STATUS_VALUES = ", ".join(
+    f"'{item.value}'" for item in SpecializedEvaluationResultStatus
+)
+SPECIALIZED_REVIEW_STATUS_VALUES = ", ".join(
+    f"'{item.value}'" for item in SpecializedEvaluationReviewStatus
+)
+SPECIALIZED_RULE_TYPE_VALUES = ", ".join(f"'{item.value}'" for item in SpecializedRuleType)
+SPECIALIZED_RULE_MAPPING_STATUS_VALUES = ", ".join(
+    f"'{item.value}'" for item in SpecializedRuleMappingStatus
+)
+SPECIALIZED_OPERATOR_VALUES = ", ".join(f"'{item.value}'" for item in SpecializedOperator)
+SPECIALIZED_RULE_SOURCE_BASIS_VALUES = ", ".join(
+    f"'{item.value}'" for item in SpecializedRuleSourceBasis
+)
+SPECIALIZED_EVIDENCE_VALIDATION_STATUS_VALUES = ", ".join(
+    f"'{item.value}'" for item in SpecializedEvidenceValidationStatus
+)
 
 
 class Process(Base):
@@ -2216,6 +2250,372 @@ class FinancialEvaluationEvent(Base):
     company_id: Mapped[UUID | None] = mapped_column(
         Uuid(as_uuid=True), ForeignKey("company_profiles.id", ondelete="SET NULL")
     )
+    event_type: Mapped[str] = mapped_column(String(64), nullable=False)
+    summary: Mapped[str] = mapped_column(String(1000), nullable=False)
+    details: Mapped[dict[str, Any]] = mapped_column(JSON, nullable=False, default=dict)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+
+class SpecializedRequirementRule(Base):
+    __tablename__ = "specialized_requirement_rules"
+    __table_args__ = (
+        CheckConstraint(
+            f"domain IN ({SPECIALIZED_DOMAIN_VALUES})", name="ck_specialized_rules_domain"
+        ),
+        CheckConstraint(
+            f"rule_type IN ({SPECIALIZED_RULE_TYPE_VALUES})",
+            name="ck_specialized_rules_type",
+        ),
+        CheckConstraint(
+            f"mapping_status IN ({SPECIALIZED_RULE_MAPPING_STATUS_VALUES})",
+            name="ck_specialized_rules_mapping_status",
+        ),
+        CheckConstraint(
+            f"source_basis IN ({SPECIALIZED_RULE_SOURCE_BASIS_VALUES})",
+            name="ck_specialized_rules_source_basis",
+        ),
+        CheckConstraint(
+            f"operator IS NULL OR operator IN ({SPECIALIZED_OPERATOR_VALUES})",
+            name="ck_specialized_rules_operator",
+        ),
+        CheckConstraint("version > 0", name="ck_specialized_rules_version"),
+        Index("ix_specialized_rules_requirement", "requirement_id", "domain"),
+        Index("ix_specialized_rules_normalization", "normalization_run_id"),
+    )
+
+    id: Mapped[UUID] = mapped_column(Uuid(as_uuid=True), primary_key=True, default=uuid4)
+    requirement_id: Mapped[UUID] = mapped_column(
+        Uuid(as_uuid=True), ForeignKey("requirements.id", ondelete="CASCADE"), nullable=False
+    )
+    normalization_run_id: Mapped[UUID] = mapped_column(
+        Uuid(as_uuid=True),
+        ForeignKey("requirement_normalization_runs.id", ondelete="CASCADE"),
+        nullable=False,
+    )
+    domain: Mapped[str] = mapped_column(String(32), nullable=False)
+    rule_type: Mapped[str] = mapped_column(String(64), nullable=False)
+    subject: Mapped[str | None] = mapped_column(String(128))
+    operator: Mapped[str | None] = mapped_column(String(64))
+    expected_value: Mapped[str | None] = mapped_column(Text)
+    expected_min_value: Mapped[Decimal | None] = mapped_column(Numeric(28, 8))
+    expected_max_value: Mapped[Decimal | None] = mapped_column(Numeric(28, 8))
+    unit: Mapped[str | None] = mapped_column(String(64))
+    currency: Mapped[str | None] = mapped_column(String(3))
+    period_policy: Mapped[str | None] = mapped_column(String(64))
+    condition_group: Mapped[dict[str, Any]] = mapped_column(JSON, nullable=False, default=dict)
+    source_basis: Mapped[str] = mapped_column(String(64), nullable=False)
+    mapping_status: Mapped[str] = mapped_column(String(32), nullable=False)
+    mapping_warnings: Mapped[list[str]] = mapped_column(JSON, nullable=False, default=list)
+    requires_human_review: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
+    manual_override_payload: Mapped[dict[str, Any]] = mapped_column(
+        JSON, nullable=False, default=dict
+    )
+    version: Mapped[int] = mapped_column(Integer, nullable=False, default=1)
+    is_manual_override: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
+    )
+
+
+class SpecializedEvaluationJob(Base):
+    __tablename__ = "specialized_evaluation_jobs"
+    __table_args__ = (
+        CheckConstraint(
+            f"status IN ({SPECIALIZED_JOB_STATUS_VALUES})", name="ck_specialized_jobs_status"
+        ),
+        CheckConstraint(
+            f"domain IN ({SPECIALIZED_DOMAIN_VALUES})", name="ck_specialized_jobs_domain"
+        ),
+        CheckConstraint("priority >= 0", name="ck_specialized_jobs_priority"),
+        CheckConstraint("attempt_count >= 0", name="ck_specialized_jobs_attempts"),
+        CheckConstraint("max_attempts > 0", name="ck_specialized_jobs_max_attempts"),
+        Index("ix_specialized_jobs_claim", "status", "available_at", "priority", "created_at"),
+        Index("ix_specialized_jobs_process", "process_id"),
+        Index("ix_specialized_jobs_company", "company_id"),
+        Index("ix_specialized_jobs_domain", "domain"),
+        Index(
+            "uq_specialized_jobs_active_inputs",
+            "process_id",
+            "normalization_run_id",
+            "company_id",
+            "company_profile_snapshot_id",
+            "domain",
+            unique=True,
+            postgresql_where=text("status IN ('PENDING', 'PROCESSING')"),
+        ),
+    )
+
+    id: Mapped[UUID] = mapped_column(Uuid(as_uuid=True), primary_key=True, default=uuid4)
+    process_id: Mapped[UUID] = mapped_column(
+        Uuid(as_uuid=True), ForeignKey("processes.id", ondelete="CASCADE"), nullable=False
+    )
+    normalization_run_id: Mapped[UUID] = mapped_column(
+        Uuid(as_uuid=True),
+        ForeignKey("requirement_normalization_runs.id", ondelete="CASCADE"),
+        nullable=False,
+    )
+    company_id: Mapped[UUID] = mapped_column(
+        Uuid(as_uuid=True), ForeignKey("company_profiles.id", ondelete="CASCADE"), nullable=False
+    )
+    company_profile_snapshot_id: Mapped[UUID] = mapped_column(
+        Uuid(as_uuid=True),
+        ForeignKey("company_profile_snapshots.id", ondelete="CASCADE"),
+        nullable=False,
+    )
+    domain: Mapped[str] = mapped_column(String(32), nullable=False)
+    run_id: Mapped[UUID | None] = mapped_column(Uuid(as_uuid=True))
+    status: Mapped[str] = mapped_column(
+        String(32), nullable=False, default=SpecializedEvaluationJobStatus.PENDING.value
+    )
+    priority: Mapped[int] = mapped_column(Integer, nullable=False, default=100)
+    attempt_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    max_attempts: Mapped[int] = mapped_column(Integer, nullable=False, default=3)
+    available_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, server_default=func.now()
+    )
+    started_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    finished_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    locked_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    locked_by: Mapped[str | None] = mapped_column(String(128))
+    force: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
+    last_error_code: Mapped[str | None] = mapped_column(String(64))
+    last_error_message: Mapped[str | None] = mapped_column(String(1000))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
+    )
+
+
+class SpecializedEvaluationRun(Base):
+    __tablename__ = "specialized_evaluation_runs"
+    __table_args__ = (
+        CheckConstraint(
+            f"status IN ({SPECIALIZED_RUN_STATUS_VALUES})", name="ck_specialized_runs_status"
+        ),
+        CheckConstraint(
+            f"domain IN ({SPECIALIZED_DOMAIN_VALUES})", name="ck_specialized_runs_domain"
+        ),
+        CheckConstraint("input_digest ~ '^[a-f0-9]{64}$'", name="ck_specialized_runs_digest"),
+        CheckConstraint("requirement_count >= 0", name="ck_specialized_runs_requirement_count"),
+        CheckConstraint("evaluated_count >= 0", name="ck_specialized_runs_evaluated_count"),
+        CheckConstraint("complies_count >= 0", name="ck_specialized_runs_complies_count"),
+        CheckConstraint(
+            "does_not_comply_count >= 0", name="ck_specialized_runs_does_not_comply_count"
+        ),
+        CheckConstraint("partial_count >= 0", name="ck_specialized_runs_partial_count"),
+        CheckConstraint("unknown_count >= 0", name="ck_specialized_runs_unknown_count"),
+        CheckConstraint(
+            "not_applicable_count >= 0", name="ck_specialized_runs_not_applicable_count"
+        ),
+        CheckConstraint("conflicting_count >= 0", name="ck_specialized_runs_conflicting_count"),
+        CheckConstraint("warning_count >= 0", name="ck_specialized_runs_warning_count"),
+        Index("ix_specialized_runs_process_company", "process_id", "company_id", "created_at"),
+        Index("ix_specialized_runs_inputs", "process_id", "input_digest"),
+        Index("ix_specialized_runs_snapshot", "company_profile_snapshot_id"),
+        Index("ix_specialized_runs_domain", "domain"),
+    )
+
+    id: Mapped[UUID] = mapped_column(Uuid(as_uuid=True), primary_key=True, default=uuid4)
+    job_id: Mapped[UUID] = mapped_column(
+        Uuid(as_uuid=True),
+        ForeignKey("specialized_evaluation_jobs.id", ondelete="CASCADE"),
+        nullable=False,
+    )
+    process_id: Mapped[UUID] = mapped_column(
+        Uuid(as_uuid=True), ForeignKey("processes.id", ondelete="CASCADE"), nullable=False
+    )
+    normalization_run_id: Mapped[UUID] = mapped_column(
+        Uuid(as_uuid=True),
+        ForeignKey("requirement_normalization_runs.id", ondelete="CASCADE"),
+        nullable=False,
+    )
+    company_id: Mapped[UUID] = mapped_column(
+        Uuid(as_uuid=True), ForeignKey("company_profiles.id", ondelete="CASCADE"), nullable=False
+    )
+    company_profile_snapshot_id: Mapped[UUID] = mapped_column(
+        Uuid(as_uuid=True),
+        ForeignKey("company_profile_snapshots.id", ondelete="CASCADE"),
+        nullable=False,
+    )
+    domain: Mapped[str] = mapped_column(String(32), nullable=False)
+    status: Mapped[str] = mapped_column(
+        String(32), nullable=False, default=SpecializedEvaluationRunStatus.PENDING.value
+    )
+    input_manifest: Mapped[dict[str, Any]] = mapped_column(JSON, nullable=False)
+    input_digest: Mapped[str] = mapped_column(String(64), nullable=False)
+    rule_version: Mapped[str] = mapped_column(String(64), nullable=False)
+    requirement_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    evaluated_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    complies_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    does_not_comply_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    partial_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    unknown_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    not_applicable_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    conflicting_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    warning_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    started_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    finished_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    error_code: Mapped[str | None] = mapped_column(String(64))
+    error_message: Mapped[str | None] = mapped_column(String(1000))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
+    )
+
+
+class SpecializedEvaluationResult(Base):
+    __tablename__ = "specialized_evaluation_results"
+    __table_args__ = (
+        UniqueConstraint("run_id", "requirement_id", name="uq_specialized_results_run_requirement"),
+        CheckConstraint(
+            f"domain IN ({SPECIALIZED_DOMAIN_VALUES})", name="ck_specialized_results_domain"
+        ),
+        CheckConstraint(
+            f"status IN ({SPECIALIZED_RESULT_STATUS_VALUES})",
+            name="ck_specialized_results_status",
+        ),
+        CheckConstraint(
+            f"review_status IN ({SPECIALIZED_REVIEW_STATUS_VALUES})",
+            name="ck_specialized_results_review_status",
+        ),
+        CheckConstraint(
+            f"rule_type IN ({SPECIALIZED_RULE_TYPE_VALUES})",
+            name="ck_specialized_results_rule_type",
+        ),
+        CheckConstraint(
+            f"operator IS NULL OR operator IN ({SPECIALIZED_OPERATOR_VALUES})",
+            name="ck_specialized_results_operator",
+        ),
+        Index("ix_specialized_results_run_id", "run_id"),
+        Index("ix_specialized_results_requirement_id", "requirement_id"),
+        Index("ix_specialized_results_status", "status"),
+        Index("ix_specialized_results_domain", "domain"),
+        Index("ix_specialized_results_review", "review_status"),
+    )
+
+    id: Mapped[UUID] = mapped_column(Uuid(as_uuid=True), primary_key=True, default=uuid4)
+    run_id: Mapped[UUID] = mapped_column(
+        Uuid(as_uuid=True), ForeignKey("specialized_evaluation_runs.id", ondelete="CASCADE")
+    )
+    requirement_id: Mapped[UUID] = mapped_column(
+        Uuid(as_uuid=True), ForeignKey("requirements.id", ondelete="CASCADE"), nullable=False
+    )
+    specialized_rule_id: Mapped[UUID | None] = mapped_column(
+        Uuid(as_uuid=True), ForeignKey("specialized_requirement_rules.id", ondelete="SET NULL")
+    )
+    domain: Mapped[str] = mapped_column(String(32), nullable=False)
+    status: Mapped[str] = mapped_column(String(64), nullable=False)
+    rule_type: Mapped[str] = mapped_column(String(64), nullable=False)
+    subject: Mapped[str | None] = mapped_column(String(128))
+    operator: Mapped[str | None] = mapped_column(String(64))
+    expected_value: Mapped[str | None] = mapped_column(Text)
+    actual_value: Mapped[str | None] = mapped_column(Text)
+    unit: Mapped[str | None] = mapped_column(String(64))
+    source_record_type: Mapped[str | None] = mapped_column(String(64))
+    source_record_id: Mapped[UUID | None] = mapped_column(Uuid(as_uuid=True))
+    explanation_code: Mapped[str] = mapped_column(String(64), nullable=False)
+    explanation_parameters: Mapped[dict[str, Any]] = mapped_column(JSON, nullable=False)
+    evidence_refs: Mapped[dict[str, Any]] = mapped_column(JSON, nullable=False, default=dict)
+    requires_human_review: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
+    review_status: Mapped[str] = mapped_column(
+        String(32), nullable=False, default=SpecializedEvaluationReviewStatus.PENDING.value
+    )
+    reviewed_status: Mapped[str | None] = mapped_column(String(64))
+    review_notes: Mapped[str | None] = mapped_column(Text)
+    reviewed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
+    )
+
+
+class SpecializedEvaluationEvidence(Base):
+    __tablename__ = "specialized_evaluation_evidence"
+    __table_args__ = (
+        CheckConstraint(
+            f"validation_status IN ({SPECIALIZED_EVIDENCE_VALIDATION_STATUS_VALUES})",
+            name="ck_specialized_evidence_validation",
+        ),
+        Index("ix_specialized_evidence_result", "result_id"),
+        Index("ix_specialized_evidence_document", "company_evidence_document_id"),
+    )
+
+    id: Mapped[UUID] = mapped_column(Uuid(as_uuid=True), primary_key=True, default=uuid4)
+    result_id: Mapped[UUID] = mapped_column(
+        Uuid(as_uuid=True),
+        ForeignKey("specialized_evaluation_results.id", ondelete="CASCADE"),
+        nullable=False,
+    )
+    evidence_type: Mapped[str] = mapped_column(String(64), nullable=False)
+    company_evidence_link_id: Mapped[UUID | None] = mapped_column(Uuid(as_uuid=True))
+    company_evidence_document_id: Mapped[UUID | None] = mapped_column(Uuid(as_uuid=True))
+    requirement_evidence_id: Mapped[UUID | None] = mapped_column(Uuid(as_uuid=True))
+    extracted_segment_id: Mapped[UUID | None] = mapped_column(Uuid(as_uuid=True))
+    quoted_text: Mapped[str | None] = mapped_column(Text)
+    source_location: Mapped[dict[str, Any]] = mapped_column(JSON, nullable=False, default=dict)
+    validation_status: Mapped[str] = mapped_column(String(32), nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+
+class SpecializedEvaluationReview(Base):
+    __tablename__ = "specialized_evaluation_reviews"
+    __table_args__ = (
+        CheckConstraint(
+            "action IN ('CONFIRM', 'OVERRIDE', 'REJECT')",
+            name="ck_specialized_reviews_action",
+        ),
+        CheckConstraint(
+            f"original_status IN ({SPECIALIZED_RESULT_STATUS_VALUES})",
+            name="ck_specialized_reviews_original_status",
+        ),
+        CheckConstraint(
+            f"reviewed_status IS NULL OR reviewed_status IN ({SPECIALIZED_RESULT_STATUS_VALUES})",
+            name="ck_specialized_reviews_reviewed_status",
+        ),
+        Index("ix_specialized_reviews_result_id", "result_id"),
+        Index("ix_specialized_reviews_reviewed_at", "reviewed_at"),
+    )
+
+    id: Mapped[UUID] = mapped_column(Uuid(as_uuid=True), primary_key=True, default=uuid4)
+    result_id: Mapped[UUID] = mapped_column(
+        Uuid(as_uuid=True),
+        ForeignKey("specialized_evaluation_results.id", ondelete="CASCADE"),
+        nullable=False,
+    )
+    action: Mapped[str] = mapped_column(String(32), nullable=False)
+    original_status: Mapped[str] = mapped_column(String(64), nullable=False)
+    reviewed_status: Mapped[str | None] = mapped_column(String(64))
+    reason: Mapped[str | None] = mapped_column(Text)
+    reviewer: Mapped[str] = mapped_column(String(128), nullable=False, default="local-user")
+    reviewed_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now()
+    )
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+
+class SpecializedEvaluationEvent(Base):
+    __tablename__ = "specialized_evaluation_events"
+    __table_args__ = (
+        Index("ix_specialized_events_run_id", "run_id"),
+        Index("ix_specialized_events_job_id", "job_id"),
+        Index("ix_specialized_events_type", "event_type"),
+    )
+
+    id: Mapped[UUID] = mapped_column(Uuid(as_uuid=True), primary_key=True, default=uuid4)
+    job_id: Mapped[UUID | None] = mapped_column(
+        Uuid(as_uuid=True), ForeignKey("specialized_evaluation_jobs.id", ondelete="SET NULL")
+    )
+    run_id: Mapped[UUID | None] = mapped_column(
+        Uuid(as_uuid=True), ForeignKey("specialized_evaluation_runs.id", ondelete="SET NULL")
+    )
+    process_id: Mapped[UUID] = mapped_column(
+        Uuid(as_uuid=True), ForeignKey("processes.id", ondelete="CASCADE"), nullable=False
+    )
+    company_id: Mapped[UUID | None] = mapped_column(
+        Uuid(as_uuid=True), ForeignKey("company_profiles.id", ondelete="SET NULL")
+    )
+    domain: Mapped[str] = mapped_column(String(32), nullable=False)
     event_type: Mapped[str] = mapped_column(String(64), nullable=False)
     summary: Mapped[str] = mapped_column(String(1000), nullable=False)
     details: Mapped[dict[str, Any]] = mapped_column(JSON, nullable=False, default=dict)

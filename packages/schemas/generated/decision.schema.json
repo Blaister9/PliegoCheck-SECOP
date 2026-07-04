@@ -308,7 +308,7 @@
       "type": "string"
     },
     "DecisionFindingSourceType": {
-      "enum": ["FINANCIAL_EVALUATION", "SYNTHETIC", "MISSING_ADAPTER"],
+      "enum": ["FINANCIAL_EVALUATION", "SPECIALIZED_EVALUATION", "SYNTHETIC", "MISSING_ADAPTER"],
       "type": "string"
     },
     "DecisionInputFinding": {

@@ -227,7 +227,7 @@ def _full_pipeline(client: TestClient) -> dict[str, Any]:
     }
 
 
-def test_decision_readiness_reports_missing_adapters(client: TestClient) -> None:
+def test_decision_readiness_reports_missing_specialized_results(client: TestClient) -> None:
     setup = _full_pipeline(client)
     response = client.get(
         f"/processes/{setup['process']['id']}/decision-readiness",
@@ -240,11 +240,11 @@ def test_decision_readiness_reports_missing_adapters(client: TestClient) -> None
     assert response.status_code == 200, response.text
     payload = response.json()
     assert payload["inputs_valid"] is True
-    assert payload["available_adapters"] == ["FINANCIAL"]
+    assert payload["available_adapters"] == ["FINANCIAL", "LEGAL", "EXPERIENCE", "TECHNICAL"]
     assert payload["not_evaluated_mandatory_count"] == 1
     assert payload["go_blocked_by_coverage"] is True
     assert payload["max_possible_outcome"] == "PENDIENTE_INFORMACION"
-    assert "ADAPTER_NOT_AVAILABLE:LEGAL" in payload["warnings"]
+    assert payload["warnings"] == ["GO_BLOCKED_BY_INCOMPLETE_COVERAGE"]
     assert payload["policy"]["semantic_version"] == "1.0.0"
 
 
@@ -287,7 +287,7 @@ def test_decision_full_flow_pendiente_informacion(client: TestClient) -> None:
     assert payload["actions"], "deben existir acciones deterministicas"
     action_types = {action["action_type"] for action in payload["actions"]}
     assert "COMPLETE_MANDATORY_EVALUATION" in action_types
-    assert "ADAPTER_NOT_AVAILABLE:LEGAL" in payload["warnings"]
+    assert payload["warnings"] == []
     assert payload["engine_outcome"] != "GO"
     # sin rutas fisicas ni SQL en la respuesta
     text = detail.text.lower()

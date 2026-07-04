@@ -23,7 +23,9 @@ def test_health_status_reports_queue_state() -> None:
         "normalization_model": "gpt-5.5-pro",
         "decision_engine_enabled": True,
         "decision_policy_version": "1.0.0",
-        "available_decision_adapters": ["FINANCIAL"],
+        "available_decision_adapters": ["FINANCIAL", "LEGAL", "EXPERIENCE", "TECHNICAL"],
+        "specialized_evaluators_enabled": True,
+        "available_specialized_evaluators": ["LEGAL", "EXPERIENCE", "TECHNICAL"],
     }
 
 

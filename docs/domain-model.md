@@ -166,6 +166,22 @@ del documento SECOP que lo soporta.
 - **Nunca debe inventarse:** metricas, periodos, valores exigidos, moneda, soportes ni cumplimiento.
   No produce `GO`, `NO_GO` ni decision final.
 
+### SpecializedEvaluation
+**Proposito:** evaluacion deterministica de requisitos juridicos, de experiencia y tecnicos contra
+un `CompanyProfileSnapshot` publicado.
+
+- **Campos conceptuales:** job, run, dominio (`LEGAL`, `EXPERIENCE`, `TECHNICAL`), reglas
+  especializadas por requisito, manifiesto y digest de entrada, resultados, evidencias, eventos y
+  revisiones manuales.
+- **Relaciones:** referencia `Process`, ejecucion de normalizacion, `CompanyProfile`,
+  `CompanyProfileSnapshot`, `Requirement`s aplicables, reglas usadas y evidencias del perfil.
+- **Requiere evidencia:** cada resultado positivo o negativo debe apuntar a registros del snapshot y
+  soportes cuando existan; evidencia declarada sin soporte produce `UNKNOWN` o revision.
+- **Puede inferirse:** mapeo conservador de tipo de regla, operador y sujeto desde el requisito.
+  Cuando el texto no permite mapearlo, queda `UNSUPPORTED` o `AMBIGUOUS`.
+- **Nunca debe inventarse:** vigencias, certificaciones, experiencia, personal, equivalencias
+  tecnicas, codigos UNSPSC, documentos ni cumplimiento. No produce `GO`, `NO_GO` ni decision final.
+
 ### Evaluation
 **Propósito:** resultado de un agente evaluador especializado sobre un conjunto de requisitos de una versión del proceso contra un perfil de empresa.
 
@@ -199,6 +215,11 @@ evaluacion financiera completada y un `DecisionPolicyVersion`. El resultado auto
 `engine_outcome`; las revisiones humanas usan `reviewed_outcome` y `effective_outcome` sin sobrescribir
 el resultado original. Las acciones (`DecisionActionItem`) son tareas abiertas, reconocidas,
 resueltas o descartadas; cambiar una accion no recalcula el run historico.
+
+Implementacion Microfase 8: el `DecisionRun` incorpora resultados completados de
+`SpecializedEvaluation` para los dominios juridico, experiencia y tecnico cuando coinciden proceso,
+normalizacion, empresa y snapshot. Si no existe resultado especializado para un requisito obligatorio
+aplicable, el motor conserva `NOT_EVALUATED`.
 
 ### DecisionRule
 **Propósito:** versión inmutable del conjunto de reglas del motor determinístico usado para producir decisiones.

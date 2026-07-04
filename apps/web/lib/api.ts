@@ -64,6 +64,15 @@ import type {
   ProcessStatus,
   RequirementDetail,
   RequirementList,
+  SpecializedEvaluationDomain,
+  SpecializedEvaluationList,
+  SpecializedEvaluationQueueResponse,
+  SpecializedEvaluationReadiness,
+  SpecializedEvaluationRequest,
+  SpecializedEvaluationResultDetail,
+  SpecializedEvaluationResultList,
+  SpecializedEvaluationResultReviewRequest,
+  SpecializedEvaluationRunDetail,
 } from "@pliegocheck/schemas";
 
 const DEFAULT_TIMEOUT_MS = 10_000;
@@ -309,6 +318,83 @@ export function updateFinancialRule(
   return request<FinancialRequirementRule>(
     `/processes/${processId}/financial-requirements/${requirementId}/rule`,
     { method: "PATCH", body: JSON.stringify(payload) },
+  );
+}
+
+export function getSpecializedEvaluationReadiness(
+  processId: string,
+  params: {
+    normalization_run_id: string;
+    company_profile_snapshot_id: string;
+    domain: SpecializedEvaluationDomain;
+  },
+) {
+  const query = new URLSearchParams(params);
+  return request<SpecializedEvaluationReadiness>(
+    `/processes/${processId}/specialized-evaluations/readiness?${query.toString()}`,
+  );
+}
+
+export function createSpecializedEvaluation(
+  processId: string,
+  payload: SpecializedEvaluationRequest,
+) {
+  return request<SpecializedEvaluationQueueResponse>(
+    `/processes/${processId}/specialized-evaluations`,
+    {
+      method: "POST",
+      body: JSON.stringify(payload),
+    },
+  );
+}
+
+export function listSpecializedEvaluations(
+  processId: string,
+  params: { domain?: SpecializedEvaluationDomain | ""; limit?: number; offset?: number } = {},
+) {
+  const query = new URLSearchParams();
+  query.set("limit", String(params.limit ?? 20));
+  query.set("offset", String(params.offset ?? 0));
+  if (params.domain) query.set("domain", params.domain);
+  return request<SpecializedEvaluationList>(
+    `/processes/${processId}/specialized-evaluations?${query.toString()}`,
+  );
+}
+
+export function getSpecializedEvaluation(processId: string, runId: string) {
+  return request<SpecializedEvaluationRunDetail>(
+    `/processes/${processId}/specialized-evaluations/${runId}`,
+  );
+}
+
+export function retrySpecializedEvaluation(processId: string, runId: string) {
+  return request<SpecializedEvaluationQueueResponse>(
+    `/processes/${processId}/specialized-evaluations/${runId}/retry`,
+    { method: "POST", body: JSON.stringify({ force: true }) },
+  );
+}
+
+export function listSpecializedEvaluationResults(processId: string, runId: string) {
+  return request<SpecializedEvaluationResultList>(
+    `/processes/${processId}/specialized-evaluations/${runId}/results?limit=100&offset=0`,
+  );
+}
+
+export function getSpecializedEvaluationResult(processId: string, runId: string, resultId: string) {
+  return request<SpecializedEvaluationResultDetail>(
+    `/processes/${processId}/specialized-evaluations/${runId}/results/${resultId}`,
+  );
+}
+
+export function reviewSpecializedEvaluationResult(
+  processId: string,
+  runId: string,
+  resultId: string,
+  payload: SpecializedEvaluationResultReviewRequest,
+) {
+  return request<SpecializedEvaluationResultDetail>(
+    `/processes/${processId}/specialized-evaluations/${runId}/results/${resultId}/review`,
+    { method: "POST", body: JSON.stringify(payload) },
   );
 }
 

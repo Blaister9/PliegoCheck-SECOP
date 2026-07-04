@@ -23,6 +23,9 @@ perfil es editable; las evaluaciones futuras deben usar un snapshot publicado.
   `NEEDS_REVIEW`.
 - Completitud no es cumplimiento. Un perfil completo solo significa que tiene datos y soportes
   suficientes para revision inicial.
+- Los evaluadores especializados solo consumen snapshots publicados. Datos `DECLARED`, faltantes,
+  vencidos o sin soporte suficiente pueden producir `UNKNOWN`, `DOES_NOT_COMPLY` o revision; nunca se
+  elevan automaticamente a cumplimiento.
 
 ## API principal
 
