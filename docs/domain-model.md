@@ -263,6 +263,19 @@ hechos, requisitos, hallazgos, prioridad, razon y resultado sugerido.
 - **Puede inferirse:** nada.
 - **Nunca debe inventarse:** una revisión humana jamás se simula ni se autocompleta.
 
+### DecisionReportPackage
+**Proposito:** paquete inmutable de reporte ejecutivo generado desde una decision preliminar completada.
+
+- **Campos conceptuales:** decision referenciada, input digest, package digest, version de motor de
+  reporte, version/hash de templates, estado, artefactos, manifest.
+- **Relaciones:** pertenece a un `Process`; referencia una `Decision`; contiene
+  `DecisionReportArtifact`s.
+- **Requiere evidencia:** deriva de una decision persistida y de sus hallazgos, reglas, acciones y
+  evidencias.
+- **Puede inferirse:** resumenes ejecutivos derivados de campos persistidos, sin reglas nuevas.
+- **Nunca debe inventarse:** resultados GO / NO GO, acciones, evidencias, revisiones humanas o
+  cumplimiento no presente en la decision original.
+
 ### AuditEvent
 **Propósito:** evento inmutable de auditoría de toda acción relevante (ingesta, extracción, evaluación, decisión, revisión, cambios de perfil).
 

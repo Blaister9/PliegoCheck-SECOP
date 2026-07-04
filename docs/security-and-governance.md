@@ -68,6 +68,8 @@ Controles de seguridad, aislamiento y gobernanza de decisiones que la plataforma
 - **Microfase 8 sin IA:** los evaluadores juridico, experiencia y tecnico tampoco llaman modelos.
   Consumen reglas persistidas y snapshots publicados; dato faltante, declarado sin soporte o no
   comparable produce `UNKNOWN`.
+- **Microfase 9 sin IA:** el reporte ejecutivo no llama modelos, no recalcula decision y no ejecuta
+  reglas nuevas. Solo renderiza datos persistidos con templates versionados.
 
 ## 7. Gobernanza de la decisión
 
@@ -77,6 +79,8 @@ Controles de seguridad, aislamiento y gobernanza de decisiones que la plataforma
 - **Decision preliminar:** `DecisionRun.engine_outcome` conserva el resultado automatico original.
   `reviewed_outcome` y `effective_outcome` registran confirmaciones u overrides humanos sin
   recalcular historicos.
+- **Reporte ejecutivo:** todo paquete debe mostrar avisos de no concepto juridico, no recomendacion
+  oficial y necesidad de revision humana antes de uso externo.
 
 ## 8. Amenazas específicas y mitigaciones
 
@@ -91,6 +95,8 @@ Controles de seguridad, aislamiento y gobernanza de decisiones que la plataforma
 | Resultado `GO` con evidencia insuficiente | Regla R3/R6/R8 del motor: sin evidencia suficiente el resultado es `PENDIENTE_INFORMACION`; `COMPLIES` sin evidencia se degrada a `UNKNOWN`. |
 | Cambio de condiciones por adendas no procesadas | Versionado de procesos (`ProcessVersion`) y reprocesamiento obligatorio al incorporar adendas; las decisiones citan la versión analizada. |
 | Manipulación del perfil de empresa (inflar capacidades) | Toda capacidad exige soporte documental, cambios de perfil auditados (`AuditEvent`), y las decisiones citan las evidencias exactas usadas. |
+| ZIP Slip o rutas peligrosas en artefactos de reporte | El ZIP de reporte usa nombres controlados, sin directorios, rutas absolutas ni `..`; cada artefacto tiene SHA-256. |
+| XSS en reporte o preview | Campos dinamicos HTML escapados y preview web como texto plano, sin `dangerouslySetInnerHTML`. |
 
 ## 9. Observabilidad mínima
 

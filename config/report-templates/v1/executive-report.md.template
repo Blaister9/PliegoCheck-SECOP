@@ -1,0 +1,39 @@
+# {{process_title}}
+
+**Resultado preliminar:** {{effective_outcome}}
+
+{{scope_notice}}
+
+{{absence_notice}}
+
+## Resumen ejecutivo
+
+{{executive_summary}}
+
+## Decision y precedencia
+
+{{decision_summary}}
+
+## Cobertura
+
+{{coverage_summary}}
+
+## Evaluaciones especializadas
+
+{{evaluation_summary}}
+
+## Evidencias
+
+{{evidence_summary}}
+
+## Acciones y pendientes
+
+{{actions_summary}}
+
+## Riesgos y limitaciones
+
+{{risk_summary}}
+
+## Manifiesto tecnico
+
+{{technical_manifest}}

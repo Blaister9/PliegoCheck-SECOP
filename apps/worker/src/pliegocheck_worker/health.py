@@ -7,6 +7,7 @@ from pliegocheck_worker import SERVICE_NAME, SERVICE_VERSION
 from pliegocheck_worker.decision.orchestrator import decision_queue_connected
 from pliegocheck_worker.financial.orchestrator import financial_queue_connected
 from pliegocheck_worker.normalization.orchestrator import normalization_queue_connected
+from pliegocheck_worker.reports.orchestrator import report_queue_connected
 from pliegocheck_worker.runner import queue_connected
 from pliegocheck_worker.specialized.orchestrator import specialized_queue_connected
 
@@ -27,10 +28,13 @@ def health_status() -> dict[str, str | bool | list[str] | None]:
     financial_connected = financial_queue_connected()
     specialized_connected = specialized_queue_connected()
     decision_connected = decision_queue_connected()
+    report_connected = report_queue_connected()
     decision_policy = _decision_policy_version()
     return {
         "decision_engine_enabled": decision_connected and decision_policy is not None,
         "decision_policy_version": decision_policy,
+        "report_generation_enabled": report_connected,
+        "report_template_version": "1.0.0",
         "available_decision_adapters": [
             domain.value for domain in DEFAULT_ADAPTER_REGISTRY.available_domains()
         ],

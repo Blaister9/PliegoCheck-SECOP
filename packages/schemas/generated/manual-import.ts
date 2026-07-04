@@ -112,6 +112,20 @@ export type DecisionErrorCode =
   | "DECISION_ENGINE_FAILED"
   | "INVALID_DECISION_OVERRIDE"
   | "DECISION_ACTION_NOT_FOUND";
+export type DecisionReportErrorCode =
+  | "DECISION_REPORT_ALREADY_QUEUED"
+  | "DECISION_REPORT_ALREADY_COMPLETED"
+  | "DECISION_REPORT_NOT_FOUND"
+  | "DECISION_REPORT_INPUT_NOT_READY"
+  | "DECISION_REPORT_DECISION_NOT_COMPLETED"
+  | "DECISION_REPORT_TEMPLATE_NOT_FOUND"
+  | "DECISION_REPORT_TEMPLATE_INVALID"
+  | "DECISION_REPORT_RENDER_FAILED"
+  | "DECISION_REPORT_STORAGE_FAILED"
+  | "DECISION_REPORT_ARTIFACT_NOT_FOUND"
+  | "DECISION_REPORT_PACKAGE_NOT_FOUND"
+  | "DECISION_REPORT_DIGEST_MISMATCH"
+  | "DECISION_REPORT_FAILED";
 /**
  * Tipo documental declarado. La clasificacion automatica llega en Microfase 3.
  */
@@ -180,7 +194,8 @@ export interface ApiError {
     | NormalizationErrorCode
     | CompanyErrorCode
     | FinancialErrorCode
-    | DecisionErrorCode;
+    | DecisionErrorCode
+    | DecisionReportErrorCode;
   details?: {
     [k: string]: string;
   };

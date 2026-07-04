@@ -4,6 +4,19 @@
 - **Fecha:** 2026-07-01
 - **Decisores:** Equipo PliegoCheck
 
+## Actualizacion de implementacion - Microfase 9 (2026-07-04)
+
+| Decision | Eleccion | Motivo |
+| --- | --- | --- |
+| Reportes | Paquete `reports` sin IA ni recalculo de decision | Mantiene la decision en el motor deterministico y evita cambios silenciosos de resultado. |
+| Persistencia | Tablas `decision_report_*` | Audita job, paquete, artefactos, secciones y eventos. |
+| Templates | `config/report-templates/v1` | Versiona el formato ejecutivo y permite hash reproducible. |
+| Artefactos | HTML, Markdown, JSON, CSV, manifest y ZIP | Cubre revision humana, integracion y descarga ejecutiva. |
+| Storage | `LocalDocumentStorage` bajo prefijo `reports/` | Reutiliza la abstraccion existente y deja S3-compatible para operacion. |
+| UI | Panel `Reporte ejecutivo y paquete` | Expone creacion, historial, preview y descargas sin presentar concepto juridico. |
+
+La Microfase 10 queda definida como endurecimiento operativo, autenticacion y preparacion de piloto.
+
 ## Actualizacion de implementacion - Microfase 8 (2026-07-04)
 
 | Decision | Eleccion | Motivo |
@@ -15,7 +28,7 @@
 | Adaptadores | `SPECIALIZED_EVALUATION` hacia hallazgos canonicos | El motor de decision conserva una sola politica y una sola precedencia. |
 | UI | Panel `Evaluadores especializados` | Expone readiness, encolado, resultados y revision sin presentar dictamen juridico. |
 
-La Microfase 9 queda definida como reporte ejecutivo y paquete de decision. La integracion
+La Microfase 9 quedo implementada como reporte ejecutivo y paquete de decision. La integracion
 automatica con datos abiertos SECOP II permanece fuera del alcance inmediato.
 
 ## Contexto

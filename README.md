@@ -102,7 +102,7 @@ flowchart TB
 
 La decisión de stack y sus alternativas están formalizadas en [docs/ADR-001-stack-and-architecture.md](docs/ADR-001-stack-and-architecture.md).
 
-## Estado actual - Microfase 8
+## Estado actual - Microfase 9
 
 Implementado: importacion manual de procesos, carga documental segura, almacenamiento local con
 SHA-256, cola transaccional inicial, extractores deterministas para PDF con texto, DOCX, XLSX, CSV y
@@ -120,6 +120,11 @@ Tambien estan implementados los evaluadores especializados deterministas juridic
 y tecnico: reglas persistidas por requisito, resolucion contra snapshot publicado, cola PostgreSQL,
 worker, API, UI, revision auditada, adaptadores hacia el motor de decision, contratos compartidos,
 pruebas y evals.
+La Microfase 9 agrega reporte ejecutivo y paquete de decision: contratos compartidos, tablas
+`decision_report_*`, cola PostgreSQL, worker, templates versionados, artefactos HTML/Markdown/JSON/
+CSV/manifest/ZIP, descargas API, panel web, pruebas y evals. El reporte resume una decision
+preliminar completada; no recalcula evaluaciones, no modifica acciones y no reemplaza revision
+juridica ni decision humana.
 
 No implementado todavia: OCR, integracion automatica con SECOP II, autenticacion y S3 real.
 Categorias fuera de los adaptadores financiero, juridico, experiencia y tecnico quedan
@@ -150,6 +155,8 @@ uv sync --all-packages  # dependencias Python (workspace uv)
 | `pnpm specialized:test` / `pnpm specialized:eval` | Pruebas y evals deterministas de evaluadores especializados |
 | `pnpm decision:run-once` / `pnpm decision:drain` | Procesa trabajos de decision preliminar |
 | `pnpm decision:policy-check` / `pnpm decision:test` / `pnpm decision:eval` | Politica, pruebas y evals del motor de decision |
+| `pnpm report:run-once` / `pnpm report:drain` | Procesa trabajos de reporte ejecutivo y paquete de decision |
+| `pnpm report:test` / `pnpm report:eval` | Pruebas y evals deterministas de reportes |
 | `pnpm infra:up` / `pnpm infra:down` | PostgreSQL local para desarrollo |
 | `pnpm db:migrate` / `pnpm db:check` | Migraciones Alembic y verificación de divergencias |
 | `pnpm schemas:generate` | Regenera JSON Schema y tipos TS desde el modelo canónico Pydantic |
@@ -196,6 +203,10 @@ Guía completa en [docs/development.md](docs/development.md).
 | [docs/decision-policy.md](docs/decision-policy.md) | Politica versionada, snapshot, digest e idempotencia. |
 | [docs/decision-rules.md](docs/decision-rules.md) | Reglas, cobertura, hallazgos canonicos y acciones. |
 | [docs/decision-outcomes.md](docs/decision-outcomes.md) | Significado y precedencia de resultados. |
+| [docs/ADR-009-decision-report-package.md](docs/ADR-009-decision-report-package.md) | Decision de arquitectura para reporte ejecutivo y paquete de decision. |
+| [docs/decision-report.md](docs/decision-report.md) | Operacion, API, worker y limites del reporte ejecutivo. |
+| [docs/decision-package.md](docs/decision-package.md) | Contenido, manifest, ZIP e idempotencia del paquete. |
+| [docs/report-artifacts.md](docs/report-artifacts.md) | Seguridad, storage, templates y evals de artefactos. |
 
 ## Roadmap resumido
 

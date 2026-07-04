@@ -34,6 +34,7 @@ from pliegocheck_worker.normalization.providers import (
     NormalizationBatchRequest,
     OpenAIResponsesNormalizationProvider,
 )
+from pliegocheck_worker.reports.orchestrator import report_drain, report_run_once
 from pliegocheck_worker.runner import drain, run_once
 from pliegocheck_worker.specialized.orchestrator import (
     specialized_drain,
@@ -104,6 +105,18 @@ def run_decision_once(worker_id: str | None) -> int:
 
 def run_decision_drain(max_jobs: int, worker_id: str | None) -> int:
     result = decision_drain(max_jobs=max_jobs, worker_id=worker_id)
+    print(json.dumps(result, sort_keys=True))
+    return 0
+
+
+def run_report_once(worker_id: str | None) -> int:
+    result = report_run_once(worker_id=worker_id)
+    print(json.dumps(result, sort_keys=True))
+    return 0
+
+
+def run_report_drain(max_jobs: int, worker_id: str | None) -> int:
+    result = report_drain(max_jobs=max_jobs, worker_id=worker_id)
     print(json.dumps(result, sort_keys=True))
     return 0
 
@@ -232,6 +245,17 @@ def main(argv: list[str] | None = None) -> int:
     )
     decision_drain_parser.add_argument("--max-jobs", type=int, default=100)
     decision_drain_parser.add_argument("--worker-id", default=None)
+    report_once = subparsers.add_parser(
+        "report-run-once",
+        help="Procesa como maximo un paquete de reporte de decision",
+    )
+    report_once.add_argument("--worker-id", default=None)
+    report_drain_parser = subparsers.add_parser(
+        "report-drain",
+        help="Procesa paquetes de reporte pendientes y termina",
+    )
+    report_drain_parser.add_argument("--max-jobs", type=int, default=100)
+    report_drain_parser.add_argument("--worker-id", default=None)
     specialized_once = subparsers.add_parser(
         "specialized-run-once",
         help="Procesa como maximo una evaluacion especializada",
@@ -267,6 +291,10 @@ def main(argv: list[str] | None = None) -> int:
         return run_decision_once(args.worker_id)
     if args.command == "decision-drain":
         return run_decision_drain(args.max_jobs, args.worker_id)
+    if args.command == "report-run-once":
+        return run_report_once(args.worker_id)
+    if args.command == "report-drain":
+        return run_report_drain(args.max_jobs, args.worker_id)
     if args.command == "specialized-run-once":
         return run_specialized_once(args.worker_id)
     if args.command == "specialized-drain":

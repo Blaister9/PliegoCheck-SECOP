@@ -24,6 +24,8 @@ def test_health_status_reports_queue_state() -> None:
         "decision_engine_enabled": True,
         "decision_policy_version": "1.0.0",
         "available_decision_adapters": ["FINANCIAL", "LEGAL", "EXPERIENCE", "TECHNICAL"],
+        "report_generation_enabled": True,
+        "report_template_version": "1.0.0",
         "specialized_evaluators_enabled": True,
         "available_specialized_evaluators": ["LEGAL", "EXPERIENCE", "TECHNICAL"],
     }

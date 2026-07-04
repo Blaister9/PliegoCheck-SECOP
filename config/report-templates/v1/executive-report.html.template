@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <title>{{process_title}}</title>
+    <style>
+      body { font-family: Arial, sans-serif; line-height: 1.45; color: #1f2937; margin: 2rem; }
+      h1, h2 { color: #111827; }
+      .notice { border-left: 4px solid #6b7280; padding: 0.75rem 1rem; background: #f9fafb; }
+      .meta { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.5rem 1rem; }
+      pre { white-space: pre-wrap; background: #f3f4f6; padding: 1rem; }
+    </style>
+  </head>
+  <body>
+    <h1>{{process_title}}</h1>
+    <div class="meta">
+      <p><strong>Entidad:</strong> {{contracting_entity}}</p>
+      <p><strong>Referencia interna:</strong> {{internal_reference}}</p>
+      <p><strong>SECOP:</strong> {{secop_reference}}</p>
+      <p><strong>Empresa:</strong> {{company_name}}</p>
+      <p><strong>Snapshot:</strong> {{company_snapshot_id}}</p>
+      <p><strong>Fecha de generacion:</strong> {{created_at}}</p>
+      <p><strong>Outcome motor:</strong> {{engine_outcome}}</p>
+      <p><strong>Outcome efectivo:</strong> {{effective_outcome}}</p>
+      <p><strong>Politica:</strong> {{policy_version}}</p>
+      <p><strong>Digest:</strong> {{input_digest_short}}</p>
+    </div>
+    <section class="notice">
+      <p>{{scope_notice}}</p>
+      <p>{{absence_notice}}</p>
+    </section>
+    <h2>Resumen ejecutivo</h2>
+    <pre>{{executive_summary}}</pre>
+    <h2>Decision y precedencia</h2>
+    <pre>{{decision_summary}}</pre>
+    <h2>Cobertura</h2>
+    <pre>{{coverage_summary}}</pre>
+    <h2>Evaluaciones especializadas</h2>
+    <pre>{{evaluation_summary}}</pre>
+    <h2>Evidencias</h2>
+    <pre>{{evidence_summary}}</pre>
+    <h2>Acciones y pendientes</h2>
+    <pre>{{actions_summary}}</pre>
+    <h2>Riesgos y limitaciones</h2>
+    <pre>{{risk_summary}}</pre>
+    <h2>Manifiesto tecnico</h2>
+    <pre>{{technical_manifest}}</pre>
+  </body>
+</html>

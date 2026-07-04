@@ -59,6 +59,14 @@ from pliegocheck_schemas.decision import (
     DecisionRuleStatus,
     DecisionRunStatus,
 )
+from pliegocheck_schemas.decision_report import (
+    DECISION_REPORT_SCHEMA_VERSION,
+    DecisionReportArtifactType,
+    DecisionReportContracts,
+    DecisionReportErrorCode,
+    DecisionReportJobStatus,
+    DecisionReportPackageStatus,
+)
 from pliegocheck_schemas.document_extraction import (
     DOCUMENT_EXTRACTION_SCHEMA_VERSION,
     DocumentExtractionContracts,
@@ -516,6 +524,34 @@ def generate_decision_enums_ts() -> None:
     write_text(GENERATED_DIR / "decision.enums.ts", "\n".join(blocks))
 
 
+def generate_decision_report_enums_ts() -> None:
+    blocks = [
+        TS_HEADER,
+        f'export const DECISION_REPORT_SCHEMA_VERSION = "{DECISION_REPORT_SCHEMA_VERSION}";\n',
+        ts_const_block(
+            "DECISION_REPORT_JOB_STATUS_VALUES",
+            "DecisionReportJobStatusValue",
+            DecisionReportJobStatus,
+        ),
+        ts_const_block(
+            "DECISION_REPORT_PACKAGE_STATUS_VALUES",
+            "DecisionReportPackageStatusValue",
+            DecisionReportPackageStatus,
+        ),
+        ts_const_block(
+            "DECISION_REPORT_ARTIFACT_TYPE_VALUES",
+            "DecisionReportArtifactTypeValue",
+            DecisionReportArtifactType,
+        ),
+        ts_const_block(
+            "DECISION_REPORT_ERROR_CODE_VALUES",
+            "DecisionReportErrorCodeValue",
+            DecisionReportErrorCode,
+        ),
+    ]
+    write_text(GENERATED_DIR / "decision-report.enums.ts", "\n".join(blocks))
+
+
 def generate_specialized_evaluation_enums_ts() -> None:
     blocks = [
         TS_HEADER,
@@ -596,8 +632,10 @@ def main() -> int:
         generate_json_schema(ManualImportContracts, "manual-import.schema.json")
         generate_json_schema(DocumentExtractionContracts, "document-extraction.schema.json")
         generate_json_schema(DecisionContracts, "decision.schema.json")
+        generate_json_schema(DecisionReportContracts, "decision-report.schema.json")
         generate_json_schema(SpecializedEvaluationContracts, "specialized-evaluation.schema.json")
         generate_decision_enums_ts()
+        generate_decision_report_enums_ts()
         generate_specialized_evaluation_enums_ts()
         generate_requirement_enums_ts()
         generate_company_profile_enums_ts()

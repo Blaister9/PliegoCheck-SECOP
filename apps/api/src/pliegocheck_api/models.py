@@ -45,6 +45,9 @@ from pliegocheck_schemas import (
     DecisionFindingSourceType,
     DecisionJobStatus,
     DecisionOutcome,
+    DecisionReportArtifactType,
+    DecisionReportJobStatus,
+    DecisionReportPackageStatus,
     DecisionReviewAction,
     DecisionRuleStatus,
     DecisionRunStatus,
@@ -208,6 +211,13 @@ DECISION_REVIEW_ACTION_VALUES = ", ".join(f"'{item.value}'" for item in Decision
 DECISION_ACTION_TYPE_VALUES = ", ".join(f"'{item.value}'" for item in DecisionActionType)
 DECISION_ACTION_PRIORITY_VALUES = ", ".join(f"'{item.value}'" for item in DecisionActionPriority)
 DECISION_ACTION_STATUS_VALUES = ", ".join(f"'{item.value}'" for item in DecisionActionStatus)
+DECISION_REPORT_JOB_STATUS_VALUES = ", ".join(f"'{item.value}'" for item in DecisionReportJobStatus)
+DECISION_REPORT_PACKAGE_STATUS_VALUES = ", ".join(
+    f"'{item.value}'" for item in DecisionReportPackageStatus
+)
+DECISION_REPORT_ARTIFACT_TYPE_VALUES = ", ".join(
+    f"'{item.value}'" for item in DecisionReportArtifactType
+)
 SPECIALIZED_DOMAIN_VALUES = ", ".join(f"'{item.value}'" for item in SpecializedEvaluationDomain)
 SPECIALIZED_JOB_STATUS_VALUES = ", ".join(
     f"'{item.value}'" for item in SpecializedEvaluationJobStatus
@@ -3029,6 +3039,203 @@ class DecisionEvent(Base):
     )
     company_id: Mapped[UUID | None] = mapped_column(
         Uuid(as_uuid=True), ForeignKey("company_profiles.id", ondelete="SET NULL")
+    )
+    event_type: Mapped[str] = mapped_column(String(64), nullable=False)
+    summary: Mapped[str] = mapped_column(String(1000), nullable=False)
+    details: Mapped[dict[str, Any]] = mapped_column(JSON, nullable=False, default=dict)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+
+class DecisionReportJob(Base):
+    """Trabajo asincrono de generacion de paquete de decision."""
+
+    __tablename__ = "decision_report_jobs"
+    __table_args__ = (
+        CheckConstraint(
+            f"status IN ({DECISION_REPORT_JOB_STATUS_VALUES})",
+            name="ck_decision_report_jobs_status",
+        ),
+        CheckConstraint("priority >= 0", name="ck_decision_report_jobs_priority"),
+        CheckConstraint("attempt_count >= 0", name="ck_decision_report_jobs_attempts"),
+        CheckConstraint("max_attempts > 0", name="ck_decision_report_jobs_max_attempts"),
+        Index("ix_decision_report_jobs_claim", "status", "available_at", "priority", "created_at"),
+        Index("ix_decision_report_jobs_process", "process_id"),
+        Index("ix_decision_report_jobs_decision_run", "decision_run_id"),
+        Index(
+            "uq_decision_report_jobs_active_run",
+            "decision_run_id",
+            unique=True,
+            postgresql_where=text("status IN ('PENDING', 'PROCESSING')"),
+        ),
+    )
+
+    id: Mapped[UUID] = mapped_column(Uuid(as_uuid=True), primary_key=True, default=uuid4)
+    process_id: Mapped[UUID] = mapped_column(
+        Uuid(as_uuid=True), ForeignKey("processes.id", ondelete="CASCADE"), nullable=False
+    )
+    decision_run_id: Mapped[UUID] = mapped_column(
+        Uuid(as_uuid=True), ForeignKey("decision_runs.id", ondelete="CASCADE"), nullable=False
+    )
+    package_id: Mapped[UUID | None] = mapped_column(Uuid(as_uuid=True))
+    status: Mapped[str] = mapped_column(
+        String(32), nullable=False, default=DecisionReportJobStatus.PENDING.value
+    )
+    priority: Mapped[int] = mapped_column(Integer, nullable=False, default=100)
+    attempt_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    max_attempts: Mapped[int] = mapped_column(Integer, nullable=False, default=3)
+    available_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, server_default=func.now()
+    )
+    started_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    finished_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    locked_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    locked_by: Mapped[str | None] = mapped_column(String(128))
+    force: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
+    last_error_code: Mapped[str | None] = mapped_column(String(64))
+    last_error_message: Mapped[str | None] = mapped_column(String(1000))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
+    )
+
+
+class DecisionReportPackage(Base):
+    """Snapshot inmutable de un paquete auditable de decision."""
+
+    __tablename__ = "decision_report_packages"
+    __table_args__ = (
+        CheckConstraint(
+            f"status IN ({DECISION_REPORT_PACKAGE_STATUS_VALUES})",
+            name="ck_decision_report_packages_status",
+        ),
+        CheckConstraint(
+            "input_digest ~ '^[a-f0-9]{64}$'", name="ck_decision_report_packages_input_digest"
+        ),
+        CheckConstraint(
+            "package_digest IS NULL OR package_digest ~ '^[a-f0-9]{64}$'",
+            name="ck_decision_report_packages_package_digest",
+        ),
+        CheckConstraint("artifact_count >= 0", name="ck_decision_report_packages_artifact_count"),
+        CheckConstraint("warning_count >= 0", name="ck_decision_report_packages_warning_count"),
+        Index("ix_decision_report_packages_process", "process_id"),
+        Index("ix_decision_report_packages_decision_run", "decision_run_id"),
+        Index("ix_decision_report_packages_status", "status"),
+        Index("ix_decision_report_packages_created_at", "created_at"),
+        Index("ix_decision_report_packages_idempotency", "decision_run_id", "input_digest"),
+    )
+
+    id: Mapped[UUID] = mapped_column(Uuid(as_uuid=True), primary_key=True, default=uuid4)
+    process_id: Mapped[UUID] = mapped_column(
+        Uuid(as_uuid=True), ForeignKey("processes.id", ondelete="CASCADE"), nullable=False
+    )
+    decision_run_id: Mapped[UUID] = mapped_column(
+        Uuid(as_uuid=True), ForeignKey("decision_runs.id", ondelete="CASCADE"), nullable=False
+    )
+    job_id: Mapped[UUID | None] = mapped_column(
+        Uuid(as_uuid=True), ForeignKey("decision_report_jobs.id", ondelete="SET NULL")
+    )
+    status: Mapped[str] = mapped_column(
+        String(32), nullable=False, default=DecisionReportPackageStatus.DRAFT.value
+    )
+    package_version: Mapped[str] = mapped_column(String(32), nullable=False, default="1.0.0")
+    template_version: Mapped[str] = mapped_column(String(32), nullable=False)
+    input_manifest: Mapped[dict[str, Any]] = mapped_column(JSON, nullable=False)
+    input_digest: Mapped[str] = mapped_column(String(64), nullable=False)
+    package_digest: Mapped[str | None] = mapped_column(String(64))
+    artifact_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    warning_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    created_by: Mapped[str] = mapped_column(String(128), nullable=False, default="local-worker")
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
+    )
+    published_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    error_code: Mapped[str | None] = mapped_column(String(64))
+    error_message: Mapped[str | None] = mapped_column(String(1000))
+
+
+class DecisionReportArtifact(Base):
+    """Metadata de un artefacto generado y almacenado fuera de PostgreSQL."""
+
+    __tablename__ = "decision_report_artifacts"
+    __table_args__ = (
+        CheckConstraint(
+            f"artifact_type IN ({DECISION_REPORT_ARTIFACT_TYPE_VALUES})",
+            name="ck_decision_report_artifacts_type",
+        ),
+        CheckConstraint("size_bytes >= 0", name="ck_decision_report_artifacts_size"),
+        CheckConstraint("sha256 ~ '^[a-f0-9]{64}$'", name="ck_decision_report_artifacts_sha"),
+        CheckConstraint(
+            "source_digest ~ '^[a-f0-9]{64}$'", name="ck_decision_report_artifacts_source_digest"
+        ),
+        Index("ix_decision_report_artifacts_package", "package_id"),
+        UniqueConstraint(
+            "package_id", "filename", name="uq_decision_report_artifacts_package_filename"
+        ),
+    )
+
+    id: Mapped[UUID] = mapped_column(Uuid(as_uuid=True), primary_key=True, default=uuid4)
+    package_id: Mapped[UUID] = mapped_column(
+        Uuid(as_uuid=True),
+        ForeignKey("decision_report_packages.id", ondelete="CASCADE"),
+        nullable=False,
+    )
+    artifact_type: Mapped[str] = mapped_column(String(64), nullable=False)
+    filename: Mapped[str] = mapped_column(String(255), nullable=False)
+    content_type: Mapped[str] = mapped_column(String(128), nullable=False)
+    storage_key: Mapped[str] = mapped_column(String(700), nullable=False, unique=True)
+    size_bytes: Mapped[int] = mapped_column(Integer, nullable=False)
+    sha256: Mapped[str] = mapped_column(String(64), nullable=False)
+    template_version: Mapped[str] = mapped_column(String(32), nullable=False)
+    source_digest: Mapped[str] = mapped_column(String(64), nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+
+class DecisionReportSection(Base):
+    """Resumen estructurado de secciones visibles en web."""
+
+    __tablename__ = "decision_report_sections"
+    __table_args__ = (
+        Index("ix_decision_report_sections_package", "package_id", "sequence"),
+        UniqueConstraint("package_id", "section_code", name="uq_decision_report_sections_code"),
+    )
+
+    id: Mapped[UUID] = mapped_column(Uuid(as_uuid=True), primary_key=True, default=uuid4)
+    package_id: Mapped[UUID] = mapped_column(
+        Uuid(as_uuid=True),
+        ForeignKey("decision_report_packages.id", ondelete="CASCADE"),
+        nullable=False,
+    )
+    section_code: Mapped[str] = mapped_column(String(64), nullable=False)
+    title: Mapped[str] = mapped_column(String(255), nullable=False)
+    sequence: Mapped[int] = mapped_column(Integer, nullable=False)
+    summary_payload: Mapped[dict[str, Any]] = mapped_column(JSON, nullable=False, default=dict)
+    warning_codes: Mapped[list[str]] = mapped_column(JSON, nullable=False, default=list)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+
+class DecisionReportEvent(Base):
+    """Evento sanitizado del ciclo de reporte."""
+
+    __tablename__ = "decision_report_events"
+    __table_args__ = (
+        Index("ix_decision_report_events_job", "job_id"),
+        Index("ix_decision_report_events_package", "package_id"),
+        Index("ix_decision_report_events_type", "event_type"),
+    )
+
+    id: Mapped[UUID] = mapped_column(Uuid(as_uuid=True), primary_key=True, default=uuid4)
+    job_id: Mapped[UUID | None] = mapped_column(
+        Uuid(as_uuid=True), ForeignKey("decision_report_jobs.id", ondelete="SET NULL")
+    )
+    package_id: Mapped[UUID | None] = mapped_column(
+        Uuid(as_uuid=True), ForeignKey("decision_report_packages.id", ondelete="SET NULL")
+    )
+    process_id: Mapped[UUID] = mapped_column(
+        Uuid(as_uuid=True), ForeignKey("processes.id", ondelete="CASCADE"), nullable=False
+    )
+    decision_run_id: Mapped[UUID | None] = mapped_column(
+        Uuid(as_uuid=True), ForeignKey("decision_runs.id", ondelete="SET NULL")
     )
     event_type: Mapped[str] = mapped_column(String(64), nullable=False)
     summary: Mapped[str] = mapped_column(String(1000), nullable=False)

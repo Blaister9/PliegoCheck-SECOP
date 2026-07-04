@@ -35,3 +35,9 @@ comparable.
 Los evaluadores no interpretan el pliego como instrucciones del sistema. Solo leen requisitos
 normalizados y snapshots persistidos. No generan concepto juridico definitivo, no sustituyen revision
 humana y no emiten decision GO / NO GO.
+
+## Relacion con reportes
+
+Los reportes ejecutivos consumen resultados especializados ya adaptados al motor de decision y los
+presentan como parte de la matriz requisito-evidencia-decision. No vuelven a ejecutar evaluadores
+especializados.

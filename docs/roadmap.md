@@ -13,8 +13,8 @@ Microfase 5: perfil de empresa y evidencias (completada)
 Microfase 6: evaluador financiero inicial (completada)
 Microfase 7: motor deterministico de decision (completada)
 Microfase 8: evaluadores especializados juridico, tecnico y de experiencia (completada)
-Microfase 9: reporte ejecutivo y paquete de decision (siguiente)
-Microfase 10: autenticacion, multiempresa y operacion
+Microfase 9: reporte ejecutivo y paquete de decision (completada)
+Microfase 10: endurecimiento operativo, autenticacion y preparacion de piloto
 ```
 
 ## Microfase 0 - Fundacion documental - completada
@@ -109,14 +109,17 @@ Microfase 10: autenticacion, multiempresa y operacion
 
 - **Objetivo:** convertir la decision preliminar y sus hallazgos en un paquete revisable para comite
   de licitaciones.
-- **Entregable previsto:** reporte ejecutivo, matriz requisito-evidencia-decision, exportacion
-  auditable, resumen de riesgos, acciones pendientes y paquete de soportes.
+- **Entregable:** reporte ejecutivo, matriz requisito-evidencia-decision, resumen de riesgos,
+  acciones pendientes, manifest auditable, ZIP plano, cola PostgreSQL, worker, API, UI, contratos
+  compartidos, pruebas y evals.
+- **Criterios verificados:** el reporte no recalcula la decision, no inventa `GO`, escapa HTML,
+  produce hashes estables y entradas ZIP seguras, y reutiliza paquetes completados por input digest.
 
-## Microfase 10 - Autenticacion, multiempresa y operacion
+## Microfase 10 - Endurecimiento operativo, autenticacion y preparacion de piloto
 
 - **Objetivo:** operacion multiusuario y multiorganizacion segura.
 - **Entregable previsto:** autenticacion, roles, aislamiento por organizacion, limites de costo,
-  observabilidad y despliegue reproducible.
+  observabilidad, storage S3-compatible, preparacion de piloto y despliegue reproducible.
 
 ## Despues del MVP
 

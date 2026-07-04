@@ -1,0 +1,940 @@
+{
+  "$defs": {
+    "DecisionActionExportRow": {
+      "additionalProperties": false,
+      "properties": {
+        "action_type": {
+          "type": "string"
+        },
+        "description_code": {
+          "type": "string"
+        },
+        "due_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "finding_ids": {
+          "items": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "parameters": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "priority": {
+          "type": "string"
+        },
+        "requirement_ids": {
+          "items": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "status": {
+          "type": "string"
+        },
+        "title_code": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "action_type",
+        "priority",
+        "status",
+        "title_code",
+        "description_code",
+        "due_at"
+      ],
+      "type": "object"
+    },
+    "DecisionReportArtifactManifest": {
+      "additionalProperties": false,
+      "properties": {
+        "artifact_type": {
+          "$ref": "#/$defs/DecisionReportArtifactType"
+        },
+        "content_type": {
+          "maxLength": 2000,
+          "minLength": 1,
+          "type": "string"
+        },
+        "filename": {
+          "maxLength": 2000,
+          "minLength": 1,
+          "type": "string"
+        },
+        "sha256": {
+          "pattern": "^[a-f0-9]{64}$",
+          "type": "string"
+        },
+        "size_bytes": {
+          "minimum": 0,
+          "type": "integer"
+        }
+      },
+      "required": ["filename", "artifact_type", "content_type", "size_bytes", "sha256"],
+      "type": "object"
+    },
+    "DecisionReportArtifactMetadata": {
+      "additionalProperties": false,
+      "properties": {
+        "artifact_type": {
+          "$ref": "#/$defs/DecisionReportArtifactType"
+        },
+        "content_type": {
+          "maxLength": 2000,
+          "minLength": 1,
+          "type": "string"
+        },
+        "created_at": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "filename": {
+          "maxLength": 2000,
+          "minLength": 1,
+          "type": "string"
+        },
+        "id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "package_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "sha256": {
+          "pattern": "^[a-f0-9]{64}$",
+          "type": "string"
+        },
+        "size_bytes": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "source_digest": {
+          "pattern": "^[a-f0-9]{64}$",
+          "type": "string"
+        },
+        "template_version": {
+          "maxLength": 2000,
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "package_id",
+        "artifact_type",
+        "filename",
+        "content_type",
+        "size_bytes",
+        "sha256",
+        "template_version",
+        "source_digest",
+        "created_at"
+      ],
+      "type": "object"
+    },
+    "DecisionReportArtifactType": {
+      "enum": [
+        "EXECUTIVE_HTML",
+        "EXECUTIVE_MARKDOWN",
+        "REQUIREMENTS_MATRIX_JSON",
+        "REQUIREMENTS_MATRIX_CSV",
+        "EVIDENCE_INDEX_JSON",
+        "ACTIONS_JSON",
+        "DECISION_MANIFEST_JSON",
+        "PACKAGE_MANIFEST_JSON",
+        "PACKAGE_ZIP"
+      ],
+      "type": "string"
+    },
+    "DecisionReportJobStatus": {
+      "enum": [
+        "PENDING",
+        "PROCESSING",
+        "COMPLETED",
+        "COMPLETED_WITH_WARNINGS",
+        "FAILED",
+        "CANCELLED"
+      ],
+      "type": "string"
+    },
+    "DecisionReportJobSummary": {
+      "additionalProperties": false,
+      "properties": {
+        "attempt_count": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "created_at": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "decision_run_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "force": {
+          "type": "boolean"
+        },
+        "id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "last_error_code": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "max_attempts": {
+          "exclusiveMinimum": 0,
+          "type": "integer"
+        },
+        "process_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "status": {
+          "$ref": "#/$defs/DecisionReportJobStatus"
+        },
+        "updated_at": {
+          "format": "date-time",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "process_id",
+        "decision_run_id",
+        "status",
+        "attempt_count",
+        "max_attempts",
+        "force",
+        "created_at",
+        "updated_at"
+      ],
+      "type": "object"
+    },
+    "DecisionReportManifest": {
+      "additionalProperties": false,
+      "properties": {
+        "artifacts": {
+          "items": {
+            "$ref": "#/$defs/DecisionReportArtifactManifest"
+          },
+          "type": "array"
+        },
+        "input_digest": {
+          "pattern": "^[a-f0-9]{64}$",
+          "type": "string"
+        },
+        "package_digest": {
+          "anyOf": [
+            {
+              "pattern": "^[a-f0-9]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "package_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "package_version": {
+          "maxLength": 2000,
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": ["package_id", "package_version", "input_digest", "package_digest"],
+      "type": "object"
+    },
+    "DecisionReportPackageDetail": {
+      "additionalProperties": false,
+      "properties": {
+        "artifact_count": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "artifacts": {
+          "items": {
+            "$ref": "#/$defs/DecisionReportArtifactMetadata"
+          },
+          "type": "array"
+        },
+        "created_at": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "created_by": {
+          "maxLength": 2000,
+          "minLength": 1,
+          "type": "string"
+        },
+        "decision_run_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "error_code": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "error_message": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "input_digest": {
+          "pattern": "^[a-f0-9]{64}$",
+          "type": "string"
+        },
+        "input_manifest": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "manifest_summary": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "package_digest": {
+          "anyOf": [
+            {
+              "pattern": "^[a-f0-9]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "package_version": {
+          "maxLength": 2000,
+          "minLength": 1,
+          "type": "string"
+        },
+        "process_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "published_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "sections": {
+          "items": {
+            "$ref": "#/$defs/DecisionReportSectionSummary"
+          },
+          "type": "array"
+        },
+        "status": {
+          "$ref": "#/$defs/DecisionReportPackageStatus"
+        },
+        "template_version": {
+          "maxLength": 2000,
+          "minLength": 1,
+          "type": "string"
+        },
+        "updated_at": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "warning_count": {
+          "minimum": 0,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id",
+        "process_id",
+        "decision_run_id",
+        "status",
+        "package_version",
+        "template_version",
+        "input_digest",
+        "package_digest",
+        "artifact_count",
+        "warning_count",
+        "created_by",
+        "published_at",
+        "error_code",
+        "error_message",
+        "created_at",
+        "updated_at"
+      ],
+      "type": "object"
+    },
+    "DecisionReportPackageList": {
+      "additionalProperties": false,
+      "properties": {
+        "items": {
+          "items": {
+            "$ref": "#/$defs/DecisionReportPackageSummary"
+          },
+          "type": "array"
+        },
+        "limit": {
+          "exclusiveMinimum": 0,
+          "type": "integer"
+        },
+        "offset": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "total": {
+          "minimum": 0,
+          "type": "integer"
+        }
+      },
+      "required": ["items", "total", "limit", "offset"],
+      "type": "object"
+    },
+    "DecisionReportPackageStatus": {
+      "enum": ["DRAFT", "GENERATING", "COMPLETED", "COMPLETED_WITH_WARNINGS", "FAILED", "ARCHIVED"],
+      "type": "string"
+    },
+    "DecisionReportPackageSummary": {
+      "additionalProperties": false,
+      "properties": {
+        "artifact_count": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "created_at": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "created_by": {
+          "maxLength": 2000,
+          "minLength": 1,
+          "type": "string"
+        },
+        "decision_run_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "error_code": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "error_message": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "input_digest": {
+          "pattern": "^[a-f0-9]{64}$",
+          "type": "string"
+        },
+        "package_digest": {
+          "anyOf": [
+            {
+              "pattern": "^[a-f0-9]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "package_version": {
+          "maxLength": 2000,
+          "minLength": 1,
+          "type": "string"
+        },
+        "process_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "published_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "status": {
+          "$ref": "#/$defs/DecisionReportPackageStatus"
+        },
+        "template_version": {
+          "maxLength": 2000,
+          "minLength": 1,
+          "type": "string"
+        },
+        "updated_at": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "warning_count": {
+          "minimum": 0,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id",
+        "process_id",
+        "decision_run_id",
+        "status",
+        "package_version",
+        "template_version",
+        "input_digest",
+        "package_digest",
+        "artifact_count",
+        "warning_count",
+        "created_by",
+        "published_at",
+        "error_code",
+        "error_message",
+        "created_at",
+        "updated_at"
+      ],
+      "type": "object"
+    },
+    "DecisionReportPreview": {
+      "additionalProperties": false,
+      "properties": {
+        "content_type": {
+          "const": "text/markdown",
+          "type": "string"
+        },
+        "package_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "sha256": {
+          "pattern": "^[a-f0-9]{64}$",
+          "type": "string"
+        },
+        "text": {
+          "type": "string"
+        }
+      },
+      "required": ["package_id", "content_type", "text", "sha256"],
+      "type": "object"
+    },
+    "DecisionReportQueueResponse": {
+      "additionalProperties": false,
+      "properties": {
+        "job": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/DecisionReportJobSummary"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "package": {
+          "$ref": "#/$defs/DecisionReportPackageSummary"
+        },
+        "reused_existing_package": {
+          "default": false,
+          "type": "boolean"
+        }
+      },
+      "required": ["package"],
+      "type": "object"
+    },
+    "DecisionReportRequest": {
+      "additionalProperties": false,
+      "properties": {
+        "decision_run_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "force": {
+          "default": false,
+          "type": "boolean"
+        }
+      },
+      "required": ["decision_run_id"],
+      "type": "object"
+    },
+    "DecisionReportRetryRequest": {
+      "additionalProperties": false,
+      "properties": {
+        "force": {
+          "default": true,
+          "type": "boolean"
+        }
+      },
+      "type": "object"
+    },
+    "DecisionReportSectionSummary": {
+      "additionalProperties": false,
+      "properties": {
+        "created_at": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "package_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "section_code": {
+          "maxLength": 2000,
+          "minLength": 1,
+          "type": "string"
+        },
+        "sequence": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "summary_payload": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "title": {
+          "maxLength": 2000,
+          "minLength": 1,
+          "type": "string"
+        },
+        "warning_codes": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "required": ["id", "package_id", "section_code", "title", "sequence", "created_at"],
+      "type": "object"
+    },
+    "EvidenceIndexEntry": {
+      "additionalProperties": false,
+      "properties": {
+        "document_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "document_sha256": {
+          "anyOf": [
+            {
+              "pattern": "^[a-f0-9]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "evidence_type": {
+          "type": "string"
+        },
+        "quoted_text": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "requirement_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "segment_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "source_label": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "source_location": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "validation_status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "requirement_id",
+        "evidence_type",
+        "document_id",
+        "segment_id",
+        "source_label",
+        "document_sha256",
+        "quoted_text",
+        "validation_status"
+      ],
+      "type": "object"
+    },
+    "RequirementMatrixRow": {
+      "additionalProperties": false,
+      "properties": {
+        "action_count": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "category": {
+          "type": "string"
+        },
+        "decision_finding_outcome": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "evidence_count": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "modality": {
+          "type": "string"
+        },
+        "requirement_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "requires_human_review": {
+          "type": "boolean"
+        },
+        "review_status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "scope": {
+          "type": "string"
+        },
+        "source_domain": {
+          "type": "string"
+        },
+        "source_result_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "source_run_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "stable_key": {
+          "type": "string"
+        },
+        "warning_codes": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "requirement_id",
+        "stable_key",
+        "category",
+        "scope",
+        "modality",
+        "description",
+        "decision_finding_outcome",
+        "source_domain",
+        "source_run_id",
+        "source_result_id",
+        "requires_human_review",
+        "review_status",
+        "evidence_count",
+        "action_count"
+      ],
+      "type": "object"
+    }
+  },
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "action_export_row": {
+      "$ref": "#/$defs/DecisionActionExportRow"
+    },
+    "artifact": {
+      "$ref": "#/$defs/DecisionReportArtifactMetadata"
+    },
+    "artifact_manifest": {
+      "$ref": "#/$defs/DecisionReportArtifactManifest"
+    },
+    "evidence_index_entry": {
+      "$ref": "#/$defs/EvidenceIndexEntry"
+    },
+    "job": {
+      "$ref": "#/$defs/DecisionReportJobSummary"
+    },
+    "manifest": {
+      "$ref": "#/$defs/DecisionReportManifest"
+    },
+    "package_detail": {
+      "$ref": "#/$defs/DecisionReportPackageDetail"
+    },
+    "package_list": {
+      "$ref": "#/$defs/DecisionReportPackageList"
+    },
+    "package_summary": {
+      "$ref": "#/$defs/DecisionReportPackageSummary"
+    },
+    "preview": {
+      "$ref": "#/$defs/DecisionReportPreview"
+    },
+    "queue_response": {
+      "$ref": "#/$defs/DecisionReportQueueResponse"
+    },
+    "request": {
+      "$ref": "#/$defs/DecisionReportRequest"
+    },
+    "requirement_matrix_row": {
+      "$ref": "#/$defs/RequirementMatrixRow"
+    },
+    "retry_request": {
+      "$ref": "#/$defs/DecisionReportRetryRequest"
+    },
+    "schema_version": {
+      "const": "1.0.0",
+      "default": "1.0.0",
+      "type": "string"
+    },
+    "section": {
+      "$ref": "#/$defs/DecisionReportSectionSummary"
+    }
+  },
+  "required": [
+    "artifact",
+    "job",
+    "package_summary",
+    "package_detail",
+    "request",
+    "retry_request",
+    "queue_response",
+    "preview",
+    "manifest",
+    "artifact_manifest",
+    "section",
+    "requirement_matrix_row",
+    "evidence_index_entry",
+    "action_export_row",
+    "package_list"
+  ],
+  "type": "object"
+}

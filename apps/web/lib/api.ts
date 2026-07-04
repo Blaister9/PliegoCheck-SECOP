@@ -38,6 +38,11 @@ import type {
   DecisionReviewResponse,
   DecisionRunDetail,
   DecisionRunList,
+  DecisionReportPackageDetail,
+  DecisionReportPackageList,
+  DecisionReportPreview,
+  DecisionReportQueueResponse,
+  DecisionReportRequest,
   DocumentExtractionDetail,
   ExtractedSegmentList,
   ExtractedSegmentType,
@@ -458,6 +463,57 @@ export function updateDecisionAction(
     `/processes/${processId}/decisions/${decisionRunId}/actions/${actionId}`,
     { method: "PATCH", body: JSON.stringify({ status }) },
   );
+}
+
+export function createDecisionReport(processId: string, payload: DecisionReportRequest) {
+  return request<DecisionReportQueueResponse>(`/processes/${processId}/decision-reports`, {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
+}
+
+export function listDecisionReports(
+  processId: string,
+  params: { decision_run_id?: string; limit?: number; offset?: number } = {},
+) {
+  const query = new URLSearchParams();
+  query.set("limit", String(params.limit ?? 20));
+  query.set("offset", String(params.offset ?? 0));
+  if (params.decision_run_id) query.set("decision_run_id", params.decision_run_id);
+  return request<DecisionReportPackageList>(
+    `/processes/${processId}/decision-reports?${query.toString()}`,
+  );
+}
+
+export function getDecisionReport(processId: string, packageId: string) {
+  return request<DecisionReportPackageDetail>(
+    `/processes/${processId}/decision-reports/${packageId}`,
+  );
+}
+
+export function getDecisionReportPreview(processId: string, packageId: string) {
+  return request<DecisionReportPreview>(
+    `/processes/${processId}/decision-reports/${packageId}/preview`,
+  );
+}
+
+export function retryDecisionReport(processId: string, packageId: string) {
+  return request<DecisionReportQueueResponse>(
+    `/processes/${processId}/decision-reports/${packageId}/retry`,
+    { method: "POST", body: JSON.stringify({ force: true }) },
+  );
+}
+
+export function decisionReportArtifactDownloadUrl(
+  processId: string,
+  packageId: string,
+  artifactId: string,
+) {
+  return `${apiBaseUrl()}/processes/${processId}/decision-reports/${packageId}/artifacts/${artifactId}/download`;
+}
+
+export function decisionReportZipDownloadUrl(processId: string, packageId: string) {
+  return `${apiBaseUrl()}/processes/${processId}/decision-reports/${packageId}/download`;
 }
 
 export function listCompanies(params: {
