@@ -14,8 +14,15 @@ review y banderas explicitas:
 - `partner_solvable`
 - `submission_blocker`
 
-`partner_solvable` y `submission_blocker` son `false` por defecto. El adaptador financiero no los
-infiere desde un incumplimiento.
+`partner_solvable` y `submission_blocker` son `false` por defecto. Los adaptadores financiero,
+juridico, experiencia y tecnico no los infieren desde un incumplimiento.
+
+## Adaptadores disponibles
+
+- `FINANCIAL_EVALUATION`: resultados financieros.
+- `SPECIALIZED_EVALUATION` para dominios `LEGAL`, `EXPERIENCE` y `TECHNICAL`.
+
+Los requisitos sin resultado completado para su adaptador se completan como `NOT_EVALUATED`.
 
 ## Cobertura
 

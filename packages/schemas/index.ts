@@ -108,3 +108,32 @@ export type {
   DecisionRunSummary,
 } from "./generated/decision";
 export * from "./generated/decision.enums";
+export type {
+  SpecializedEvaluationDomain,
+  SpecializedEvaluationEvidence,
+  SpecializedEvaluationJobStatus,
+  SpecializedEvaluationJobSummary,
+  SpecializedEvaluationList,
+  SpecializedEvaluationQueueResponse,
+  SpecializedEvaluationReadiness,
+  SpecializedEvaluationRequest,
+  SpecializedEvaluationResult,
+  SpecializedEvaluationResultDetail,
+  SpecializedEvaluationResultList,
+  SpecializedEvaluationResultReviewRequest,
+  SpecializedEvaluationResultStatus,
+  SpecializedEvaluationRetryRequest,
+  SpecializedEvaluationReviewStatus,
+  SpecializedEvaluationRunDetail,
+  SpecializedEvaluationRunStatus,
+  SpecializedEvaluationRunSummary,
+  SpecializedEvidenceValidationStatus,
+  SpecializedExplanationCode,
+  SpecializedOperator,
+  SpecializedRequirementRule,
+  SpecializedRequirementRuleUpdate,
+  SpecializedRuleMappingStatus,
+  SpecializedRuleSourceBasis,
+  SpecializedRuleType,
+} from "./generated/specialized-evaluation";
+export * from "./generated/specialized-evaluation.enums";

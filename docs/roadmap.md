@@ -12,8 +12,8 @@ Microfase 4: normalizacion de requisitos (completada)
 Microfase 5: perfil de empresa y evidencias (completada)
 Microfase 6: evaluador financiero inicial (completada)
 Microfase 7: motor deterministico de decision (completada)
-Microfase 8: evaluadores especializados juridico, tecnico y de experiencia (siguiente)
-Microfase 9: integracion con datos abiertos SECOP II
+Microfase 8: evaluadores especializados juridico, tecnico y de experiencia (completada)
+Microfase 9: reporte ejecutivo y paquete de decision (siguiente)
 Microfase 10: autenticacion, multiempresa y operacion
 ```
 
@@ -95,17 +95,22 @@ Microfase 10: autenticacion, multiempresa y operacion
 - **Criterios verificados:** misma entrada + misma version de reglas produce la misma decision; sin
   cobertura obligatoria completa no emite `GO`; categorias sin adaptador quedan `NOT_EVALUATED`.
 
-## Microfase 8 - Evaluadores especializados juridico, tecnico y de experiencia
+## Microfase 8 - Evaluadores especializados juridico, tecnico y de experiencia - completada
 
 - **Objetivo:** ampliar la cobertura del motor con evaluadores no financieros.
-- **Entregable previsto:** adaptadores y evaluadores juridico, tecnico y de experiencia, con
-  evidencia trazable y sin decision por IA.
+- **Entregable:** contratos compartidos, tablas especializadas, reglas por requisito, mapeo
+  conservador, resolucion contra snapshot publicado, cola PostgreSQL, worker, API, UI, revision
+  manual auditada, adaptadores hacia el motor de decision, pruebas y evals.
+- **Criterios verificados:** ausencia de evidencia produce `UNKNOWN`; evidencia declarada sin soporte
+  no se eleva a cumplimiento; los evaluadores no llaman IA ni producen GO / NO GO; el motor bloquea
+  resultados positivos cuando un requisito obligatorio sigue `UNKNOWN` o `NOT_EVALUATED`.
 
-## Microfase 9 - Integracion con datos abiertos SECOP II
+## Microfase 9 - Reporte ejecutivo y paquete de decision
 
-- **Objetivo:** ingesta automatica desde datos abiertos de Colombia Compra Eficiente.
-- **Entregable previsto:** busqueda y registro por identificador SECOP, descarga de documentos
-  disponibles y versionado por adendas.
+- **Objetivo:** convertir la decision preliminar y sus hallazgos en un paquete revisable para comite
+  de licitaciones.
+- **Entregable previsto:** reporte ejecutivo, matriz requisito-evidencia-decision, exportacion
+  auditable, resumen de riesgos, acciones pendientes y paquete de soportes.
 
 ## Microfase 10 - Autenticacion, multiempresa y operacion
 

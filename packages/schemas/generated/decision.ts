@@ -43,7 +43,8 @@ export type DecisionFindingOutcome =
   | "NOT_APPLICABLE"
   | "CONFLICTING_EVIDENCE"
   | "NOT_EVALUATED";
-export type DecisionFindingSourceType = "FINANCIAL_EVALUATION" | "SYNTHETIC" | "MISSING_ADAPTER";
+export type DecisionFindingSourceType =
+  "FINANCIAL_EVALUATION" | "SPECIALIZED_EVALUATION" | "SYNTHETIC" | "MISSING_ADAPTER";
 export type DecisionJobStatus =
   "PENDING" | "PROCESSING" | "COMPLETED" | "COMPLETED_WITH_WARNINGS" | "FAILED" | "CANCELLED";
 /**

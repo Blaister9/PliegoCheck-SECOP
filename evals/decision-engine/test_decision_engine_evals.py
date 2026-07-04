@@ -155,7 +155,7 @@ def test_09_critical_conflict_produces_pendiente_and_review() -> None:
     assert out.conflicting_findings
 
 
-def test_10_financial_only_with_legal_mandatory_produces_pendiente() -> None:
+def test_10_financial_only_with_legal_not_evaluated_produces_pendiente() -> None:
     out = decide(
         [
             finding(outcome=C, source_type=DecisionFindingSourceType.FINANCIAL_EVALUATION),
@@ -163,7 +163,7 @@ def test_10_financial_only_with_legal_mandatory_produces_pendiente() -> None:
         ]
     )
     assert out.engine_outcome == DecisionOutcome.PENDIENTE_INFORMACION
-    assert any(warning.startswith("ADAPTER_NOT_AVAILABLE:LEGAL") for warning in out.warnings)
+    assert out.unknown_findings
 
 
 def test_11_optional_failure_does_not_block() -> None:

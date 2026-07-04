@@ -73,6 +73,7 @@ export type DecisionFindingApplicabilityValue =
 
 export const DECISION_FINDING_SOURCE_TYPE_VALUES = [
   "FINANCIAL_EVALUATION",
+  "SPECIALIZED_EVALUATION",
   "SYNTHETIC",
   "MISSING_ADAPTER",
 ] as const;

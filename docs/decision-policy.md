@@ -21,6 +21,11 @@ Si el contenido cambia sin cambiar la version semantica, la API rechaza la polit
 
 ## Precedencia
 
+La politica no distingue si un hallazgo proviene del evaluador financiero o de un evaluador
+especializado. Una vez adaptado a `DecisionInputFinding`, `UNKNOWN`, `NOT_EVALUATED`,
+`CONFLICTING_EVIDENCE`, incumplimientos obligatorios y revisiones humanas pendientes se tratan con
+las mismas reglas de precedencia.
+
 La precedencia de `pliegocheck-default` 1.0.0 es:
 
 1. `NO_CARGAR`

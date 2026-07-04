@@ -18,6 +18,7 @@ import type {
 } from "@pliegocheck/schemas";
 import { EXTRACTED_SEGMENT_TYPE_VALUES } from "@pliegocheck/schemas";
 import { DecisionPanel } from "./DecisionPanel";
+import { SpecializedEvaluationPanel } from "./SpecializedEvaluationPanel";
 import {
   ApiClientError,
   createFinancialEvaluation,
@@ -383,6 +384,20 @@ export function ProcessDetailClient({ processId }: { processId: string }) {
           onRetry={(runId) => void retryFinancialRun(runId)}
         />
       </section>
+
+      <SpecializedEvaluationPanel
+        processId={processId}
+        normalizations={normalizations}
+        companies={companies}
+        snapshots={snapshots}
+        selectedNormalizationRunId={selectedFinancialRunId}
+        selectedCompanyId={selectedCompanyId}
+        selectedSnapshotId={selectedSnapshotId}
+        onLoadCompanies={() => void loadCompaniesForFinancial()}
+        onSelectNormalization={setSelectedFinancialRunId}
+        onSelectCompany={(companyId) => void chooseCompanyForFinancial(companyId)}
+        onSelectSnapshot={setSelectedSnapshotId}
+      />
 
       <DecisionPanel processId={processId} />
 

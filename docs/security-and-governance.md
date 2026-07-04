@@ -65,6 +65,9 @@ Controles de seguridad, aislamiento y gobernanza de decisiones que la plataforma
 - **Microfase 7 sin IA:** el motor de decision preliminar no llama OpenAI ni ningun modelo. Consume
   hallazgos canonicos, cobertura y una politica versionada; las categorias sin adaptador quedan
   `NOT_EVALUATED` y no se interpretan como cumplimiento.
+- **Microfase 8 sin IA:** los evaluadores juridico, experiencia y tecnico tampoco llaman modelos.
+  Consumen reglas persistidas y snapshots publicados; dato faltante, declarado sin soporte o no
+  comparable produce `UNKNOWN`.
 
 ## 7. Gobernanza de la decisión
 

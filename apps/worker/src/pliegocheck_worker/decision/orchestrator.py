@@ -34,12 +34,15 @@ from pliegocheck_api.models import (
     FinancialEvaluationRun,
     Process,
     Requirement,
+    SpecializedEvaluationResult,
+    SpecializedEvaluationRun,
 )
 from pliegocheck_schemas import (
     DecisionErrorCode,
     DecisionJobStatus,
     DecisionRunStatus,
     FinancialEvaluationRunStatus,
+    SpecializedEvaluationRunStatus,
 )
 
 
@@ -202,11 +205,44 @@ def _process_run(session: Session, job: DecisionJob, run: DecisionRun, *, worker
             .order_by(FinancialEvaluationResult.requirement_id.asc())
         ).all()
     )
+    specialized_runs = list(
+        session.scalars(
+            select(SpecializedEvaluationRun).where(
+                SpecializedEvaluationRun.process_id == run.process_id,
+                SpecializedEvaluationRun.normalization_run_id == run.normalization_run_id,
+                SpecializedEvaluationRun.company_id == run.company_id,
+                SpecializedEvaluationRun.company_profile_snapshot_id
+                == run.company_profile_snapshot_id,
+                SpecializedEvaluationRun.status.in_(
+                    [
+                        SpecializedEvaluationRunStatus.COMPLETED.value,
+                        SpecializedEvaluationRunStatus.COMPLETED_WITH_WARNINGS.value,
+                    ]
+                ),
+            )
+        ).all()
+    )
+    specialized_results: list[SpecializedEvaluationResult] = []
+    if specialized_runs:
+        specialized_results = list(
+            session.scalars(
+                select(SpecializedEvaluationResult)
+                .where(
+                    SpecializedEvaluationResult.run_id.in_(
+                        [specialized_run.id for specialized_run in specialized_runs]
+                    )
+                )
+                .order_by(SpecializedEvaluationResult.requirement_id.asc())
+            ).all()
+        )
     context = {
         "financial_results_by_requirement": {
             result.requirement_id: result for result in financial_results
         },
         "financial_evaluation_run_id": financial_run.id,
+        "specialized_results_by_requirement": {
+            result.requirement_id: result for result in specialized_results
+        },
     }
     findings = DEFAULT_ADAPTER_REGISTRY.collect_all_findings(
         requirements=requirements, context=context

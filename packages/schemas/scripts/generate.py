@@ -116,6 +116,23 @@ from pliegocheck_schemas.normalized_requirement import (
     RequirementScope,
     RequirementSubsanability,
 )
+from pliegocheck_schemas.specialized_evaluation import (
+    SPECIALIZED_EVALUATION_SCHEMA_VERSION,
+    SpecializedDataUsability,
+    SpecializedErrorCode,
+    SpecializedEvaluationContracts,
+    SpecializedEvaluationDomain,
+    SpecializedEvaluationJobStatus,
+    SpecializedEvaluationResultStatus,
+    SpecializedEvaluationReviewStatus,
+    SpecializedEvaluationRunStatus,
+    SpecializedEvidenceValidationStatus,
+    SpecializedExplanationCode,
+    SpecializedOperator,
+    SpecializedRuleMappingStatus,
+    SpecializedRuleSourceBasis,
+    SpecializedRuleType,
+)
 
 GENERATED_DIR = Path(__file__).resolve().parent.parent / "generated"
 
@@ -499,6 +516,74 @@ def generate_decision_enums_ts() -> None:
     write_text(GENERATED_DIR / "decision.enums.ts", "\n".join(blocks))
 
 
+def generate_specialized_evaluation_enums_ts() -> None:
+    blocks = [
+        TS_HEADER,
+        "export const SPECIALIZED_EVALUATION_SCHEMA_VERSION = "
+        f'"{SPECIALIZED_EVALUATION_SCHEMA_VERSION}";\n',
+        ts_const_block(
+            "SPECIALIZED_EVALUATION_DOMAIN_VALUES",
+            "SpecializedEvaluationDomainValue",
+            SpecializedEvaluationDomain,
+        ),
+        ts_const_block(
+            "SPECIALIZED_EVALUATION_JOB_STATUS_VALUES",
+            "SpecializedEvaluationJobStatusValue",
+            SpecializedEvaluationJobStatus,
+        ),
+        ts_const_block(
+            "SPECIALIZED_EVALUATION_RUN_STATUS_VALUES",
+            "SpecializedEvaluationRunStatusValue",
+            SpecializedEvaluationRunStatus,
+        ),
+        ts_const_block(
+            "SPECIALIZED_EVALUATION_RESULT_STATUS_VALUES",
+            "SpecializedEvaluationResultStatusValue",
+            SpecializedEvaluationResultStatus,
+        ),
+        ts_const_block(
+            "SPECIALIZED_EVALUATION_REVIEW_STATUS_VALUES",
+            "SpecializedEvaluationReviewStatusValue",
+            SpecializedEvaluationReviewStatus,
+        ),
+        ts_const_block(
+            "SPECIALIZED_RULE_TYPE_VALUES", "SpecializedRuleTypeValue", SpecializedRuleType
+        ),
+        ts_const_block(
+            "SPECIALIZED_RULE_MAPPING_STATUS_VALUES",
+            "SpecializedRuleMappingStatusValue",
+            SpecializedRuleMappingStatus,
+        ),
+        ts_const_block(
+            "SPECIALIZED_OPERATOR_VALUES", "SpecializedOperatorValue", SpecializedOperator
+        ),
+        ts_const_block(
+            "SPECIALIZED_EVIDENCE_VALIDATION_STATUS_VALUES",
+            "SpecializedEvidenceValidationStatusValue",
+            SpecializedEvidenceValidationStatus,
+        ),
+        ts_const_block(
+            "SPECIALIZED_DATA_USABILITY_VALUES",
+            "SpecializedDataUsabilityValue",
+            SpecializedDataUsability,
+        ),
+        ts_const_block(
+            "SPECIALIZED_RULE_SOURCE_BASIS_VALUES",
+            "SpecializedRuleSourceBasisValue",
+            SpecializedRuleSourceBasis,
+        ),
+        ts_const_block(
+            "SPECIALIZED_EXPLANATION_CODE_VALUES",
+            "SpecializedExplanationCodeValue",
+            SpecializedExplanationCode,
+        ),
+        ts_const_block(
+            "SPECIALIZED_ERROR_CODE_VALUES", "SpecializedErrorCodeValue", SpecializedErrorCode
+        ),
+    ]
+    write_text(GENERATED_DIR / "specialized-evaluation.enums.ts", "\n".join(blocks))
+
+
 def main() -> int:
     try:
         generate_json_schema(CompanyProfileContracts, "company-profile.schema.json")
@@ -511,7 +596,9 @@ def main() -> int:
         generate_json_schema(ManualImportContracts, "manual-import.schema.json")
         generate_json_schema(DocumentExtractionContracts, "document-extraction.schema.json")
         generate_json_schema(DecisionContracts, "decision.schema.json")
+        generate_json_schema(SpecializedEvaluationContracts, "specialized-evaluation.schema.json")
         generate_decision_enums_ts()
+        generate_specialized_evaluation_enums_ts()
         generate_requirement_enums_ts()
         generate_company_profile_enums_ts()
         generate_financial_evaluation_enums_ts()

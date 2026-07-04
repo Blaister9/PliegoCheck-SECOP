@@ -38,6 +38,9 @@ El validador rechaza segmentos ajenos al documento, citas inexistentes, ubicacio
 evidencias vencidas. Los enlaces sin segmento son posibles solo como soporte documental de nivel
 documento y quedan sujetos a revision.
 
+Los evaluadores especializados leen estos enlaces desde el snapshot publicado. Un registro soportado
+por evidencia rechazada, vencida o conflictiva no se trata como cumplimiento automatico.
+
 ## Privacidad
 
 Los documentos empresariales pueden incluir datos financieros y personales. La UI y la API exponen

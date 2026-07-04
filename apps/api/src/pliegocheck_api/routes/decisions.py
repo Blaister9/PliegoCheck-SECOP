@@ -35,10 +35,13 @@ from pliegocheck_api.models import (
     DecisionReview,
     DecisionRuleEvaluationRecord,
     DecisionRun,
+    FinancialEvaluationResult,
     FinancialEvaluationRun,
     Process,
     Requirement,
     RequirementNormalizationRun,
+    SpecializedEvaluationResult,
+    SpecializedEvaluationRun,
 )
 from pliegocheck_schemas import (
     CompanySnapshotStatus,
@@ -59,6 +62,7 @@ from pliegocheck_schemas import (
     DecisionRunStatus,
     FinancialEvaluationRunStatus,
     RequirementNormalizationStatus,
+    SpecializedEvaluationRunStatus,
 )
 from pliegocheck_schemas import (
     DecisionActionItem as DecisionActionItemContract,
@@ -179,6 +183,61 @@ def decision_readiness(
                     mandatory_total=mandatory_total,
                     adapter_available=adapter_available,
                 )
+            )
+        if financial_run is not None and snapshot is not None:
+            financial_results = list(
+                session.scalars(
+                    select(FinancialEvaluationResult)
+                    .where(FinancialEvaluationResult.run_id == financial_run.id)
+                    .order_by(FinancialEvaluationResult.requirement_id.asc())
+                ).all()
+            )
+            specialized_runs = list(
+                session.scalars(
+                    select(SpecializedEvaluationRun).where(
+                        SpecializedEvaluationRun.process_id == process_id,
+                        SpecializedEvaluationRun.normalization_run_id == normalization_run.id,
+                        SpecializedEvaluationRun.company_id == financial_run.company_id,
+                        SpecializedEvaluationRun.company_profile_snapshot_id == snapshot.id,
+                        SpecializedEvaluationRun.status.in_(
+                            [
+                                SpecializedEvaluationRunStatus.COMPLETED.value,
+                                SpecializedEvaluationRunStatus.COMPLETED_WITH_WARNINGS.value,
+                            ]
+                        ),
+                    )
+                ).all()
+            )
+            specialized_results: list[SpecializedEvaluationResult] = []
+            if specialized_runs:
+                specialized_results = list(
+                    session.scalars(
+                        select(SpecializedEvaluationResult)
+                        .where(
+                            SpecializedEvaluationResult.run_id.in_(
+                                [specialized_run.id for specialized_run in specialized_runs]
+                            )
+                        )
+                        .order_by(SpecializedEvaluationResult.requirement_id.asc())
+                    ).all()
+                )
+            findings = DEFAULT_ADAPTER_REGISTRY.collect_all_findings(
+                requirements=requirements,
+                context={
+                    "financial_results_by_requirement": {
+                        result.requirement_id: result for result in financial_results
+                    },
+                    "financial_evaluation_run_id": financial_run.id,
+                    "specialized_results_by_requirement": {
+                        result.requirement_id: result for result in specialized_results
+                    },
+                },
+            )
+            not_evaluated_mandatory = sum(
+                1
+                for finding in findings
+                if finding.applicability == DecisionFindingApplicability.MANDATORY
+                and finding.outcome == DecisionFindingOutcome.NOT_EVALUATED
             )
         if not requirements:
             input_errors.append(DecisionErrorCode.DECISION_INPUT_NOT_READY.value)

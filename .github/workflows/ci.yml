@@ -109,6 +109,12 @@ jobs:
       - name: Evals deterministas de evaluacion financiera
         run: pnpm financial:eval
 
+      - name: Pruebas de evaluadores especializados
+        run: pnpm specialized:test
+
+      - name: Evals deterministas de evaluadores especializados
+        run: pnpm specialized:eval
+
       - name: Politica de decision valida
         run: pnpm decision:policy-check
 

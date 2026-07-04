@@ -22,6 +22,10 @@ Cada requisito normalizado que llega al motor debe contener, como mínimo:
 > evaluacion financiera completada y politica versionada. Actualmente solo existe el adaptador
 > especializado `FINANCIAL`; los requisitos obligatorios de otras categorias se materializan como
 > `NOT_EVALUATED` y bloquean `GO`.
+>
+> Nota Microfase 8: el motor tambien consume resultados especializados juridicos, de experiencia y
+> tecnicos cuando sus runs estan completados para la misma normalizacion, empresa y snapshot. Estos
+> evaluadores no emiten GO / NO GO; solo aportan hallazgos canonicos.
 
 ```json
 {
@@ -188,6 +192,16 @@ Con esto, cualquier decisión es reproducible y auditable: misma entrada + misma
 - API: readiness, crear, listar, detalle, retry, review/override y actualizacion de acciones.
 - UI: seccion "Decision preliminar" en el detalle del proceso, con avisos obligatorios, readiness,
   historial, cobertura, reglas, hallazgos, acciones, eventos y revision.
+
+## Implementacion Microfase 8
+
+- Adaptadores especializados para `LEGAL`, `EXPERIENCE` y `TECHNICAL` en el registro de decision.
+- El worker de decision incorpora resultados completados de evaluaciones especializadas al contexto
+  `specialized_results_by_requirement`.
+- Los resultados especializados conservan `source_type = SPECIALIZED_EVALUATION`; requisitos sin
+  resultado siguen materializandose como `NOT_EVALUATED`.
+- Un resultado especializado `UNKNOWN`, `CONFLICTING_EVIDENCE` o con revision humana pendiente
+  bloquea resultados positivos bajo la politica activa.
 
 ## Relación con los agentes
 

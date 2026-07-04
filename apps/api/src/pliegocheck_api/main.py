@@ -15,6 +15,7 @@ from pliegocheck_api.routes import (
     health,
     processes,
     requirements,
+    specialized_evaluations,
 )
 from pliegocheck_schemas import ApiError, UploadErrorCode
 
@@ -36,6 +37,7 @@ app.include_router(processes.router)
 app.include_router(requirements.router)
 app.include_router(companies.router)
 app.include_router(financial_evaluations.router)
+app.include_router(specialized_evaluations.router)
 app.include_router(decisions.router)
 
 

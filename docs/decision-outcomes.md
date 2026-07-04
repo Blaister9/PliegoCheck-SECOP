@@ -12,6 +12,7 @@ constituye concepto juridico ni garantiza habilitacion o adjudicacion.
 | `NO_CARGAR` | Hay bloqueo explicito para presentar la oferta (`submission_blocker=true`). |
 | `PENDIENTE_INFORMACION` | Falta informacion, evaluacion, cobertura, revision humana o hay conflicto. |
 
-La ausencia de evaluacion en una dimension nunca se interpreta como cumplimiento. En Microfase 7 el
-unico adaptador especializado disponible es `FINANCIAL`; los demas requisitos obligatorios quedan
+La ausencia de evaluacion en una dimension nunca se interpreta como cumplimiento. Desde Microfase 8
+existen adaptadores para `FINANCIAL`, `LEGAL`, `EXPERIENCE` y `TECHNICAL`. Los demas requisitos
+obligatorios, o los requisitos de esos dominios sin run especializado completado, quedan
 `NOT_EVALUATED` y bloquean `GO`.

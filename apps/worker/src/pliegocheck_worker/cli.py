@@ -35,6 +35,10 @@ from pliegocheck_worker.normalization.providers import (
     OpenAIResponsesNormalizationProvider,
 )
 from pliegocheck_worker.runner import drain, run_once
+from pliegocheck_worker.specialized.orchestrator import (
+    specialized_drain,
+    specialized_run_once,
+)
 
 logger = logging.getLogger(SERVICE_NAME)
 
@@ -100,6 +104,18 @@ def run_decision_once(worker_id: str | None) -> int:
 
 def run_decision_drain(max_jobs: int, worker_id: str | None) -> int:
     result = decision_drain(max_jobs=max_jobs, worker_id=worker_id)
+    print(json.dumps(result, sort_keys=True))
+    return 0
+
+
+def run_specialized_once(worker_id: str | None) -> int:
+    result = specialized_run_once(worker_id=worker_id)
+    print(json.dumps(result, sort_keys=True))
+    return 0
+
+
+def run_specialized_drain(max_jobs: int, worker_id: str | None) -> int:
+    result = specialized_drain(max_jobs=max_jobs, worker_id=worker_id)
     print(json.dumps(result, sort_keys=True))
     return 0
 
@@ -216,6 +232,17 @@ def main(argv: list[str] | None = None) -> int:
     )
     decision_drain_parser.add_argument("--max-jobs", type=int, default=100)
     decision_drain_parser.add_argument("--worker-id", default=None)
+    specialized_once = subparsers.add_parser(
+        "specialized-run-once",
+        help="Procesa como maximo una evaluacion especializada",
+    )
+    specialized_once.add_argument("--worker-id", default=None)
+    specialized_drain_parser = subparsers.add_parser(
+        "specialized-drain",
+        help="Procesa evaluaciones especializadas pendientes y termina",
+    )
+    specialized_drain_parser.add_argument("--max-jobs", type=int, default=100)
+    specialized_drain_parser.add_argument("--worker-id", default=None)
     subparsers.add_parser(
         "normalization-smoke",
         help="Prueba manual opcional contra OpenAI con fixture sintetico",
@@ -240,6 +267,10 @@ def main(argv: list[str] | None = None) -> int:
         return run_decision_once(args.worker_id)
     if args.command == "decision-drain":
         return run_decision_drain(args.max_jobs, args.worker_id)
+    if args.command == "specialized-run-once":
+        return run_specialized_once(args.worker_id)
+    if args.command == "specialized-drain":
+        return run_specialized_drain(args.max_jobs, args.worker_id)
     if args.command == "normalization-smoke":
         return run_normalization_smoke()
     parser.error(f"comando no reconocido: {args.command}")

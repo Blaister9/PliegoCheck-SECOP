@@ -27,3 +27,6 @@ completitud calculada. No incluye rutas fisicas de almacenamiento.
 - La decision preliminar de Microfase 7 referencia siempre un snapshot publicado. El digest de ese
   snapshot participa en el manifiesto de entrada e idempotencia del `DecisionRun`; cambios posteriores
   del perfil no recalculan historicos.
+- Las evaluaciones especializadas de Microfase 8 tambien referencian snapshots publicados. El
+  `input_manifest` incluye digest del snapshot, requisitos, reglas y fecha efectiva; cambios
+  posteriores del perfil exigen nuevo snapshot y nuevo run.

@@ -22,6 +22,9 @@ from pliegocheck_schemas import (
     RequirementCriticality,
     RequirementModality,
     RequirementScope,
+    SpecializedEvaluationDomain,
+    SpecializedEvaluationResultStatus,
+    SpecializedEvaluationReviewStatus,
 )
 
 CATEGORY_TO_DOMAIN: dict[str, DecisionEvaluationDomain] = {
@@ -50,6 +53,29 @@ _FINANCIAL_TO_FINDING_OUTCOME: dict[str, DecisionFindingOutcome] = {
     FinancialEvaluationResultStatus.CONFLICTING_EVIDENCE.value: (
         DecisionFindingOutcome.CONFLICTING_EVIDENCE
     ),
+}
+
+_SPECIALIZED_TO_FINDING_OUTCOME: dict[str, DecisionFindingOutcome] = {
+    SpecializedEvaluationResultStatus.COMPLIES.value: DecisionFindingOutcome.COMPLIES,
+    SpecializedEvaluationResultStatus.DOES_NOT_COMPLY.value: DecisionFindingOutcome.DOES_NOT_COMPLY,
+    SpecializedEvaluationResultStatus.PARTIAL.value: DecisionFindingOutcome.PARTIAL,
+    SpecializedEvaluationResultStatus.UNKNOWN.value: DecisionFindingOutcome.UNKNOWN,
+    SpecializedEvaluationResultStatus.NOT_APPLICABLE.value: DecisionFindingOutcome.NOT_APPLICABLE,
+    SpecializedEvaluationResultStatus.CONFLICTING_EVIDENCE.value: (
+        DecisionFindingOutcome.CONFLICTING_EVIDENCE
+    ),
+}
+
+SPECIALIZED_DOMAIN_TO_DECISION_DOMAIN: dict[str, DecisionEvaluationDomain] = {
+    SpecializedEvaluationDomain.LEGAL.value: DecisionEvaluationDomain.LEGAL,
+    SpecializedEvaluationDomain.EXPERIENCE.value: DecisionEvaluationDomain.EXPERIENCE,
+    SpecializedEvaluationDomain.TECHNICAL.value: DecisionEvaluationDomain.TECHNICAL,
+    SpecializedEvaluationDomain.WORKFORCE.value: DecisionEvaluationDomain.WORKFORCE,
+    SpecializedEvaluationDomain.DOCUMENTARY.value: DecisionEvaluationDomain.DOCUMENTARY,
+    SpecializedEvaluationDomain.GUARANTEE.value: DecisionEvaluationDomain.GUARANTEE,
+    SpecializedEvaluationDomain.OPERATIONAL.value: DecisionEvaluationDomain.OPERATIONAL,
+    SpecializedEvaluationDomain.ORGANIZATIONAL.value: DecisionEvaluationDomain.ORGANIZATIONAL,
+    SpecializedEvaluationDomain.RISK.value: DecisionEvaluationDomain.RISK_AND_INELIGIBILITY,
 }
 
 
@@ -190,6 +216,86 @@ class FinancialDecisionEvaluationAdapter:
         )
 
 
+class SpecializedDecisionEvaluationAdapter:
+    """Transforma resultados juridicos, de experiencia y tecnicos en hallazgos canonicos."""
+
+    def __init__(self, domain: SpecializedEvaluationDomain, categories: set[str]) -> None:
+        self.domain = SPECIALIZED_DOMAIN_TO_DECISION_DOMAIN[domain.value]
+        self._specialized_domain = domain
+        self._categories = categories
+
+    def supports(self, requirement: Any) -> bool:
+        return bool(requirement.category in self._categories)
+
+    def collect_findings(
+        self, *, requirements: list[Any], context: dict[str, Any]
+    ) -> list[DecisionInputFinding]:
+        results_by_requirement: dict[UUID, Any] = context.get(
+            "specialized_results_by_requirement", {}
+        )
+        findings: list[DecisionInputFinding] = []
+        for requirement in requirements:
+            if not self.supports(requirement):
+                continue
+            result = results_by_requirement.get(requirement.id)
+            if result is None or result.domain != self._specialized_domain.value:
+                continue
+            findings.append(self._to_finding(requirement, result))
+        return findings
+
+    def _to_finding(self, requirement: Any, result: Any) -> DecisionInputFinding:
+        effective_status = result.status
+        review_status = result.review_status
+        requires_review = bool(result.requires_human_review)
+        if (
+            review_status == SpecializedEvaluationReviewStatus.OVERRIDDEN.value
+            and result.reviewed_status
+        ):
+            effective_status = result.reviewed_status
+            requires_review = False
+        elif review_status == SpecializedEvaluationReviewStatus.CONFIRMED.value:
+            requires_review = False
+        elif review_status == SpecializedEvaluationReviewStatus.REJECTED.value:
+            requires_review = True
+        outcome = _SPECIALIZED_TO_FINDING_OUTCOME.get(
+            effective_status, DecisionFindingOutcome.UNKNOWN
+        )
+        evidence_refs = result.evidence_refs if isinstance(result.evidence_refs, dict) else {}
+        references = [
+            {"type": "company_evidence_link", "id": str(link.get("id"))}
+            for link in evidence_refs.get("links", [])
+            if isinstance(link, dict) and link.get("id")
+        ]
+        references.append({"type": "specialized_evaluation_result", "id": str(result.id)})
+        explanation_parameters = (
+            result.explanation_parameters if isinstance(result.explanation_parameters, dict) else {}
+        )
+        usability = explanation_parameters.get("usability")
+        warning_codes: list[str] = []
+        if usability and usability != "VERIFIED":
+            warning_codes.append(f"EVIDENCE_{usability}")
+        if explanation_parameters.get("warning"):
+            warning_codes.append(str(explanation_parameters["warning"]))
+        return DecisionInputFinding(
+            **_base_finding_kwargs(requirement),
+            source_type=DecisionFindingSourceType.SPECIALIZED_EVALUATION,
+            source_run_id=result.run_id,
+            source_result_id=result.id,
+            outcome=outcome,
+            applicability=applicability_for_requirement(requirement, outcome),
+            evidence_quality=str(usability) if usability else None,
+            review_status=review_status,
+            requires_human_review=requires_review,
+            is_blocking=False,
+            is_remediable=False,
+            partner_solvable=False,
+            submission_blocker=False,
+            condition_codes=[],
+            warning_codes=warning_codes,
+            evidence_references=references,
+        )
+
+
 def not_evaluated_finding(requirement: Any) -> DecisionInputFinding:
     """Hallazgo NOT_EVALUATED para requisitos sin adaptador o sin resultado."""
     outcome = DecisionFindingOutcome.NOT_EVALUATED
@@ -216,19 +322,42 @@ def not_evaluated_finding(requirement: Any) -> DecisionInputFinding:
 class DecisionAdapterRegistry:
     """Registro de adaptadores disponibles por dominio."""
 
-    def __init__(self, adapters: list[Any] | None = None) -> None:
-        self._adapters = (
-            adapters if adapters is not None else [FinancialDecisionEvaluationAdapter()]
-        )
+    def __init__(self, adapters: list[DecisionEvaluationAdapter] | None = None) -> None:
+        default_adapters: list[DecisionEvaluationAdapter] = [
+            FinancialDecisionEvaluationAdapter(),
+            SpecializedDecisionEvaluationAdapter(
+                SpecializedEvaluationDomain.LEGAL,
+                {
+                    RequirementCategory.LEGAL.value,
+                    RequirementCategory.RISK_AND_INELIGIBILITY.value,
+                    RequirementCategory.DOCUMENTARY.value,
+                    RequirementCategory.GUARANTEE.value,
+                },
+            ),
+            SpecializedDecisionEvaluationAdapter(
+                SpecializedEvaluationDomain.EXPERIENCE,
+                {RequirementCategory.EXPERIENCE.value},
+            ),
+            SpecializedDecisionEvaluationAdapter(
+                SpecializedEvaluationDomain.TECHNICAL,
+                {
+                    RequirementCategory.TECHNICAL.value,
+                    RequirementCategory.OPERATIONAL.value,
+                    RequirementCategory.WORKFORCE.value,
+                    RequirementCategory.ORGANIZATIONAL.value,
+                },
+            ),
+        ]
+        self._adapters = adapters if adapters is not None else default_adapters
 
     @property
-    def adapters(self) -> list[Any]:
+    def adapters(self) -> list[DecisionEvaluationAdapter]:
         return list(self._adapters)
 
     def available_domains(self) -> list[DecisionEvaluationDomain]:
         return [adapter.domain for adapter in self._adapters]
 
-    def adapter_for(self, requirement: Any) -> Any | None:
+    def adapter_for(self, requirement: Any) -> DecisionEvaluationAdapter | None:
         for adapter in self._adapters:
             if adapter.supports(requirement):
                 return adapter
