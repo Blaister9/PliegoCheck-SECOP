@@ -23,6 +23,9 @@
             },
             {
               "$ref": "#/$defs/DecisionErrorCode"
+            },
+            {
+              "$ref": "#/$defs/DecisionReportErrorCode"
             }
           ]
         },
@@ -86,6 +89,24 @@
         "DECISION_ENGINE_FAILED",
         "INVALID_DECISION_OVERRIDE",
         "DECISION_ACTION_NOT_FOUND"
+      ],
+      "type": "string"
+    },
+    "DecisionReportErrorCode": {
+      "enum": [
+        "DECISION_REPORT_ALREADY_QUEUED",
+        "DECISION_REPORT_ALREADY_COMPLETED",
+        "DECISION_REPORT_NOT_FOUND",
+        "DECISION_REPORT_INPUT_NOT_READY",
+        "DECISION_REPORT_DECISION_NOT_COMPLETED",
+        "DECISION_REPORT_TEMPLATE_NOT_FOUND",
+        "DECISION_REPORT_TEMPLATE_INVALID",
+        "DECISION_REPORT_RENDER_FAILED",
+        "DECISION_REPORT_STORAGE_FAILED",
+        "DECISION_REPORT_ARTIFACT_NOT_FOUND",
+        "DECISION_REPORT_PACKAGE_NOT_FOUND",
+        "DECISION_REPORT_DIGEST_MISMATCH",
+        "DECISION_REPORT_FAILED"
       ],
       "type": "string"
     },

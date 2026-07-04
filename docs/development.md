@@ -1,6 +1,6 @@
 # Guia de desarrollo - PliegoCheck-SECOP
 
-Como trabajar en el monorepo tras la Microfase 8. Las decisiones de stack estan en
+Como trabajar en el monorepo tras la Microfase 9. Las decisiones de stack estan en
 [ADR-001](ADR-001-stack-and-architecture.md); la extraccion documental esta en
 [ADR-003](ADR-003-document-extraction.md); las reglas para agentes de programacion, en
 [AGENTS.md](../AGENTS.md).
@@ -53,6 +53,8 @@ docs/        Documentacion fundacional, guias y ADRs.
 - **Drenar evaluaciones especializadas:** `pnpm specialized:drain -- --max-jobs 10`
 - **Procesar decision preliminar:** `pnpm decision:run-once`
 - **Drenar decisiones:** `pnpm decision:drain -- --max-jobs 10`
+- **Procesar reporte de decision:** `pnpm report:run-once`
+- **Drenar reportes:** `pnpm report:drain -- --max-jobs 10`
 - **PostgreSQL:** `pnpm infra:up` publica PostgreSQL en `localhost:56543`
 - **Migraciones:** `pnpm db:migrate`; `pnpm db:check`
 
@@ -129,6 +131,8 @@ pnpm specialized:eval
 pnpm decision:policy-check
 pnpm decision:test
 pnpm decision:eval
+pnpm report:test
+pnpm report:eval
 pnpm schemas:check
 pnpm build
 ```
@@ -137,7 +141,8 @@ La CI ejecuta instalacion reproducible, migraciones, `db:check`, contratos sincr
 perfil de empresa y snapshot, pruebas y evals de normalizacion, formato, lint, typecheck, pruebas,
 pruebas y evals de evaluacion financiera, pruebas y evals de evaluadores especializados,
 politica/pruebas/evals de decision, pruebas dedicadas de extraccion, build web y verificacion de
-repositorio sin cambios tras generar.
+repositorio sin cambios tras generar. Desde Microfase 9 tambien ejecuta pruebas y evals de reporte
+ejecutivo.
 
 ## Estado funcional real
 
@@ -173,7 +178,9 @@ Implementado:
 - worker `decision-run-once` / `decision-drain`, API y UI de decision preliminar;
 - evaluadores juridico, experiencia y tecnico deterministas contra snapshots publicados;
 - worker `specialized-run-once` / `specialized-drain`, API, UI, revision auditada y adaptadores de
-  decision para resultados especializados.
+  decision para resultados especializados;
+- reporte ejecutivo y paquete de decision con templates versionados, artefactos
+  HTML/Markdown/JSON/CSV/manifest/ZIP, cola PostgreSQL, worker, API, UI y evals deterministas.
 
 No implementado todavia: OCR, integracion automatica con SECOP II, autenticacion y S3 real.
 Categorias fuera de financiero, juridico, experiencia y tecnico permanecen `NOT_EVALUATED` y

@@ -10,6 +10,7 @@ from pliegocheck_api.errors import DomainError
 from pliegocheck_api.routes import (
     companies,
     contracts,
+    decision_reports,
     decisions,
     financial_evaluations,
     health,
@@ -39,6 +40,7 @@ app.include_router(companies.router)
 app.include_router(financial_evaluations.router)
 app.include_router(specialized_evaluations.router)
 app.include_router(decisions.router)
+app.include_router(decision_reports.router)
 
 
 @app.exception_handler(DomainError)

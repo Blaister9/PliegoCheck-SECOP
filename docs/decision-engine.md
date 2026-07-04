@@ -26,6 +26,9 @@ Cada requisito normalizado que llega al motor debe contener, como mínimo:
 > Nota Microfase 8: el motor tambien consume resultados especializados juridicos, de experiencia y
 > tecnicos cuando sus runs estan completados para la misma normalizacion, empresa y snapshot. Estos
 > evaluadores no emiten GO / NO GO; solo aportan hallazgos canonicos.
+>
+> Nota Microfase 9: el reporte ejecutivo consume una `DecisionRun` completada y sus datos
+> persistidos. No vuelve a ejecutar este motor, no modifica acciones y no cambia el resultado.
 
 ```json
 {

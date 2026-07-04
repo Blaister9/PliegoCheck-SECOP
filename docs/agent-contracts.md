@@ -330,3 +330,4 @@ Los seis evaluadores comparten estructura de contrato; se listan sus diferencias
 | Verificar respaldo de evidencia | EvidenceVerificationAgent |
 | **Emitir la decisión final** | **Motor determinístico (no LLM)** |
 | Explicar la decisión | DecisionExplanationAgent |
+| Generar reporte ejecutivo | Report worker deterministico |

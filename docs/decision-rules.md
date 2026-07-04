@@ -52,3 +52,8 @@ Los estados posibles son `TRIGGERED`, `NOT_TRIGGERED`, `NOT_APPLICABLE` e `INDET
 
 Las acciones se generan deterministamente desde reglas disparadas. No se inventa `due_at`. Cambiar
 una accion a `ACKNOWLEDGED`, `RESOLVED` o `DISMISSED` no recalcula el run historico.
+
+## Reportes
+
+El paquete de decision incluye acciones y reglas aplicadas como snapshot de lectura. La generacion
+del reporte no crea acciones nuevas, no actualiza estados y no dispara reglas adicionales.

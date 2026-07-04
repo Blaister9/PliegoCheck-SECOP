@@ -16,3 +16,7 @@ La ausencia de evaluacion en una dimension nunca se interpreta como cumplimiento
 existen adaptadores para `FINANCIAL`, `LEGAL`, `EXPERIENCE` y `TECHNICAL`. Los demas requisitos
 obligatorios, o los requisitos de esos dominios sin run especializado completado, quedan
 `NOT_EVALUATED` y bloquean `GO`.
+
+Los reportes ejecutivos de Microfase 9 solo muestran el resultado existente. Si el outcome es
+`PENDIENTE_INFORMACION`, el reporte debe conservarlo y explicar faltantes; nunca lo convierte en
+`GO`.

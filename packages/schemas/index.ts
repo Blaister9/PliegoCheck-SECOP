@@ -109,6 +109,27 @@ export type {
 } from "./generated/decision";
 export * from "./generated/decision.enums";
 export type {
+  DecisionActionExportRow,
+  DecisionReportArtifactManifest,
+  DecisionReportArtifactMetadata,
+  DecisionReportArtifactType,
+  DecisionReportJobStatus,
+  DecisionReportJobSummary,
+  DecisionReportManifest,
+  DecisionReportPackageDetail,
+  DecisionReportPackageList,
+  DecisionReportPackageStatus,
+  DecisionReportPackageSummary,
+  DecisionReportPreview,
+  DecisionReportQueueResponse,
+  DecisionReportRequest,
+  DecisionReportRetryRequest,
+  DecisionReportSectionSummary,
+  EvidenceIndexEntry,
+  RequirementMatrixRow,
+} from "./generated/decision-report";
+export * from "./generated/decision-report.enums";
+export type {
   SpecializedEvaluationDomain,
   SpecializedEvaluationEvidence,
   SpecializedEvaluationJobStatus,

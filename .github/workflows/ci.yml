@@ -124,6 +124,12 @@ jobs:
       - name: Evals deterministas de decision
         run: pnpm decision:eval
 
+      - name: Pruebas de reporte de decision
+        run: pnpm report:test
+
+      - name: Evals deterministas de reporte de decision
+        run: pnpm report:eval
+
       - name: Formato
         run: pnpm format:check
 

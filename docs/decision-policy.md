@@ -45,3 +45,9 @@ El manifiesto de entrada incluye proceso, normalizacion, snapshot de empresa, ev
 requisitos, hash de politica y version de motor. `effective_at` se persiste, pero se excluye del
 digest de idempotencia para evitar que el reloj cree duplicados arbitrarios. `force=true` crea un
 nuevo run y conserva el historico.
+
+## Reportes
+
+Los reportes de Microfase 9 tienen su propio input manifest y digest. Ese digest resume la decision
+ya persistida, reviews, acciones, evaluadores y templates; no reemplaza ni reinterpreta el digest de
+la `DecisionRun`.

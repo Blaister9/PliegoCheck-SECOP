@@ -18,6 +18,7 @@ import type {
 } from "@pliegocheck/schemas";
 import { EXTRACTED_SEGMENT_TYPE_VALUES } from "@pliegocheck/schemas";
 import { DecisionPanel } from "./DecisionPanel";
+import { DecisionReportPanel } from "./DecisionReportPanel";
 import { SpecializedEvaluationPanel } from "./SpecializedEvaluationPanel";
 import {
   ApiClientError,
@@ -400,6 +401,8 @@ export function ProcessDetailClient({ processId }: { processId: string }) {
       />
 
       <DecisionPanel processId={processId} />
+
+      <DecisionReportPanel processId={processId} />
 
       <section>
         <div className="section-heading">

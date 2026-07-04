@@ -1,0 +1,15 @@
+{
+  "template_name": "pliegocheck-executive-report",
+  "semantic_version": "1.0.0",
+  "artifact_filenames": [
+    "executive-report.html",
+    "executive-report.md",
+    "requirements-matrix.json",
+    "requirements-matrix.csv",
+    "evidence-index.json",
+    "actions.json",
+    "decision-manifest.json",
+    "package-manifest.json",
+    "decision-package.zip"
+  ]
+}

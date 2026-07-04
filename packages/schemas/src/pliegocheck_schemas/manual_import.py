@@ -31,6 +31,7 @@ from pydantic import (
 
 from pliegocheck_schemas.company_profile import CompanyErrorCode
 from pliegocheck_schemas.decision import DecisionErrorCode
+from pliegocheck_schemas.decision_report import DecisionReportErrorCode
 from pliegocheck_schemas.document_extraction import DocumentProcessingStatus, ExtractionErrorCode
 from pliegocheck_schemas.financial_evaluation import FinancialErrorCode
 from pliegocheck_schemas.normalized_requirement import NormalizationErrorCode
@@ -104,6 +105,7 @@ ApiErrorCode = (
     | CompanyErrorCode
     | FinancialErrorCode
     | DecisionErrorCode
+    | DecisionReportErrorCode
 )
 
 

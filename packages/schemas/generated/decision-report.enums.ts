@@ -1,0 +1,56 @@
+// Archivo generado automaticamente por packages/schemas/scripts/generate.py.
+// No editar a mano: la definicion canonica son los modelos Pydantic de
+// packages/schemas/src/pliegocheck_schemas/.
+
+export const DECISION_REPORT_SCHEMA_VERSION = "1.0.0";
+
+export const DECISION_REPORT_JOB_STATUS_VALUES = [
+  "PENDING",
+  "PROCESSING",
+  "COMPLETED",
+  "COMPLETED_WITH_WARNINGS",
+  "FAILED",
+  "CANCELLED",
+] as const;
+export type DecisionReportJobStatusValue = (typeof DECISION_REPORT_JOB_STATUS_VALUES)[number];
+
+export const DECISION_REPORT_PACKAGE_STATUS_VALUES = [
+  "DRAFT",
+  "GENERATING",
+  "COMPLETED",
+  "COMPLETED_WITH_WARNINGS",
+  "FAILED",
+  "ARCHIVED",
+] as const;
+export type DecisionReportPackageStatusValue =
+  (typeof DECISION_REPORT_PACKAGE_STATUS_VALUES)[number];
+
+export const DECISION_REPORT_ARTIFACT_TYPE_VALUES = [
+  "EXECUTIVE_HTML",
+  "EXECUTIVE_MARKDOWN",
+  "REQUIREMENTS_MATRIX_JSON",
+  "REQUIREMENTS_MATRIX_CSV",
+  "EVIDENCE_INDEX_JSON",
+  "ACTIONS_JSON",
+  "DECISION_MANIFEST_JSON",
+  "PACKAGE_MANIFEST_JSON",
+  "PACKAGE_ZIP",
+] as const;
+export type DecisionReportArtifactTypeValue = (typeof DECISION_REPORT_ARTIFACT_TYPE_VALUES)[number];
+
+export const DECISION_REPORT_ERROR_CODE_VALUES = [
+  "DECISION_REPORT_ALREADY_QUEUED",
+  "DECISION_REPORT_ALREADY_COMPLETED",
+  "DECISION_REPORT_NOT_FOUND",
+  "DECISION_REPORT_INPUT_NOT_READY",
+  "DECISION_REPORT_DECISION_NOT_COMPLETED",
+  "DECISION_REPORT_TEMPLATE_NOT_FOUND",
+  "DECISION_REPORT_TEMPLATE_INVALID",
+  "DECISION_REPORT_RENDER_FAILED",
+  "DECISION_REPORT_STORAGE_FAILED",
+  "DECISION_REPORT_ARTIFACT_NOT_FOUND",
+  "DECISION_REPORT_PACKAGE_NOT_FOUND",
+  "DECISION_REPORT_DIGEST_MISMATCH",
+  "DECISION_REPORT_FAILED",
+] as const;
+export type DecisionReportErrorCodeValue = (typeof DECISION_REPORT_ERROR_CODE_VALUES)[number];

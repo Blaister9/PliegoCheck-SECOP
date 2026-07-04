@@ -73,7 +73,9 @@ def clean_database_and_storage(migrated_engine: Engine) -> Generator[None, None,
     with migrated_engine.begin() as connection:
         connection.execute(
             text(
-                "TRUNCATE TABLE decision_events, decision_reviews, "
+                "TRUNCATE TABLE decision_report_events, decision_report_sections, "
+                "decision_report_artifacts, decision_report_packages, decision_report_jobs, "
+                "decision_events, decision_reviews, "
                 "decision_action_items, decision_rule_evaluations, "
                 "decision_input_findings, decision_runs, decision_jobs, "
                 "decision_policy_versions, "
