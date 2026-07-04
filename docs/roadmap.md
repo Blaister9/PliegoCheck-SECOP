@@ -15,7 +15,8 @@ Microfase 7: motor deterministico de decision (completada)
 Microfase 8: evaluadores especializados juridico, tecnico y de experiencia (completada)
 Microfase 9: reporte ejecutivo y paquete de decision (completada)
 Microfase 10: endurecimiento operativo, autenticacion y preparacion de piloto (completada)
-Microfase 11: piloto controlado end-to-end con datos sinteticos y retroalimentacion (siguiente)
+Microfase 11: piloto controlado end-to-end con datos sinteticos y retroalimentacion (completada)
+Microfase 12: ajustes post-piloto y preparacion de despliegue controlado (siguiente)
 ```
 
 ## Microfase 0 - Fundacion documental - completada
@@ -123,11 +124,22 @@ Microfase 11: piloto controlado end-to-end con datos sinteticos y retroalimentac
   auditoria operacional, configuracion validada, headers, readiness, backup local, pantallas admin,
   eval de piloto, pruebas, CI y documentacion.
 
-## Microfase 11 - Piloto controlado end-to-end con datos sinteticos y retroalimentacion
+## Microfase 11 - Piloto controlado end-to-end con datos sinteticos y retroalimentacion - completada
 
 - **Objetivo:** ejecutar un piloto completo con datos sinteticos y feedback de uso.
-- **Entregable previsto:** guion de demo, casos sinteticos, medicion de tiempos, retroalimentacion
-  de usuarios, bugs priorizados y decision de alcance para siguiente iteracion.
+- **Entregable:** dataset sintetico (`pilot/`), comandos `pnpm pilot:prepare|run|reset|readiness`,
+  eval end-to-end con auth (`evals/pilot-end-to-end`), guion de demo y checklist
+  ([docs/demo-script.md](demo-script.md), [docs/pilot-demo-checklist.md](pilot-demo-checklist.md)),
+  registro de retroalimentacion ([docs/pilot-feedback-log.md](pilot-feedback-log.md)),
+  contratos de piloto (`PilotRunSummary`, `PilotReadiness`, ...) y
+  [ADR-011](ADR-011-controlled-pilot.md). Resultado honesto del dataset:
+  `PENDIENTE_INFORMACION` (no forzado a GO).
+
+## Microfase 12 - Ajustes post-piloto y preparacion de despliegue controlado - siguiente
+
+- **Objetivo:** incorporar la retroalimentacion del piloto y endurecer el despliegue.
+- **Entregable previsto:** correcciones priorizadas del log de retroalimentacion, endurecimiento de
+  despliegue (contenedores, secretos gestionados), y criterios de salida a un piloto con datos reales.
 
 ## Despues del MVP
 

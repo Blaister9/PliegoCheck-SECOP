@@ -1,0 +1,391 @@
+{
+  "$defs": {
+    "PilotDatasetUser": {
+      "additionalProperties": false,
+      "description": "Usuario sintetico del dataset de piloto (sin contrasena versionada).",
+      "properties": {
+        "display_name": {
+          "maxLength": 500,
+          "minLength": 1,
+          "type": "string"
+        },
+        "email": {
+          "maxLength": 500,
+          "minLength": 1,
+          "type": "string"
+        },
+        "roles": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "type": "array"
+        }
+      },
+      "required": ["email", "display_name", "roles"],
+      "type": "object"
+    },
+    "PilotExpectedOutcome": {
+      "additionalProperties": false,
+      "description": "Resultado esperado del dataset sintetico, sin depender de IA real.",
+      "properties": {
+        "action_min": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "decision_outcome": {
+          "type": "string"
+        },
+        "financial_complies_min": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "financial_does_not_comply_min": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "not_evaluated_expected": {
+          "type": "boolean"
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "report_artifact_count": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "unknown_min": {
+          "minimum": 0,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "decision_outcome",
+        "financial_complies_min",
+        "financial_does_not_comply_min",
+        "unknown_min",
+        "not_evaluated_expected",
+        "action_min",
+        "report_artifact_count"
+      ],
+      "type": "object"
+    },
+    "PilotReadiness": {
+      "additionalProperties": false,
+      "description": "Estado de preparacion del entorno de piloto. Solo diagnostico.",
+      "properties": {
+        "admin_user_exists": {
+          "type": "boolean"
+        },
+        "auth_enabled": {
+          "type": "boolean"
+        },
+        "dataset_available": {
+          "type": "boolean"
+        },
+        "environment": {
+          "type": "string"
+        },
+        "is_local_environment": {
+          "type": "boolean"
+        },
+        "pilot_company_present": {
+          "type": "boolean"
+        },
+        "pilot_mode": {
+          "type": "boolean"
+        },
+        "pilot_process_present": {
+          "type": "boolean"
+        },
+        "pilot_users_present": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "ready": {
+          "type": "boolean"
+        },
+        "schema_version": {
+          "const": "1.0.0",
+          "default": "1.0.0",
+          "type": "string"
+        },
+        "warnings": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "environment",
+        "pilot_mode",
+        "auth_enabled",
+        "is_local_environment",
+        "admin_user_exists",
+        "pilot_process_present",
+        "pilot_company_present",
+        "dataset_available",
+        "ready"
+      ],
+      "type": "object"
+    },
+    "PilotRunSummary": {
+      "additionalProperties": false,
+      "description": "Resumen estructurado de una corrida end-to-end del piloto.",
+      "properties": {
+        "artifact_count": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "audit_event_count": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "company_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "decision_outcome": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "decision_run_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "duration_seconds": {
+          "minimum": 0,
+          "type": "number"
+        },
+        "financial_run_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "normalization_run_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "process_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "report_package_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "schema_version": {
+          "const": "1.0.0",
+          "default": "1.0.0",
+          "type": "string"
+        },
+        "snapshot_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "specialized_run_ids": {
+          "items": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "steps": {
+          "items": {
+            "$ref": "#/$defs/PilotStepStatus"
+          },
+          "type": "array"
+        },
+        "steps_failed": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "steps_succeeded": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "steps_total": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "synthetic_data_only": {
+          "const": true,
+          "default": true,
+          "type": "boolean"
+        },
+        "warnings": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "duration_seconds",
+        "steps_total",
+        "steps_succeeded",
+        "steps_failed",
+        "artifact_count",
+        "audit_event_count"
+      ],
+      "type": "object"
+    },
+    "PilotStepName": {
+      "description": "Pasos del flujo end-to-end del piloto.",
+      "enum": [
+        "SEED_USERS",
+        "SEED_PROCESS",
+        "UPLOAD_DOCUMENTS",
+        "EXTRACTION",
+        "NORMALIZATION",
+        "SEED_COMPANY",
+        "PUBLISH_SNAPSHOT",
+        "FINANCIAL_EVALUATION",
+        "LEGAL_EVALUATION",
+        "EXPERIENCE_EVALUATION",
+        "TECHNICAL_EVALUATION",
+        "DECISION",
+        "REPORT_PACKAGE",
+        "PACKAGE_DOWNLOAD",
+        "AUDIT"
+      ],
+      "type": "string"
+    },
+    "PilotStepState": {
+      "description": "Estado de un paso del piloto.",
+      "enum": ["PENDING", "RUNNING", "COMPLETED", "COMPLETED_WITH_WARNINGS", "SKIPPED", "FAILED"],
+      "type": "string"
+    },
+    "PilotStepStatus": {
+      "additionalProperties": false,
+      "description": "Resultado de un paso individual del flujo de piloto.",
+      "properties": {
+        "detail": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "state": {
+          "$ref": "#/$defs/PilotStepState"
+        },
+        "step": {
+          "$ref": "#/$defs/PilotStepName"
+        },
+        "warnings": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "required": ["step", "state"],
+      "type": "object"
+    }
+  },
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "Contenedor para generar JSON Schema con defs compartidos.",
+  "properties": {
+    "dataset_user": {
+      "$ref": "#/$defs/PilotDatasetUser"
+    },
+    "expected_outcome": {
+      "$ref": "#/$defs/PilotExpectedOutcome"
+    },
+    "readiness": {
+      "$ref": "#/$defs/PilotReadiness"
+    },
+    "run_summary": {
+      "$ref": "#/$defs/PilotRunSummary"
+    },
+    "schema_version": {
+      "const": "1.0.0",
+      "default": "1.0.0",
+      "type": "string"
+    },
+    "step_status": {
+      "$ref": "#/$defs/PilotStepStatus"
+    }
+  },
+  "required": ["step_status", "expected_outcome", "run_summary", "dataset_user", "readiness"],
+  "type": "object"
+}

@@ -1,0 +1,5 @@
+{
+  "note": "Dominios evaluados en el piloto. La evaluacion financiera es deterministica; los evaluadores especializados cubren juridico, experiencia y tecnico. Ninguno usa IA.",
+  "financial": true,
+  "specialized_domains": ["LEGAL", "EXPERIENCE", "TECHNICAL"]
+}

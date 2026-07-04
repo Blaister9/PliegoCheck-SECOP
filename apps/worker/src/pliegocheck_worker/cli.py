@@ -133,6 +133,49 @@ def run_specialized_drain(max_jobs: int, worker_id: str | None) -> int:
     return 0
 
 
+def run_pilot_prepare(password: str | None) -> int:
+    from pliegocheck_worker.pilot.orchestrator import DEFAULT_DEMO_PASSWORD, prepare_pilot
+
+    result = prepare_pilot(password=password or DEFAULT_DEMO_PASSWORD)
+    print(json.dumps(result, sort_keys=True))
+    return 0
+
+
+def run_pilot_run(password: str | None) -> int:
+    from pliegocheck_worker.pilot.orchestrator import DEFAULT_DEMO_PASSWORD, run_pilot
+
+    summary = run_pilot(password=password or DEFAULT_DEMO_PASSWORD)
+    print(json.dumps(summary.model_dump(mode="json"), sort_keys=True))
+    return 0
+
+
+def run_pilot_reset(confirm: bool) -> int:
+    from pliegocheck_worker.pilot.orchestrator import reset_pilot
+
+    if not confirm:
+        print(
+            json.dumps(
+                {
+                    "status": "aborted",
+                    "reason": "reset requiere --confirm para eliminar datos de piloto",
+                },
+                sort_keys=True,
+            )
+        )
+        return 1
+    result = reset_pilot(confirm=True)
+    print(json.dumps(result, sort_keys=True))
+    return 0
+
+
+def run_pilot_readiness() -> int:
+    from pliegocheck_worker.pilot.orchestrator import pilot_readiness
+
+    readiness = pilot_readiness()
+    print(json.dumps(readiness.model_dump(mode="json"), sort_keys=True))
+    return 0
+
+
 def run_normalization_smoke() -> int:
     from uuid import UUID
 
@@ -271,6 +314,22 @@ def main(argv: list[str] | None = None) -> int:
         "normalization-smoke",
         help="Prueba manual opcional contra OpenAI con fixture sintetico",
     )
+    pilot_prepare = subparsers.add_parser(
+        "pilot-prepare",
+        help="Siembra el dataset sintetico de piloto (usuarios, proceso, empresa)",
+    )
+    pilot_prepare.add_argument("--password", default=None)
+    pilot_run = subparsers.add_parser(
+        "pilot-run",
+        help="Ejecuta el flujo end-to-end del piloto y devuelve un resumen JSON",
+    )
+    pilot_run.add_argument("--password", default=None)
+    pilot_reset = subparsers.add_parser(
+        "pilot-reset",
+        help="Elimina unicamente datos de piloto (requiere --confirm)",
+    )
+    pilot_reset.add_argument("--confirm", action="store_true")
+    subparsers.add_parser("pilot-readiness", help="Diagnostico de preparacion del piloto")
 
     args = parser.parse_args(argv)
     if args.command == "health":
@@ -301,6 +360,14 @@ def main(argv: list[str] | None = None) -> int:
         return run_specialized_drain(args.max_jobs, args.worker_id)
     if args.command == "normalization-smoke":
         return run_normalization_smoke()
+    if args.command == "pilot-prepare":
+        return run_pilot_prepare(args.password)
+    if args.command == "pilot-run":
+        return run_pilot_run(args.password)
+    if args.command == "pilot-reset":
+        return run_pilot_reset(args.confirm)
+    if args.command == "pilot-readiness":
+        return run_pilot_readiness()
     parser.error(f"comando no reconocido: {args.command}")
 
 

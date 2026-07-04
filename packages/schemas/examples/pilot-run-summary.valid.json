@@ -1,0 +1,25 @@
+{
+  "schema_version": "1.0.0",
+  "process_id": "0e5efb37-6f3b-4f2f-9b41-000000000001",
+  "company_id": "0e5efb37-6f3b-4f2f-9b41-000000000002",
+  "snapshot_id": "0e5efb37-6f3b-4f2f-9b41-000000000003",
+  "normalization_run_id": "0e5efb37-6f3b-4f2f-9b41-000000000004",
+  "financial_run_id": "0e5efb37-6f3b-4f2f-9b41-000000000005",
+  "specialized_run_ids": [
+    "0e5efb37-6f3b-4f2f-9b41-000000000006",
+    "0e5efb37-6f3b-4f2f-9b41-000000000007",
+    "0e5efb37-6f3b-4f2f-9b41-000000000008"
+  ],
+  "decision_run_id": "0e5efb37-6f3b-4f2f-9b41-000000000009",
+  "report_package_id": "0e5efb37-6f3b-4f2f-9b41-00000000000a",
+  "decision_outcome": "PENDIENTE_INFORMACION",
+  "duration_seconds": 12.5,
+  "steps": [{ "step": "DECISION", "state": "COMPLETED", "warnings": [] }],
+  "steps_total": 15,
+  "steps_succeeded": 15,
+  "steps_failed": 0,
+  "artifact_count": 9,
+  "audit_event_count": 12,
+  "warnings": [],
+  "synthetic_data_only": true
+}

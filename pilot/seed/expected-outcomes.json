@@ -1,0 +1,11 @@
+{
+  "note": "Resultado esperado del dataset sintetico, sin depender de IA real. El piloto NO fuerza GO: el resultado honesto es PENDIENTE_INFORMACION.",
+  "decision_outcome": "PENDIENTE_INFORMACION",
+  "financial_complies_min": 1,
+  "financial_does_not_comply_min": 1,
+  "unknown_min": 1,
+  "not_evaluated_expected": false,
+  "action_min": 1,
+  "report_artifact_count": 9,
+  "rationale": "Liquidez cumple; capital de trabajo no cumple (no bloqueante); un requisito financiero ambiguo produce UNKNOWN; la evidencia SUPPORTED (no verificada) exige revision humana. Precedencia: sin bloqueo insubsanable ni no-cargar, con incertidumbre relevante y revision pendiente, el resultado es PENDIENTE_INFORMACION."
+}

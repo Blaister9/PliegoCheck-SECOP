@@ -1,0 +1,29 @@
+{
+  "note": "Datos sinteticos. Las contrasenas no se versionan; se pasan por argumento o variable de entorno. Valor demo local sugerido: DemoOnly-ChangeMe-12345.",
+  "users": [
+    {
+      "key": "admin",
+      "email": "admin@pilot.pliegocheck.local",
+      "display_name": "Piloto Admin Sintetico",
+      "roles": ["ADMIN"]
+    },
+    {
+      "key": "analyst",
+      "email": "analyst@pilot.pliegocheck.local",
+      "display_name": "Piloto Analyst Sintetico",
+      "roles": ["ANALYST"]
+    },
+    {
+      "key": "reviewer",
+      "email": "reviewer@pilot.pliegocheck.local",
+      "display_name": "Piloto Reviewer Sintetico",
+      "roles": ["REVIEWER"]
+    },
+    {
+      "key": "viewer",
+      "email": "viewer@pilot.pliegocheck.local",
+      "display_name": "Piloto Viewer Sintetico",
+      "roles": ["VIEWER"]
+    }
+  ]
+}

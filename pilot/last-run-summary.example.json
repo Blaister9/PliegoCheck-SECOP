@@ -1,0 +1,25 @@
+{
+  "note": "Ejemplo sanitizado. Los identificadores son placeholders; una corrida real genera UUID locales que no se versionan.",
+  "schema_version": "1.0.0",
+  "process_id": "00000000-0000-0000-0000-0000000000a1",
+  "company_id": "00000000-0000-0000-0000-0000000000a2",
+  "snapshot_id": "00000000-0000-0000-0000-0000000000a3",
+  "normalization_run_id": "00000000-0000-0000-0000-0000000000a4",
+  "financial_run_id": "00000000-0000-0000-0000-0000000000a5",
+  "specialized_run_ids": [
+    "00000000-0000-0000-0000-0000000000a6",
+    "00000000-0000-0000-0000-0000000000a7",
+    "00000000-0000-0000-0000-0000000000a8"
+  ],
+  "decision_run_id": "00000000-0000-0000-0000-0000000000a9",
+  "report_package_id": "00000000-0000-0000-0000-0000000000aa",
+  "decision_outcome": "PENDIENTE_INFORMACION",
+  "duration_seconds": 12.5,
+  "steps_total": 15,
+  "steps_succeeded": 15,
+  "steps_failed": 0,
+  "artifact_count": 9,
+  "audit_event_count": 14,
+  "warnings": [],
+  "synthetic_data_only": true
+}

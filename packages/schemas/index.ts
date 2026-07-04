@@ -179,3 +179,14 @@ export type {
   SpecializedRuleType,
 } from "./generated/specialized-evaluation";
 export * from "./generated/specialized-evaluation.enums";
+
+export type {
+  PilotDatasetUser,
+  PilotExpectedOutcome,
+  PilotReadiness,
+  PilotRunSummary,
+  PilotStepName,
+  PilotStepState,
+  PilotStepStatus,
+} from "./generated/pilot";
+export * from "./generated/pilot.enums";

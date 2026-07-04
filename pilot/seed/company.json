@@ -1,0 +1,36 @@
+{
+  "note": "Empresa sintetica de piloto. NIT ficticio. El snapshot publicado incluye finanzas, RUP, registros juridicos, experiencia, personal, certificaciones y capacidades sinteticas.",
+  "legal_name": "Empresa Demo PliegoCheck S.A.S.",
+  "tax_id": "900123456",
+  "tax_id_type": "NIT",
+  "snapshot": {
+    "status": "PUBLISHED",
+    "financial_periods": [
+      {
+        "period_start": "2025-01-01",
+        "period_end": "2025-12-31",
+        "currency": "COP",
+        "status": "SUPPORTED",
+        "metrics": [
+          { "metric_type": "LIQUIDITY_RATIO", "value": "1.75", "status": "SUPPORTED" },
+          { "metric_type": "CURRENT_ASSETS", "value": "100000000", "status": "SUPPORTED" },
+          { "metric_type": "CURRENT_LIABILITIES", "value": "80000000", "status": "SUPPORTED" }
+        ]
+      }
+    ],
+    "rup_snapshots": [{ "status": "SUPPORTED", "valid_until": "2027-06-30" }],
+    "experience_records": [
+      {
+        "status": "SUPPORTED",
+        "execution_status": "COMPLETED",
+        "contract_title": "Mesa de ayuda sintetica 2024",
+        "unspsc_codes": ["81111800"],
+        "total_contract_value": "800000000",
+        "currency": "COP"
+      }
+    ],
+    "certifications": [
+      { "name": "Certificado ISO 9001 Calidad", "status": "SUPPORTED", "expires_at": "2027-12-31" }
+    ]
+  }
+}

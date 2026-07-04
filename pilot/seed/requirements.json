@@ -1,0 +1,47 @@
+{
+  "note": "Requisitos normalizados controlados (fixture, sin OpenAI). Cubren financiero, juridico, experiencia y tecnico, incluyendo un cumplimiento, un incumplimiento y un ambiguo (UNKNOWN).",
+  "requirements": [
+    {
+      "key": "fin-liquidez",
+      "category": "FINANCIAL",
+      "criticality": "HIGH",
+      "description": "El proponente debe acreditar un indice de liquidez minimo de 1.2.",
+      "expected_outcome": "COMPLIES"
+    },
+    {
+      "key": "fin-capital",
+      "category": "FINANCIAL",
+      "criticality": "MEDIUM",
+      "description": "El proponente debe acreditar un capital de trabajo minimo de 500000000 COP.",
+      "expected_outcome": "DOES_NOT_COMPLY"
+    },
+    {
+      "key": "fin-ambiguo",
+      "category": "FINANCIAL",
+      "criticality": "MEDIUM",
+      "description": "El proponente debe demostrar solidez financiera adecuada.",
+      "expected_outcome": "UNKNOWN"
+    },
+    {
+      "key": "legal-rup",
+      "category": "LEGAL",
+      "criticality": "HIGH",
+      "description": "El proponente debe aportar RUP vigente.",
+      "expected_outcome": "COMPLIES"
+    },
+    {
+      "key": "experiencia",
+      "category": "EXPERIENCE",
+      "criticality": "HIGH",
+      "description": "El proponente debe acreditar experiencia en contratos similares.",
+      "expected_outcome": "COMPLIES"
+    },
+    {
+      "key": "tecnico-iso",
+      "category": "TECHNICAL",
+      "criticality": "HIGH",
+      "description": "El proponente debe contar con certificacion de calidad ISO 9001.",
+      "expected_outcome": "COMPLIES"
+    }
+  ]
+}

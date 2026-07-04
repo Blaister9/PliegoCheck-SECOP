@@ -133,6 +133,12 @@ from pliegocheck_schemas.normalized_requirement import (
     RequirementScope,
     RequirementSubsanability,
 )
+from pliegocheck_schemas.pilot import (
+    PILOT_SCHEMA_VERSION,
+    PilotContracts,
+    PilotStepName,
+    PilotStepState,
+)
 from pliegocheck_schemas.specialized_evaluation import (
     SPECIALIZED_EVALUATION_SCHEMA_VERSION,
     SpecializedDataUsability,
@@ -578,6 +584,16 @@ def generate_auth_enums_ts() -> None:
     write_text(GENERATED_DIR / "auth.enums.ts", "\n".join(blocks))
 
 
+def generate_pilot_enums_ts() -> None:
+    blocks = [
+        TS_HEADER,
+        f'export const PILOT_SCHEMA_VERSION = "{PILOT_SCHEMA_VERSION}";\n',
+        ts_const_block("PILOT_STEP_NAME_VALUES", "PilotStepNameValue", PilotStepName),
+        ts_const_block("PILOT_STEP_STATE_VALUES", "PilotStepStateValue", PilotStepState),
+    ]
+    write_text(GENERATED_DIR / "pilot.enums.ts", "\n".join(blocks))
+
+
 def generate_specialized_evaluation_enums_ts() -> None:
     blocks = [
         TS_HEADER,
@@ -661,6 +677,8 @@ def main() -> int:
         generate_json_schema(DecisionReportContracts, "decision-report.schema.json")
         generate_json_schema(AuthContracts, "auth.schema.json")
         generate_json_schema(SpecializedEvaluationContracts, "specialized-evaluation.schema.json")
+        generate_json_schema(PilotContracts, "pilot.schema.json")
+        generate_pilot_enums_ts()
         generate_decision_enums_ts()
         generate_decision_report_enums_ts()
         generate_auth_enums_ts()
