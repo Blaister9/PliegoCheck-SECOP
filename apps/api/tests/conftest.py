@@ -25,6 +25,12 @@ def pytest_configure(config: pytest.Config) -> None:
     os.environ["PLIEGOCHECK_STORAGE_PATH"] = str(TEST_STORAGE_PATH)
     os.environ["PLIEGOCHECK_MAX_FILE_SIZE_MB"] = "1"
     os.environ["PLIEGOCHECK_ALLOWED_WEB_ORIGINS"] = "http://localhost:3000"
+    os.environ["PLIEGOCHECK_CORS_ALLOWED_ORIGINS"] = "http://localhost:3000"
+    os.environ["PLIEGOCHECK_ENVIRONMENT"] = "test"
+    os.environ["PLIEGOCHECK_AUTH_ENABLED"] = "false"
+    os.environ["PLIEGOCHECK_AUTH_SECRET_KEY"] = ""
+    os.environ["PLIEGOCHECK_SECURITY_HEADERS_ENABLED"] = "true"
+    os.environ["PLIEGOCHECK_PILOT_MODE"] = "false"
     os.environ["PLIEGOCHECK_EXTRACTION_MAX_SECONDS"] = "10"
     os.environ["PLIEGOCHECK_EXTRACTION_MAX_CHARACTERS"] = "50000"
     os.environ["PLIEGOCHECK_EXTRACTION_MAX_PAGES"] = "20"
@@ -74,7 +80,9 @@ def clean_database_and_storage(migrated_engine: Engine) -> Generator[None, None,
     with migrated_engine.begin() as connection:
         connection.execute(
             text(
-                "TRUNCATE TABLE decision_report_events, decision_report_sections, "
+                "TRUNCATE TABLE operational_audit_events, auth_login_events, auth_sessions, "
+                "auth_user_roles, auth_roles, auth_users, "
+                "decision_report_events, decision_report_sections, "
                 "decision_report_artifacts, decision_report_packages, decision_report_jobs, "
                 "decision_events, decision_reviews, "
                 "decision_action_items, decision_rule_evaluations, "

@@ -14,6 +14,9 @@ dependencies = [
     "python-multipart>=0.0.32",
 ]
 
+[project.scripts]
+pliegocheck-api = "pliegocheck_api.cli:main"
+
 [tool.uv.sources]
 pliegocheck-schemas = { workspace = true }
 

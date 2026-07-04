@@ -43,6 +43,10 @@ const CONTRACTS = [
     output: "decision-report.ts",
   },
   {
+    schema: "auth.schema.json",
+    output: "auth.ts",
+  },
+  {
     schema: "specialized-evaluation.schema.json",
     output: "specialized-evaluation.ts",
   },

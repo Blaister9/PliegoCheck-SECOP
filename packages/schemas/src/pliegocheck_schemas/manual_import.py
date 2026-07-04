@@ -29,6 +29,7 @@ from pydantic import (
     model_validator,
 )
 
+from pliegocheck_schemas.auth import AuthErrorCode
 from pliegocheck_schemas.company_profile import CompanyErrorCode
 from pliegocheck_schemas.decision import DecisionErrorCode
 from pliegocheck_schemas.decision_report import DecisionReportErrorCode
@@ -106,6 +107,7 @@ ApiErrorCode = (
     | FinancialErrorCode
     | DecisionErrorCode
     | DecisionReportErrorCode
+    | AuthErrorCode
 )
 
 

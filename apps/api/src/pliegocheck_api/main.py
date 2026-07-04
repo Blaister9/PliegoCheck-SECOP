@@ -7,7 +7,10 @@ from fastapi.responses import JSONResponse
 
 from pliegocheck_api.config import settings
 from pliegocheck_api.errors import DomainError
+from pliegocheck_api.middleware import security_middleware
 from pliegocheck_api.routes import (
+    admin,
+    auth,
     companies,
     contracts,
     decision_reports,
@@ -27,12 +30,15 @@ app = FastAPI(
 )
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=settings.allowed_web_origins,
-    allow_credentials=False,
+    allow_origins=settings.effective_cors_origins,
+    allow_credentials=True,
     allow_methods=["GET", "POST", "PATCH", "OPTIONS"],
-    allow_headers=["Content-Type"],
+    allow_headers=["Content-Type", "X-Request-ID"],
 )
+app.middleware("http")(security_middleware)
 app.include_router(health.router)
+app.include_router(auth.router)
+app.include_router(admin.router)
 app.include_router(contracts.router)
 app.include_router(processes.router)
 app.include_router(requirements.router)

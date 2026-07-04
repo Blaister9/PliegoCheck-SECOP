@@ -5,8 +5,10 @@ from typing import Any
 
 from pliegocheck_schemas import (
     ApiError,
+    AuthErrorCode,
     CompanyErrorCode,
     DecisionErrorCode,
+    DecisionReportErrorCode,
     ExtractionErrorCode,
     FinancialErrorCode,
     NormalizationErrorCode,
@@ -26,6 +28,8 @@ class DomainError(Exception):
             | CompanyErrorCode
             | FinancialErrorCode
             | DecisionErrorCode
+            | DecisionReportErrorCode
+            | AuthErrorCode
         ),
         message: str,
         *,

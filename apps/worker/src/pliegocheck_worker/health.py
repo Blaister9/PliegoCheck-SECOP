@@ -35,6 +35,8 @@ def health_status() -> dict[str, str | bool | list[str] | None]:
         "decision_policy_version": decision_policy,
         "report_generation_enabled": report_connected,
         "report_template_version": "1.0.0",
+        "auth_enabled": settings.auth_enabled,
+        "pilot_mode": settings.pilot_mode,
         "available_decision_adapters": [
             domain.value for domain in DEFAULT_ADAPTER_REGISTRY.available_domains()
         ],

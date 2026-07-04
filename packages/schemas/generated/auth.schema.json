@@ -1,0 +1,652 @@
+{
+  "$defs": {
+    "AuthChangePasswordRequest": {
+      "additionalProperties": false,
+      "properties": {
+        "current_password": {
+          "maxLength": 500,
+          "minLength": 1,
+          "type": "string"
+        },
+        "new_password": {
+          "maxLength": 500,
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": ["current_password", "new_password"],
+      "type": "object"
+    },
+    "AuthCurrentUser": {
+      "additionalProperties": false,
+      "properties": {
+        "auth_enabled": {
+          "default": true,
+          "type": "boolean"
+        },
+        "permissions": {
+          "items": {
+            "$ref": "#/$defs/AuthPermission"
+          },
+          "type": "array"
+        },
+        "roles": {
+          "items": {
+            "$ref": "#/$defs/AuthRoleName"
+          },
+          "type": "array"
+        },
+        "user": {
+          "$ref": "#/$defs/AuthUserSummary"
+        }
+      },
+      "required": ["user", "roles", "permissions"],
+      "type": "object"
+    },
+    "AuthErrorCode": {
+      "enum": [
+        "AUTH_REQUIRED",
+        "AUTH_INVALID_CREDENTIALS",
+        "AUTH_SESSION_EXPIRED",
+        "AUTH_PERMISSION_DENIED",
+        "AUTH_USER_DISABLED",
+        "AUTH_USER_LOCKED",
+        "AUTH_PASSWORD_TOO_SHORT",
+        "AUTH_INVALID_CURRENT_PASSWORD",
+        "AUTH_CONFIG_INVALID",
+        "AUTH_USER_NOT_FOUND",
+        "AUTH_EMAIL_ALREADY_EXISTS"
+      ],
+      "type": "string"
+    },
+    "AuthLoginRequest": {
+      "additionalProperties": false,
+      "properties": {
+        "email": {
+          "maxLength": 320,
+          "minLength": 3,
+          "type": "string"
+        },
+        "password": {
+          "maxLength": 500,
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": ["email", "password"],
+      "type": "object"
+    },
+    "AuthLoginResponse": {
+      "additionalProperties": false,
+      "properties": {
+        "permissions": {
+          "items": {
+            "$ref": "#/$defs/AuthPermission"
+          },
+          "type": "array"
+        },
+        "roles": {
+          "items": {
+            "$ref": "#/$defs/AuthRoleName"
+          },
+          "type": "array"
+        },
+        "user": {
+          "$ref": "#/$defs/AuthUserSummary"
+        }
+      },
+      "required": ["user", "roles", "permissions"],
+      "type": "object"
+    },
+    "AuthPermission": {
+      "enum": [
+        "process:read",
+        "process:write",
+        "document:write",
+        "normalization:run",
+        "company:read",
+        "company:write",
+        "evaluation:run",
+        "decision:run",
+        "decision:review",
+        "report:generate",
+        "report:download",
+        "admin:users",
+        "admin:settings",
+        "audit:read"
+      ],
+      "type": "string"
+    },
+    "AuthRoleName": {
+      "enum": ["ADMIN", "ANALYST", "REVIEWER", "VIEWER"],
+      "type": "string"
+    },
+    "AuthSessionSummary": {
+      "additionalProperties": false,
+      "properties": {
+        "created_at": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "expires_at": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "last_seen_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "revoked_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "user_id": {
+          "format": "uuid",
+          "type": "string"
+        }
+      },
+      "required": ["id", "user_id", "expires_at", "created_at"],
+      "type": "object"
+    },
+    "AuthUserCreateRequest": {
+      "additionalProperties": false,
+      "properties": {
+        "display_name": {
+          "maxLength": 500,
+          "minLength": 1,
+          "type": "string"
+        },
+        "email": {
+          "maxLength": 320,
+          "minLength": 3,
+          "type": "string"
+        },
+        "password": {
+          "maxLength": 500,
+          "minLength": 1,
+          "type": "string"
+        },
+        "roles": {
+          "items": {
+            "$ref": "#/$defs/AuthRoleName"
+          },
+          "type": "array"
+        }
+      },
+      "required": ["email", "display_name", "password"],
+      "type": "object"
+    },
+    "AuthUserList": {
+      "additionalProperties": false,
+      "properties": {
+        "items": {
+          "items": {
+            "$ref": "#/$defs/AuthUserSummary"
+          },
+          "type": "array"
+        },
+        "limit": {
+          "exclusiveMinimum": 0,
+          "type": "integer"
+        },
+        "offset": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "total": {
+          "minimum": 0,
+          "type": "integer"
+        }
+      },
+      "required": ["items", "total", "limit", "offset"],
+      "type": "object"
+    },
+    "AuthUserRoleUpdateRequest": {
+      "additionalProperties": false,
+      "properties": {
+        "roles": {
+          "items": {
+            "$ref": "#/$defs/AuthRoleName"
+          },
+          "type": "array"
+        }
+      },
+      "required": ["roles"],
+      "type": "object"
+    },
+    "AuthUserStatus": {
+      "enum": ["ACTIVE", "DISABLED", "LOCKED", "PENDING"],
+      "type": "string"
+    },
+    "AuthUserSummary": {
+      "additionalProperties": false,
+      "properties": {
+        "created_at": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "display_name": {
+          "maxLength": 500,
+          "minLength": 1,
+          "type": "string"
+        },
+        "email": {
+          "maxLength": 320,
+          "minLength": 3,
+          "type": "string"
+        },
+        "id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "last_login_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "permissions": {
+          "items": {
+            "$ref": "#/$defs/AuthPermission"
+          },
+          "type": "array"
+        },
+        "roles": {
+          "items": {
+            "$ref": "#/$defs/AuthRoleName"
+          },
+          "type": "array"
+        },
+        "status": {
+          "$ref": "#/$defs/AuthUserStatus"
+        },
+        "updated_at": {
+          "format": "date-time",
+          "type": "string"
+        }
+      },
+      "required": ["id", "email", "display_name", "status", "created_at", "updated_at"],
+      "type": "object"
+    },
+    "HealthReadyDetail": {
+      "additionalProperties": false,
+      "properties": {
+        "checks": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "type": "object"
+        },
+        "service": {
+          "maxLength": 500,
+          "minLength": 1,
+          "type": "string"
+        },
+        "status": {
+          "maxLength": 500,
+          "minLength": 1,
+          "type": "string"
+        },
+        "version": {
+          "maxLength": 500,
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": ["status", "service", "version", "checks"],
+      "type": "object"
+    },
+    "OperationalAuditEvent": {
+      "additionalProperties": false,
+      "properties": {
+        "action": {
+          "maxLength": 500,
+          "minLength": 1,
+          "type": "string"
+        },
+        "actor_email_hash": {
+          "anyOf": [
+            {
+              "pattern": "^[a-f0-9]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "actor_user_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "created_at": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "entity_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "entity_type": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "event_type": {
+          "$ref": "#/$defs/OperationalAuditEventType"
+        },
+        "id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "ip_hash": {
+          "anyOf": [
+            {
+              "pattern": "^[a-f0-9]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "metadata": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "status": {
+          "maxLength": 500,
+          "minLength": 1,
+          "type": "string"
+        },
+        "user_agent_hash": {
+          "anyOf": [
+            {
+              "pattern": "^[a-f0-9]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "actor_user_id",
+        "actor_email_hash",
+        "event_type",
+        "entity_type",
+        "entity_id",
+        "action",
+        "status",
+        "ip_hash",
+        "user_agent_hash",
+        "created_at"
+      ],
+      "type": "object"
+    },
+    "OperationalAuditEventList": {
+      "additionalProperties": false,
+      "properties": {
+        "items": {
+          "items": {
+            "$ref": "#/$defs/OperationalAuditEvent"
+          },
+          "type": "array"
+        },
+        "limit": {
+          "exclusiveMinimum": 0,
+          "type": "integer"
+        },
+        "offset": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "total": {
+          "minimum": 0,
+          "type": "integer"
+        }
+      },
+      "required": ["items", "total", "limit", "offset"],
+      "type": "object"
+    },
+    "OperationalAuditEventType": {
+      "enum": [
+        "AUTH_LOGIN_SUCCEEDED",
+        "AUTH_LOGIN_FAILED",
+        "AUTH_LOGOUT",
+        "AUTH_PASSWORD_CHANGED",
+        "AUTH_USER_CREATED",
+        "AUTH_USER_DISABLED",
+        "AUTH_USER_ENABLED",
+        "AUTH_ROLES_UPDATED",
+        "PROCESS_CREATED",
+        "DOCUMENT_UPLOADED",
+        "NORMALIZATION_QUEUED",
+        "EVALUATION_QUEUED",
+        "DECISION_QUEUED",
+        "DECISION_REVIEWED",
+        "REPORT_GENERATED",
+        "ARTIFACT_DOWNLOADED",
+        "PERMISSION_DENIED"
+      ],
+      "type": "string"
+    },
+    "PermissionDeniedError": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "$ref": "#/$defs/AuthErrorCode",
+          "default": "AUTH_PERMISSION_DENIED"
+        },
+        "request_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "required_permission": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/AuthPermission"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "type": "object"
+    },
+    "SystemConfigSummary": {
+      "additionalProperties": false,
+      "properties": {
+        "ai_enabled": {
+          "type": "boolean"
+        },
+        "allowed_origins_count": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "auth_enabled": {
+          "type": "boolean"
+        },
+        "commit": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "environment": {
+          "maxLength": 500,
+          "minLength": 1,
+          "type": "string"
+        },
+        "pilot_mode": {
+          "type": "boolean"
+        },
+        "redacted": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "type": "object"
+        },
+        "security_headers_enabled": {
+          "type": "boolean"
+        },
+        "storage_mode": {
+          "maxLength": 500,
+          "minLength": 1,
+          "type": "string"
+        },
+        "upload_max_file_size_mb": {
+          "minimum": 1,
+          "type": "integer"
+        },
+        "version": {
+          "maxLength": 500,
+          "minLength": 1,
+          "type": "string"
+        },
+        "worker_capabilities": {
+          "items": {
+            "maxLength": 500,
+            "minLength": 1,
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "auth_enabled",
+        "pilot_mode",
+        "environment",
+        "storage_mode",
+        "ai_enabled",
+        "allowed_origins_count",
+        "upload_max_file_size_mb",
+        "security_headers_enabled",
+        "worker_capabilities",
+        "version"
+      ],
+      "type": "object"
+    }
+  },
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "Contenedor para generacion conjunta de esquemas de auth.",
+  "properties": {
+    "audit_event_list": {
+      "$ref": "#/$defs/OperationalAuditEventList"
+    },
+    "change_password_request": {
+      "$ref": "#/$defs/AuthChangePasswordRequest"
+    },
+    "current_user": {
+      "$ref": "#/$defs/AuthCurrentUser"
+    },
+    "health_ready": {
+      "$ref": "#/$defs/HealthReadyDetail"
+    },
+    "login_request": {
+      "$ref": "#/$defs/AuthLoginRequest"
+    },
+    "login_response": {
+      "$ref": "#/$defs/AuthLoginResponse"
+    },
+    "permission_denied": {
+      "$ref": "#/$defs/PermissionDeniedError"
+    },
+    "session_summary": {
+      "$ref": "#/$defs/AuthSessionSummary"
+    },
+    "system_config": {
+      "$ref": "#/$defs/SystemConfigSummary"
+    },
+    "user_create_request": {
+      "$ref": "#/$defs/AuthUserCreateRequest"
+    },
+    "user_list": {
+      "$ref": "#/$defs/AuthUserList"
+    },
+    "user_role_update_request": {
+      "$ref": "#/$defs/AuthUserRoleUpdateRequest"
+    }
+  },
+  "required": [
+    "current_user",
+    "login_request",
+    "login_response",
+    "change_password_request",
+    "user_create_request",
+    "user_role_update_request",
+    "user_list",
+    "session_summary",
+    "audit_event_list",
+    "system_config",
+    "health_ready",
+    "permission_denied"
+  ],
+  "type": "object"
+}

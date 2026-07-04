@@ -29,6 +29,10 @@ Cada requisito normalizado que llega al motor debe contener, como mínimo:
 >
 > Nota Microfase 9: el reporte ejecutivo consume una `DecisionRun` completada y sus datos
 > persistidos. No vuelve a ejecutar este motor, no modifica acciones y no cambia el resultado.
+>
+> Nota Microfase 10: la autenticacion y los permisos protegen el acceso al motor y a sus endpoints,
+> pero no son insumo de decision. Un rol puede autorizar una accion operativa; nunca convierte una
+> ausencia de evidencia en cumplimiento.
 
 ```json
 {

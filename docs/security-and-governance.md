@@ -70,6 +70,8 @@ Controles de seguridad, aislamiento y gobernanza de decisiones que la plataforma
   comparable produce `UNKNOWN`.
 - **Microfase 9 sin IA:** el reporte ejecutivo no llama modelos, no recalcula decision y no ejecuta
   reglas nuevas. Solo renderiza datos persistidos con templates versionados.
+- **Microfase 10 sin IA:** autenticacion, autorizacion, sesiones, auditoria operacional, readiness,
+  headers y backup/restore son controles deterministas. No usan modelos ni cambian decisiones.
 
 ## 7. Gobernanza de la decisión
 
@@ -97,6 +99,9 @@ Controles de seguridad, aislamiento y gobernanza de decisiones que la plataforma
 | Manipulación del perfil de empresa (inflar capacidades) | Toda capacidad exige soporte documental, cambios de perfil auditados (`AuditEvent`), y las decisiones citan las evidencias exactas usadas. |
 | ZIP Slip o rutas peligrosas en artefactos de reporte | El ZIP de reporte usa nombres controlados, sin directorios, rutas absolutas ni `..`; cada artefacto tiene SHA-256. |
 | XSS en reporte o preview | Campos dinamicos HTML escapados y preview web como texto plano, sin `dangerouslySetInnerHTML`. |
+| Acceso no autenticado a API operativa | Sesion persistida por cookie `HttpOnly`, permisos por rol y denegacion con `request_id` auditable. |
+| Configuracion insegura para piloto | `PLIEGOCHECK_PILOT_MODE=true` exige autenticacion activa, cookie segura, secreto explicito y CORS cerrado. |
+| Perdida local de datos de piloto | Backup local excluye secretos, genera manifest con SHA-256 y restore requiere confirmacion explicita. |
 
 ## 9. Observabilidad mínima
 

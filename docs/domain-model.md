@@ -30,6 +30,11 @@ Convenciones de este documento, aplicables a toda entidad:
 - **Puede inferirse:** ninguno.
 - **Nunca debe inventarse:** n/a.
 
+Implementacion Microfase 10: el usuario operativo se persiste como `AuthUser`, con email
+normalizado, hash de password, estado `ACTIVE`/`DISABLED`, roles locales (`ADMIN`, `ANALYST`,
+`REVIEWER`, `VIEWER`), sesiones revocables y eventos de login. Esta autenticacion local prepara el
+piloto; no implementa SSO ni tenant real.
+
 ### CompanyProfile
 **Propósito:** perfil de la empresa que evalúa participar: su capacidad jurídica, financiera, técnica y de experiencia.
 
@@ -284,6 +289,10 @@ hechos, requisitos, hallazgos, prioridad, razon y resultado sugerido.
 - **Requiere evidencia:** n/a (es el mecanismo de evidencia del sistema).
 - **Puede inferirse:** nada.
 - **Nunca debe inventarse:** n/a; los eventos no se editan ni se eliminan.
+
+Implementacion Microfase 10: los eventos operacionales de autenticacion, administracion y acceso se
+persisten en `operational_audit_events`, separados de los eventos de decision para no mezclar
+controles de plataforma con trazabilidad requisito-evidencia-decision.
 
 ---
 

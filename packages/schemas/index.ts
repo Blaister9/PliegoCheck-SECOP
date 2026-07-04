@@ -130,6 +130,27 @@ export type {
 } from "./generated/decision-report";
 export * from "./generated/decision-report.enums";
 export type {
+  AuthChangePasswordRequest,
+  AuthCurrentUser,
+  AuthLoginRequest,
+  AuthLoginResponse,
+  AuthPermission,
+  AuthRoleName,
+  AuthSessionSummary,
+  AuthUserCreateRequest,
+  AuthUserList,
+  AuthUserRoleUpdateRequest,
+  AuthUserStatus,
+  AuthUserSummary,
+  HealthReadyDetail,
+  OperationalAuditEvent,
+  OperationalAuditEventList,
+  OperationalAuditEventType,
+  PermissionDeniedError,
+  SystemConfigSummary,
+} from "./generated/auth";
+export * from "./generated/auth.enums";
+export type {
   SpecializedEvaluationDomain,
   SpecializedEvaluationEvidence,
   SpecializedEvaluationJobStatus,

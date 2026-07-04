@@ -6,7 +6,9 @@ import {
   REQUIREMENT_CATEGORY_VALUES,
 } from "@pliegocheck/schemas";
 import { CompanyDetailClient } from "../app/companies/[id]/CompanyDetailClient";
+import AdminPage from "../app/admin/page";
 import CompaniesPage from "../app/companies/page";
+import LoginPage from "../app/login/page";
 import NewCompanyPage from "../app/companies/new/page";
 import Home from "../app/page";
 import { ProcessDetailClient } from "../app/processes/[id]/ProcessDetailClient";
@@ -14,13 +16,16 @@ import ProcessesPage from "../app/processes/page";
 import NewProcessPage from "../app/processes/new/page";
 
 const pushMock = vi.fn();
+const searchParamsMock = { get: vi.fn() };
 
 vi.mock("next/navigation", () => ({
   useRouter: () => ({ push: pushMock }),
+  useSearchParams: () => searchParamsMock,
 }));
 
 beforeEach(() => {
   pushMock.mockReset();
+  searchParamsMock.get.mockReset();
   vi.stubGlobal("fetch", vi.fn());
 });
 
@@ -67,6 +72,53 @@ describe("pagina principal", () => {
     expect(
       screen.getAllByText(new RegExp(`v${COMPANY_PROFILE_SCHEMA_VERSION}`)).length,
     ).toBeGreaterThan(0);
+  });
+});
+
+describe("autenticacion web", () => {
+  it("inicia sesion con cookie HttpOnly gestionada por la API y redirige al destino solicitado", async () => {
+    searchParamsMock.get.mockReturnValue("/admin");
+    mockJson({
+      user: {
+        id: "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
+        email: "admin@example.com",
+        display_name: "Admin",
+        status: "ACTIVE",
+        roles: ["ADMIN"],
+        permissions: ["admin:manage_users"],
+        created_at: "2026-07-04T00:00:00Z",
+        updated_at: "2026-07-04T00:00:00Z",
+        last_login_at: "2026-07-04T00:00:00Z",
+      },
+      session_expires_at: "2026-07-04T08:00:00Z",
+    });
+    render(<LoginPage />);
+    fireEvent.change(screen.getByLabelText("Email"), {
+      target: { value: "admin@example.com" },
+    });
+    fireEvent.change(screen.getByLabelText("Password"), {
+      target: { value: "very-secure-password" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: "Iniciar sesion" }));
+    await waitFor(() => expect(pushMock).toHaveBeenCalledWith("/admin"));
+    expect(vi.mocked(fetch)).toHaveBeenCalledWith(
+      expect.stringContaining("/auth/login"),
+      expect.objectContaining({ credentials: "include", method: "POST" }),
+    );
+  });
+
+  it("expone enlaces administrativos protegidos por middleware y backend", () => {
+    render(<AdminPage />);
+    expect(screen.getByRole("heading", { level: 1, name: "Administracion" })).toBeDefined();
+    expect(screen.getByRole("link", { name: "Usuarios" }).getAttribute("href")).toBe(
+      "/admin/users",
+    );
+    expect(screen.getByRole("link", { name: "Auditoria" }).getAttribute("href")).toBe(
+      "/admin/audit",
+    );
+    expect(screen.getByRole("link", { name: "Sistema" }).getAttribute("href")).toBe(
+      "/admin/system",
+    );
   });
 });
 
@@ -279,15 +331,28 @@ describe("detalle de proceso", () => {
   });
 
   it("muestra runs y detalle de evidencia de requisitos", async () => {
-    const fetchMock = vi.mocked(fetch);
-    fetchMock
-      .mockResolvedValueOnce(jsonResponse(processDetail()))
-      .mockResolvedValueOnce(jsonResponse(processInventory("COMPLETED")))
-      .mockResolvedValueOnce(jsonResponse(normalizationList("COMPLETED")))
-      .mockResolvedValueOnce(jsonResponse(requirementList()))
-      .mockResolvedValueOnce(jsonResponse(financialEvaluationList()))
-      .mockResolvedValueOnce(jsonResponse(decisionList()))
-      .mockResolvedValueOnce(jsonResponse(requirementDetail()));
+    vi.mocked(fetch).mockImplementation(async (input) => {
+      const url = String(input);
+      if (url.includes("/requirements/aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa")) {
+        return jsonResponse(requirementDetail());
+      }
+      if (url.includes("/requirements/normalizations")) {
+        return jsonResponse(normalizationList("COMPLETED"));
+      }
+      if (url.includes("/requirements?")) {
+        return jsonResponse(requirementList());
+      }
+      if (url.includes("/financial-evaluations")) {
+        return jsonResponse(financialEvaluationList());
+      }
+      if (url.includes("/decisions")) {
+        return jsonResponse(decisionList());
+      }
+      if (url.includes("/inventory")) {
+        return jsonResponse(processInventory("COMPLETED"));
+      }
+      return jsonResponse(processDetail());
+    });
 
     render(<ProcessDetailClient processId="11111111-1111-1111-1111-111111111111" />);
     expect(await screen.findByText("Ultima ejecucion: COMPLETED")).toBeDefined();

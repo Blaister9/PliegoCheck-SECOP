@@ -55,6 +55,9 @@ docs/        Documentacion fundacional, guias y ADRs.
 - **Drenar decisiones:** `pnpm decision:drain -- --max-jobs 10`
 - **Procesar reporte de decision:** `pnpm report:run-once`
 - **Drenar reportes:** `pnpm report:drain -- --max-jobs 10`
+- **Crear admin local:** `pnpm auth:create-admin -- --email admin@example.com --display-name "Admin"`
+- **Listar usuarios:** `pnpm auth:list-users`
+- **Backup local:** `pnpm ops:backup`
 - **PostgreSQL:** `pnpm infra:up` publica PostgreSQL en `localhost:56543`
 - **Migraciones:** `pnpm db:migrate`; `pnpm db:check`
 
@@ -133,6 +136,9 @@ pnpm decision:test
 pnpm decision:eval
 pnpm report:test
 pnpm report:eval
+pnpm auth:test
+pnpm ops:test
+pnpm pilot:eval
 pnpm schemas:check
 pnpm build
 ```
@@ -180,8 +186,10 @@ Implementado:
 - worker `specialized-run-once` / `specialized-drain`, API, UI, revision auditada y adaptadores de
   decision para resultados especializados;
 - reporte ejecutivo y paquete de decision con templates versionados, artefactos
-  HTML/Markdown/JSON/CSV/manifest/ZIP, cola PostgreSQL, worker, API, UI y evals deterministas.
+  HTML/Markdown/JSON/CSV/manifest/ZIP, cola PostgreSQL, worker, API, UI y evals deterministas;
+- autenticacion local, roles, permisos, sesiones persistidas, auditoria operacional, headers de
+  seguridad, readiness y backup local para piloto controlado.
 
-No implementado todavia: OCR, integracion automatica con SECOP II, autenticacion y S3 real.
-Categorias fuera de financiero, juridico, experiencia y tecnico permanecen `NOT_EVALUATED` y
-bloquean `GO`.
+No implementado todavia: OCR, integracion automatica con SECOP II, S3 real y autenticacion externa
+corporativa. Categorias fuera de financiero, juridico, experiencia y tecnico permanecen
+`NOT_EVALUATED` y bloquean `GO`.
