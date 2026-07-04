@@ -102,7 +102,7 @@ flowchart TB
 
 La decisión de stack y sus alternativas están formalizadas en [docs/ADR-001-stack-and-architecture.md](docs/ADR-001-stack-and-architecture.md).
 
-## Estado actual - Microfase 10
+## Estado actual - Microfase 11
 
 Implementado: importacion manual de procesos, carga documental segura, almacenamiento local con
 SHA-256, cola transaccional inicial, extractores deterministas para PDF con texto, DOCX, XLSX, CSV y
@@ -128,6 +128,13 @@ juridica ni decision humana.
 La Microfase 10 agrega autenticacion local, sesiones HttpOnly, roles y permisos, proteccion de API
 y web, auditoria operacional, headers de seguridad, readiness operativo, scripts de backup local,
 pantallas admin minimas y checklist de piloto.
+La Microfase 11 agrega un **piloto controlado end-to-end con datos sinteticos**: dataset en `pilot/`,
+comandos `pnpm pilot:prepare|run|reset|readiness`, un eval end-to-end con auth (`evals/pilot-end-to-end`)
+que ejecuta proceso -> documentos -> extraccion -> normalizacion controlada -> empresa/snapshot ->
+evaluaciones financiera y especializadas -> decision -> reporte -> descarga ZIP -> auditoria,
+guion de demo, checklist, registro de retroalimentacion y contratos de piloto. No usa OpenAI ni datos
+reales; el resultado honesto del dataset es `PENDIENTE_INFORMACION` (no forzado a GO). Detalle en
+[docs/pilot-dataset.md](docs/pilot-dataset.md) y [docs/ADR-011-controlled-pilot.md](docs/ADR-011-controlled-pilot.md).
 
 No implementado todavia: OCR, integracion automatica con SECOP II, autenticacion y S3 real.
 Categorias fuera de los adaptadores financiero, juridico, experiencia y tecnico quedan
@@ -160,7 +167,9 @@ uv sync --all-packages  # dependencias Python (workspace uv)
 | `pnpm decision:policy-check` / `pnpm decision:test` / `pnpm decision:eval` | Politica, pruebas y evals del motor de decision |
 | `pnpm report:run-once` / `pnpm report:drain` | Procesa trabajos de reporte ejecutivo y paquete de decision |
 | `pnpm report:test` / `pnpm report:eval` | Pruebas y evals deterministas de reportes |
-| `pnpm auth:test` / `pnpm pilot:eval` | Pruebas de autenticacion y eval de preparacion de piloto |
+| `pnpm auth:test` / `pnpm pilot:eval` | Pruebas de autenticacion y eval end-to-end de piloto |
+| `pnpm pilot:prepare` / `pnpm pilot:run` | Siembra el dataset sintetico / ejecuta el flujo end-to-end |
+| `pnpm pilot:readiness` / `pnpm pilot:reset -- --confirm` | Diagnostico de piloto / limpieza segura de datos de piloto |
 | `pnpm auth:create-admin` / `pnpm auth:list-users` | CLI administrativo de usuarios locales |
 | `pnpm ops:backup` / `pnpm ops:restore` | Backup y restore local controlado |
 | `pnpm infra:up` / `pnpm infra:down` | PostgreSQL local para desarrollo |
@@ -220,6 +229,11 @@ Guía completa en [docs/development.md](docs/development.md).
 | [docs/pilot-readiness-checklist.md](docs/pilot-readiness-checklist.md) | Checklist pre-piloto. |
 | [docs/security-hardening.md](docs/security-hardening.md) | Controles de seguridad implementados. |
 | [docs/backup-restore.md](docs/backup-restore.md) | Backup y restore local. |
+| [docs/ADR-011-controlled-pilot.md](docs/ADR-011-controlled-pilot.md) | Decision de arquitectura del piloto controlado. |
+| [docs/pilot-dataset.md](docs/pilot-dataset.md) | Dataset sintetico del piloto. |
+| [docs/demo-script.md](docs/demo-script.md) | Guion de demo end-to-end. |
+| [docs/pilot-demo-checklist.md](docs/pilot-demo-checklist.md) | Checklist de demo del piloto. |
+| [docs/pilot-feedback-log.md](docs/pilot-feedback-log.md) | Registro de retroalimentacion del piloto. |
 
 ## Roadmap resumido
 
@@ -237,5 +251,6 @@ Guía completa en [docs/development.md](docs/development.md).
 | 9 | Reporte ejecutivo y paquete de decision |
 | 10 | Endurecimiento operativo, autenticacion y preparacion de piloto |
 | 11 | Piloto controlado end-to-end con datos sinteticos y retroalimentacion |
+| 12 | Ajustes post-piloto y preparacion de despliegue controlado |
 
 Detalle completo en [docs/roadmap.md](docs/roadmap.md).

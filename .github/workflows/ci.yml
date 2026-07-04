@@ -103,7 +103,7 @@ jobs:
       - name: Pruebas operativas
         run: pnpm ops:test
 
-      - name: Eval de preparacion de piloto
+      - name: Eval end-to-end de piloto controlado
         run: pnpm pilot:eval
 
       - name: Pruebas de perfil de empresa

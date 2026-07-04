@@ -5,6 +5,7 @@ description = "Worker de procesamiento asincrono de PliegoCheck-SECOP (esqueleto
 requires-python = ">=3.12"
 dependencies = [
     "charset-normalizer>=3.4.7",
+    "httpx>=0.27",
     "openai>=2.9.0",
     "openpyxl>=3.1.5",
     "pliegocheck-api",

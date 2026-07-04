@@ -106,3 +106,17 @@ Controles de seguridad, aislamiento y gobernanza de decisiones que la plataforma
 ## 9. Observabilidad mínima
 
 Eventos de ejecución con: consumo de tokens y costo por `AgentRun`, tiempos por etapa, errores y reintentos, versiones de prompt y modelo, y estado del pipeline. Sin esta telemetría no se autoriza operación en producción.
+
+## 10. Piloto controlado (Microfase 11)
+
+El piloto controlado opera con **datos exclusivamente sinteticos** y con autenticacion, permisos y
+auditoria activos; no desactiva la seguridad para la validacion principal. Reglas:
+
+- Sin datos reales de entidades, empresas, personas, procesos o documentos.
+- Sin OpenAI ni servicios externos en el flujo de piloto.
+- Las contrasenas demo no se versionan; se pasan por argumento o variable de entorno.
+- `pnpm pilot:reset -- --confirm` elimina unicamente datos marcados como piloto (usuarios
+  `@pilot.pliegocheck.local`, el proceso piloto y la empresa piloto); nunca datos ajenos ni `.env`.
+- El paquete de reporte descargado no contiene `.env`, secretos ni rutas fisicas (verificado por eval).
+- El resultado del piloto es una decision preliminar deterministica que requiere revision humana y no
+  constituye concepto juridico.

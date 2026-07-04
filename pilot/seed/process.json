@@ -1,0 +1,15 @@
+{
+  "note": "Proceso sintetico de piloto. Datos ficticios.",
+  "title": "Proceso Piloto Sintetico 001 - Mesa de ayuda",
+  "contracting_entity": "Entidad Demo de Contratacion",
+  "secop_reference": "CO1.NTC.PILOTO-SINTETICO-001",
+  "description": "Proceso sintetico de piloto. Datos ficticios para demostracion end-to-end.",
+  "selection_method": "Licitacion publica",
+  "estimated_value": "1500000000",
+  "currency": "COP",
+  "closing_at": "2026-12-31T23:59:00-05:00",
+  "documents": [
+    { "filename": "pliego-sintetico.txt", "document_type": "TERMS" },
+    { "filename": "anexo-financiero-sintetico.csv", "document_type": "FINANCIAL_ANNEX" }
+  ]
+}

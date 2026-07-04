@@ -143,6 +143,23 @@ pnpm schemas:check
 pnpm build
 ```
 
+## Piloto controlado end-to-end
+
+Flujo completo con datos sinteticos (no usa OpenAI ni datos reales). Detalle en
+[pilot-dataset.md](pilot-dataset.md), [demo-script.md](demo-script.md) y
+[ADR-011](ADR-011-controlled-pilot.md).
+
+```bash
+pnpm pilot:readiness            # diagnostico de preparacion del piloto
+pnpm pilot:prepare              # siembra usuarios, proceso, documentos, empresa, snapshot
+pnpm pilot:run                  # ejecuta el flujo end-to-end y devuelve un PilotRunSummary JSON
+pnpm pilot:reset -- --confirm   # elimina SOLO datos de piloto (nunca datos ajenos ni .env)
+pnpm pilot:eval                 # eval automatizado del flujo completo con auth (lo corre la CI)
+```
+
+La contrasena demo se pasa por `--password` o `PLIEGOCHECK_PILOT_PASSWORD`; el valor por defecto
+sintetico `DemoOnly-ChangeMe-12345` es solo local.
+
 La CI ejecuta instalacion reproducible, migraciones, `db:check`, contratos sincronizados, pruebas de
 perfil de empresa y snapshot, pruebas y evals de normalizacion, formato, lint, typecheck, pruebas,
 pruebas y evals de evaluacion financiera, pruebas y evals de evaluadores especializados,

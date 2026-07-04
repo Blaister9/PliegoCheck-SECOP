@@ -50,6 +50,10 @@ const CONTRACTS = [
     schema: "specialized-evaluation.schema.json",
     output: "specialized-evaluation.ts",
   },
+  {
+    schema: "pilot.schema.json",
+    output: "pilot.ts",
+  },
 ];
 
 function banner(schemaFile) {

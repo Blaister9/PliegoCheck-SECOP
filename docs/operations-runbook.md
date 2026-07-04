@@ -27,3 +27,15 @@ documentos completos ni rutas fisicas.
 
 Todo error controlado usa envelope `ApiError`. Los errores internos se sanitizan y devuelven
 `X-Request-ID`.
+
+## Piloto controlado
+
+El piloto controlado end-to-end usa exclusivamente datos sinteticos y no llama a OpenAI.
+
+- `pnpm pilot:readiness` — diagnostico de preparacion (entorno local, usuarios, dataset).
+- `pnpm pilot:prepare` — siembra usuarios, proceso, documentos, empresa y snapshot sinteticos.
+- `pnpm pilot:run` — ejecuta el flujo completo y devuelve un `PilotRunSummary` en JSON.
+- `pnpm pilot:reset -- --confirm` — elimina UNICAMENTE datos de piloto; nunca datos ajenos ni `.env`.
+
+Guion y checklist: [demo-script.md](demo-script.md), [pilot-demo-checklist.md](pilot-demo-checklist.md).
+Dataset: [pilot-dataset.md](pilot-dataset.md). Retroalimentacion: [pilot-feedback-log.md](pilot-feedback-log.md).
