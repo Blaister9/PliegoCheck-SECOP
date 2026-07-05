@@ -53,6 +53,8 @@
     "controlled:eval": "uv run pytest evals/controlled-deployment/test_controlled_deployment.py",
     "controlled:data-scan": "uv run pytest evals/controlled-deployment/test_controlled_data_scan.py",
     "controlled:backup-check": "pnpm deployment:backup-check",
+    "mvp:eval": "uv run pytest evals/mvp-closure",
+    "mvp:data-scan": "pnpm controlled:data-scan",
     "specialized:test": "uv run pytest apps/worker/tests/test_specialized_evaluators.py apps/api/tests/test_specialized_evaluations_api.py packages/schemas/tests/test_specialized_evaluation_contracts.py",
     "specialized:eval": "uv run pytest evals/specialized-evaluators",
     "specialized:run-once": "uv run pliegocheck-worker specialized-run-once",
@@ -70,7 +72,7 @@
     "test": "pnpm -r test && uv run pytest",
     "extraction:test": "uv run pytest apps/worker/tests && uv run pytest apps/api/tests/test_process_import.py",
     "build": "pnpm --filter @pliegocheck/web build",
-    "check": "pnpm schemas:check && pnpm auth:test && pnpm ops:test && pnpm pilot:eval && pnpm deployment:eval && pnpm deployment:backup-check && pnpm controlled:eval && pnpm controlled:data-scan && pnpm company:test && pnpm company:snapshot-check && pnpm normalization:test && pnpm normalization:eval && pnpm financial:test && pnpm financial:eval && pnpm specialized:test && pnpm specialized:eval && pnpm decision:policy-check && pnpm decision:test && pnpm decision:eval && pnpm report:test && pnpm report:eval && pnpm format:check && pnpm lint && pnpm typecheck && pnpm test && pnpm build"
+    "check": "pnpm schemas:check && pnpm auth:test && pnpm ops:test && pnpm pilot:eval && pnpm deployment:eval && pnpm deployment:backup-check && pnpm controlled:eval && pnpm controlled:data-scan && pnpm mvp:eval && pnpm mvp:data-scan && pnpm company:test && pnpm company:snapshot-check && pnpm normalization:test && pnpm normalization:eval && pnpm financial:test && pnpm financial:eval && pnpm specialized:test && pnpm specialized:eval && pnpm decision:policy-check && pnpm decision:test && pnpm decision:eval && pnpm report:test && pnpm report:eval && pnpm format:check && pnpm lint && pnpm typecheck && pnpm test && pnpm build"
   },
   "devDependencies": {
     "@eslint/js": "^9.17.0",

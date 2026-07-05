@@ -102,7 +102,7 @@ flowchart TB
 
 La decisión de stack y sus alternativas están formalizadas en [docs/ADR-001-stack-and-architecture.md](docs/ADR-001-stack-and-architecture.md).
 
-## Estado actual - Microfase 13
+## Estado actual - Microfase 14
 
 Implementado: importacion manual de procesos, carga documental segura, almacenamiento local con
 SHA-256, cola transaccional inicial, extractores deterministas para PDF con texto, DOCX, XLSX, CSV y
@@ -145,6 +145,10 @@ agrega `compose.pilot.yaml`, scripts `pnpm controlled:*`, eval de controlled dep
 contra datos reales/secretos/rutas fisicas, kit de validacion por rol, formulario de feedback,
 matriz de hallazgos, acta plantilla, guia de observacion y release candidate `0.13.0-rc.1`. Este
 despliegue controlado usa datos sinteticos y no es produccion.
+La Microfase 14 cierra el **MVP controlado**: consolida hallazgos finales, declara alcance y
+limitaciones, agrega criterios de aceptacion/no produccion, guia de demo final, checklist de cierre,
+indice de entrega, `pnpm mvp:eval`, `pnpm mvp:data-scan` y release candidate
+`0.14.0-mvp-controlled`. No se recibió retroalimentación real de usuarios piloto en esta microfase.
 
 No implementado todavia: OCR, integracion automatica con SECOP II, SSO/MFA y S3 real obligatorio.
 Categorias fuera de los adaptadores financiero, juridico, experiencia y tecnico quedan
@@ -184,6 +188,7 @@ uv sync --all-packages  # dependencias Python (workspace uv)
 | `pnpm controlled:deploy` / `pnpm controlled:validate` | Levanta y valida entorno controlado para usuarios piloto |
 | `pnpm controlled:stop` / `pnpm controlled:reset` | Detiene sin borrar / limpia con confirmacion el entorno controlado |
 | `pnpm controlled:eval` / `pnpm controlled:data-scan` | Eval de sesion piloto / escaneo de datos reales, secretos y rutas |
+| `pnpm mvp:eval` / `pnpm mvp:data-scan` | Eval de cierre MVP / data scan final del MVP controlado |
 | `pnpm auth:create-admin` / `pnpm auth:list-users` | CLI administrativo de usuarios locales |
 | `pnpm ops:backup` / `pnpm ops:restore` | Backup y restore local controlado |
 | `pnpm infra:up` / `pnpm infra:down` | PostgreSQL local para desarrollo |
@@ -246,6 +251,7 @@ Guía completa en [docs/development.md](docs/development.md).
 | [docs/ADR-011-controlled-pilot.md](docs/ADR-011-controlled-pilot.md) | Decision de arquitectura del piloto controlado. |
 | [docs/ADR-012-post-pilot-deployment-readiness.md](docs/ADR-012-post-pilot-deployment-readiness.md) | Decision de preparacion post-piloto y deployment readiness. |
 | [docs/ADR-013-controlled-deployment-user-validation.md](docs/ADR-013-controlled-deployment-user-validation.md) | Decision de despliegue controlado y validacion con usuarios piloto. |
+| [docs/ADR-014-controlled-mvp-closure.md](docs/ADR-014-controlled-mvp-closure.md) | Decision de cierre del MVP controlado. |
 | [docs/pilot-dataset.md](docs/pilot-dataset.md) | Dataset sintetico del piloto. |
 | [docs/demo-script.md](docs/demo-script.md) | Guion de demo end-to-end. |
 | [docs/pilot-demo-checklist.md](docs/pilot-demo-checklist.md) | Checklist de demo del piloto. |
@@ -257,6 +263,14 @@ Guía completa en [docs/development.md](docs/development.md).
 | [docs/user-pilot-findings.md](docs/user-pilot-findings.md) | Matriz inicial de hallazgos de usuarios piloto. |
 | [docs/pilot-validation-minutes.md](docs/pilot-validation-minutes.md) | Plantilla de acta de validacion piloto. |
 | [docs/pilot-observation-guide.md](docs/pilot-observation-guide.md) | Guia de observacion, logs, request id y evidencia. |
+| [docs/mvp-final-findings.md](docs/mvp-final-findings.md) | Hallazgos finales del MVP controlado. |
+| [docs/mvp-controlled-scope.md](docs/mvp-controlled-scope.md) | Alcance incluido y excluido del MVP controlado. |
+| [docs/known-limitations.md](docs/known-limitations.md) | Limitaciones conocidas antes de piloto real o produccion. |
+| [docs/mvp-acceptance-criteria.md](docs/mvp-acceptance-criteria.md) | Criterios de aceptacion del MVP controlado. |
+| [docs/non-production-criteria.md](docs/non-production-criteria.md) | Condiciones que bloquean uso productivo. |
+| [docs/final-demo-guide.md](docs/final-demo-guide.md) | Guia de demo final del MVP controlado. |
+| [docs/mvp-closure-checklist.md](docs/mvp-closure-checklist.md) | Checklist de cierre del MVP controlado. |
+| [docs/mvp-delivery-index.md](docs/mvp-delivery-index.md) | Indice de entrega del MVP controlado. |
 
 ## Roadmap resumido
 
@@ -277,5 +291,6 @@ Guía completa en [docs/development.md](docs/development.md).
 | 12 | Ajustes post-piloto y preparacion de despliegue controlado |
 | 13 | Despliegue controlado y validacion con usuarios piloto |
 | 14 | Ajustes derivados de usuarios piloto y cierre de MVP controlado |
+| 15 | Decision ejecutiva sobre evolucion a piloto real o pausa tecnica |
 
 Detalle completo en [docs/roadmap.md](docs/roadmap.md).

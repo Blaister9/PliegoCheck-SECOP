@@ -63,6 +63,8 @@ Invoke-RestMethod http://localhost:8000/health/ready
 pnpm deployment:eval
 pnpm controlled:eval
 pnpm controlled:data-scan
+pnpm mvp:eval
+pnpm mvp:data-scan
 ```
 
 ## 8. Pilot prepare y validacion posterior
@@ -77,6 +79,8 @@ pnpm controlled:validate
 
 Completar [browser-validation-checklist.md](browser-validation-checklist.md) y el kit
 [`pilot/user-validation`](../pilot/user-validation/README.md).
+Para cierre de MVP controlado, revisar tambien [mvp-delivery-index.md](mvp-delivery-index.md) y
+[mvp-final-findings.md](mvp-final-findings.md).
 
 ## 9. Backup previo y posterior
 

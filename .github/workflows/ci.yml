@@ -118,6 +118,12 @@ jobs:
       - name: Data scan de piloto controlado
         run: pnpm controlled:data-scan
 
+      - name: Eval de cierre MVP controlado
+        run: pnpm mvp:eval
+
+      - name: Data scan final MVP
+        run: pnpm mvp:data-scan
+
       - name: Pruebas de perfil de empresa
         run: pnpm company:test
 

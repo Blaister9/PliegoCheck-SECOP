@@ -234,8 +234,9 @@ def test_user_validation_kit_and_docs_are_complete() -> None:
 
     roadmap = (ROOT / "docs/roadmap.md").read_text(encoding="utf-8")
     assert "Microfase 13: completada" in roadmap
-    assert "Microfase 14: siguiente" in roadmap
+    assert "Microfase 14: completada" in roadmap
+    assert "Microfase 15: siguiente" in roadmap
 
     release = (ROOT / "docs/release-candidate.md").read_text(encoding="utf-8")
-    assert "0.13.0-rc.1" in release
-    assert re.search(r"Commit base:\*\* `?[0-9a-f]{7,40}`?", release)
+    assert "0.14.0-mvp-controlled" in release
+    assert re.search(r"Commit base para cierre:\*\* `?[0-9a-f]{7,40}`?", release)

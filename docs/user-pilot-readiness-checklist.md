@@ -6,6 +6,8 @@ Este checklist aplica solo a validacion piloto con datos sinteticos. No autoriza
 - [ ] `pnpm controlled:validate` pasa.
 - [ ] `pnpm controlled:eval` pasa.
 - [ ] `pnpm controlled:data-scan` pasa.
+- [ ] `pnpm mvp:eval` pasa.
+- [ ] `pnpm mvp:data-scan` pasa.
 - [ ] Migraciones aplicadas con `pnpm db:migrate` y verificadas con `pnpm db:check`.
 - [ ] Usuarios sinteticos `ADMIN`, `ANALYST`, `REVIEWER` y `VIEWER` disponibles.
 - [ ] Dataset sintetico preparado con `pnpm pilot:prepare`.
@@ -18,3 +20,7 @@ Este checklist aplica solo a validacion piloto con datos sinteticos. No autoriza
 - [ ] Formulario `pilot/user-validation/feedback-form.md` listo.
 - [ ] Matriz `pilot/user-validation/findings-matrix.csv` lista.
 - [ ] Plan de rollback revisado y responsable tecnico asignado.
+
+Para una nueva sesion posterior al cierre MVP, usar release candidate
+`0.14.0-mvp-controlled` y declarar al inicio: No se recibió retroalimentación real de usuarios
+piloto en esta microfase.

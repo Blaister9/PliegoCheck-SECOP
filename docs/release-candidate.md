@@ -1,96 +1,79 @@
-# Release candidate - Microfase 13
+# Release candidate - Microfase 14
 
-- **Version sugerida:** `0.13.0-rc.1`
-- **Commit base:** `51ebe660abb45ee6450f01dc6d382ba5e96cad88`
-- **Estado:** candidato para validacion controlada con usuarios piloto y datos sinteticos.
+- **Version sugerida:** `0.14.0-mvp-controlled`
+- **Commit base para cierre:** `dbcf168c528c58625fc761a995d0da4875e915f5`
+- **Commit final:** PR de Microfase 14 al integrarse en `main`.
+- **Estado:** candidato de cierre de MVP controlado, no productivo.
 
-## Alcance
+No se recibió retroalimentación real de usuarios piloto en esta microfase.
 
-Incluye piloto sintetico end-to-end, auth local, roles, auditoria, decision, reporte, ZIP, runbooks,
-checklists, rollback, smoke tests de deployment readiness, scripts `controlled:*`, data scan, kit de
-usuarios piloto, tareas por rol, formulario de feedback, acta plantilla y matriz de hallazgos.
+## Alcance incluido
+
+Incluye piloto sintetico end-to-end, auth local, roles, auditoria, decision
+deterministica, reporte, ZIP, runbooks, checklists, rollback, smoke tests de
+deployment readiness, scripts `controlled:*`, data scan, kit de usuarios piloto,
+matriz de hallazgos, cierre MVP, criterios de aceptacion/no produccion y guia de
+demo final.
 
 ## Fuera de alcance
 
-SSO, MFA, S3 real obligatorio, despliegue real en servidor, OCR, integracion
-SECOP, firma digital, PDF, correos, notificaciones, nuevos evaluadores y nuevas
-reglas de decision.
+Produccion, datos reales, SSO, MFA, S3 real obligatorio, despliegue real en
+servidor, OCR, integracion SECOP, firma digital, PDF, correos, notificaciones,
+nuevos evaluadores y nuevas reglas de decision.
 
 ## Validaciones requeridas
 
+- `pnpm pilot:eval`
 - `pnpm deployment:eval`
 - `pnpm deployment:backup-check`
 - `pnpm controlled:eval`
 - `pnpm controlled:data-scan`
-- `pnpm pilot:eval`
+- `pnpm mvp:eval`
+- `pnpm mvp:data-scan`
 - `pnpm check`
-- Checklist de navegador ejecutada.
+- Checklist de navegador antes de una nueva sesion real.
 - CI verde.
 - Escaneo de secretos sin hallazgos reales.
 
-## Riesgos
-
-- No hay SSO/MFA ni multi-tenant productivo completo.
-- Storage local no sustituye S3 productivo.
-- Evidencia sintetica no equivale a validacion juridica real.
-- `PENDIENTE_INFORMACION` es resultado esperado y honesto del dataset.
-
 ## Criterios de aceptacion
 
-- Smoke tests y CI en verde.
-- Admin puede operar y auditar.
+- No hay hallazgos `BLOCKER` abiertos en `docs/mvp-final-findings.md`.
+- Los hallazgos diferidos quedan marcados como diferidos, no cerrados sin
+  evidencia.
+- Admin puede operar y auditar en entorno controlado.
 - Viewer no modifica.
 - Reviewer puede revisar decision.
 - ZIP se descarga sin secretos ni rutas fisicas.
-- Feedback estructurado disponible para cada rol.
+- Feedback estructurado sigue disponible para cada rol.
 - No hay datos reales en `pilot/`, `docs/`, `evals` ni scripts.
 
-## Criterios para sesion piloto
+## Criterios de no produccion
 
-- `pnpm controlled:deploy` o preparacion manual equivalente completada.
-- `pnpm controlled:validate` pasa.
-- Roles `ADMIN`, `ANALYST`, `REVIEWER` y `VIEWER` disponibles.
-- Backup previo verificado.
-- Formulario y matriz de hallazgos listos.
+- No existe validacion real con usuarios piloto.
+- No hay SSO/MFA productivo.
+- No hay almacenamiento productivo ni politica completa de retencion.
+- No hay aprobacion juridica, seguridad y operacion para datos reales.
+- No hay integracion SECOP ni OCR.
+- Cualquier hallazgo `BLOCKER` o `HIGH` abierto sin aceptacion formal bloquea
+  produccion.
 
-## Criterios para bloquear sesion piloto
+## Riesgos
 
-- Cualquier dato real o secreto aparece en pantalla, logs, ZIP o repositorio.
-- Health/readiness queda en error.
-- Login falla para roles principales.
-- ZIP no descarga.
-- Viewer puede modificar datos.
-- Backup previo no existe o manifest no valida.
+- Evidencia sintetica no equivale a validacion juridica real.
+- La falta de feedback real impide afirmar usabilidad o valor con usuarios.
+- `PENDIENTE_INFORMACION` sigue siendo resultado esperado y honesto cuando falta
+  evidencia critica.
+- Storage local no sustituye S3 productivo.
 
 ## Rollback
 
 Seguir [rollback-plan.md](rollback-plan.md). No hacer downgrade automatico si
 hay datos no reversibles o backup no verificado.
 
-## Checklist de evidencia
+## Indice de entrega
 
-- Commit y PR.
-- Resultado de CI.
-- Salida de `pnpm controlled:eval`.
-- Salida de `pnpm controlled:data-scan`.
-- Manifest de backup previo y posterior.
-- Acta de validacion.
-- Matriz de hallazgos.
+Ver [mvp-delivery-index.md](mvp-delivery-index.md).
 
-## Pasos de despliegue controlado
+## Siguiente decision
 
-Seguir [controlled-deployment-runbook.md](controlled-deployment-runbook.md) y
-checklists pre/post despliegue.
-
-## Responsables genericos
-
-- Operacion tecnica: prepara entorno, migraciones y backups.
-- Lider de piloto: ejecuta demo y checklist.
-- Revisor juridico/negocio: revisa resultado y limitaciones.
-
-## Checklist de aprobacion
-
-- [ ] Pre-deployment checklist completo.
-- [ ] Browser validation checklist completo.
-- [ ] Post-deployment checklist completo.
-- [ ] Riesgos aceptados por responsables.
+Microfase 15 - Decision ejecutiva sobre evolucion a piloto real o pausa tecnica.
