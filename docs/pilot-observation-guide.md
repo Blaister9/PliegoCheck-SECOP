@@ -8,7 +8,8 @@ pantallas con informacion personal real.
 - API: `var/controlled/logs/api.log` y `var/controlled/logs/api.err.log`.
 - Web: `var/controlled/logs/web.log` y `var/controlled/logs/web.err.log`.
 - Worker: salida de `pnpm worker:health` y comandos `pilot:*`.
-- CI/evals: salida de `pnpm controlled:eval`, `pnpm controlled:data-scan` y `pnpm pilot:eval`.
+- CI/evals: salida de `pnpm controlled:eval`, `pnpm controlled:data-scan`, `pnpm mvp:eval`,
+  `pnpm mvp:data-scan` y `pnpm pilot:eval`.
 
 ## Request ID
 

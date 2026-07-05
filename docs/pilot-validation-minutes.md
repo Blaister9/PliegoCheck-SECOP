@@ -7,7 +7,7 @@ Este documento es una plantilla. No representa una sesion real ejecutada.
 - Fecha:
 - Ambiente:
 - Commit:
-- Release candidate: `0.13.0-rc.1`
+- Release candidate: `0.14.0-mvp-controlled`
 - Responsable tecnico:
 - Facilitador:
 - Observadores:
@@ -35,6 +35,9 @@ Este documento es una plantilla. No representa una sesion real ejecutada.
 
 Registrar cada hallazgo en `pilot/user-validation/findings-matrix.csv` y resumir aqui los
 `BLOCKER` y `HIGH`.
+
+Nota de cierre Microfase 14: No se recibió retroalimentación real de usuarios piloto en esta
+microfase.
 
 ## Decisiones
 

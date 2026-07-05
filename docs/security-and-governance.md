@@ -77,6 +77,9 @@ Controles de seguridad, aislamiento y gobernanza de decisiones que la plataforma
 - **Microfase 13 sin IA:** scripts controlled, data scan, kit de usuarios piloto, acta, matriz de
   hallazgos y evals de validacion son controles operativos. No llaman modelos ni agregan reglas de
   decision.
+- **Microfase 14 sin IA:** cierre MVP, hallazgos finales, criterios de aceptacion/no produccion,
+  guia de demo, `mvp:eval` y `mvp:data-scan` son controles documentales y operativos. No llaman
+  modelos, no agregan reglas de decision y no habilitan produccion.
 
 ## 7. Gobernanza de la decisión
 
@@ -143,3 +146,10 @@ Este despliegue controlado es para validacion piloto con datos sinteticos. No es
   estado.
 - Si aparece dato real, secreto, token, cookie o ruta fisica sensible, la sesion se pausa y el
   hallazgo se clasifica como `BLOCKER`.
+
+## 13. Cierre MVP controlado (Microfase 14)
+
+No se recibió retroalimentación real de usuarios piloto en esta microfase. El cierre MVP no autoriza
+produccion ni uso con datos reales. Antes de evolucionar a piloto real deben estar aceptados los
+criterios de [non-production-criteria.md](non-production-criteria.md), el data scan debe pasar y los
+responsables humanos deben decidir continuidad en Microfase 15.

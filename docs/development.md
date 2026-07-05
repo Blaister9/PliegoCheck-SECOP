@@ -1,6 +1,6 @@
 # Guia de desarrollo - PliegoCheck-SECOP
 
-Como trabajar en el monorepo tras la Microfase 9. Las decisiones de stack estan en
+Como trabajar en el monorepo tras la Microfase 14. Las decisiones de stack estan en
 [ADR-001](ADR-001-stack-and-architecture.md); la extraccion documental esta en
 [ADR-003](ADR-003-document-extraction.md); las reglas para agentes de programacion, en
 [AGENTS.md](../AGENTS.md).
@@ -64,6 +64,7 @@ docs/        Documentacion fundacional, guias y ADRs.
   `pnpm controlled:stop`, `pnpm controlled:reset`
 - **Controlled eval/data scan:** `pnpm controlled:eval`, `pnpm controlled:data-scan`,
   `pnpm controlled:backup-check`
+- **MVP closure:** `pnpm mvp:eval`, `pnpm mvp:data-scan`
 - **PostgreSQL:** `pnpm infra:up` publica PostgreSQL en `localhost:56543`
 - **Migraciones:** `pnpm db:migrate`; `pnpm db:check`
 
@@ -151,6 +152,8 @@ pnpm deployment:eval
 pnpm deployment:backup-check
 pnpm controlled:eval
 pnpm controlled:data-scan
+pnpm mvp:eval
+pnpm mvp:data-scan
 pnpm schemas:check
 pnpm build
 ```
@@ -223,6 +226,9 @@ Implementado:
   despliegue controlado.
 - flujo controlado de validacion con usuarios piloto, scripts `controlled:*`, data scan, kit por rol,
   acta plantilla, matriz de hallazgos y release candidate `0.13.0-rc.1`.
+- cierre de MVP controlado con ADR-014, hallazgos finales, alcance, limitaciones, criterios de
+  aceptacion/no produccion, demo final, checklist, indice de entrega, `mvp:eval`, `mvp:data-scan` y
+  release candidate `0.14.0-mvp-controlled`.
 
 No implementado todavia: OCR, integracion automatica con SECOP II, S3 real y autenticacion externa
 corporativa. Categorias fuera de financiero, juridico, experiencia y tecnico permanecen

@@ -18,7 +18,8 @@ Microfase 10: completada - endurecimiento operativo, autenticacion y preparacion
 Microfase 11: completada - piloto controlado end-to-end con datos sinteticos y retroalimentacion
 Microfase 12: completada - ajustes post-piloto y preparacion de despliegue controlado
 Microfase 13: completada - despliegue controlado y validacion con usuarios piloto
-Microfase 14: siguiente - ajustes derivados de usuarios piloto y cierre de MVP controlado
+Microfase 14: completada - ajustes derivados de usuarios piloto y cierre de MVP controlado
+Microfase 15: siguiente - Decisión ejecutiva sobre evolución a piloto real o pausa técnica
 ```
 
 ## Microfase 0 - Fundacion documental - completada
@@ -157,12 +158,26 @@ Microfase 14: siguiente - ajustes derivados de usuarios piloto y cierre de MVP c
 - **Fuera de alcance:** despliegue productivo real, SSO, MFA, S3 real obligatorio, OCR, PDF, firma
   digital, SECOP, nuevos evaluadores y nuevas reglas de decision.
 
-## Microfase 14 - Ajustes derivados de usuarios piloto y cierre de MVP controlado - siguiente
+## Microfase 14 - Ajustes derivados de usuarios piloto y cierre de MVP controlado - completada
 
-- **Objetivo:** priorizar hallazgos reales de usuarios piloto, corregir bloqueos y cerrar criterios
-  de MVP controlado.
-- **Entregable previsto:** matriz de hallazgos cerrada o diferida, fixes acotados y decision de
-  continuidad.
+- **Objetivo:** consolidar hallazgos, cerrar el MVP controlado y dejar explicitos criterios de
+  aceptacion, limitaciones, no produccion y demo final.
+- **Entregable:** ADR-014, hallazgos finales, alcance MVP, limitaciones conocidas, criterios de
+  aceptacion/no produccion, guia de demo final, checklist de cierre, indice de entrega, `mvp:eval`,
+  `mvp:data-scan` y CI actualizado.
+- **Criterios verificados:** no hay `BLOCKER` abierto para cierre MVP, la ausencia de feedback real
+  queda declarada, el data scan sigue vigente y la documentacion no habilita produccion.
+- **Nota de integridad:** No se recibió retroalimentación real de usuarios piloto en esta
+  microfase.
+- **Fuera de alcance:** produccion, datos reales, SSO/MFA, S3 obligatorio, OCR, SECOP en linea y
+  afirmaciones de validacion juridica o de usuarios reales.
+
+## Microfase 15 - Decisión ejecutiva sobre evolución a piloto real o pausa técnica - siguiente
+
+- **Objetivo:** decidir con responsables humanos si el MVP controlado pasa a piloto real con datos y
+  usuarios autorizados, o si se pausa tecnicamente.
+- **Entregable previsto:** decision ejecutiva, condiciones de avance o pausa, responsables,
+  controles adicionales y presupuesto de riesgos.
 
 ## Despues del MVP
 

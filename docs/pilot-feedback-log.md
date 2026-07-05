@@ -21,6 +21,13 @@ Severidad: `critica`, `alta`, `media`, `baja`. Estado: `abierto`, `en curso`,
 | 2026-07-04 | Autenticacion | SSO y MFA quedan fuera del piloto; auth local con roles es suficiente para la demo. | baja | `docs/authentication.md` | SSO/MFA en fase posterior. | fuera-de-alcance |
 | 2026-07-04 | Almacenamiento | S3 real, PDF y firma digital quedan fuera del piloto. | baja | `docs/ADR-011-controlled-pilot.md` | Evaluar en despliegue controlado. | fuera-de-alcance |
 
+## Cierre MVP controlado (Microfase 14)
+
+| Fecha | Escenario | Observacion | Severidad | Evidencia | Decision | Estado |
+| --- | --- | --- | --- | --- | --- | --- |
+| 2026-07-04 | Usuarios piloto | No se recibió retroalimentación real de usuarios piloto en esta microfase. | media | `docs/mvp-final-findings.md` | Diferir validacion real a Microfase 15; no usar como evidencia de aceptacion de usuarios. | fuera-de-alcance |
+| 2026-07-04 | Datos | Data scan controlado sigue como bloqueo obligatorio ante datos reales o secretos. | alta | `pnpm controlled:data-scan`, `pnpm mvp:data-scan` | Mantener como criterio de aceptacion del MVP controlado. | cerrado |
+
 ## Como agregar retroalimentacion
 
 Durante una demo o validacion, agrega una fila por observacion. Referencia
