@@ -28,6 +28,20 @@ pnpm ops:restore -- -BackupDir var/backups/pliegocheck-YYYYMMDD-HHMMSS -Yes
 Verificar manifest antes de restaurar. El restore local reemplaza DB y storage
 local configurado; no debe ejecutarse contra datos ajenos al piloto.
 
+## Sesion piloto controlada
+
+- Backup antes de sesion: `pnpm ops:backup` y revision de `manifest.json`.
+- Backup despues de sesion: repetir backup y conservar hallazgos/acta fuera del reset.
+- Falla de migracion: detener servicios, restaurar backup si existe, no hacer downgrade si hay duda.
+- Falla de web: `pnpm controlled:stop`, revisar `var/controlled/logs/web.err.log` y volver al commit
+  aprobado.
+- Falla de worker: revisar `pnpm worker:health`, colas y logs; no borrar datos antes de capturar
+  evidencia.
+- Falla de storage: no continuar si `PLIEGOCHECK_STORAGE_PATH` no es escribible o expone rutas
+  fisicas.
+- Limpieza sintetica: `pnpm controlled:reset -Confirm` solo despues de conservar feedback y
+  evidencia permitida.
+
 ## Verificacion posterior
 
 - `pnpm db:check`

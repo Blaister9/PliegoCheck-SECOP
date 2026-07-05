@@ -41,5 +41,5 @@ operador en la bitacora interna del piloto.
 ## Cierre
 
 - [ ] `pnpm ops:backup` ejecutado y manifest revisado.
-- [ ] `pnpm pilot:reset -- --confirm` limpia solo datos piloto.
+- [ ] `pnpm pilot:reset --confirm` limpia solo datos piloto.
 - [ ] `pnpm infra:down` ejecutado si no se continua la demo.

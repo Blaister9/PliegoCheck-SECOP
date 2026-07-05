@@ -102,7 +102,7 @@ flowchart TB
 
 La decisión de stack y sus alternativas están formalizadas en [docs/ADR-001-stack-and-architecture.md](docs/ADR-001-stack-and-architecture.md).
 
-## Estado actual - Microfase 12
+## Estado actual - Microfase 13
 
 Implementado: importacion manual de procesos, carga documental segura, almacenamiento local con
 SHA-256, cola transaccional inicial, extractores deterministas para PDF con texto, DOCX, XLSX, CSV y
@@ -140,6 +140,11 @@ post-piloto, agrega `pnpm deployment:eval`, `pnpm deployment:backup-check`, perf
 local/piloto, runbook de despliegue controlado, checklist de navegador, pre/post deployment,
 rollback, observabilidad local y documentacion de release candidate. Controlado/piloto no equivale a
 produccion.
+La Microfase 13 convierte esa preparacion en un **flujo controlado validable por usuarios piloto**:
+agrega `compose.pilot.yaml`, scripts `pnpm controlled:*`, eval de controlled deployment, data scan
+contra datos reales/secretos/rutas fisicas, kit de validacion por rol, formulario de feedback,
+matriz de hallazgos, acta plantilla, guia de observacion y release candidate `0.13.0-rc.1`. Este
+despliegue controlado usa datos sinteticos y no es produccion.
 
 No implementado todavia: OCR, integracion automatica con SECOP II, SSO/MFA y S3 real obligatorio.
 Categorias fuera de los adaptadores financiero, juridico, experiencia y tecnico quedan
@@ -174,8 +179,11 @@ uv sync --all-packages  # dependencias Python (workspace uv)
 | `pnpm report:test` / `pnpm report:eval` | Pruebas y evals deterministas de reportes |
 | `pnpm auth:test` / `pnpm pilot:eval` | Pruebas de autenticacion y eval end-to-end de piloto |
 | `pnpm pilot:prepare` / `pnpm pilot:run` | Siembra el dataset sintetico / ejecuta el flujo end-to-end |
-| `pnpm pilot:readiness` / `pnpm pilot:reset -- --confirm` | Diagnostico de piloto / limpieza segura de datos de piloto |
+| `pnpm pilot:readiness` / `pnpm pilot:reset --confirm` | Diagnostico de piloto / limpieza segura de datos de piloto |
 | `pnpm deployment:eval` / `pnpm deployment:backup-check` | Smoke de despliegue controlado / verificacion de backup |
+| `pnpm controlled:deploy` / `pnpm controlled:validate` | Levanta y valida entorno controlado para usuarios piloto |
+| `pnpm controlled:stop` / `pnpm controlled:reset` | Detiene sin borrar / limpia con confirmacion el entorno controlado |
+| `pnpm controlled:eval` / `pnpm controlled:data-scan` | Eval de sesion piloto / escaneo de datos reales, secretos y rutas |
 | `pnpm auth:create-admin` / `pnpm auth:list-users` | CLI administrativo de usuarios locales |
 | `pnpm ops:backup` / `pnpm ops:restore` | Backup y restore local controlado |
 | `pnpm infra:up` / `pnpm infra:down` | PostgreSQL local para desarrollo |
@@ -237,6 +245,7 @@ Guía completa en [docs/development.md](docs/development.md).
 | [docs/backup-restore.md](docs/backup-restore.md) | Backup y restore local. |
 | [docs/ADR-011-controlled-pilot.md](docs/ADR-011-controlled-pilot.md) | Decision de arquitectura del piloto controlado. |
 | [docs/ADR-012-post-pilot-deployment-readiness.md](docs/ADR-012-post-pilot-deployment-readiness.md) | Decision de preparacion post-piloto y deployment readiness. |
+| [docs/ADR-013-controlled-deployment-user-validation.md](docs/ADR-013-controlled-deployment-user-validation.md) | Decision de despliegue controlado y validacion con usuarios piloto. |
 | [docs/pilot-dataset.md](docs/pilot-dataset.md) | Dataset sintetico del piloto. |
 | [docs/demo-script.md](docs/demo-script.md) | Guion de demo end-to-end. |
 | [docs/pilot-demo-checklist.md](docs/pilot-demo-checklist.md) | Checklist de demo del piloto. |
@@ -244,6 +253,10 @@ Guía completa en [docs/development.md](docs/development.md).
 | [docs/post-pilot-findings.md](docs/post-pilot-findings.md) | Clasificacion de hallazgos post-piloto. |
 | [docs/controlled-deployment-runbook.md](docs/controlled-deployment-runbook.md) | Runbook de despliegue controlado. |
 | [docs/release-candidate.md](docs/release-candidate.md) | Release candidate y criterios de aceptacion/rollback. |
+| [docs/user-pilot-readiness-checklist.md](docs/user-pilot-readiness-checklist.md) | Checklist de readiness para sesion con usuarios piloto. |
+| [docs/user-pilot-findings.md](docs/user-pilot-findings.md) | Matriz inicial de hallazgos de usuarios piloto. |
+| [docs/pilot-validation-minutes.md](docs/pilot-validation-minutes.md) | Plantilla de acta de validacion piloto. |
+| [docs/pilot-observation-guide.md](docs/pilot-observation-guide.md) | Guia de observacion, logs, request id y evidencia. |
 
 ## Roadmap resumido
 
@@ -263,5 +276,6 @@ Guía completa en [docs/development.md](docs/development.md).
 | 11 | Piloto controlado end-to-end con datos sinteticos y retroalimentacion |
 | 12 | Ajustes post-piloto y preparacion de despliegue controlado |
 | 13 | Despliegue controlado y validacion con usuarios piloto |
+| 14 | Ajustes derivados de usuarios piloto y cierre de MVP controlado |
 
 Detalle completo en [docs/roadmap.md](docs/roadmap.md).

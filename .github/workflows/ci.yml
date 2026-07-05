@@ -112,6 +112,12 @@ jobs:
       - name: Verificacion de backup controlado
         run: pnpm deployment:backup-check
 
+      - name: Eval de validacion controlada con usuarios piloto
+        run: pnpm controlled:eval
+
+      - name: Data scan de piloto controlado
+        run: pnpm controlled:data-scan
+
       - name: Pruebas de perfil de empresa
         run: pnpm company:test
 

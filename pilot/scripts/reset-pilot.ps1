@@ -1,5 +1,5 @@
 # Elimina UNICAMENTE datos de piloto. Requiere -Confirm explicito.
-# Wrapper de: pnpm pilot:reset -- --confirm. No toca datos no sinteticos ni .env.
+# Wrapper de: pnpm pilot:reset --confirm. No toca datos no sinteticos ni .env.
 param(
   [switch]$Confirm
 )

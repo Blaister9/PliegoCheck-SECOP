@@ -15,4 +15,9 @@
 - [ ] `pnpm pilot:eval` pasando.
 - [ ] `pnpm deployment:eval` pasando.
 - [ ] `pnpm deployment:backup-check` pasando.
+- [ ] `pnpm controlled:eval` pasando.
+- [ ] `pnpm controlled:data-scan` pasando.
+- [ ] `pnpm controlled:validate` pasando si los servicios ya estan levantados.
+- [ ] Kit `pilot/user-validation/` revisado.
+- [ ] Formulario de feedback y matriz de hallazgos preparados.
 - [ ] Documentacion operativa revisada.

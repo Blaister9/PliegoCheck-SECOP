@@ -222,4 +222,5 @@ def test_documentation_commands_and_files_exist() -> None:
 
     roadmap = (ROOT / "docs" / "roadmap.md").read_text(encoding="utf-8")
     assert "Microfase 12: completada" in roadmap
-    assert "Microfase 13: siguiente" in roadmap
+    assert "Microfase 13: completada" in roadmap
+    assert "Microfase 14: siguiente" in roadmap

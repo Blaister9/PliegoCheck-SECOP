@@ -74,6 +74,9 @@ Controles de seguridad, aislamiento y gobernanza de decisiones que la plataforma
   headers y backup/restore son controles deterministas. No usan modelos ni cambian decisiones.
 - **Microfase 12 sin IA:** deployment readiness, backup check, rollback, observabilidad local y
   release candidate son controles operativos. No llaman modelos ni agregan reglas de decision.
+- **Microfase 13 sin IA:** scripts controlled, data scan, kit de usuarios piloto, acta, matriz de
+  hallazgos y evals de validacion son controles operativos. No llaman modelos ni agregan reglas de
+  decision.
 
 ## 7. Gobernanza de la decisión
 
@@ -117,7 +120,7 @@ auditoria activos; no desactiva la seguridad para la validacion principal. Regla
 - Sin datos reales de entidades, empresas, personas, procesos o documentos.
 - Sin OpenAI ni servicios externos en el flujo de piloto.
 - Las contrasenas demo no se versionan; se pasan por argumento o variable de entorno.
-- `pnpm pilot:reset -- --confirm` elimina unicamente datos marcados como piloto (usuarios
+- `pnpm pilot:reset --confirm` elimina unicamente datos marcados como piloto (usuarios
   `@pilot.pliegocheck.local`, el proceso piloto y la empresa piloto); nunca datos ajenos ni `.env`.
 - El paquete de reporte descargado no contiene `.env`, secretos ni rutas fisicas (verificado por eval).
 - El resultado del piloto es una decision preliminar deterministica que requiere revision humana y no
@@ -128,3 +131,15 @@ auditoria activos; no desactiva la seguridad para la validacion principal. Regla
 Controlado/piloto no equivale a produccion. Antes de abrir acceso a usuarios piloto deben pasar
 `pnpm deployment:eval`, `pnpm deployment:backup-check`, `pnpm pilot:eval`, CI y checklist manual de
 navegador. No se autoriza uso con datos reales sin SSO/MFA o decision explicita de riesgo aceptado.
+
+## 12. Validacion con usuarios piloto (Microfase 13)
+
+Este despliegue controlado es para validacion piloto con datos sinteticos. No es produccion.
+
+- `pnpm controlled:data-scan` debe pasar antes de la sesion.
+- Los roles `ADMIN`, `ANALYST`, `REVIEWER` y `VIEWER` deben validarse con acciones permitidas y
+  denegadas.
+- El feedback se registra con escenario, rol, tarea, severidad, evidencia, decision, fase destino y
+  estado.
+- Si aparece dato real, secreto, token, cookie o ruta fisica sensible, la sesion se pausa y el
+  hallazgo se clasifica como `BLOCKER`.

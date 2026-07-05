@@ -14,6 +14,6 @@ pnpm dev:api        # y en otra terminal: pnpm dev:web
 # recorrido web: login por rol -> proceso -> empresa -> evaluaciones -> decision -> reporte -> ZIP -> auditoria
 pnpm pilot:run      # o el flujo automatizado equivalente
 pnpm ops:backup
-pnpm pilot:reset -- --confirm
+pnpm pilot:reset --confirm
 pnpm infra:down
 ```

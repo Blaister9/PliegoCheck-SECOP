@@ -47,7 +47,7 @@ pnpm db:migrate          # migraciones
 pnpm pilot:readiness     # diagnostico de preparacion
 pnpm pilot:prepare       # siembra usuarios, proceso, documentos, empresa, snapshot
 pnpm pilot:run           # ejecuta el flujo end-to-end y devuelve un resumen JSON
-pnpm pilot:reset -- --confirm   # elimina SOLO datos de piloto
+pnpm pilot:reset --confirm      # elimina SOLO datos de piloto
 pnpm pilot:eval          # eval automatizado del flujo completo (auth activo)
 ```
 

@@ -9,6 +9,7 @@ pnpm infra:up
 pnpm db:migrate
 pnpm auth:create-admin -- --email admin@example.com --display-name "Admin"
 pnpm deployment:eval
+pnpm controlled:eval
 pnpm dev:api
 pnpm dev:web
 ```
@@ -36,7 +37,7 @@ El piloto controlado end-to-end usa exclusivamente datos sinteticos y no llama a
 - `pnpm pilot:readiness` — diagnostico de preparacion (entorno local, usuarios, dataset).
 - `pnpm pilot:prepare` — siembra usuarios, proceso, documentos, empresa y snapshot sinteticos.
 - `pnpm pilot:run` — ejecuta el flujo completo y devuelve un `PilotRunSummary` en JSON.
-- `pnpm pilot:reset -- --confirm` — elimina UNICAMENTE datos de piloto; nunca datos ajenos ni `.env`.
+- `pnpm pilot:reset --confirm` — elimina UNICAMENTE datos de piloto; nunca datos ajenos ni `.env`.
 
 Guion y checklist: [demo-script.md](demo-script.md), [pilot-demo-checklist.md](pilot-demo-checklist.md).
 Dataset: [pilot-dataset.md](pilot-dataset.md). Retroalimentacion: [pilot-feedback-log.md](pilot-feedback-log.md).
@@ -60,4 +61,15 @@ Comandos:
 pnpm deployment:eval
 pnpm deployment:backup-check
 pnpm pilot:eval
+pnpm controlled:eval
+pnpm controlled:data-scan
+pnpm controlled:deploy
+pnpm controlled:validate
+pnpm controlled:stop
 ```
+
+Para sesiones con usuarios piloto usar el kit [../pilot/user-validation/README.md](../pilot/user-validation/README.md),
+la checklist [user-pilot-readiness-checklist.md](user-pilot-readiness-checklist.md), la matriz
+[user-pilot-findings.md](user-pilot-findings.md) y la guia
+[pilot-observation-guide.md](pilot-observation-guide.md). Ejecutar backup antes y despues de la
+sesion; conservar hallazgos aunque se haga reset del entorno sintetico.

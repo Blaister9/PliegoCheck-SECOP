@@ -21,6 +21,8 @@ En piloto, `PLIEGOCHECK_AUTH_SECRET_KEY` debe existir y `PLIEGOCHECK_AUTH_COOKIE
 hay HTTPS.
 `.env.pilot.example` documenta el perfil controlado; copiarlo a `.env` local no versionado y
 reemplazar todos los `CHANGEME`.
+Los scripts `controlled:*` leen `.env.pilot` por defecto y rechazan placeholders `CHANGEME` antes de
+levantar una sesion piloto compartida.
 
 ## Primer admin
 

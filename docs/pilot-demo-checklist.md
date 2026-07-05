@@ -39,7 +39,7 @@ sinteticos.
 
 - [ ] Eventos de auditoria registran login, evaluaciones, decision y descarga.
 - [ ] `pnpm ops:backup` produce manifest con hashes y excluye `.env`.
-- [ ] `pnpm pilot:reset -- --confirm` elimina SOLO datos de piloto.
+- [ ] `pnpm pilot:reset --confirm` elimina SOLO datos de piloto.
 - [ ] Un usuario/proceso no-piloto permanece tras el reset.
 - [ ] `pnpm infra:down` detiene la infraestructura.
 
