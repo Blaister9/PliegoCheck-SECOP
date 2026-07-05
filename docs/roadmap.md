@@ -4,19 +4,20 @@ Fases pequenas, cada una con entregable verificable. Cada microfase termina inte
 mediante Pull Request, siguiendo [AGENTS.md](../AGENTS.md).
 
 ```text
-Microfase 0: fundacion documental (completada)
-Microfase 1: esqueleto del monorepo (completada)
-Microfase 2: importacion manual de proceso y documentos (completada)
-Microfase 3: inventario y extraccion documental (completada)
-Microfase 4: normalizacion de requisitos (completada)
-Microfase 5: perfil de empresa y evidencias (completada)
-Microfase 6: evaluador financiero inicial (completada)
-Microfase 7: motor deterministico de decision (completada)
-Microfase 8: evaluadores especializados juridico, tecnico y de experiencia (completada)
-Microfase 9: reporte ejecutivo y paquete de decision (completada)
-Microfase 10: endurecimiento operativo, autenticacion y preparacion de piloto (completada)
-Microfase 11: piloto controlado end-to-end con datos sinteticos y retroalimentacion (completada)
-Microfase 12: ajustes post-piloto y preparacion de despliegue controlado (siguiente)
+Microfase 0: completada - fundacion documental
+Microfase 1: completada - esqueleto del monorepo
+Microfase 2: completada - importacion manual de proceso y documentos
+Microfase 3: completada - inventario y extraccion documental
+Microfase 4: completada - normalizacion de requisitos
+Microfase 5: completada - perfil de empresa y evidencias
+Microfase 6: completada - evaluador financiero inicial
+Microfase 7: completada - motor deterministico de decision
+Microfase 8: completada - evaluadores especializados juridico, tecnico y de experiencia
+Microfase 9: completada - reporte ejecutivo y paquete de decision
+Microfase 10: completada - endurecimiento operativo, autenticacion y preparacion de piloto
+Microfase 11: completada - piloto controlado end-to-end con datos sinteticos y retroalimentacion
+Microfase 12: completada - ajustes post-piloto y preparacion de despliegue controlado
+Microfase 13: siguiente - despliegue controlado y validacion con usuarios piloto
 ```
 
 ## Microfase 0 - Fundacion documental - completada
@@ -135,11 +136,19 @@ Microfase 12: ajustes post-piloto y preparacion de despliegue controlado (siguie
   [ADR-011](ADR-011-controlled-pilot.md). Resultado honesto del dataset:
   `PENDIENTE_INFORMACION` (no forzado a GO).
 
-## Microfase 12 - Ajustes post-piloto y preparacion de despliegue controlado - siguiente
+## Microfase 12 - Ajustes post-piloto y preparacion de despliegue controlado - completada
 
 - **Objetivo:** incorporar la retroalimentacion del piloto y endurecer el despliegue.
-- **Entregable previsto:** correcciones priorizadas del log de retroalimentacion, endurecimiento de
-  despliegue (contenedores, secretos gestionados), y criterios de salida a un piloto con datos reales.
+- **Entregable:** hallazgos post-piloto clasificados, `deployment:eval`, `deployment:backup-check`,
+  perfiles `.env` local/piloto, checklist de navegador, runbook de despliegue controlado,
+  checklists pre/post despliegue, rollback, observabilidad local y release candidate documentada.
+
+## Microfase 13 - Despliegue controlado y validacion con usuarios piloto - siguiente
+
+- **Objetivo:** ejecutar un despliegue controlado real con usuarios piloto y retroalimentacion
+  operativa.
+- **Entregable previsto:** entorno controlado levantado, checklist de navegador ejecutada,
+  usuarios piloto activos, observaciones priorizadas y decision de evolucion hacia produccion.
 
 ## Despues del MVP
 

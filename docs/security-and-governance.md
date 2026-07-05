@@ -72,6 +72,8 @@ Controles de seguridad, aislamiento y gobernanza de decisiones que la plataforma
   reglas nuevas. Solo renderiza datos persistidos con templates versionados.
 - **Microfase 10 sin IA:** autenticacion, autorizacion, sesiones, auditoria operacional, readiness,
   headers y backup/restore son controles deterministas. No usan modelos ni cambian decisiones.
+- **Microfase 12 sin IA:** deployment readiness, backup check, rollback, observabilidad local y
+  release candidate son controles operativos. No llaman modelos ni agregan reglas de decision.
 
 ## 7. Gobernanza de la decisión
 
@@ -120,3 +122,9 @@ auditoria activos; no desactiva la seguridad para la validacion principal. Regla
 - El paquete de reporte descargado no contiene `.env`, secretos ni rutas fisicas (verificado por eval).
 - El resultado del piloto es una decision preliminar deterministica que requiere revision humana y no
   constituye concepto juridico.
+
+## 11. Despliegue controlado (Microfase 12)
+
+Controlado/piloto no equivale a produccion. Antes de abrir acceso a usuarios piloto deben pasar
+`pnpm deployment:eval`, `pnpm deployment:backup-check`, `pnpm pilot:eval`, CI y checklist manual de
+navegador. No se autoriza uso con datos reales sin SSO/MFA o decision explicita de riesgo aceptado.

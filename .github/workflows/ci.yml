@@ -106,6 +106,12 @@ jobs:
       - name: Eval end-to-end de piloto controlado
         run: pnpm pilot:eval
 
+      - name: Eval de despliegue controlado
+        run: pnpm deployment:eval
+
+      - name: Verificacion de backup controlado
+        run: pnpm deployment:backup-check
+
       - name: Pruebas de perfil de empresa
         run: pnpm company:test
 

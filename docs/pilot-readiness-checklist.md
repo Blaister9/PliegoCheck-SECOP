@@ -24,6 +24,13 @@ El flujo end-to-end con datos sinteticos esta automatizado y validado:
   decision -> reporte -> ZIP -> auditoria y devuelve un resumen JSON.
 - `pnpm pilot:eval` valida el flujo con auth activo (roles, decision, reporte, ZIP, auditoria, logout).
 - `pnpm pilot:reset -- --confirm` limpia unicamente datos de piloto.
+- `pnpm deployment:eval` valida configuracion, health, auth, worker, storage, backup y subpaso
+  `pilot:eval`.
+- `pnpm deployment:backup-check` valida manifest y exclusion de secretos.
 
 Ver [demo-script.md](demo-script.md), [pilot-demo-checklist.md](pilot-demo-checklist.md) y
 [pilot-dataset.md](pilot-dataset.md). El resultado honesto del dataset es `PENDIENTE_INFORMACION`.
+
+Antes de despliegue controlado completar tambien
+[browser-validation-checklist.md](browser-validation-checklist.md) y
+[pre-deployment-checklist.md](pre-deployment-checklist.md).

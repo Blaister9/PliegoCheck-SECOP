@@ -58,6 +58,8 @@ docs/        Documentacion fundacional, guias y ADRs.
 - **Crear admin local:** `pnpm auth:create-admin -- --email admin@example.com --display-name "Admin"`
 - **Listar usuarios:** `pnpm auth:list-users`
 - **Backup local:** `pnpm ops:backup`
+- **Deployment readiness:** `pnpm deployment:eval`
+- **Backup check:** `pnpm deployment:backup-check`
 - **PostgreSQL:** `pnpm infra:up` publica PostgreSQL en `localhost:56543`
 - **Migraciones:** `pnpm db:migrate`; `pnpm db:check`
 
@@ -66,6 +68,8 @@ Variables locales minimas en `.env.example`:
 ```text
 DATABASE_URL
 PLIEGOCHECK_STORAGE_PATH
+PLIEGOCHECK_REPORT_STORAGE_PATH
+PLIEGOCHECK_BACKUP_OUTPUT_DIR
 PLIEGOCHECK_MAX_FILE_SIZE_MB
 PLIEGOCHECK_EXTRACTION_MAX_SECONDS
 PLIEGOCHECK_EXTRACTION_MAX_CHARACTERS
@@ -139,6 +143,8 @@ pnpm report:eval
 pnpm auth:test
 pnpm ops:test
 pnpm pilot:eval
+pnpm deployment:eval
+pnpm deployment:backup-check
 pnpm schemas:check
 pnpm build
 ```
@@ -205,7 +211,10 @@ Implementado:
 - reporte ejecutivo y paquete de decision con templates versionados, artefactos
   HTML/Markdown/JSON/CSV/manifest/ZIP, cola PostgreSQL, worker, API, UI y evals deterministas;
 - autenticacion local, roles, permisos, sesiones persistidas, auditoria operacional, headers de
-  seguridad, readiness y backup local para piloto controlado.
+  seguridad, readiness y backup local para piloto controlado;
+- piloto controlado end-to-end con datos sinteticos;
+- deployment readiness, checklists, rollback, observabilidad local y release candidate para
+  despliegue controlado.
 
 No implementado todavia: OCR, integracion automatica con SECOP II, S3 real y autenticacion externa
 corporativa. Categorias fuera de financiero, juridico, experiencia y tecnico permanecen

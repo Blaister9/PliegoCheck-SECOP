@@ -102,7 +102,7 @@ flowchart TB
 
 La decisión de stack y sus alternativas están formalizadas en [docs/ADR-001-stack-and-architecture.md](docs/ADR-001-stack-and-architecture.md).
 
-## Estado actual - Microfase 11
+## Estado actual - Microfase 12
 
 Implementado: importacion manual de procesos, carga documental segura, almacenamiento local con
 SHA-256, cola transaccional inicial, extractores deterministas para PDF con texto, DOCX, XLSX, CSV y
@@ -135,8 +135,13 @@ evaluaciones financiera y especializadas -> decision -> reporte -> descarga ZIP 
 guion de demo, checklist, registro de retroalimentacion y contratos de piloto. No usa OpenAI ni datos
 reales; el resultado honesto del dataset es `PENDIENTE_INFORMACION` (no forzado a GO). Detalle en
 [docs/pilot-dataset.md](docs/pilot-dataset.md) y [docs/ADR-011-controlled-pilot.md](docs/ADR-011-controlled-pilot.md).
+La Microfase 12 prepara una **release candidate de despliegue controlado**: clasifica hallazgos
+post-piloto, agrega `pnpm deployment:eval`, `pnpm deployment:backup-check`, perfiles `.env`
+local/piloto, runbook de despliegue controlado, checklist de navegador, pre/post deployment,
+rollback, observabilidad local y documentacion de release candidate. Controlado/piloto no equivale a
+produccion.
 
-No implementado todavia: OCR, integracion automatica con SECOP II, autenticacion y S3 real.
+No implementado todavia: OCR, integracion automatica con SECOP II, SSO/MFA y S3 real obligatorio.
 Categorias fuera de los adaptadores financiero, juridico, experiencia y tecnico quedan
 `NOT_EVALUATED`, por lo que no pueden producir `GO`.
 
@@ -170,6 +175,7 @@ uv sync --all-packages  # dependencias Python (workspace uv)
 | `pnpm auth:test` / `pnpm pilot:eval` | Pruebas de autenticacion y eval end-to-end de piloto |
 | `pnpm pilot:prepare` / `pnpm pilot:run` | Siembra el dataset sintetico / ejecuta el flujo end-to-end |
 | `pnpm pilot:readiness` / `pnpm pilot:reset -- --confirm` | Diagnostico de piloto / limpieza segura de datos de piloto |
+| `pnpm deployment:eval` / `pnpm deployment:backup-check` | Smoke de despliegue controlado / verificacion de backup |
 | `pnpm auth:create-admin` / `pnpm auth:list-users` | CLI administrativo de usuarios locales |
 | `pnpm ops:backup` / `pnpm ops:restore` | Backup y restore local controlado |
 | `pnpm infra:up` / `pnpm infra:down` | PostgreSQL local para desarrollo |
@@ -230,10 +236,14 @@ Guía completa en [docs/development.md](docs/development.md).
 | [docs/security-hardening.md](docs/security-hardening.md) | Controles de seguridad implementados. |
 | [docs/backup-restore.md](docs/backup-restore.md) | Backup y restore local. |
 | [docs/ADR-011-controlled-pilot.md](docs/ADR-011-controlled-pilot.md) | Decision de arquitectura del piloto controlado. |
+| [docs/ADR-012-post-pilot-deployment-readiness.md](docs/ADR-012-post-pilot-deployment-readiness.md) | Decision de preparacion post-piloto y deployment readiness. |
 | [docs/pilot-dataset.md](docs/pilot-dataset.md) | Dataset sintetico del piloto. |
 | [docs/demo-script.md](docs/demo-script.md) | Guion de demo end-to-end. |
 | [docs/pilot-demo-checklist.md](docs/pilot-demo-checklist.md) | Checklist de demo del piloto. |
 | [docs/pilot-feedback-log.md](docs/pilot-feedback-log.md) | Registro de retroalimentacion del piloto. |
+| [docs/post-pilot-findings.md](docs/post-pilot-findings.md) | Clasificacion de hallazgos post-piloto. |
+| [docs/controlled-deployment-runbook.md](docs/controlled-deployment-runbook.md) | Runbook de despliegue controlado. |
+| [docs/release-candidate.md](docs/release-candidate.md) | Release candidate y criterios de aceptacion/rollback. |
 
 ## Roadmap resumido
 
@@ -252,5 +262,6 @@ Guía completa en [docs/development.md](docs/development.md).
 | 10 | Endurecimiento operativo, autenticacion y preparacion de piloto |
 | 11 | Piloto controlado end-to-end con datos sinteticos y retroalimentacion |
 | 12 | Ajustes post-piloto y preparacion de despliegue controlado |
+| 13 | Despliegue controlado y validacion con usuarios piloto |
 
 Detalle completo en [docs/roadmap.md](docs/roadmap.md).

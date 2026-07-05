@@ -19,6 +19,8 @@ PLIEGOCHECK_AUTH_LOCKOUT_MINUTES=15
 
 En piloto, `PLIEGOCHECK_AUTH_SECRET_KEY` debe existir y `PLIEGOCHECK_AUTH_COOKIE_SECURE=true` si
 hay HTTPS.
+`.env.pilot.example` documenta el perfil controlado; copiarlo a `.env` local no versionado y
+reemplazar todos los `CHANGEME`.
 
 ## Primer admin
 
@@ -36,3 +38,8 @@ No uses passwords en argumentos visibles. El comando imprime metadata del usuari
 - `POST /auth/change-password`
 
 Los tokens no se guardan en `localStorage`; el navegador usa cookie HttpOnly.
+
+## Limites
+
+La autenticacion local es suficiente para demo/piloto controlado. No implementa SSO, MFA ni politicas
+corporativas de identidad.
