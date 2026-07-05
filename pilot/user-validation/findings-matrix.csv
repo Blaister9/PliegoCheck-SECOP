@@ -1,0 +1,3 @@
+id,rol,escenario,descripcion,resultado_esperado,resultado_observado,severidad,evidencia,decision,estado,fase_destino
+UPF-001,ALL,sesion piloto,Validacion real con usuarios aun pendiente,Usuarios ejecutan tareas por rol,PENDIENTE,BLOCKER,pilot/user-validation/session-plan.md,ejecutar sesion,OPEN,Microfase 13
+UPF-002,ALL,datos reales,Datos reales prohibidos en esta etapa,solo datos sinteticos,PENDIENTE,HIGH,pnpm controlled:data-scan,bloquear si aparece dato real,OPEN,Microfase 13

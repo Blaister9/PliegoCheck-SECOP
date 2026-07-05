@@ -69,7 +69,7 @@ pnpm pilot:eval    # eval end-to-end con auth (usado por CI)
 
 ```powershell
 pnpm ops:backup    # backup local con manifest y hashes (excluye .env)
-pnpm pilot:reset -- --confirm   # elimina SOLO datos de piloto
+pnpm pilot:reset --confirm   # elimina SOLO datos de piloto
 pnpm infra:down
 ```
 

@@ -17,7 +17,8 @@ Microfase 9: completada - reporte ejecutivo y paquete de decision
 Microfase 10: completada - endurecimiento operativo, autenticacion y preparacion de piloto
 Microfase 11: completada - piloto controlado end-to-end con datos sinteticos y retroalimentacion
 Microfase 12: completada - ajustes post-piloto y preparacion de despliegue controlado
-Microfase 13: siguiente - despliegue controlado y validacion con usuarios piloto
+Microfase 13: completada - despliegue controlado y validacion con usuarios piloto
+Microfase 14: siguiente - ajustes derivados de usuarios piloto y cierre de MVP controlado
 ```
 
 ## Microfase 0 - Fundacion documental - completada
@@ -143,12 +144,25 @@ Microfase 13: siguiente - despliegue controlado y validacion con usuarios piloto
   perfiles `.env` local/piloto, checklist de navegador, runbook de despliegue controlado,
   checklists pre/post despliegue, rollback, observabilidad local y release candidate documentada.
 
-## Microfase 13 - Despliegue controlado y validacion con usuarios piloto - siguiente
+## Microfase 13 - Despliegue controlado y validacion con usuarios piloto - completada
 
-- **Objetivo:** ejecutar un despliegue controlado real con usuarios piloto y retroalimentacion
-  operativa.
-- **Entregable previsto:** entorno controlado levantado, checklist de navegador ejecutada,
-  usuarios piloto activos, observaciones priorizadas y decision de evolucion hacia produccion.
+- **Objetivo:** convertir la preparacion de despliegue en un flujo reproducible, validable por
+  usuarios piloto y cubierto por evals.
+- **Entregable:** `compose.pilot.yaml`, scripts `controlled:deploy|validate|stop|reset`, eval
+  `controlled:eval`, data scan `controlled:data-scan`, kit `pilot/user-validation/`, checklist de
+  readiness, matriz de hallazgos, acta plantilla, guia de observacion, runbooks actualizados y
+  release candidate `0.13.0-rc.1`.
+- **Criterios verificados:** health, auth, worker, DB, storage, dataset piloto, reporte ZIP,
+  auditoria, backup manifest, no secretos, no datos reales y documentacion de rollback.
+- **Fuera de alcance:** despliegue productivo real, SSO, MFA, S3 real obligatorio, OCR, PDF, firma
+  digital, SECOP, nuevos evaluadores y nuevas reglas de decision.
+
+## Microfase 14 - Ajustes derivados de usuarios piloto y cierre de MVP controlado - siguiente
+
+- **Objetivo:** priorizar hallazgos reales de usuarios piloto, corregir bloqueos y cerrar criterios
+  de MVP controlado.
+- **Entregable previsto:** matriz de hallazgos cerrada o diferida, fixes acotados y decision de
+  continuidad.
 
 ## Despues del MVP
 

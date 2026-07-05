@@ -1,0 +1,5 @@
+escenario,rol,tarea,resultado_esperado,resultado_observado,facilidad,claridad,confianza,error_observado,severidad,evidencia,sugerencia,decision,fase_destino,estado
+sesion-piloto,ADMIN,login,acceso exitoso,PENDIENTE,,,,,OBSERVATION,,,pendiente,Microfase 13,OPEN
+sesion-piloto,ANALYST,descargar ZIP,paquete sintetico descargado,PENDIENTE,,,,,OBSERVATION,,,pendiente,Microfase 13,OPEN
+sesion-piloto,REVIEWER,override sintetico,override auditado,PENDIENTE,,,,,OBSERVATION,,,pendiente,Microfase 13,OPEN
+sesion-piloto,VIEWER,intento no permitido,403 comprensible,PENDIENTE,,,,,OBSERVATION,,,pendiente,Microfase 13,OPEN

@@ -23,7 +23,15 @@ passwords, tokens, cookies, documentos completos ni rutas fisicas.
 
 - `pnpm pilot:run` imprime `PilotRunSummary`.
 - `pnpm deployment:eval` valida readiness y falla con salida pytest.
+- `pnpm controlled:eval` valida health, auth, worker, storage, piloto, ZIP, auditoria y backup.
+- `pnpm controlled:data-scan` falla si detecta datos reales, secretos o rutas fisicas no permitidas.
 - Backups generan `manifest.json` con hashes.
+
+## Sesion con usuarios piloto
+
+Usar [pilot-observation-guide.md](pilot-observation-guide.md). Registrar `request_id`, rol, tarea,
+resultado observado y evidencia permitida. No capturar passwords, cookies, tokens, `.env` ni datos
+reales.
 
 ## Limites conocidos
 

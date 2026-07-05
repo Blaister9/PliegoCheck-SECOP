@@ -10,6 +10,9 @@
 - [ ] Descarga de ZIP sintetico funciona.
 - [ ] Auditoria visible para admin.
 - [ ] Backup posterior ejecutado.
+- [ ] `pnpm controlled:data-scan` sin hallazgos reales.
+- [ ] Feedback de usuarios consolidado en `pilot/user-validation/findings-matrix.csv`.
+- [ ] Acta de validacion completada desde `docs/pilot-validation-minutes.md`.
 - [ ] Logs revisados.
 - [ ] Sin errores 500 durante smoke.
 - [ ] Plan de rollback listo y responsable informado.

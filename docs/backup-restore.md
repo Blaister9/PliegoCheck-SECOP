@@ -5,6 +5,7 @@
 ```powershell
 pnpm ops:backup
 pnpm deployment:backup-check
+pnpm controlled:backup-check
 ```
 
 Genera un directorio bajo `var/backups/` con:
@@ -28,3 +29,5 @@ de verificar el manifest y con `-Yes` explicito.
 
 Para despliegue controlado, ejecutar backup antes y despues del smoke. Si el restore requiere borrar
 storage, el script solo permite rutas bajo `var/` para evitar reemplazar rutas inesperadas.
+Para sesion con usuarios piloto, ejecutar backup antes y despues de la sesion, conservar el
+`manifest.json` como evidencia y no incluir feedback/hallazgos dentro del reset sintetico.

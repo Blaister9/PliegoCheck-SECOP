@@ -60,6 +60,10 @@ docs/        Documentacion fundacional, guias y ADRs.
 - **Backup local:** `pnpm ops:backup`
 - **Deployment readiness:** `pnpm deployment:eval`
 - **Backup check:** `pnpm deployment:backup-check`
+- **Controlled pilot:** `pnpm controlled:deploy`, `pnpm controlled:validate`,
+  `pnpm controlled:stop`, `pnpm controlled:reset`
+- **Controlled eval/data scan:** `pnpm controlled:eval`, `pnpm controlled:data-scan`,
+  `pnpm controlled:backup-check`
 - **PostgreSQL:** `pnpm infra:up` publica PostgreSQL en `localhost:56543`
 - **Migraciones:** `pnpm db:migrate`; `pnpm db:check`
 
@@ -145,6 +149,8 @@ pnpm ops:test
 pnpm pilot:eval
 pnpm deployment:eval
 pnpm deployment:backup-check
+pnpm controlled:eval
+pnpm controlled:data-scan
 pnpm schemas:check
 pnpm build
 ```
@@ -159,7 +165,7 @@ Flujo completo con datos sinteticos (no usa OpenAI ni datos reales). Detalle en
 pnpm pilot:readiness            # diagnostico de preparacion del piloto
 pnpm pilot:prepare              # siembra usuarios, proceso, documentos, empresa, snapshot
 pnpm pilot:run                  # ejecuta el flujo end-to-end y devuelve un PilotRunSummary JSON
-pnpm pilot:reset -- --confirm   # elimina SOLO datos de piloto (nunca datos ajenos ni .env)
+pnpm pilot:reset --confirm      # elimina SOLO datos de piloto (nunca datos ajenos ni .env)
 pnpm pilot:eval                 # eval automatizado del flujo completo con auth (lo corre la CI)
 ```
 
@@ -215,6 +221,8 @@ Implementado:
 - piloto controlado end-to-end con datos sinteticos;
 - deployment readiness, checklists, rollback, observabilidad local y release candidate para
   despliegue controlado.
+- flujo controlado de validacion con usuarios piloto, scripts `controlled:*`, data scan, kit por rol,
+  acta plantilla, matriz de hallazgos y release candidate `0.13.0-rc.1`.
 
 No implementado todavia: OCR, integracion automatica con SECOP II, S3 real y autenticacion externa
 corporativa. Categorias fuera de financiero, juridico, experiencia y tecnico permanecen

@@ -59,7 +59,7 @@ bloqueante, un `UNKNOWN` y revision humana pendiente. **El piloto no fuerza GO.*
 
 `pnpm pilot:prepare` es idempotente: reutiliza la empresa piloto y publica una
 nueva version de snapshot; crea un proceso y una normalizacion nuevos por
-corrida para conservar el historico. `pnpm pilot:reset -- --confirm` elimina
+corrida para conservar el historico. `pnpm pilot:reset --confirm` elimina
 unicamente los datos de piloto (usuarios `@pilot.pliegocheck.local`, el proceso
 piloto y la empresa piloto), nunca datos no sinteticos ni `.env`.
 

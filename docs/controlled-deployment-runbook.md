@@ -2,6 +2,7 @@
 
 Este runbook aplica a demo/piloto controlado. **Controlado/piloto no es
 produccion**.
+Este despliegue controlado es para validacion piloto con datos sinteticos. No es produccion.
 
 ## 1. Prerrequisitos
 
@@ -16,8 +17,17 @@ Usar origenes exactos, nunca `*`. En HTTPS, `PLIEGOCHECK_AUTH_COOKIE_SECURE=true
 
 ## 3. Base de datos y migraciones
 
+Opcion automatizada para sesion piloto:
+
 ```powershell
-pnpm infra:up
+pnpm controlled:deploy
+pnpm controlled:validate
+```
+
+Opcion manual:
+
+```powershell
+docker compose -f compose.pilot.yaml up -d postgres controlled-storage
 pnpm db:migrate
 pnpm db:check
 ```
@@ -51,6 +61,8 @@ Para Linux/macOS usar los mismos comandos en shells separados.
 Invoke-RestMethod http://localhost:8000/health/live
 Invoke-RestMethod http://localhost:8000/health/ready
 pnpm deployment:eval
+pnpm controlled:eval
+pnpm controlled:data-scan
 ```
 
 ## 8. Pilot prepare y validacion posterior
@@ -60,18 +72,23 @@ pnpm pilot:readiness
 pnpm pilot:prepare
 pnpm pilot:run
 pnpm pilot:eval
+pnpm controlled:validate
 ```
 
-Completar [browser-validation-checklist.md](browser-validation-checklist.md).
+Completar [browser-validation-checklist.md](browser-validation-checklist.md) y el kit
+[`pilot/user-validation`](../pilot/user-validation/README.md).
 
 ## 9. Backup previo y posterior
 
 ```powershell
 pnpm deployment:backup-check
+pnpm controlled:backup-check
 pnpm ops:backup -- -OutputDir var/backups
 ```
 
 Revisar `manifest.json`, hashes y exclusion de `.env`.
+Ejecutar backup antes y despues de la sesion. Si falla migracion, web, worker o storage, detener
+servicios con `pnpm controlled:stop`, conservar logs/hallazgos y seguir [rollback-plan.md](rollback-plan.md).
 
 ## 10. Logs y errores comunes
 
@@ -85,6 +102,7 @@ Revisar `manifest.json`, hashes y exclusion de `.env`.
 Seguir [rollback-plan.md](rollback-plan.md). Para apagar localmente:
 
 ```powershell
-pnpm pilot:reset -- --confirm
+pnpm controlled:stop
+pnpm controlled:reset -Confirm
 pnpm infra:down
 ```
