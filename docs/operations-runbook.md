@@ -8,6 +8,7 @@ uv sync --all-packages --frozen
 pnpm infra:up
 pnpm db:migrate
 pnpm auth:create-admin -- --email admin@example.com --display-name "Admin"
+pnpm deployment:eval
 pnpm dev:api
 pnpm dev:web
 ```
@@ -39,3 +40,24 @@ El piloto controlado end-to-end usa exclusivamente datos sinteticos y no llama a
 
 Guion y checklist: [demo-script.md](demo-script.md), [pilot-demo-checklist.md](pilot-demo-checklist.md).
 Dataset: [pilot-dataset.md](pilot-dataset.md). Retroalimentacion: [pilot-feedback-log.md](pilot-feedback-log.md).
+
+## Despliegue controlado
+
+El despliegue controlado sigue siendo piloto, no produccion. Antes de una demo o validacion con
+usuarios ejecutar:
+
+- [post-pilot-findings.md](post-pilot-findings.md)
+- [browser-validation-checklist.md](browser-validation-checklist.md)
+- [controlled-deployment-runbook.md](controlled-deployment-runbook.md)
+- [pre-deployment-checklist.md](pre-deployment-checklist.md)
+- [post-deployment-checklist.md](post-deployment-checklist.md)
+- [rollback-plan.md](rollback-plan.md)
+- [release-candidate.md](release-candidate.md)
+
+Comandos:
+
+```powershell
+pnpm deployment:eval
+pnpm deployment:backup-check
+pnpm pilot:eval
+```
