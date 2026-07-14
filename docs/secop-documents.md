@@ -7,3 +7,6 @@ Solo `.pdf`, `.docx`, `.xlsx`, `.txt` y `.csv` pueden avanzar a descarga control
 Un inventario puede quedar `METADATA_ONLY`, `LINK_AVAILABLE` o `UNSUPPORTED` sin que eso implique una descarga. Solo bytes validados y almacenados producen `DOWNLOADED`. Cada version descargada se enlaza con `ProcessDocument`; la extraccion se solicita despues y de forma explicita.
 
 Los nombres y descripciones no son hechos juridicos. Un termino de adenda en texto libre produce `POTENTIAL_ADDENDUM`; solo una categoria/tipo explicito de la fuente produce `CONFIRMED_ADDENDUM`. Ambos estados quedan trazables y no recalculan decisiones.
+# Estado documental en oportunidades
+
+El screening solo refleja el estado documental público; la ausencia no bloquea metadatos ni se interpreta como cumplimiento. El análisis profundo exige proceso interno y comprueba inventario, extracción y normalización. La descarga y sincronización se mantienen en las colas de Microfase 17 y no se duplican en el motor de compatibilidad.

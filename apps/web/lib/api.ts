@@ -82,6 +82,15 @@ import type {
   NormalizationRetryResponse,
   NormalizationRunDetail,
   NormalizationRunList,
+  OpportunityAssessmentDetail,
+  OpportunityDeepAnalysisResponse,
+  OpportunityDiscoveryRequest,
+  OpportunityDiscoveryResponse,
+  OpportunityDiscoveryRunDetail,
+  OpportunityInboxFilters,
+  OpportunityInboxResponse,
+  OpportunityReviewRequest,
+  OpportunityReviewResponse,
   ProcessInventory,
   ProcessCreate,
   ProcessDetail,
@@ -783,6 +792,50 @@ export function reviewEvidenceLink(
 
 export function listSnapshots(companyId: string) {
   return request<CompanyProfileSnapshotSummary[]>(`/companies/${companyId}/snapshots`);
+}
+
+export function createOpportunityDiscovery(payload: OpportunityDiscoveryRequest) {
+  return request<OpportunityDiscoveryResponse>("/opportunities/discovery-runs", {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
+}
+
+export function getOpportunityDiscovery(runId: string) {
+  return request<OpportunityDiscoveryRunDetail>(`/opportunities/discovery-runs/${runId}`);
+}
+
+export function listOpportunities(filters: OpportunityInboxFilters = {}) {
+  const query = new URLSearchParams();
+  Object.entries(filters).forEach(([key, value]) => {
+    if (value !== null && value !== undefined && value !== "") query.set(key, String(value));
+  });
+  return request<OpportunityInboxResponse>(`/opportunities?${query.toString()}`);
+}
+
+export function getOpportunity(opportunityId: string) {
+  return request<OpportunityAssessmentDetail>(`/opportunities/${opportunityId}`);
+}
+
+export function reviewOpportunity(opportunityId: string, payload: OpportunityReviewRequest) {
+  return request<OpportunityReviewResponse>(`/opportunities/${opportunityId}/review`, {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
+}
+
+export function importOpportunity(opportunityId: string) {
+  return request<ExternalProcurementImportResponse>(`/opportunities/${opportunityId}/import`, {
+    method: "POST",
+    body: JSON.stringify({}),
+  });
+}
+
+export function requestOpportunityDeepAnalysis(opportunityId: string) {
+  return request<OpportunityDeepAnalysisResponse>(
+    `/opportunities/${opportunityId}/request-deep-analysis`,
+    { method: "POST", body: JSON.stringify({}) },
+  );
 }
 
 export function createSnapshot(companyId: string, payload: CompanyProfileSnapshotCreate) {

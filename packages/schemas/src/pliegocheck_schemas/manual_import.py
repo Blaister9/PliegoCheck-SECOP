@@ -38,6 +38,7 @@ from pliegocheck_schemas.external_documents import ExternalDocumentErrorCode
 from pliegocheck_schemas.external_procurement import ExternalProcurementErrorCode
 from pliegocheck_schemas.financial_evaluation import FinancialErrorCode
 from pliegocheck_schemas.normalized_requirement import NormalizationErrorCode
+from pliegocheck_schemas.opportunities import OpportunityErrorCode
 
 MANUAL_IMPORT_SCHEMA_VERSION = "1.0.0"
 
@@ -113,6 +114,7 @@ ApiErrorCode = (
     | AuthErrorCode
     | ExternalProcurementErrorCode
     | ExternalDocumentErrorCode
+    | OpportunityErrorCode
 )
 
 

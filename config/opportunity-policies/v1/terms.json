@@ -1,0 +1,28 @@
+{
+  "version": "1.0.0",
+  "stopwords": [
+    "de",
+    "la",
+    "el",
+    "los",
+    "las",
+    "para",
+    "por",
+    "con",
+    "del",
+    "y",
+    "en",
+    "un",
+    "una",
+    "a"
+  ],
+  "synonyms": {
+    "software": ["sistema", "aplicacion", "plataforma"],
+    "soporte": ["mantenimiento", "mesa de ayuda"],
+    "consultoria": ["asesoria", "interventoria"]
+  },
+  "incompatible_groups": [
+    ["construccion", "medicamentos"],
+    ["software", "alimentos"]
+  ]
+}

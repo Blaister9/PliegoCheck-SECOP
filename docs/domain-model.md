@@ -346,3 +346,6 @@ erDiagram
 | Riesgos e inhabilidades | Matriz de riesgos del proceso, causales de rechazo, conflictos de interés. |
 
 > **Aclaración obligatoria:** los umbrales (p. ej. índice de liquidez mínimo), los documentos exigidos y las causales de rechazo o subsanabilidad **dependen de cada proceso concreto y de su pliego**. Ningún valor observado en un caso específico debe convertirse en regla universal del sistema. Las reglas del motor determinístico operan sobre los valores extraídos de cada pliego, no sobre umbrales fijos codificados.
+# Agregado Opportunity
+
+`OpportunityDiscoveryRun` fija empresa, snapshot, política, filtros, fecha efectiva y digest. Contiene `OpportunityCandidate`; cada candidato conserva uno o más `OpportunityAssessment` históricos con componentes y evidencias. `OpportunityReview` es append-only y `OpportunityEvent` registra transiciones. El vínculo opcional a `Process` permite importar y reutilizar el pipeline documental, requisitos, evaluaciones y decisión sin duplicarlos.

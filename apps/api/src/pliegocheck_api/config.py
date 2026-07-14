@@ -294,6 +294,15 @@ class Settings(BaseSettings):
     secop_incremental_sync_enabled: bool = Field(
         default=True, validation_alias="PLIEGOCHECK_SECOP_INCREMENTAL_SYNC_ENABLED"
     )
+    opportunities_enabled: bool = Field(
+        default=True, validation_alias="PLIEGOCHECK_OPPORTUNITIES_ENABLED"
+    )
+    opportunities_max_candidates: int = Field(
+        default=100,
+        validation_alias="PLIEGOCHECK_OPPORTUNITIES_MAX_CANDIDATES",
+        ge=1,
+        le=500,
+    )
 
     @field_validator(
         "secop_document_allowed_hosts", "secop_document_allowed_content_types", mode="before"

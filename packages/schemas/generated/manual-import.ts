@@ -169,6 +169,14 @@ export type ExternalDocumentErrorCode =
   | "EXTERNAL_DOCUMENT_ALREADY_DOWNLOADED"
   | "EXTERNAL_DOCUMENT_VERSION_CONFLICT"
   | "EXTERNAL_DOCUMENT_EXTRACTION_NOT_READY";
+export type OpportunityErrorCode =
+  | "COMPANY_SNAPSHOT_REQUIRED"
+  | "COMPANY_SNAPSHOT_NOT_PUBLISHED"
+  | "DISCOVERY_RUN_NOT_FOUND"
+  | "OPPORTUNITY_NOT_FOUND"
+  | "INVALID_POLICY"
+  | "DEEP_ANALYSIS_BLOCKED"
+  | "INVALID_FILTER";
 /**
  * Tipo documental declarado. La clasificacion automatica llega en Microfase 3.
  */
@@ -241,7 +249,8 @@ export interface ApiError {
     | DecisionReportErrorCode
     | AuthErrorCode
     | ExternalProcurementErrorCode
-    | ExternalDocumentErrorCode;
+    | ExternalDocumentErrorCode
+    | OpportunityErrorCode;
   details?: {
     [k: string]: string;
   };

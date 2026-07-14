@@ -170,3 +170,6 @@ de decisión. Los fallos y campos ausentes se registran explícitamente.
 Las URLs SECOP son entrada no confiable. La descarga exige HTTPS, puerto 443, host exacto en allowlist y resolucion DNS exclusivamente a IP publica antes de cada solicitud y redireccion. Se rechazan credenciales embebidas, HTML, tipos fuera de allowlist, firmas inconsistentes, macros Office y archivos que excedan el limite declarado o real. Los bytes se escriben a temporal mientras se calcula SHA-256 y solo se mueven al storage despues de validar. Un fallo de base de datos compensa eliminando el objeto nuevo.
 
 La metadata externa no se trata como instruccion, evidencia de cumplimiento ni decision. Las posibles adendas quedan `requires_human_review`; la ausencia de datos se conserva como ausencia o advertencia. Los contratos publicos nunca exponen claves de almacenamiento.
+# Controles de la bandeja de oportunidades
+
+Solo se evalúan snapshots empresariales publicados. Los permisos `opportunity:read|discover|assess|review|import` se aplican en backend y las denegaciones siguen la auditoría operacional. La bandeja no expone payloads crudos, storage keys ni datos empresariales sensibles; eventos guardan metadatos acotados. Discovery público conserva límites, allowlists y controles del conector SECOP.
