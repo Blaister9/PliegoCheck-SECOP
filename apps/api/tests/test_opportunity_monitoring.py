@@ -26,6 +26,8 @@ def state(**changes):
         closing_date=datetime(2026, 7, 20, tzinfo=UTC),
         document_state_hash="a" * 64,
         assessment_digest="b" * 64,
+        document_count=0,
+        document_version_hash="c" * 64,
         source_status="PUBLICADO",
         addendum_status=None,
     )
@@ -54,6 +56,26 @@ def test_small_score_change_and_unknown_do_not_alert():
     assert changed_alerts(new, detect_changes(old, new), OpportunityAlertRules()) == []
     same = state(outcome="INFORMACION_INSUFICIENTE")
     assert detect_changes(same, same) == []
+
+
+def test_document_inventory_distinguishes_new_document_version_and_addendum():
+    rules = OpportunityAlertRules()
+    old = state(document_count=1, document_version_hash="1" * 64)
+    added = state(document_count=2, document_version_hash="2" * 64)
+    updated = state(document_count=1, document_version_hash="2" * 64)
+    addendum = state(addendum_status="CONFIRMED_ADDENDUM")
+
+    assert [
+        decision.alert_type for decision in changed_alerts(added, detect_changes(old, added), rules)
+    ] == ["NEW_DOCUMENT_DISCOVERED"]
+    assert [
+        decision.alert_type
+        for decision in changed_alerts(updated, detect_changes(old, updated), rules)
+    ] == ["DOCUMENT_UPDATED"]
+    assert "CONFIRMED_ADDENDUM_DISCOVERED" in [
+        decision.alert_type
+        for decision in changed_alerts(addendum, detect_changes(state(), addendum), rules)
+    ]
 
 
 def test_next_run_collapses_missed_intervals_without_drift():

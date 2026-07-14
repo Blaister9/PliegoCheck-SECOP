@@ -19,6 +19,8 @@ class CandidateSnapshot:
     closing_date: datetime | None
     document_state_hash: str
     assessment_digest: str
+    document_count: int = 0
+    document_version_hash: str = ""
     source_status: str | None = None
     addendum_status: str | None = None
 

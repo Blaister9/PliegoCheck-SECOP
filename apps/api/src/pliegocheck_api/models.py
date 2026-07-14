@@ -4308,6 +4308,8 @@ class OpportunityMonitorCandidateState(Base):
     information_completeness: Mapped[Decimal] = mapped_column(Numeric(6, 2), nullable=False)
     closing_date: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     document_state_hash: Mapped[str] = mapped_column(String(64), nullable=False)
+    document_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    document_version_hash: Mapped[str] = mapped_column(String(64), nullable=False, default="")
     assessment_digest: Mapped[str] = mapped_column(String(64), nullable=False)
     source_status: Mapped[str | None] = mapped_column(String(500))
     addendum_status: Mapped[str | None] = mapped_column(String(32))

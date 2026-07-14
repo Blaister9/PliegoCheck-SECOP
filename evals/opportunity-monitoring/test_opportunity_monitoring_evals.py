@@ -23,6 +23,8 @@ def snapshot(**changes):
         closing_date=datetime(2026, 8, 1, tzinfo=UTC),
         document_state_hash="a",
         assessment_digest="b",
+        document_count=0,
+        document_version_hash="v1",
         source_status="PUBLICADO",
         addendum_status=None,
     )
@@ -39,9 +41,20 @@ CASES = [
     ("critical", {}, {"urgency_status": "CRITICAL"}, "OPPORTUNITY_NOW_CRITICAL"),
     ("closing", {}, {"closing_date": datetime(2026, 7, 25, tzinfo=UTC)}, "CLOSING_DATE_CHANGED"),
     ("closed", {}, {"source_status": "CERRADO"}, "PROCESS_CLOSED"),
-    ("document", {}, {"document_state_hash": "c"}, "NEW_DOCUMENT_DISCOVERED"),
-    ("potential_addendum", {}, {"addendum_status": "POTENTIAL"}, "POTENTIAL_ADDENDUM_DISCOVERED"),
-    ("confirmed_addendum", {}, {"addendum_status": "CONFIRMED"}, "CONFIRMED_ADDENDUM_DISCOVERED"),
+    ("document", {}, {"document_count": 1}, "NEW_DOCUMENT_DISCOVERED"),
+    ("document_update", {}, {"document_version_hash": "v2"}, "DOCUMENT_UPDATED"),
+    (
+        "potential_addendum",
+        {},
+        {"addendum_status": "POTENTIAL_ADDENDUM"},
+        "POTENTIAL_ADDENDUM_DISCOVERED",
+    ),
+    (
+        "confirmed_addendum",
+        {},
+        {"addendum_status": "CONFIRMED_ADDENDUM"},
+        "CONFIRMED_ADDENDUM_DISCOVERED",
+    ),
 ]
 
 

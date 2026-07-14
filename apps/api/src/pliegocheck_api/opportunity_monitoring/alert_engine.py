@@ -85,6 +85,7 @@ def changed_alerts(
     current: CandidateSnapshot, changes: list[CandidateChange], rules: OpportunityAlertRules
 ) -> list[AlertDecision]:
     alerts: list[AlertDecision] = []
+    changed_kinds = {item.kind for item in changes}
     for change in changes:
         if change.kind == "outcome" and rules.outcome_changes:
             improved = _RANK.get(str(change.new), 0) > _RANK.get(str(change.old), 0)
@@ -169,7 +170,7 @@ def changed_alerts(
                     f"closed:{change.new}",
                 )
             )
-        elif change.kind == "document_state_hash" and rules.new_documents:
+        elif change.kind == "document_count" and change.new > change.old and rules.new_documents:
             alerts.append(
                 AlertDecision(
                     "NEW_DOCUMENT_DISCOVERED",
@@ -179,23 +180,46 @@ def changed_alerts(
                     "Requiere revisión humana.",
                     "DOCUMENT_STATE_CHANGED",
                     {},
-                    f"documents:{change.new}",
+                    f"documents:{current.document_state_hash}",
+                )
+            )
+        elif (
+            change.kind == "document_version_hash"
+            and "document_count" not in changed_kinds
+            and rules.document_updates
+        ):
+            alerts.append(
+                AlertDecision(
+                    "DOCUMENT_UPDATED",
+                    "HIGH",
+                    "Documento actualizado",
+                    "SECOP reportó una versión diferente de un documento existente. "
+                    "Requiere revisión humana.",
+                    "DOCUMENT_VERSION_CHANGED",
+                    {},
+                    f"document-version:{change.new}",
                 )
             )
         elif (
             change.kind == "addendum_status"
             and rules.addenda
-            and change.new in {"POTENTIAL", "CONFIRMED"}
+            and change.new
+            in {
+                "POTENTIAL",
+                "CONFIRMED",
+                "POTENTIAL_ADDENDUM",
+                "CONFIRMED_ADDENDUM",
+            }
         ):
             kind = (
                 "CONFIRMED_ADDENDUM_DISCOVERED"
-                if change.new == "CONFIRMED"
+                if change.new in {"CONFIRMED", "CONFIRMED_ADDENDUM"}
                 else "POTENTIAL_ADDENDUM_DISCOVERED"
             )
             alerts.append(
                 AlertDecision(
                     kind,
-                    "CRITICAL" if change.new == "CONFIRMED" else "HIGH",
+                    "CRITICAL" if change.new in {"CONFIRMED", "CONFIRMED_ADDENDUM"} else "HIGH",
                     "Novedad de adenda",
                     "La fuente pública reporta una novedad documental que requiere "
                     "revisión humana.",
