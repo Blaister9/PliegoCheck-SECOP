@@ -44,6 +44,11 @@ from pliegocheck_worker.opportunities.orchestrator import (
     opportunity_drain,
     opportunity_run_once,
 )
+from pliegocheck_worker.opportunity_monitoring.orchestrator import (
+    monitor_drain,
+    monitor_run_once,
+    monitor_scheduler_run_once,
+)
 from pliegocheck_worker.reports.orchestrator import report_drain, report_run_once
 from pliegocheck_worker.runner import drain, run_once
 from pliegocheck_worker.specialized.orchestrator import (
@@ -341,6 +346,18 @@ def main(argv: list[str] | None = None) -> int:
         item = subparsers.add_parser(name, help="Drena ejecuciones de oportunidades")
         item.add_argument("--max-jobs", type=int, default=100)
         item.add_argument("--worker-id", default=None)
+    subparsers.add_parser(
+        "opportunity-monitor-scheduler-run-once", help="Reclama monitores vencidos"
+    )
+    monitor_once = subparsers.add_parser(
+        "opportunity-monitor-run-once", help="Procesa una ejecución de monitor"
+    )
+    monitor_once.add_argument("--worker-id", default=None)
+    monitor_drain_parser = subparsers.add_parser(
+        "opportunity-monitor-drain", help="Drena ejecuciones de monitores"
+    )
+    monitor_drain_parser.add_argument("--max-jobs", type=int, default=100)
+    monitor_drain_parser.add_argument("--worker-id", default=None)
     for name, help_text in (
         ("secop-sync-drain", "Drena sincronizaciones SECOP"),
         ("secop-download-drain", "Drena descargas SECOP"),
@@ -424,6 +441,15 @@ def main(argv: list[str] | None = None) -> int:
         "opportunity-assessment-drain",
     }:
         print(json.dumps(opportunity_drain(args.max_jobs, args.worker_id), sort_keys=True))
+        return 0
+    if args.command == "opportunity-monitor-scheduler-run-once":
+        print(json.dumps(monitor_scheduler_run_once(), sort_keys=True))
+        return 0
+    if args.command == "opportunity-monitor-run-once":
+        print(json.dumps(monitor_run_once(args.worker_id), sort_keys=True))
+        return 0
+    if args.command == "opportunity-monitor-drain":
+        print(json.dumps(monitor_drain(args.max_jobs, args.worker_id), sort_keys=True))
         return 0
     if args.command == "normalization-smoke":
         return run_normalization_smoke()

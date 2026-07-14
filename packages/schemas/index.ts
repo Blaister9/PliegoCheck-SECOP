@@ -80,6 +80,28 @@ export type {
   OpportunityUrgencyStatus,
 } from "./generated/opportunities";
 export * from "./generated/opportunities.enums";
+export type {
+  OpportunityAlertActionRequest,
+  OpportunityAlertActionResponse,
+  OpportunityAlertDetail,
+  OpportunityAlertDigest,
+  OpportunityAlertList,
+  OpportunityAlertRules,
+  OpportunityAlertSummary,
+  OpportunityAlertUnreadCount,
+  OpportunityMonitorCreateRequest,
+  OpportunityMonitorDetail,
+  OpportunityMonitorFilters,
+  OpportunityMonitorList,
+  OpportunityMonitorManualRunRequest,
+  OpportunityMonitorManualRunResponse,
+  OpportunityMonitorRunDetail,
+  OpportunityMonitorRunSummary,
+  OpportunityMonitorSummary,
+  OpportunityMonitorUpdateRequest,
+  OpportunityMonitoringReadiness,
+} from "./generated/opportunity-monitoring";
+export * from "./generated/opportunity-monitoring.enums";
 
 export type {
   DocumentExtraction,

@@ -167,6 +167,18 @@ from pliegocheck_schemas.opportunities import (
     OpportunityReviewAction,
     OpportunityUrgencyStatus,
 )
+from pliegocheck_schemas.opportunity_monitoring import (
+    OPPORTUNITY_MONITORING_SCHEMA_VERSION,
+    OpportunityAlertAction,
+    OpportunityAlertSeverity,
+    OpportunityAlertStatus,
+    OpportunityAlertType,
+    OpportunityMonitorFrequency,
+    OpportunityMonitoringContracts,
+    OpportunityMonitorRunStatus,
+    OpportunityMonitorStatus,
+    OpportunityMonitorTriggerType,
+)
 from pliegocheck_schemas.pilot import (
     PILOT_SCHEMA_VERSION,
     PilotContracts,
@@ -310,6 +322,49 @@ def generate_opportunities_enums_ts() -> None:
         ),
     ]
     write_text(GENERATED_DIR / "opportunities.enums.ts", "\n".join(blocks))
+
+
+def generate_opportunity_monitoring_enums_ts() -> None:
+    blocks = [
+        TS_HEADER,
+        "export const OPPORTUNITY_MONITORING_SCHEMA_VERSION = "
+        f'"{OPPORTUNITY_MONITORING_SCHEMA_VERSION}";\n',
+        ts_const_block(
+            "OPPORTUNITY_MONITOR_STATUS_VALUES",
+            "OpportunityMonitorStatusValue",
+            OpportunityMonitorStatus,
+        ),
+        ts_const_block(
+            "OPPORTUNITY_MONITOR_FREQUENCY_VALUES",
+            "OpportunityMonitorFrequencyValue",
+            OpportunityMonitorFrequency,
+        ),
+        ts_const_block(
+            "OPPORTUNITY_MONITOR_RUN_STATUS_VALUES",
+            "OpportunityMonitorRunStatusValue",
+            OpportunityMonitorRunStatus,
+        ),
+        ts_const_block(
+            "OPPORTUNITY_MONITOR_TRIGGER_TYPE_VALUES",
+            "OpportunityMonitorTriggerTypeValue",
+            OpportunityMonitorTriggerType,
+        ),
+        ts_const_block(
+            "OPPORTUNITY_ALERT_TYPE_VALUES", "OpportunityAlertTypeValue", OpportunityAlertType
+        ),
+        ts_const_block(
+            "OPPORTUNITY_ALERT_SEVERITY_VALUES",
+            "OpportunityAlertSeverityValue",
+            OpportunityAlertSeverity,
+        ),
+        ts_const_block(
+            "OPPORTUNITY_ALERT_STATUS_VALUES", "OpportunityAlertStatusValue", OpportunityAlertStatus
+        ),
+        ts_const_block(
+            "OPPORTUNITY_ALERT_ACTION_VALUES", "OpportunityAlertActionValue", OpportunityAlertAction
+        ),
+    ]
+    write_text(GENERATED_DIR / "opportunity-monitoring.enums.ts", "\n".join(blocks))
 
 
 def ts_const_block(const_name: str, type_name: str, enum_cls: type[StrEnum]) -> str:
@@ -840,6 +895,7 @@ def main() -> int:
         )
         generate_json_schema(ExternalDocumentsContracts, "external-documents.schema.json")
         generate_json_schema(OpportunityContracts, "opportunities.schema.json")
+        generate_json_schema(OpportunityMonitoringContracts, "opportunity-monitoring.schema.json")
         generate_json_schema(DocumentExtractionContracts, "document-extraction.schema.json")
         generate_json_schema(DecisionContracts, "decision.schema.json")
         generate_json_schema(DecisionReportContracts, "decision-report.schema.json")
@@ -858,6 +914,7 @@ def main() -> int:
         generate_external_procurement_enums_ts()
         generate_external_documents_enums_ts()
         generate_opportunities_enums_ts()
+        generate_opportunity_monitoring_enums_ts()
         generate_document_extraction_enums_ts()
     except Exception as exc:  # el fallo debe ser visible y con codigo distinto de cero
         print(f"ERROR generando contratos: {exc}", file=sys.stderr)

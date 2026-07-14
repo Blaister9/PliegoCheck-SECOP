@@ -1,5 +1,7 @@
 # Modelo de dominio — PliegoCheck-SECOP
 
+Microfase 19 incorpora `OpportunityMonitor`, `OpportunityMonitorRun`, `OpportunityMonitorCandidateState`, `OpportunityAlert` y `OpportunityAlertEvent`. La relación preserva monitor → run → discovery/assessment → estado compacto → alerta/eventos, con snapshot y política inmutables.
+
 Entidades conceptuales iniciales de la plataforma. Este documento define **conceptos**, no tablas: el esquema físico (PostgreSQL + Alembic) se derivará de aquí en las microfases de implementación.
 
 Convenciones de este documento, aplicables a toda entidad:

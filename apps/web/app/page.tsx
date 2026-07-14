@@ -82,6 +82,12 @@ export default function Home() {
           <Link className="button secondary" href="/opportunities">
             Oportunidades SECOP
           </Link>
+          <Link className="button secondary" href="/monitors">
+            Monitores
+          </Link>
+          <Link className="button secondary" href="/alerts">
+            Alertas
+          </Link>
         </nav>
       </header>
 

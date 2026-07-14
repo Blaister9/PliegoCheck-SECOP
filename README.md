@@ -1,5 +1,7 @@
 # PliegoCheck-SECOP
 
+Microfase 19 añade monitores SECOP periódicos, baseline incremental y alertas internas deduplicadas en `/monitors` y `/alerts`. La programación usa PostgreSQL y permanece deshabilitada por defecto; consulte [operación de monitores](docs/opportunity-monitor-operations.md) y [ADR-019](docs/ADR-019-opportunity-monitoring-alerts.md).
+
 Plataforma multiagente de análisis **GO / NO GO** para procesos de contratación pública publicados en **SECOP II** (Colombia).
 
 > ⚠️ **Advertencia:** el resultado producido por PliegoCheck es un **apoyo para la decisión de participar o no en un proceso**. No reemplaza la revisión jurídica, financiera ni contractual realizada por profesionales. Toda decisión crítica debe pasar por revisión humana.

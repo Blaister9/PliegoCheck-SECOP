@@ -1,5 +1,7 @@
 # Roadmap incremental - PliegoCheck-SECOP
 
+Estado actual: Microfases 16, 17, 18 y 19 completadas. Microfase 20 es la siguiente: entrega externa configurable de alertas y operación piloto; no forma parte de esta entrega.
+
 Fases pequenas, cada una con entregable verificable. Cada microfase termina integrada en `main`
 mediante Pull Request, siguiendo [AGENTS.md](../AGENTS.md).
 

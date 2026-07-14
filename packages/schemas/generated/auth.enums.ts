@@ -35,6 +35,11 @@ export const AUTH_PERMISSION_VALUES = [
   "opportunity:assess",
   "opportunity:review",
   "opportunity:import",
+  "monitor:read",
+  "monitor:write",
+  "monitor:run",
+  "alert:read",
+  "alert:manage",
 ] as const;
 export type AuthPermissionValue = (typeof AUTH_PERMISSION_VALUES)[number];
 
@@ -87,5 +92,16 @@ export const OPERATIONAL_AUDIT_EVENT_TYPE_VALUES = [
   "OPPORTUNITY_PARTNER_REVIEW_REQUESTED",
   "OPPORTUNITY_IMPORTED",
   "OPPORTUNITY_DEEP_ANALYSIS_REQUESTED",
+  "OPPORTUNITY_MONITOR_CREATED",
+  "OPPORTUNITY_MONITOR_UPDATED",
+  "OPPORTUNITY_MONITOR_PAUSED",
+  "OPPORTUNITY_MONITOR_RESUMED",
+  "OPPORTUNITY_MONITOR_RUN_REQUESTED",
+  "OPPORTUNITY_MONITOR_RUN_COMPLETED",
+  "OPPORTUNITY_MONITOR_RUN_FAILED",
+  "OPPORTUNITY_ALERT_CREATED",
+  "OPPORTUNITY_ALERT_READ",
+  "OPPORTUNITY_ALERT_ARCHIVED",
+  "OPPORTUNITY_ALERT_RESOLVED",
 ] as const;
 export type OperationalAuditEventTypeValue = (typeof OPERATIONAL_AUDIT_EVENT_TYPE_VALUES)[number];

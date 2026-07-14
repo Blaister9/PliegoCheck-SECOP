@@ -135,6 +135,12 @@ jobs:
       - name: Evals offline de oportunidades
         run: pnpm opportunities:eval
 
+      - name: Pruebas de monitores y alertas
+        run: pnpm monitors:test
+
+      - name: Evals offline de monitores y alertas
+        run: pnpm monitors:eval
+
       - name: Scan semantico de oportunidades
         run: pnpm opportunities:semantic-scan
 

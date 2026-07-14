@@ -62,6 +62,11 @@ ROLE_PERMISSIONS: dict[AuthRoleName, set[AuthPermission]] = {
         AuthPermission.OPPORTUNITY_DISCOVER,
         AuthPermission.OPPORTUNITY_ASSESS,
         AuthPermission.OPPORTUNITY_IMPORT,
+        AuthPermission.MONITOR_READ,
+        AuthPermission.MONITOR_WRITE,
+        AuthPermission.MONITOR_RUN,
+        AuthPermission.ALERT_READ,
+        AuthPermission.ALERT_MANAGE,
     },
     AuthRoleName.REVIEWER: {
         AuthPermission.PROCESS_READ,
@@ -71,6 +76,9 @@ ROLE_PERMISSIONS: dict[AuthRoleName, set[AuthPermission]] = {
         AuthPermission.EXTERNAL_READ,
         AuthPermission.OPPORTUNITY_READ,
         AuthPermission.OPPORTUNITY_REVIEW,
+        AuthPermission.MONITOR_READ,
+        AuthPermission.ALERT_READ,
+        AuthPermission.ALERT_MANAGE,
     },
     AuthRoleName.VIEWER: {
         AuthPermission.PROCESS_READ,
@@ -78,6 +86,8 @@ ROLE_PERMISSIONS: dict[AuthRoleName, set[AuthPermission]] = {
         AuthPermission.REPORT_DOWNLOAD,
         AuthPermission.EXTERNAL_READ,
         AuthPermission.OPPORTUNITY_READ,
+        AuthPermission.MONITOR_READ,
+        AuthPermission.ALERT_READ,
     },
 }
 

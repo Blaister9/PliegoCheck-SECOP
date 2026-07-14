@@ -22,7 +22,7 @@ import {
 } from "../../lib/api";
 
 const NOTICE =
-  "La priorización expresa compatibilidad preliminar con el perfil empresarial y la información pública disponible. No representa probabilidad de adjudicación ni reemplaza la revisión humana.";
+  "La priorización expresa compatibilidad preliminar con el perfil empresarial y la información pública disponible. No recomienda presentar oferta ni reemplaza la revisión humana.";
 const OUTCOMES: (OpportunityOutcome | "")[] = [
   "",
   "REVISAR_PRIMERO",

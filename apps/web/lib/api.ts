@@ -91,6 +91,14 @@ import type {
   OpportunityInboxResponse,
   OpportunityReviewRequest,
   OpportunityReviewResponse,
+  OpportunityAlertActionRequest,
+  OpportunityAlertActionResponse,
+  OpportunityAlertList,
+  OpportunityAlertUnreadCount,
+  OpportunityMonitorCreateRequest,
+  OpportunityMonitorDetail,
+  OpportunityMonitorList,
+  OpportunityMonitorManualRunResponse,
   ProcessInventory,
   ProcessCreate,
   ProcessDetail,
@@ -836,6 +844,55 @@ export function requestOpportunityDeepAnalysis(opportunityId: string) {
     `/opportunities/${opportunityId}/request-deep-analysis`,
     { method: "POST", body: JSON.stringify({}) },
   );
+}
+
+export function listMonitors() {
+  return request<OpportunityMonitorList>("/opportunity-monitors");
+}
+
+export function createMonitor(payload: OpportunityMonitorCreateRequest) {
+  return request<OpportunityMonitorDetail>("/opportunity-monitors", {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
+}
+
+export function pauseMonitor(id: string) {
+  return request<OpportunityMonitorDetail>(`/opportunity-monitors/${id}/pause`, {
+    method: "POST",
+    body: JSON.stringify({}),
+  });
+}
+
+export function resumeMonitor(id: string) {
+  return request<OpportunityMonitorDetail>(`/opportunity-monitors/${id}/resume`, {
+    method: "POST",
+    body: JSON.stringify({}),
+  });
+}
+
+export function runMonitor(id: string) {
+  return request<OpportunityMonitorManualRunResponse>(`/opportunity-monitors/${id}/run`, {
+    method: "POST",
+    body: JSON.stringify({ force: false }),
+  });
+}
+
+export function listAlerts(filters: Record<string, string> = {}) {
+  return request<OpportunityAlertList>(
+    `/opportunity-alerts?${new URLSearchParams(filters).toString()}`,
+  );
+}
+
+export function getUnreadAlertCount() {
+  return request<OpportunityAlertUnreadCount>("/opportunity-alerts/unread-count");
+}
+
+export function actOnAlert(id: string, payload: OpportunityAlertActionRequest) {
+  return request<OpportunityAlertActionResponse>(`/opportunity-alerts/${id}/actions`, {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
 }
 
 export function createSnapshot(companyId: string, payload: CompanyProfileSnapshotCreate) {
