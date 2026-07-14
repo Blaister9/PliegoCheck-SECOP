@@ -20,6 +20,7 @@ import { EXTRACTED_SEGMENT_TYPE_VALUES } from "@pliegocheck/schemas";
 import { DecisionPanel } from "./DecisionPanel";
 import { DecisionReportPanel } from "./DecisionReportPanel";
 import { ExternalLinksPanel } from "./ExternalLinksPanel";
+import { ExternalDocumentSyncPanel } from "./ExternalDocumentSyncPanel";
 import { SpecializedEvaluationPanel } from "./SpecializedEvaluationPanel";
 import {
   ApiClientError,
@@ -332,6 +333,9 @@ export function ProcessDetailClient({ processId }: { processId: string }) {
       </section>
 
       {process.source === "SECOP_IMPORT" ? <ExternalLinksPanel processId={processId} /> : null}
+      {process.source === "SECOP_IMPORT" ? (
+        <ExternalDocumentSyncPanel processId={processId} />
+      ) : null}
 
       <aside className="notice" role="note">
         La extraccion es deterministica y todavia no evalua requisitos ni produce una decision GO /

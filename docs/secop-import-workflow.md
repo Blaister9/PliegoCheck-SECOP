@@ -26,7 +26,8 @@ Los campos ausentes siguen ausentes. En particular, SECOP II no publica moneda j
 
 ## Documentos y decisiones
 
-La ausencia de enlaces estables se representa como `DOCUMENT_DOWNLOAD_UNSUPPORTED` y se muestra
-como “documentos no importados”. Esta versión no descarga archivos, no navega con credenciales y no
-hace scraping. Importar no crea trabajos del motor de decisión ni resultados GO/NO GO. La revisión
-humana de la fuente y de los documentos sigue siendo obligatoria.
+La ausencia de enlaces estables se representa como `DOCUMENT_DOWNLOAD_UNSUPPORTED`. La Microfase 17
+permite sincronizar e inventariar despues de importar, y descargar solo URLs publicas compatibles
+mediante una accion separada. No navega con credenciales ni hace scraping. Importar, sincronizar o
+descargar no crea trabajos del motor de decision ni resultados GO/NO GO. La revision humana de la
+fuente y de los documentos sigue siendo obligatoria.

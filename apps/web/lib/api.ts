@@ -59,6 +59,14 @@ import type {
   ExternalProcurementSearchRequest,
   ExternalProcurementSearchResponse,
   ExternalProcurementSourceSummary,
+  ExternalDocumentDownloadResponse,
+  ExternalDocumentExtractResponse,
+  ExternalProcessDocumentList,
+  ExternalProcessDocumentVersion,
+  ExternalProcessSyncQueueResponse,
+  ExternalProcessSyncReadiness,
+  ExternalProcessSyncRunDetail,
+  ExternalProcessSyncRunList,
   ExtractionRetryResponse,
   FinancialEvaluationList,
   FinancialEvaluationQueueResponse,
@@ -236,6 +244,51 @@ export function importExternalProcurementResult(resultId: string, sourceProcessI
 
 export function listProcessExternalLinks(processId: string) {
   return request<ExternalProcurementProcessLinkList>(`/processes/${processId}/external-links`);
+}
+
+export function getExternalSyncReadiness(processId: string) {
+  return request<ExternalProcessSyncReadiness>(`/processes/${processId}/external-sync/readiness`);
+}
+
+export function queueExternalSync(processId: string) {
+  return request<ExternalProcessSyncQueueResponse>(`/processes/${processId}/external-sync`, {
+    method: "POST",
+    body: JSON.stringify({ discover_documents: true }),
+  });
+}
+
+export function listExternalSyncRuns(processId: string) {
+  return request<ExternalProcessSyncRunList>(`/processes/${processId}/external-sync-runs`);
+}
+
+export function getExternalSyncRun(processId: string, runId: string) {
+  return request<ExternalProcessSyncRunDetail>(
+    `/processes/${processId}/external-sync-runs/${runId}`,
+  );
+}
+
+export function listExternalDocuments(processId: string) {
+  return request<ExternalProcessDocumentList>(`/processes/${processId}/external-documents`);
+}
+
+export function queueExternalDocumentDownload(processId: string, documentId: string) {
+  return request<ExternalDocumentDownloadResponse>(
+    `/processes/${processId}/external-documents/${documentId}/download`,
+    { method: "POST", body: JSON.stringify({ confirm_public_download: true }) },
+  );
+}
+
+export function extractExternalDocument(processId: string, documentId: string) {
+  return request<ExternalDocumentExtractResponse>(
+    `/processes/${processId}/external-documents/${documentId}/extract`,
+    { method: "POST", body: JSON.stringify({}) },
+  );
+}
+
+export function listExternalDocumentVersions(processId: string, documentId: string) {
+  return request<ExternalProcessDocumentVersion[]>(
+    `/processes/${processId}/external-documents/${documentId}/versions`,
+  );
 }
 
 export function getProcess(processId: string) {

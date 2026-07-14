@@ -387,7 +387,9 @@ def test_viewer_cannot_import(monkeypatch: pytest.MonkeyPatch, client: TestClien
     )
     denied = client.post(f"/external-procurement/results/{result_id}/import", json={})
     assert denied.status_code == HTTPStatus.FORBIDDEN
-    assert denied.json()["details"]["required_permission"] == "external:import"
+    assert denied.json()["code"] == "AUTH_PERMISSION_DENIED"
+    assert "required_permission" not in denied.json()["details"]
+    assert "external:import" not in json.dumps(denied.json())
 
 
 def test_cors_preflight_does_not_require_auth(client: TestClient) -> None:

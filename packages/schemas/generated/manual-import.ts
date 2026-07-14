@@ -151,6 +151,24 @@ export type ExternalProcurementErrorCode =
   | "IMPORT_NOT_FOUND"
   | "INVALID_EXTERNAL_PROCESS"
   | "EXTERNAL_DATABASE_ERROR";
+export type ExternalDocumentErrorCode =
+  | "EXTERNAL_SYNC_NOT_AVAILABLE"
+  | "EXTERNAL_SYNC_ALREADY_QUEUED"
+  | "EXTERNAL_SYNC_NOT_FOUND"
+  | "EXTERNAL_SOURCE_UNAVAILABLE"
+  | "EXTERNAL_PROCESS_LINK_NOT_FOUND"
+  | "EXTERNAL_DOCUMENT_NOT_FOUND"
+  | "EXTERNAL_DOCUMENT_DOWNLOAD_UNSUPPORTED"
+  | "EXTERNAL_DOCUMENT_URL_REJECTED"
+  | "EXTERNAL_DOCUMENT_HOST_REJECTED"
+  | "EXTERNAL_DOCUMENT_TOO_LARGE"
+  | "EXTERNAL_DOCUMENT_CONTENT_TYPE_REJECTED"
+  | "EXTERNAL_DOCUMENT_HTML_RESPONSE"
+  | "EXTERNAL_DOCUMENT_DOWNLOAD_FAILED"
+  | "EXTERNAL_DOCUMENT_HASH_MISMATCH"
+  | "EXTERNAL_DOCUMENT_ALREADY_DOWNLOADED"
+  | "EXTERNAL_DOCUMENT_VERSION_CONFLICT"
+  | "EXTERNAL_DOCUMENT_EXTRACTION_NOT_READY";
 /**
  * Tipo documental declarado. La clasificacion automatica llega en Microfase 3.
  */
@@ -222,7 +240,8 @@ export interface ApiError {
     | DecisionErrorCode
     | DecisionReportErrorCode
     | AuthErrorCode
-    | ExternalProcurementErrorCode;
+    | ExternalProcurementErrorCode
+    | ExternalDocumentErrorCode;
   details?: {
     [k: string]: string;
   };

@@ -67,7 +67,7 @@ SOURCE_DEFINITIONS = {
         human_path="/Estad-sticas-Nacionales/SECOP-II-Procesos-de-Contrataci-n/p6dx-8zbt",
         api_path="/resource/p6dx-8zbt.json",
         field_map=SECOP_II_FIELDS,
-        safe_fields=_safe_fields(SECOP_II_FIELDS),
+        safe_fields=(*_safe_fields(SECOP_II_FIELDS), "id_del_portafolio"),
         unsupported_filters=frozenset(),
         # El dataset no publica una columna de moneda. No inferimos COP a partir
         # del contexto del sistema ni del valor numérico.
@@ -86,7 +86,7 @@ SOURCE_DEFINITIONS = {
         human_path="/Estad-sticas-Nacionales/SECOP-I-Procesos-de-Compra-P-blica/f789-7hwg",
         api_path="/resource/f789-7hwg.json",
         field_map=SECOP_I_FIELDS,
-        safe_fields=_safe_fields(SECOP_I_FIELDS),
+        safe_fields=(*_safe_fields(SECOP_I_FIELDS), "numero_de_constancia"),
         unsupported_filters=frozenset({"closing_from", "closing_to"}),
         default_currency=None,
         metadata={

@@ -64,6 +64,15 @@ def pytest_configure(config: pytest.Config) -> None:
     os.environ["PLIEGOCHECK_SECOP_RATE_LIMIT_PER_MINUTE"] = "60"
     os.environ["PLIEGOCHECK_SECOP_CACHE_TTL_MINUTES"] = "0"
     os.environ["PLIEGOCHECK_SECOP_ALLOW_LIVE_TESTS"] = "false"
+    os.environ["PLIEGOCHECK_SECOP_DOCUMENT_SYNC_ENABLED"] = "true"
+    os.environ["PLIEGOCHECK_SECOP_DOCUMENT_DOWNLOAD_ENABLED"] = "true"
+    os.environ["PLIEGOCHECK_SECOP_DOCUMENT_MAX_FILE_SIZE_BYTES"] = "1048576"
+    os.environ["PLIEGOCHECK_SECOP_DOCUMENT_MAX_FILES_PER_SYNC"] = "25"
+    os.environ["PLIEGOCHECK_SECOP_DOCUMENT_TIMEOUT_SECONDS"] = "5"
+    os.environ["PLIEGOCHECK_SECOP_DOCUMENT_MAX_REDIRECTS"] = "2"
+    os.environ["PLIEGOCHECK_SECOP_DOCUMENT_ALLOWED_HOSTS"] = "files.example.gov.co"
+    os.environ["PLIEGOCHECK_SECOP_DOCUMENT_ALLOW_LIVE_TESTS"] = "false"
+    os.environ["PLIEGOCHECK_SECOP_INCREMENTAL_SYNC_ENABLED"] = "true"
     from pliegocheck_api.config import get_settings
     from pliegocheck_api.db import get_engine, get_sessionmaker
 

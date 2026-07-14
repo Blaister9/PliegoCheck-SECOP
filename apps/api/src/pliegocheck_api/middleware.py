@@ -25,6 +25,14 @@ logger = logging.getLogger(__name__)
 
 
 def required_permission(method: str, path: str) -> AuthPermission | None:
+    if path.startswith("/processes") and path.endswith("/external-sync") and method == "POST":
+        return AuthPermission.EXTERNAL_SYNC
+    if "/external-documents/" in path and path.endswith("/download") and method == "POST":
+        return AuthPermission.EXTERNAL_DOWNLOAD
+    if "/external-documents/" in path and path.endswith("/extract") and method == "POST":
+        return AuthPermission.DOCUMENT_WRITE
+    if "/external-sync" in path or "/external-documents" in path:
+        return AuthPermission.EXTERNAL_READ
     if path.startswith("/external-procurement/results") and method == "POST":
         return AuthPermission.EXTERNAL_IMPORT
     if path.startswith("/external-procurement/searches") and method == "POST":
@@ -149,7 +157,6 @@ def _authorize_request(request: Request) -> JSONResponse | None:
                 "Permiso insuficiente.",
                 HTTPStatus.FORBIDDEN,
                 request.state.request_id,
-                {"required_permission": permission.value},
             )
         session.commit()
     return None

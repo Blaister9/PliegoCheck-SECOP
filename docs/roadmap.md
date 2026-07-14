@@ -193,10 +193,11 @@ Microfase 17: siguiente - descarga controlada de documentos públicos y actualiz
 - **Fuera de alcance:** descarga documental, actualización incremental, login, ofertas, trámites,
   scraping agresivo y producción.
 
-## Microfase 17 - Descarga controlada de documentos públicos y actualización incremental - siguiente
+## Microfase 17 - Descarga controlada de documentos públicos y actualización incremental - completada
 
-- **Objetivo sugerido:** descargar únicamente documentos públicos con límites, validación de tipo,
-  tamaño, hash y storage seguro, y reconciliar cambios de procesos importados.
+Inventario incremental SECOP I/II, snapshots, eventos, cola PostgreSQL, descarga publica opt-in con proteccion SSRF, hashing, deduplicacion, versiones inmutables, integracion explicita con `ProcessDocument` y UI del proceso. La limitacion de descarga live queda documentada sin simular exito.
+
+Siguiente: Microfase 18 — Bandeja priorizada de oportunidades compatibles.
 
 ## Despues del MVP
 

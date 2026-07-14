@@ -35,6 +35,10 @@ const CONTRACTS = [
     output: "external-procurement.ts",
   },
   {
+    schema: "external-documents.schema.json",
+    output: "external-documents.ts",
+  },
+  {
     schema: "document-extraction.schema.json",
     output: "document-extraction.ts",
   },

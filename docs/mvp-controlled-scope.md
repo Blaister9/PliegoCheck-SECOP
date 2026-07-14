@@ -2,6 +2,8 @@
 
 ## Incluido
 
+- Conector SECOP publico e inventario documental incremental opt-in, sin login ni acciones transaccionales.
+
 - Flujo end-to-end con datos sinteticos de piloto.
 - API local con autenticacion configurable y roles `ADMIN`, `ANALYST`,
   `REVIEWER` y `VIEWER`.

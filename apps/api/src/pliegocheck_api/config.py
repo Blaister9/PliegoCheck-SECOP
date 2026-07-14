@@ -254,6 +254,57 @@ class Settings(BaseSettings):
         default=False,
         validation_alias="PLIEGOCHECK_SECOP_ALLOW_LIVE_TESTS",
     )
+    secop_document_sync_enabled: bool = Field(
+        default=False, validation_alias="PLIEGOCHECK_SECOP_DOCUMENT_SYNC_ENABLED"
+    )
+    secop_document_download_enabled: bool = Field(
+        default=False, validation_alias="PLIEGOCHECK_SECOP_DOCUMENT_DOWNLOAD_ENABLED"
+    )
+    secop_document_max_file_size_bytes: int = Field(
+        default=26_214_400,
+        validation_alias="PLIEGOCHECK_SECOP_DOCUMENT_MAX_FILE_SIZE_BYTES",
+        ge=1,
+        le=209_715_200,
+    )
+    secop_document_max_files_per_sync: int = Field(
+        default=25, validation_alias="PLIEGOCHECK_SECOP_DOCUMENT_MAX_FILES_PER_SYNC", ge=1, le=500
+    )
+    secop_document_timeout_seconds: int = Field(
+        default=30, validation_alias="PLIEGOCHECK_SECOP_DOCUMENT_TIMEOUT_SECONDS", ge=1, le=120
+    )
+    secop_document_max_redirects: int = Field(
+        default=3, validation_alias="PLIEGOCHECK_SECOP_DOCUMENT_MAX_REDIRECTS", ge=0, le=10
+    )
+    secop_document_allowed_hosts: list[str] = Field(
+        default_factory=list, validation_alias="PLIEGOCHECK_SECOP_DOCUMENT_ALLOWED_HOSTS"
+    )
+    secop_document_allowed_content_types: list[str] = Field(
+        default_factory=lambda: [
+            "application/pdf",
+            "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            "text/csv",
+            "text/plain",
+        ],
+        validation_alias="PLIEGOCHECK_SECOP_DOCUMENT_ALLOWED_CONTENT_TYPES",
+    )
+    secop_document_allow_live_tests: bool = Field(
+        default=False, validation_alias="PLIEGOCHECK_SECOP_DOCUMENT_ALLOW_LIVE_TESTS"
+    )
+    secop_incremental_sync_enabled: bool = Field(
+        default=True, validation_alias="PLIEGOCHECK_SECOP_INCREMENTAL_SYNC_ENABLED"
+    )
+
+    @field_validator(
+        "secop_document_allowed_hosts", "secop_document_allowed_content_types", mode="before"
+    )
+    @classmethod
+    def parse_csv_list(cls, value: Any) -> list[str]:
+        if value in (None, ""):
+            return []
+        if isinstance(value, str):
+            return [item.strip().lower() for item in value.split(",") if item.strip()]
+        return [str(item).strip().lower() for item in value if str(item).strip()]
 
     @field_validator("allowed_web_origins", mode="before")
     @classmethod

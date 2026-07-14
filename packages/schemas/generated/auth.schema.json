@@ -115,7 +115,10 @@
         "admin:settings",
         "audit:read",
         "external:search",
-        "external:import"
+        "external:import",
+        "external:read",
+        "external:sync",
+        "external:download"
       ],
       "type": "string"
     },
@@ -482,7 +485,10 @@
         "EXTERNAL_SEARCH_COMPLETED",
         "EXTERNAL_SEARCH_FAILED",
         "EXTERNAL_PROCESS_IMPORTED",
-        "EXTERNAL_IMPORT_SKIPPED_DUPLICATE"
+        "EXTERNAL_IMPORT_SKIPPED_DUPLICATE",
+        "EXTERNAL_SYNC_QUEUED",
+        "EXTERNAL_DOCUMENT_DOWNLOAD_QUEUED",
+        "EXTERNAL_DOCUMENT_EXTRACTION_QUEUED"
       ],
       "type": "string"
     },
