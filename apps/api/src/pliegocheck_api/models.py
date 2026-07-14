@@ -4174,3 +4174,224 @@ class OpportunityEvent(Base):
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), nullable=False
     )
+
+
+class OpportunityMonitor(Base):
+    __tablename__ = "opportunity_monitors"
+    __table_args__ = (
+        CheckConstraint(
+            "status IN ('ACTIVE','PAUSED','DISABLED','ERROR')", name="ck_opportunity_monitor_status"
+        ),
+        CheckConstraint(
+            "frequency IN ('HOURLY','EVERY_3_HOURS','EVERY_6_HOURS',"
+            "'EVERY_12_HOURS','DAILY','WEEKDAYS')",
+            name="ck_opportunity_monitor_frequency",
+        ),
+        Index("ix_opportunity_monitor_due", "status", "next_run_at"),
+    )
+    id: Mapped[UUID] = mapped_column(Uuid(as_uuid=True), primary_key=True, default=uuid4)
+    name: Mapped[str] = mapped_column(String(200), nullable=False)
+    description: Mapped[str | None] = mapped_column(Text)
+    company_profile_id: Mapped[UUID] = mapped_column(
+        Uuid(as_uuid=True), ForeignKey("company_profiles.id", ondelete="CASCADE"), nullable=False
+    )
+    company_snapshot_id: Mapped[UUID] = mapped_column(
+        Uuid(as_uuid=True),
+        ForeignKey("company_profile_snapshots.id", ondelete="RESTRICT"),
+        nullable=False,
+    )
+    policy_version: Mapped[str] = mapped_column(String(64), nullable=False)
+    policy_hash: Mapped[str] = mapped_column(String(64), nullable=False)
+    status: Mapped[str] = mapped_column(String(32), nullable=False, default="ACTIVE")
+    frequency: Mapped[str] = mapped_column(String(32), nullable=False)
+    timezone: Mapped[str] = mapped_column(String(64), nullable=False)
+    filters: Mapped[dict[str, Any]] = mapped_column(JSON, nullable=False)
+    source_systems: Mapped[list[str]] = mapped_column(JSON, nullable=False)
+    alert_rules: Mapped[dict[str, Any]] = mapped_column(JSON, nullable=False)
+    last_run_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    next_run_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    last_success_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    last_failure_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    consecutive_failures: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    baseline_run_id: Mapped[UUID | None] = mapped_column(Uuid(as_uuid=True))
+    created_by: Mapped[UUID | None] = mapped_column(
+        Uuid(as_uuid=True), ForeignKey("auth_users.id", ondelete="SET NULL")
+    )
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), nullable=False
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), onupdate=func.now(), nullable=False
+    )
+
+
+class OpportunityMonitorRun(Base):
+    __tablename__ = "opportunity_monitor_runs"
+    __table_args__ = (
+        CheckConstraint(
+            "trigger_type IN ('SCHEDULED','MANUAL','RETRY','BASELINE')",
+            name="ck_opportunity_monitor_run_trigger",
+        ),
+        CheckConstraint(
+            "status IN ('PENDING','PROCESSING','COMPLETED','COMPLETED_WITH_WARNINGS',"
+            "'FAILED','CANCELLED','SKIPPED')",
+            name="ck_opportunity_monitor_run_status",
+        ),
+        UniqueConstraint("monitor_id", "input_digest", name="uq_opportunity_monitor_run_digest"),
+        Index("ix_opportunity_monitor_run_claim", "status", "created_at"),
+        Index(
+            "uq_opportunity_monitor_active_run",
+            "monitor_id",
+            unique=True,
+            postgresql_where=text("status IN ('PENDING','PROCESSING')"),
+        ),
+    )
+    id: Mapped[UUID] = mapped_column(Uuid(as_uuid=True), primary_key=True, default=uuid4)
+    monitor_id: Mapped[UUID] = mapped_column(
+        Uuid(as_uuid=True),
+        ForeignKey("opportunity_monitors.id", ondelete="CASCADE"),
+        nullable=False,
+    )
+    trigger_type: Mapped[str] = mapped_column(String(32), nullable=False)
+    status: Mapped[str] = mapped_column(String(32), nullable=False)
+    scheduled_for: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    started_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    finished_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    discovery_run_id: Mapped[UUID | None] = mapped_column(
+        Uuid(as_uuid=True), ForeignKey("opportunity_discovery_runs.id", ondelete="SET NULL")
+    )
+    candidate_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    new_candidate_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    changed_candidate_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    alert_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    warning_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    error_code: Mapped[str | None] = mapped_column(String(64))
+    error_message: Mapped[str | None] = mapped_column(String(500))
+    input_digest: Mapped[str] = mapped_column(String(64), nullable=False)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), nullable=False
+    )
+
+
+class OpportunityMonitorCandidateState(Base):
+    __tablename__ = "opportunity_monitor_candidate_states"
+    __table_args__ = (
+        UniqueConstraint(
+            "monitor_id",
+            "source_system",
+            "source_process_id",
+            name="uq_opportunity_monitor_candidate_identity",
+        ),
+        Index("ix_opportunity_monitor_candidate_seen", "monitor_id", "last_seen_at"),
+    )
+    id: Mapped[UUID] = mapped_column(Uuid(as_uuid=True), primary_key=True, default=uuid4)
+    monitor_id: Mapped[UUID] = mapped_column(
+        Uuid(as_uuid=True),
+        ForeignKey("opportunity_monitors.id", ondelete="CASCADE"),
+        nullable=False,
+    )
+    source_system: Mapped[str] = mapped_column(String(32), nullable=False)
+    source_process_id: Mapped[str] = mapped_column(String(500), nullable=False)
+    opportunity_id: Mapped[UUID] = mapped_column(
+        Uuid(as_uuid=True),
+        ForeignKey("opportunity_assessments.id", ondelete="CASCADE"),
+        nullable=False,
+    )
+    assessment_id: Mapped[UUID] = mapped_column(
+        Uuid(as_uuid=True),
+        ForeignKey("opportunity_assessments.id", ondelete="CASCADE"),
+        nullable=False,
+    )
+    outcome: Mapped[str] = mapped_column(String(32), nullable=False)
+    compatibility_score: Mapped[Decimal] = mapped_column(Numeric(6, 2), nullable=False)
+    urgency_status: Mapped[str] = mapped_column(String(32), nullable=False)
+    information_completeness: Mapped[Decimal] = mapped_column(Numeric(6, 2), nullable=False)
+    closing_date: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    document_state_hash: Mapped[str] = mapped_column(String(64), nullable=False)
+    assessment_digest: Mapped[str] = mapped_column(String(64), nullable=False)
+    source_status: Mapped[str | None] = mapped_column(String(500))
+    addendum_status: Mapped[str | None] = mapped_column(String(32))
+    first_seen_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    last_seen_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    last_alerted_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    is_active: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), nullable=False
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), onupdate=func.now(), nullable=False
+    )
+
+
+class OpportunityAlert(Base):
+    __tablename__ = "opportunity_alerts"
+    __table_args__ = (
+        UniqueConstraint("alert_fingerprint", name="uq_opportunity_alert_fingerprint"),
+        CheckConstraint(
+            "severity IN ('INFO','LOW','MEDIUM','HIGH','CRITICAL')",
+            name="ck_opportunity_alert_severity",
+        ),
+        CheckConstraint(
+            "status IN ('UNREAD','READ','ARCHIVED','RESOLVED')", name="ck_opportunity_alert_status"
+        ),
+        Index("ix_opportunity_alert_inbox", "status", "occurred_at"),
+        Index("ix_opportunity_alert_monitor", "monitor_id", "occurred_at"),
+    )
+    id: Mapped[UUID] = mapped_column(Uuid(as_uuid=True), primary_key=True, default=uuid4)
+    monitor_id: Mapped[UUID] = mapped_column(
+        Uuid(as_uuid=True),
+        ForeignKey("opportunity_monitors.id", ondelete="CASCADE"),
+        nullable=False,
+    )
+    monitor_run_id: Mapped[UUID] = mapped_column(
+        Uuid(as_uuid=True),
+        ForeignKey("opportunity_monitor_runs.id", ondelete="CASCADE"),
+        nullable=False,
+    )
+    opportunity_id: Mapped[UUID | None] = mapped_column(
+        Uuid(as_uuid=True), ForeignKey("opportunity_assessments.id", ondelete="SET NULL")
+    )
+    assessment_id: Mapped[UUID | None] = mapped_column(
+        Uuid(as_uuid=True), ForeignKey("opportunity_assessments.id", ondelete="SET NULL")
+    )
+    alert_type: Mapped[str] = mapped_column(String(64), nullable=False)
+    severity: Mapped[str] = mapped_column(String(16), nullable=False)
+    status: Mapped[str] = mapped_column(String(16), nullable=False, default="UNREAD")
+    title: Mapped[str] = mapped_column(String(300), nullable=False)
+    summary: Mapped[str] = mapped_column(Text, nullable=False)
+    reason_code: Mapped[str] = mapped_column(String(100), nullable=False)
+    explanation_parameters: Mapped[dict[str, Any]] = mapped_column(
+        JSON, nullable=False, default=dict
+    )
+    alert_fingerprint: Mapped[str] = mapped_column(String(64), nullable=False)
+    occurred_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    first_seen_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    last_seen_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    read_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    archived_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    created_by_system: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), nullable=False
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), onupdate=func.now(), nullable=False
+    )
+
+
+class OpportunityAlertEvent(Base):
+    __tablename__ = "opportunity_alert_events"
+    __table_args__ = (Index("ix_opportunity_alert_event_alert", "alert_id", "created_at"),)
+    id: Mapped[UUID] = mapped_column(Uuid(as_uuid=True), primary_key=True, default=uuid4)
+    alert_id: Mapped[UUID] = mapped_column(
+        Uuid(as_uuid=True), ForeignKey("opportunity_alerts.id", ondelete="CASCADE"), nullable=False
+    )
+    event_type: Mapped[str] = mapped_column(String(64), nullable=False)
+    event_metadata: Mapped[dict[str, Any]] = mapped_column(
+        "metadata", JSON, nullable=False, default=dict
+    )
+    created_by: Mapped[UUID | None] = mapped_column(
+        Uuid(as_uuid=True), ForeignKey("auth_users.id", ondelete="SET NULL")
+    )
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), nullable=False
+    )

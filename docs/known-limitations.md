@@ -1,5 +1,7 @@
 # Limitaciones conocidas
 
+Los monitores dependen de disponibilidad y calidad de SECOP. No hay frecuencias inferiores a una hora, entrega por correo/SMS/WhatsApp/push ni webhooks externos. Las posibles adendas requieren revisión humana.
+
 ## Fuentes documentales SECOP
 
 - La correlacion SECOP II depende de `id_del_portafolio` a `proceso`; SECOP I depende de `numero_de_constancia`. Si la fuente omite la clave, el resultado queda con advertencia y sin documentos inventados.

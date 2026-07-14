@@ -1,0 +1,1 @@
+"""Consumidor de monitores periódicos."""

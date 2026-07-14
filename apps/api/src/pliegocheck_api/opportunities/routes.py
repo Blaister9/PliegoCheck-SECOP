@@ -63,7 +63,7 @@ SessionDep = Annotated[Session, Depends(get_session)]
 SettingsDep = Annotated[Settings, Depends(get_settings)]
 DISCLAIMER = (
     "La priorizacion expresa compatibilidad preliminar con el perfil empresarial y la "
-    "informacion publica disponible. No representa probabilidad de adjudicacion ni "
+    "informacion publica disponible. No recomienda presentar oferta ni "
     "reemplaza la revision humana."
 )
 

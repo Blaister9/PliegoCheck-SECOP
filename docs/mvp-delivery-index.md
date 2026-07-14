@@ -1,5 +1,7 @@
 # Indice de entrega del MVP controlado
 
+Microfase 19: [monitores](opportunity-monitors.md), [alertas](opportunity-alerts.md), [scheduler](opportunity-monitor-scheduling.md), [deduplicación](opportunity-alert-deduplication.md) y [operación](opportunity-monitor-operations.md).
+
 ## Extension SECOP
 
 - [Conector SECOP](secop-connector.md)

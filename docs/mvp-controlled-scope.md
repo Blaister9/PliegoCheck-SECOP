@@ -1,5 +1,7 @@
 # Alcance del MVP controlado
 
+El alcance controlado incluye alertas internas y digest en aplicación. Excluye entrega externa y automatización de presentación de ofertas. El monitoreo debe habilitarse explícitamente por entorno.
+
 ## Incluido
 
 - Conector SECOP publico e inventario documental incremental opt-in, sin login ni acciones transaccionales.

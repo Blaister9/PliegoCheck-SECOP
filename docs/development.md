@@ -1,5 +1,7 @@
 # Guia de desarrollo - PliegoCheck-SECOP
 
+Para Microfase 19 use `pnpm monitors:test` y `pnpm monitors:eval`. Con PostgreSQL disponible, `pnpm monitors:scheduler-run-once` reclama vencidos y `pnpm monitors:drain` consume runs. Las pruebas son offline y el scheduler está apagado por defecto.
+
 ## Documentos SECOP (Microfase 17)
 
 `pnpm secop:documents:test` y `pnpm secop:documents:eval` son offline. Los consumidores de cola son `pnpm secop:sync-run-once|sync-drain` y `pnpm secop:document-run-once|document-drain`. El smoke `pnpm secop:documents:smoke` se omite salvo opt-in explicito y nunca descarga documentos.

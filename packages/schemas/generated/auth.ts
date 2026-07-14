@@ -35,7 +35,18 @@ export type OperationalAuditEventType =
   | "OPPORTUNITY_DISMISSED"
   | "OPPORTUNITY_PARTNER_REVIEW_REQUESTED"
   | "OPPORTUNITY_IMPORTED"
-  | "OPPORTUNITY_DEEP_ANALYSIS_REQUESTED";
+  | "OPPORTUNITY_DEEP_ANALYSIS_REQUESTED"
+  | "OPPORTUNITY_MONITOR_CREATED"
+  | "OPPORTUNITY_MONITOR_UPDATED"
+  | "OPPORTUNITY_MONITOR_PAUSED"
+  | "OPPORTUNITY_MONITOR_RESUMED"
+  | "OPPORTUNITY_MONITOR_RUN_REQUESTED"
+  | "OPPORTUNITY_MONITOR_RUN_COMPLETED"
+  | "OPPORTUNITY_MONITOR_RUN_FAILED"
+  | "OPPORTUNITY_ALERT_CREATED"
+  | "OPPORTUNITY_ALERT_READ"
+  | "OPPORTUNITY_ALERT_ARCHIVED"
+  | "OPPORTUNITY_ALERT_RESOLVED";
 export type AuthPermission =
   | "process:read"
   | "process:write"
@@ -60,7 +71,12 @@ export type AuthPermission =
   | "opportunity:discover"
   | "opportunity:assess"
   | "opportunity:review"
-  | "opportunity:import";
+  | "opportunity:import"
+  | "monitor:read"
+  | "monitor:write"
+  | "monitor:run"
+  | "alert:read"
+  | "alert:manage";
 export type AuthRoleName = "ADMIN" | "ANALYST" | "REVIEWER" | "VIEWER";
 export type AuthUserStatus = "ACTIVE" | "DISABLED" | "LOCKED" | "PENDING";
 

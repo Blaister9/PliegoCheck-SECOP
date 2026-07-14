@@ -4,16 +4,20 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import type { AuthCurrentUser } from "@pliegocheck/schemas";
-import { getCurrentUser, logout } from "../lib/api";
+import { getCurrentUser, getUnreadAlertCount, logout } from "../lib/api";
 
 export function AuthBar() {
   const router = useRouter();
   const [current, setCurrent] = useState<AuthCurrentUser | null>(null);
+  const [unread, setUnread] = useState(0);
 
   useEffect(() => {
     getCurrentUser()
       .then(setCurrent)
       .catch(() => setCurrent(null));
+    getUnreadAlertCount()
+      .then((value) => setUnread(value.count))
+      .catch(() => setUnread(0));
   }, []);
 
   async function doLogout() {
@@ -34,6 +38,9 @@ export function AuthBar() {
     <div className="topbar">
       <span>{current.user.email}</span>
       {isAdmin ? <Link href="/admin">Admin</Link> : null}
+      <Link href="/opportunities">Oportunidades</Link>
+      <Link href="/monitors">Monitores</Link>
+      <Link href="/alerts">Alertas{unread ? ` (${unread})` : ""}</Link>
       <button type="button" onClick={doLogout}>
         Cerrar sesion
       </button>

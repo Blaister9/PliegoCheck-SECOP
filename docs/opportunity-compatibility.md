@@ -1,5 +1,7 @@
 # Compatibilidad de oportunidades
 
+El monitoreo compara scores y outcomes ya producidos por el motor determinístico. Urgencia y severidad de alerta permanecen separadas de compatibilidad. Solo un cambio que supere el threshold configurado genera alerta.
+
 El motor evalúa doce componentes: relevancia, UNSPSC, experiencia, ajuste financiero preliminar, capacidad técnica preliminar, preparación jurídica preliminar, ubicación, cuantía, urgencia, documentos, completitud y posible necesidad de aliado.
 
 Cada componente conserva estado, score 0–100, peso, aporte ponderado, `reason_code`, parámetros, referencias de evidencia y advertencias. Las explicaciones salen de plantillas versionadas; no se genera prosa con IA. `UNKNOWN`, `NOT_APPLICABLE`, `CONFLICTING` y `MISMATCH` no generan aporte positivo.

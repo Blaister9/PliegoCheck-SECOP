@@ -25,6 +25,18 @@ logger = logging.getLogger(__name__)
 
 
 def required_permission(method: str, path: str) -> AuthPermission | None:
+    if path.startswith("/opportunity-alerts"):
+        return AuthPermission.ALERT_MANAGE if method == "POST" else AuthPermission.ALERT_READ
+    if path.startswith("/opportunity-monitors"):
+        if method == "POST" and path.endswith("/run"):
+            return AuthPermission.MONITOR_RUN
+        return (
+            AuthPermission.MONITOR_WRITE
+            if method in {"POST", "PATCH"}
+            else AuthPermission.MONITOR_READ
+        )
+    if path.startswith("/opportunity-monitoring"):
+        return AuthPermission.MONITOR_READ
     if path.startswith("/opportunities/discovery-runs") and method == "POST":
         return AuthPermission.OPPORTUNITY_DISCOVER
     if path.startswith("/opportunities/") and path.endswith("/assess") and method == "POST":

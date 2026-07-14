@@ -303,6 +303,33 @@ class Settings(BaseSettings):
         ge=1,
         le=500,
     )
+    monitoring_enabled: bool = Field(
+        default=False, validation_alias="PLIEGOCHECK_MONITORING_ENABLED"
+    )
+    monitor_scheduler_interval_seconds: int = Field(
+        default=60,
+        validation_alias="PLIEGOCHECK_MONITOR_SCHEDULER_INTERVAL_SECONDS",
+        ge=10,
+        le=3600,
+    )
+    monitor_max_active_runs: int = Field(
+        default=5, validation_alias="PLIEGOCHECK_MONITOR_MAX_ACTIVE_RUNS", ge=1, le=100
+    )
+    monitor_max_results_per_run: int = Field(
+        default=500, validation_alias="PLIEGOCHECK_MONITOR_MAX_RESULTS_PER_RUN", ge=1, le=5000
+    )
+    monitor_max_pages_per_run: int = Field(
+        default=10, validation_alias="PLIEGOCHECK_MONITOR_MAX_PAGES_PER_RUN", ge=1, le=100
+    )
+    monitor_failure_alert_threshold: int = Field(
+        default=3, validation_alias="PLIEGOCHECK_MONITOR_FAILURE_ALERT_THRESHOLD", ge=1, le=20
+    )
+    monitor_default_timezone: str = Field(
+        default="America/Bogota", validation_alias="PLIEGOCHECK_MONITOR_DEFAULT_TIMEZONE"
+    )
+    alert_retention_days: int = Field(
+        default=365, validation_alias="PLIEGOCHECK_ALERT_RETENTION_DAYS", ge=30, le=3650
+    )
 
     @field_validator(
         "secop_document_allowed_hosts", "secop_document_allowed_content_types", mode="before"
