@@ -1,5 +1,12 @@
 # Indice de entrega del MVP controlado
 
+## Extension SECOP
+
+- [Conector SECOP](secop-connector.md)
+- [Documentos publicos SECOP](secop-documents.md)
+- [Actualizaciones incrementales](secop-incremental-updates.md)
+- [Seguridad de descargas](secop-document-security.md)
+
 ## Decision y cierre
 
 - [ADR-014 - Cierre de MVP controlado](ADR-014-controlled-mvp-closure.md)

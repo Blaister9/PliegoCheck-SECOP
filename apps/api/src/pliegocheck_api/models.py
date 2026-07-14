@@ -59,6 +59,11 @@ from pliegocheck_schemas import (
     DocumentProcessingStatus,
     DocumentType,
     DocumentUploadStatus,
+    ExternalDocumentAddendumStatus,
+    ExternalDocumentDiscoveryStatus,
+    ExternalDocumentDownloadStatus,
+    ExternalProcessChangeEventType,
+    ExternalProcessSyncStatus,
     ExternalProcurementDocumentStatus,
     ExternalProcurementImportStatus,
     ExternalProcurementSearchStatus,
@@ -118,6 +123,19 @@ DOCUMENT_PROCESSING_JOB_TYPE_VALUES = ", ".join(
 )
 DOCUMENT_EXTRACTION_STATUS_VALUES = ", ".join(
     f"'{status.value}'" for status in DocumentExtractionStatus
+)
+EXTERNAL_SYNC_STATUS_VALUES = ", ".join(f"'{value.value}'" for value in ExternalProcessSyncStatus)
+EXTERNAL_DISCOVERY_STATUS_VALUES = ", ".join(
+    f"'{value.value}'" for value in ExternalDocumentDiscoveryStatus
+)
+EXTERNAL_DOWNLOAD_STATUS_VALUES = ", ".join(
+    f"'{value.value}'" for value in ExternalDocumentDownloadStatus
+)
+EXTERNAL_ADDENDUM_STATUS_VALUES = ", ".join(
+    f"'{value.value}'" for value in ExternalDocumentAddendumStatus
+)
+EXTERNAL_CHANGE_EVENT_VALUES = ", ".join(
+    f"'{value.value}'" for value in ExternalProcessChangeEventType
 )
 EXTRACTED_SEGMENT_TYPE_VALUES = ", ".join(
     f"'{segment_type.value}'" for segment_type in ExtractedSegmentType
@@ -568,6 +586,282 @@ class ExternalProcurementImport(Base):
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), nullable=False, server_default=func.now()
     )
+
+
+class ExternalProcessSyncRun(Base):
+    """Ejecucion durable e idempotente de refresco de un proceso externo."""
+
+    __tablename__ = "external_process_sync_runs"
+    __table_args__ = (
+        CheckConstraint(
+            f"status IN ({EXTERNAL_SYNC_STATUS_VALUES})", name="ck_external_sync_runs_status"
+        ),
+        Index("ix_external_sync_runs_claim", "status", "available_at", "created_at"),
+        Index("ix_external_sync_runs_process", "process_id", "created_at"),
+        Index(
+            "uq_external_sync_runs_active",
+            "process_id",
+            "external_process_link_id",
+            unique=True,
+            postgresql_where=text("status IN ('PENDING', 'PROCESSING')"),
+        ),
+    )
+
+    id: Mapped[UUID] = mapped_column(Uuid(as_uuid=True), primary_key=True, default=uuid4)
+    process_id: Mapped[UUID] = mapped_column(
+        Uuid(as_uuid=True), ForeignKey("processes.id", ondelete="CASCADE"), nullable=False
+    )
+    external_process_link_id: Mapped[UUID] = mapped_column(
+        Uuid(as_uuid=True),
+        ForeignKey("external_procurement_process_links.id", ondelete="CASCADE"),
+        nullable=False,
+    )
+    source_system: Mapped[str] = mapped_column(String(32), nullable=False)
+    status: Mapped[str] = mapped_column(
+        String(32), nullable=False, default=ExternalProcessSyncStatus.PENDING.value
+    )
+    input_digest: Mapped[str] = mapped_column(String(64), nullable=False)
+    discover_documents: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
+    metadata_changed: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
+    documents_discovered: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    documents_added: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    documents_updated: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    documents_unchanged: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    documents_failed: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    warnings: Mapped[list[dict[str, Any]]] = mapped_column(JSON, nullable=False, default=list)
+    error_code: Mapped[str | None] = mapped_column(String(64))
+    error_message: Mapped[str | None] = mapped_column(String(500))
+    source_updated_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    available_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, server_default=func.now()
+    )
+    started_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    finished_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    locked_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    locked_by: Mapped[str | None] = mapped_column(String(255))
+    attempt_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    max_attempts: Mapped[int] = mapped_column(Integer, nullable=False, default=3)
+    created_by: Mapped[UUID | None] = mapped_column(
+        Uuid(as_uuid=True), ForeignKey("auth_users.id", ondelete="SET NULL")
+    )
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, server_default=func.now()
+    )
+
+
+class ExternalProcessSnapshot(Base):
+    __tablename__ = "external_process_snapshots"
+    __table_args__ = (
+        UniqueConstraint("sync_run_id", name="uq_external_process_snapshots_run"),
+        Index("ix_external_process_snapshots_process", "process_id", "captured_at"),
+    )
+
+    id: Mapped[UUID] = mapped_column(Uuid(as_uuid=True), primary_key=True, default=uuid4)
+    process_id: Mapped[UUID] = mapped_column(
+        Uuid(as_uuid=True), ForeignKey("processes.id", ondelete="CASCADE"), nullable=False
+    )
+    sync_run_id: Mapped[UUID] = mapped_column(
+        Uuid(as_uuid=True),
+        ForeignKey("external_process_sync_runs.id", ondelete="CASCADE"),
+        nullable=False,
+    )
+    source_system: Mapped[str] = mapped_column(String(32), nullable=False)
+    source_process_id: Mapped[str] = mapped_column(String(500), nullable=False)
+    source_reference: Mapped[str | None] = mapped_column(String(500))
+    source_status: Mapped[str | None] = mapped_column(String(500))
+    source_publication_date: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    source_closing_date: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    source_estimated_value: Mapped[Decimal | None] = mapped_column(Numeric(24, 2))
+    source_currency: Mapped[str | None] = mapped_column(String(3))
+    normalized_payload: Mapped[dict[str, Any]] = mapped_column(JSON, nullable=False, default=dict)
+    raw_payload_hash: Mapped[str] = mapped_column(String(64), nullable=False)
+    source_updated_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    captured_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, server_default=func.now()
+    )
+
+
+class ExternalProcessDocument(Base):
+    __tablename__ = "external_process_documents"
+    __table_args__ = (
+        UniqueConstraint(
+            "process_id",
+            "source_system",
+            "source_document_id",
+            name="uq_external_documents_source_key",
+        ),
+        CheckConstraint(
+            f"discovery_status IN ({EXTERNAL_DISCOVERY_STATUS_VALUES})",
+            name="ck_external_documents_discovery",
+        ),
+        CheckConstraint(
+            f"download_status IN ({EXTERNAL_DOWNLOAD_STATUS_VALUES})",
+            name="ck_external_documents_download",
+        ),
+        CheckConstraint(
+            f"addendum_status IN ({EXTERNAL_ADDENDUM_STATUS_VALUES})",
+            name="ck_external_documents_addendum",
+        ),
+        Index("ix_external_documents_process", "process_id", "last_seen_at"),
+    )
+
+    id: Mapped[UUID] = mapped_column(Uuid(as_uuid=True), primary_key=True, default=uuid4)
+    process_id: Mapped[UUID] = mapped_column(
+        Uuid(as_uuid=True), ForeignKey("processes.id", ondelete="CASCADE"), nullable=False
+    )
+    external_process_link_id: Mapped[UUID] = mapped_column(
+        Uuid(as_uuid=True),
+        ForeignKey("external_procurement_process_links.id", ondelete="CASCADE"),
+        nullable=False,
+    )
+    source_system: Mapped[str] = mapped_column(String(32), nullable=False)
+    source_document_id: Mapped[str] = mapped_column(String(500), nullable=False)
+    source_document_reference: Mapped[str | None] = mapped_column(String(500))
+    title: Mapped[str] = mapped_column(String(500), nullable=False)
+    document_type: Mapped[str | None] = mapped_column(String(255))
+    document_category: Mapped[str | None] = mapped_column(String(255))
+    source_url: Mapped[str | None] = mapped_column(String(2083))
+    source_public_url: Mapped[str | None] = mapped_column(String(2083))
+    published_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    updated_at_source: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    reported_size_bytes: Mapped[int | None] = mapped_column(Integer)
+    reported_content_type: Mapped[str | None] = mapped_column(String(255))
+    discovery_status: Mapped[str] = mapped_column(String(32), nullable=False)
+    download_status: Mapped[str] = mapped_column(
+        String(32), nullable=False, default=ExternalDocumentDownloadStatus.NOT_REQUESTED.value
+    )
+    addendum_status: Mapped[str] = mapped_column(
+        String(32), nullable=False, default=ExternalDocumentAddendumStatus.UNKNOWN.value
+    )
+    requires_human_review: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
+    current_version_id: Mapped[UUID | None] = mapped_column(Uuid(as_uuid=True))
+    version_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    first_seen_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, server_default=func.now()
+    )
+    last_seen_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, server_default=func.now()
+    )
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, server_default=func.now()
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, server_default=func.now(), onupdate=func.now()
+    )
+
+
+class ExternalProcessDocumentVersion(Base):
+    __tablename__ = "external_process_document_versions"
+    __table_args__ = (
+        UniqueConstraint(
+            "external_document_id", "sha256", name="uq_external_document_versions_hash"
+        ),
+        UniqueConstraint(
+            "external_document_id", "version_number", name="uq_external_document_versions_number"
+        ),
+        Index("ix_external_document_versions_document", "external_document_id", "version_number"),
+    )
+
+    id: Mapped[UUID] = mapped_column(Uuid(as_uuid=True), primary_key=True, default=uuid4)
+    external_document_id: Mapped[UUID] = mapped_column(
+        Uuid(as_uuid=True),
+        ForeignKey("external_process_documents.id", ondelete="CASCADE"),
+        nullable=False,
+    )
+    version_number: Mapped[int] = mapped_column(Integer, nullable=False)
+    source_url: Mapped[str | None] = mapped_column(String(2083))
+    source_updated_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    reported_size_bytes: Mapped[int | None] = mapped_column(Integer)
+    reported_content_type: Mapped[str | None] = mapped_column(String(255))
+    sha256: Mapped[str] = mapped_column(String(64), nullable=False)
+    size_bytes: Mapped[int] = mapped_column(Integer, nullable=False)
+    detected_content_type: Mapped[str] = mapped_column(String(255), nullable=False)
+    storage_key: Mapped[str] = mapped_column(String(700), nullable=False)
+    downloaded_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    process_document_id: Mapped[UUID] = mapped_column(
+        Uuid(as_uuid=True), ForeignKey("process_documents.id", ondelete="RESTRICT"), nullable=False
+    )
+    previous_version_id: Mapped[UUID | None] = mapped_column(
+        Uuid(as_uuid=True), ForeignKey("external_process_document_versions.id", ondelete="SET NULL")
+    )
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, server_default=func.now()
+    )
+
+
+class ExternalProcessChangeEvent(Base):
+    __tablename__ = "external_process_change_events"
+    __table_args__ = (
+        CheckConstraint(
+            f"event_type IN ({EXTERNAL_CHANGE_EVENT_VALUES})", name="ck_external_change_events_type"
+        ),
+        Index("ix_external_change_events_process", "process_id", "created_at"),
+    )
+
+    id: Mapped[UUID] = mapped_column(Uuid(as_uuid=True), primary_key=True, default=uuid4)
+    process_id: Mapped[UUID] = mapped_column(
+        Uuid(as_uuid=True), ForeignKey("processes.id", ondelete="CASCADE"), nullable=False
+    )
+    sync_run_id: Mapped[UUID] = mapped_column(
+        Uuid(as_uuid=True),
+        ForeignKey("external_process_sync_runs.id", ondelete="CASCADE"),
+        nullable=False,
+    )
+    event_type: Mapped[str] = mapped_column(String(64), nullable=False)
+    external_document_id: Mapped[UUID | None] = mapped_column(
+        Uuid(as_uuid=True), ForeignKey("external_process_documents.id", ondelete="SET NULL")
+    )
+    old_value: Mapped[str | None] = mapped_column(Text)
+    new_value: Mapped[str | None] = mapped_column(Text)
+    event_metadata: Mapped[dict[str, Any]] = mapped_column(
+        "metadata", JSON, nullable=False, default=dict
+    )
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, server_default=func.now()
+    )
+
+
+class ExternalDocumentDownloadJob(Base):
+    __tablename__ = "external_document_download_jobs"
+    __table_args__ = (
+        CheckConstraint(
+            f"status IN ({EXTERNAL_DOWNLOAD_STATUS_VALUES})",
+            name="ck_external_download_jobs_status",
+        ),
+        Index("ix_external_download_jobs_claim", "status", "available_at", "created_at"),
+        Index(
+            "uq_external_download_jobs_active",
+            "external_document_id",
+            unique=True,
+            postgresql_where=text("status IN ('PENDING', 'DOWNLOADING')"),
+        ),
+    )
+
+    id: Mapped[UUID] = mapped_column(Uuid(as_uuid=True), primary_key=True, default=uuid4)
+    external_document_id: Mapped[UUID] = mapped_column(
+        Uuid(as_uuid=True),
+        ForeignKey("external_process_documents.id", ondelete="CASCADE"),
+        nullable=False,
+    )
+    status: Mapped[str] = mapped_column(
+        String(32), nullable=False, default=ExternalDocumentDownloadStatus.PENDING.value
+    )
+    available_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, server_default=func.now()
+    )
+    locked_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    locked_by: Mapped[str | None] = mapped_column(String(255))
+    attempt_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    max_attempts: Mapped[int] = mapped_column(Integer, nullable=False, default=3)
+    error_code: Mapped[str | None] = mapped_column(String(64))
+    error_message: Mapped[str | None] = mapped_column(String(500))
+    created_by: Mapped[UUID | None] = mapped_column(
+        Uuid(as_uuid=True), ForeignKey("auth_users.id", ondelete="SET NULL")
+    )
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, server_default=func.now()
+    )
+    finished_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
 
 
 class ProcessDocument(Base):

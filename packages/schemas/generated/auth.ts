@@ -23,7 +23,10 @@ export type OperationalAuditEventType =
   | "EXTERNAL_SEARCH_COMPLETED"
   | "EXTERNAL_SEARCH_FAILED"
   | "EXTERNAL_PROCESS_IMPORTED"
-  | "EXTERNAL_IMPORT_SKIPPED_DUPLICATE";
+  | "EXTERNAL_IMPORT_SKIPPED_DUPLICATE"
+  | "EXTERNAL_SYNC_QUEUED"
+  | "EXTERNAL_DOCUMENT_DOWNLOAD_QUEUED"
+  | "EXTERNAL_DOCUMENT_EXTRACTION_QUEUED";
 export type AuthPermission =
   | "process:read"
   | "process:write"
@@ -40,7 +43,10 @@ export type AuthPermission =
   | "admin:settings"
   | "audit:read"
   | "external:search"
-  | "external:import";
+  | "external:import"
+  | "external:read"
+  | "external:sync"
+  | "external:download";
 export type AuthRoleName = "ADMIN" | "ANALYST" | "REVIEWER" | "VIEWER";
 export type AuthUserStatus = "ACTIVE" | "DISABLED" | "LOCKED" | "PENDING";
 

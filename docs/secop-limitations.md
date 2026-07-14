@@ -1,5 +1,7 @@
 # Limitaciones del conector SECOP
 
+La Microfase 17 puede inventariar documentos oficiales y detectar cambios, pero no garantiza que la URL publica permita descarga. SECOP I observado publica rutas HTTP incompatibles con la politica HTTPS; SECOP II puede responder 403/HTML. Esos casos quedan `UNSUPPORTED`, `FAILED` o `REJECTED`, nunca como descargas exitosas simuladas. Ver [secop-document-source-discovery.md](secop-document-source-discovery.md).
+
 - La fuente es externa: puede estar incompleta, desactualizada, temporalmente caída o cambiar de
   esquema sin aviso. Los estados y warnings informan la incertidumbre; no la ocultan.
 - La búsqueda opera sobre dos datasets de procesos verificados el 2026-07-13. No agrega contratos,

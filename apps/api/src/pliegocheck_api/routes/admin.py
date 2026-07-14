@@ -243,6 +243,8 @@ def system_config(
             "specialized",
             "decision",
             "report",
+            "external_process_sync",
+            "external_document_download",
         ],
         version=settings.version,
         commit=None,

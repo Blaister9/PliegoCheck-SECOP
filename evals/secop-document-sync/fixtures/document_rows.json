@@ -1,0 +1,22 @@
+{
+  "secop_ii": {
+    "id_documento": "DOC-17",
+    "n_mero_de_contrato": "CON-17",
+    "nombre_archivo": "Adenda 1.pdf",
+    "descripci_n": "Modificación del cronograma",
+    "extensi_n": "pdf",
+    "tamanno_archivo": "1200",
+    "fecha_carga": "2026-07-01T15:30:00.000",
+    "url_descarga_documento": { "url": "https://files.example.gov.co/adenda.pdf" }
+  },
+  "secop_i": {
+    "identificador": "DOC-I-17",
+    "numero_de_constancia": "CONST-17",
+    "nombrearchivo": "pliego.pdf",
+    "tipo": "Pliego de condiciones",
+    "extension": "pdf",
+    "tama_o": "800",
+    "fecha_creacion": "2026-07-01T10:00:00.000",
+    "ruta_descarga": "http://20.96.127.85/descarga/fixture"
+  }
+}

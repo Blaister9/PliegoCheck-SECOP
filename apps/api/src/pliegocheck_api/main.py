@@ -7,6 +7,7 @@ from fastapi.responses import JSONResponse
 
 from pliegocheck_api.config import settings
 from pliegocheck_api.errors import DomainError
+from pliegocheck_api.external_documents.routes import router as external_documents_router
 from pliegocheck_api.external_procurement.routes import process_router as external_process_router
 from pliegocheck_api.external_procurement.routes import router as external_procurement_router
 from pliegocheck_api.middleware import security_middleware
@@ -30,6 +31,7 @@ app = FastAPI(
     version=settings.version,
     description=settings.description,
 )
+app.middleware("http")(security_middleware)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.effective_cors_origins,
@@ -37,7 +39,6 @@ app.add_middleware(
     allow_methods=["GET", "POST", "PATCH", "OPTIONS"],
     allow_headers=["Content-Type", "X-Request-ID"],
 )
-app.middleware("http")(security_middleware)
 app.include_router(health.router)
 app.include_router(auth.router)
 app.include_router(admin.router)
@@ -51,6 +52,7 @@ app.include_router(decisions.router)
 app.include_router(decision_reports.router)
 app.include_router(external_procurement_router)
 app.include_router(external_process_router)
+app.include_router(external_documents_router)
 
 
 @app.exception_handler(DomainError)

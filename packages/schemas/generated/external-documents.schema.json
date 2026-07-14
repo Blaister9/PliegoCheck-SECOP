@@ -1,0 +1,1226 @@
+{
+  "$defs": {
+    "ExternalDocumentAddendumStatus": {
+      "enum": ["CONFIRMED_ADDENDUM", "POTENTIAL_ADDENDUM", "NOT_ADDENDUM", "UNKNOWN"],
+      "type": "string"
+    },
+    "ExternalDocumentDiscoveryStatus": {
+      "enum": ["DISCOVERED", "LINK_AVAILABLE", "METADATA_ONLY", "UNSUPPORTED", "MISSING", "ERROR"],
+      "type": "string"
+    },
+    "ExternalDocumentDownloadRequest": {
+      "additionalProperties": false,
+      "properties": {
+        "confirm_public_download": {
+          "type": "boolean"
+        }
+      },
+      "required": ["confirm_public_download"],
+      "type": "object"
+    },
+    "ExternalDocumentDownloadResponse": {
+      "additionalProperties": false,
+      "properties": {
+        "external_document_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "message": {
+          "maxLength": 5000,
+          "minLength": 1,
+          "type": "string"
+        },
+        "process_document_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "process_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "sha256": {
+          "anyOf": [
+            {
+              "pattern": "^[a-f0-9]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "status": {
+          "$ref": "#/$defs/ExternalDocumentDownloadStatus"
+        },
+        "version_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "process_id",
+        "external_document_id",
+        "status",
+        "version_id",
+        "process_document_id",
+        "sha256",
+        "message"
+      ],
+      "type": "object"
+    },
+    "ExternalDocumentDownloadStatus": {
+      "enum": [
+        "NOT_REQUESTED",
+        "PENDING",
+        "DOWNLOADING",
+        "DOWNLOADED",
+        "UNCHANGED",
+        "UPDATED",
+        "UNSUPPORTED",
+        "FAILED",
+        "REJECTED"
+      ],
+      "type": "string"
+    },
+    "ExternalDocumentErrorCode": {
+      "enum": [
+        "EXTERNAL_SYNC_NOT_AVAILABLE",
+        "EXTERNAL_SYNC_ALREADY_QUEUED",
+        "EXTERNAL_SYNC_NOT_FOUND",
+        "EXTERNAL_SOURCE_UNAVAILABLE",
+        "EXTERNAL_PROCESS_LINK_NOT_FOUND",
+        "EXTERNAL_DOCUMENT_NOT_FOUND",
+        "EXTERNAL_DOCUMENT_DOWNLOAD_UNSUPPORTED",
+        "EXTERNAL_DOCUMENT_URL_REJECTED",
+        "EXTERNAL_DOCUMENT_HOST_REJECTED",
+        "EXTERNAL_DOCUMENT_TOO_LARGE",
+        "EXTERNAL_DOCUMENT_CONTENT_TYPE_REJECTED",
+        "EXTERNAL_DOCUMENT_HTML_RESPONSE",
+        "EXTERNAL_DOCUMENT_DOWNLOAD_FAILED",
+        "EXTERNAL_DOCUMENT_HASH_MISMATCH",
+        "EXTERNAL_DOCUMENT_ALREADY_DOWNLOADED",
+        "EXTERNAL_DOCUMENT_VERSION_CONFLICT",
+        "EXTERNAL_DOCUMENT_EXTRACTION_NOT_READY"
+      ],
+      "type": "string"
+    },
+    "ExternalDocumentExtractResponse": {
+      "additionalProperties": false,
+      "properties": {
+        "external_document_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "extraction_job_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "message": {
+          "maxLength": 500,
+          "minLength": 1,
+          "type": "string"
+        },
+        "process_document_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "process_id": {
+          "format": "uuid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "process_id",
+        "external_document_id",
+        "process_document_id",
+        "extraction_job_id",
+        "message"
+      ],
+      "type": "object"
+    },
+    "ExternalProcessChangeEvent": {
+      "additionalProperties": false,
+      "properties": {
+        "created_at": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "event_type": {
+          "$ref": "#/$defs/ExternalProcessChangeEventType"
+        },
+        "external_document_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "metadata": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "new_value": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "old_value": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "process_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "sync_run_id": {
+          "format": "uuid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "process_id",
+        "sync_run_id",
+        "event_type",
+        "external_document_id",
+        "old_value",
+        "new_value",
+        "created_at"
+      ],
+      "type": "object"
+    },
+    "ExternalProcessChangeEventType": {
+      "enum": [
+        "PROCESS_STATUS_CHANGED",
+        "CLOSING_DATE_CHANGED",
+        "ESTIMATED_VALUE_CHANGED",
+        "DOCUMENT_DISCOVERED",
+        "DOCUMENT_UPDATED",
+        "DOCUMENT_REMOVED_FROM_SOURCE",
+        "POTENTIAL_ADDENDUM_DISCOVERED",
+        "CONFIRMED_ADDENDUM_DISCOVERED",
+        "DOWNLOAD_FAILED"
+      ],
+      "type": "string"
+    },
+    "ExternalProcessDocumentDetail": {
+      "additionalProperties": false,
+      "properties": {
+        "addendum_status": {
+          "$ref": "#/$defs/ExternalDocumentAddendumStatus"
+        },
+        "current_version_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "discovery_status": {
+          "$ref": "#/$defs/ExternalDocumentDiscoveryStatus"
+        },
+        "document_category": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "document_type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "download_status": {
+          "$ref": "#/$defs/ExternalDocumentDownloadStatus"
+        },
+        "first_seen_at": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "last_seen_at": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "process_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "published_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "reported_content_type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "reported_size_bytes": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "requires_human_review": {
+          "type": "boolean"
+        },
+        "source_document_id": {
+          "type": "string"
+        },
+        "source_document_reference": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "source_public_url": {
+          "anyOf": [
+            {
+              "maxLength": 2083,
+              "pattern": "^https://",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "source_system": {
+          "type": "string"
+        },
+        "source_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "title": {
+          "maxLength": 500,
+          "minLength": 1,
+          "type": "string"
+        },
+        "updated_at_source": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "version_count": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "versions": {
+          "items": {
+            "$ref": "#/$defs/ExternalProcessDocumentVersion"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "id",
+        "process_id",
+        "source_system",
+        "source_document_id",
+        "source_document_reference",
+        "title",
+        "document_type",
+        "document_category",
+        "source_url",
+        "source_public_url",
+        "published_at",
+        "updated_at_source",
+        "reported_content_type",
+        "discovery_status",
+        "download_status",
+        "addendum_status",
+        "requires_human_review",
+        "current_version_id",
+        "version_count",
+        "first_seen_at",
+        "last_seen_at"
+      ],
+      "type": "object"
+    },
+    "ExternalProcessDocumentList": {
+      "additionalProperties": false,
+      "properties": {
+        "items": {
+          "items": {
+            "$ref": "#/$defs/ExternalProcessDocumentSummary"
+          },
+          "type": "array"
+        },
+        "process_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "total": {
+          "minimum": 0,
+          "type": "integer"
+        }
+      },
+      "required": ["process_id", "items", "total"],
+      "type": "object"
+    },
+    "ExternalProcessDocumentSummary": {
+      "additionalProperties": false,
+      "properties": {
+        "addendum_status": {
+          "$ref": "#/$defs/ExternalDocumentAddendumStatus"
+        },
+        "current_version_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "discovery_status": {
+          "$ref": "#/$defs/ExternalDocumentDiscoveryStatus"
+        },
+        "document_category": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "document_type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "download_status": {
+          "$ref": "#/$defs/ExternalDocumentDownloadStatus"
+        },
+        "first_seen_at": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "last_seen_at": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "process_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "published_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "reported_content_type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "reported_size_bytes": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "requires_human_review": {
+          "type": "boolean"
+        },
+        "source_document_id": {
+          "type": "string"
+        },
+        "source_document_reference": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "source_public_url": {
+          "anyOf": [
+            {
+              "maxLength": 2083,
+              "pattern": "^https://",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "source_system": {
+          "type": "string"
+        },
+        "source_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "title": {
+          "maxLength": 500,
+          "minLength": 1,
+          "type": "string"
+        },
+        "updated_at_source": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "version_count": {
+          "minimum": 0,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id",
+        "process_id",
+        "source_system",
+        "source_document_id",
+        "source_document_reference",
+        "title",
+        "document_type",
+        "document_category",
+        "source_url",
+        "source_public_url",
+        "published_at",
+        "updated_at_source",
+        "reported_content_type",
+        "discovery_status",
+        "download_status",
+        "addendum_status",
+        "requires_human_review",
+        "current_version_id",
+        "version_count",
+        "first_seen_at",
+        "last_seen_at"
+      ],
+      "type": "object"
+    },
+    "ExternalProcessDocumentVersion": {
+      "additionalProperties": false,
+      "properties": {
+        "created_at": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "detected_content_type": {
+          "type": "string"
+        },
+        "downloaded_at": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "external_document_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "previous_version_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "process_document_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "reported_content_type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "reported_size_bytes": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "sha256": {
+          "pattern": "^[a-f0-9]{64}$",
+          "type": "string"
+        },
+        "size_bytes": {
+          "exclusiveMinimum": 0,
+          "type": "integer"
+        },
+        "source_updated_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "source_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "version_number": {
+          "minimum": 1,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id",
+        "external_document_id",
+        "version_number",
+        "source_url",
+        "source_updated_at",
+        "reported_content_type",
+        "sha256",
+        "size_bytes",
+        "detected_content_type",
+        "downloaded_at",
+        "process_document_id",
+        "previous_version_id",
+        "created_at"
+      ],
+      "type": "object"
+    },
+    "ExternalProcessSyncQueueResponse": {
+      "additionalProperties": false,
+      "properties": {
+        "message": {
+          "maxLength": 500,
+          "minLength": 1,
+          "type": "string"
+        },
+        "process_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "status": {
+          "$ref": "#/$defs/ExternalProcessSyncStatus"
+        },
+        "sync_run_id": {
+          "format": "uuid",
+          "type": "string"
+        }
+      },
+      "required": ["process_id", "sync_run_id", "status", "message"],
+      "type": "object"
+    },
+    "ExternalProcessSyncReadiness": {
+      "additionalProperties": false,
+      "properties": {
+        "active_sync_run_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "available": {
+          "type": "boolean"
+        },
+        "enabled": {
+          "type": "boolean"
+        },
+        "external_process_link_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "last_sync_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "process_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "reason": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "source_system": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "process_id",
+        "available",
+        "enabled",
+        "source_system",
+        "external_process_link_id",
+        "active_sync_run_id",
+        "last_sync_at",
+        "reason"
+      ],
+      "type": "object"
+    },
+    "ExternalProcessSyncRequest": {
+      "additionalProperties": false,
+      "properties": {
+        "discover_documents": {
+          "default": true,
+          "type": "boolean"
+        }
+      },
+      "type": "object"
+    },
+    "ExternalProcessSyncRunDetail": {
+      "additionalProperties": false,
+      "properties": {
+        "created_at": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "documents_added": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "documents_discovered": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "documents_failed": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "documents_unchanged": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "documents_updated": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "error_code": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ExternalDocumentErrorCode"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "error_message": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "events": {
+          "items": {
+            "$ref": "#/$defs/ExternalProcessChangeEvent"
+          },
+          "type": "array"
+        },
+        "external_process_link_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "finished_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "input_digest": {
+          "pattern": "^[a-f0-9]{64}$",
+          "type": "string"
+        },
+        "metadata_changed": {
+          "type": "boolean"
+        },
+        "process_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "source_system": {
+          "type": "string"
+        },
+        "source_updated_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "started_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "status": {
+          "$ref": "#/$defs/ExternalProcessSyncStatus"
+        },
+        "warnings": {
+          "items": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "id",
+        "process_id",
+        "external_process_link_id",
+        "source_system",
+        "status",
+        "started_at",
+        "finished_at",
+        "source_updated_at",
+        "metadata_changed",
+        "documents_discovered",
+        "documents_added",
+        "documents_updated",
+        "documents_unchanged",
+        "documents_failed",
+        "error_code",
+        "error_message",
+        "created_at",
+        "input_digest"
+      ],
+      "type": "object"
+    },
+    "ExternalProcessSyncRunList": {
+      "additionalProperties": false,
+      "properties": {
+        "items": {
+          "items": {
+            "$ref": "#/$defs/ExternalProcessSyncRunSummary"
+          },
+          "type": "array"
+        },
+        "process_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "total": {
+          "minimum": 0,
+          "type": "integer"
+        }
+      },
+      "required": ["process_id", "items", "total"],
+      "type": "object"
+    },
+    "ExternalProcessSyncRunSummary": {
+      "additionalProperties": false,
+      "properties": {
+        "created_at": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "documents_added": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "documents_discovered": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "documents_failed": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "documents_unchanged": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "documents_updated": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "error_code": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ExternalDocumentErrorCode"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "error_message": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "external_process_link_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "finished_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "metadata_changed": {
+          "type": "boolean"
+        },
+        "process_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "source_system": {
+          "type": "string"
+        },
+        "source_updated_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "started_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "status": {
+          "$ref": "#/$defs/ExternalProcessSyncStatus"
+        },
+        "warnings": {
+          "items": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "id",
+        "process_id",
+        "external_process_link_id",
+        "source_system",
+        "status",
+        "started_at",
+        "finished_at",
+        "source_updated_at",
+        "metadata_changed",
+        "documents_discovered",
+        "documents_added",
+        "documents_updated",
+        "documents_unchanged",
+        "documents_failed",
+        "error_code",
+        "error_message",
+        "created_at"
+      ],
+      "type": "object"
+    },
+    "ExternalProcessSyncStatus": {
+      "enum": [
+        "PENDING",
+        "PROCESSING",
+        "COMPLETED",
+        "COMPLETED_WITH_WARNINGS",
+        "FAILED",
+        "CANCELLED"
+      ],
+      "type": "string"
+    }
+  },
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "change_event": {
+      "$ref": "#/$defs/ExternalProcessChangeEvent"
+    },
+    "document_detail": {
+      "$ref": "#/$defs/ExternalProcessDocumentDetail"
+    },
+    "document_list": {
+      "$ref": "#/$defs/ExternalProcessDocumentList"
+    },
+    "document_summary": {
+      "$ref": "#/$defs/ExternalProcessDocumentSummary"
+    },
+    "document_version": {
+      "$ref": "#/$defs/ExternalProcessDocumentVersion"
+    },
+    "download_request": {
+      "$ref": "#/$defs/ExternalDocumentDownloadRequest"
+    },
+    "download_response": {
+      "$ref": "#/$defs/ExternalDocumentDownloadResponse"
+    },
+    "extract_response": {
+      "$ref": "#/$defs/ExternalDocumentExtractResponse"
+    },
+    "sync_detail": {
+      "$ref": "#/$defs/ExternalProcessSyncRunDetail"
+    },
+    "sync_list": {
+      "$ref": "#/$defs/ExternalProcessSyncRunList"
+    },
+    "sync_queue_response": {
+      "$ref": "#/$defs/ExternalProcessSyncQueueResponse"
+    },
+    "sync_readiness": {
+      "$ref": "#/$defs/ExternalProcessSyncReadiness"
+    },
+    "sync_request": {
+      "$ref": "#/$defs/ExternalProcessSyncRequest"
+    },
+    "sync_summary": {
+      "$ref": "#/$defs/ExternalProcessSyncRunSummary"
+    }
+  },
+  "required": [
+    "sync_request",
+    "sync_queue_response",
+    "sync_readiness",
+    "sync_summary",
+    "sync_detail",
+    "sync_list",
+    "document_summary",
+    "document_detail",
+    "document_list",
+    "document_version",
+    "download_request",
+    "download_response",
+    "extract_response",
+    "change_event"
+  ],
+  "type": "object"
+}

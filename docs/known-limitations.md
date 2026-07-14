@@ -1,5 +1,13 @@
 # Limitaciones conocidas
 
+## Fuentes documentales SECOP
+
+- La correlacion SECOP II depende de `id_del_portafolio` a `proceso`; SECOP I depende de `numero_de_constancia`. Si la fuente omite la clave, el resultado queda con advertencia y sin documentos inventados.
+- En la validacion del 13 de julio de 2026, una URL de `community.secop.gov.co` respondio 403/HTML y los enlaces actuales SECOP I observados eran HTTP. Por ello el inventario funciona, pero una descarga live no se promete y SECOP I se marca `UNSUPPORTED` bajo la politica HTTPS.
+- La deteccion de texto como “adenda” solo produce `POTENTIAL_ADDENDUM` y revision humana; no confirma efectos juridicos.
+- La proteccion DNS se revalida antes de cada salto. El transporte HTTP conserva la resolucion del sistema, por lo que el despliegue debe aplicar tambien controles de salida de red como defensa en profundidad.
+- No hay scheduler automatico: la sincronizacion se encola explicitamente y los workers deben estar operativos.
+
 - No se recibió retroalimentación real de usuarios piloto en esta microfase.
 - La evidencia disponible es sintetica y no representa contratos reales.
 - El MVP no acredita cumplimiento legal ni reemplaza revision humana.

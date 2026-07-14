@@ -12,6 +12,10 @@ Convenciones de este documento, aplicables a toda entidad:
 
 ## Entidades
 
+### Sincronizacion documental externa
+
+`ExternalProcessSyncRun` conserva el estado durable del trabajo; cada ejecucion produce un `ExternalProcessSnapshot`. `ExternalProcessDocument` representa la identidad estable de una fila documental oficial y `ExternalProcessDocumentVersion` conserva cada hash descargado, enlazado al `ProcessDocument` existente. `ExternalProcessChangeEvent` registra diferencias verificables y posibles adendas. `ExternalDocumentDownloadJob` separa la descarga de la sincronizacion y de la extraccion. Ninguna de estas entidades participa directamente en la decision deterministica.
+
 ### Organization
 **Propósito:** tenant de la plataforma; agrupa usuarios, empresas y procesos con aislamiento completo entre organizaciones.
 

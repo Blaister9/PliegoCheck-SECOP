@@ -9,6 +9,7 @@ from pliegocheck_schemas import (
     CompanyErrorCode,
     DecisionErrorCode,
     DecisionReportErrorCode,
+    ExternalDocumentErrorCode,
     ExternalProcurementErrorCode,
     ExtractionErrorCode,
     FinancialErrorCode,
@@ -32,6 +33,7 @@ class DomainError(Exception):
             | DecisionReportErrorCode
             | AuthErrorCode
             | ExternalProcurementErrorCode
+            | ExternalDocumentErrorCode
         ),
         message: str,
         *,

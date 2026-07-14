@@ -52,6 +52,8 @@ export type {
 export * from "./generated/manual-import.enums";
 export * from "./generated/external-procurement";
 export * from "./generated/external-procurement.enums";
+export * from "./generated/external-documents";
+export * from "./generated/external-documents.enums";
 
 export type {
   DocumentExtraction,

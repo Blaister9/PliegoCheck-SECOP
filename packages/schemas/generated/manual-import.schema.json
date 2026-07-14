@@ -32,6 +32,9 @@
             },
             {
               "$ref": "#/$defs/ExternalProcurementErrorCode"
+            },
+            {
+              "$ref": "#/$defs/ExternalDocumentErrorCode"
             }
           ]
         },
@@ -227,6 +230,28 @@
     "DocumentUploadStatus": {
       "description": "Resultado del intento de carga de un documento.",
       "enum": ["STORED", "REJECTED"],
+      "type": "string"
+    },
+    "ExternalDocumentErrorCode": {
+      "enum": [
+        "EXTERNAL_SYNC_NOT_AVAILABLE",
+        "EXTERNAL_SYNC_ALREADY_QUEUED",
+        "EXTERNAL_SYNC_NOT_FOUND",
+        "EXTERNAL_SOURCE_UNAVAILABLE",
+        "EXTERNAL_PROCESS_LINK_NOT_FOUND",
+        "EXTERNAL_DOCUMENT_NOT_FOUND",
+        "EXTERNAL_DOCUMENT_DOWNLOAD_UNSUPPORTED",
+        "EXTERNAL_DOCUMENT_URL_REJECTED",
+        "EXTERNAL_DOCUMENT_HOST_REJECTED",
+        "EXTERNAL_DOCUMENT_TOO_LARGE",
+        "EXTERNAL_DOCUMENT_CONTENT_TYPE_REJECTED",
+        "EXTERNAL_DOCUMENT_HTML_RESPONSE",
+        "EXTERNAL_DOCUMENT_DOWNLOAD_FAILED",
+        "EXTERNAL_DOCUMENT_HASH_MISMATCH",
+        "EXTERNAL_DOCUMENT_ALREADY_DOWNLOADED",
+        "EXTERNAL_DOCUMENT_VERSION_CONFLICT",
+        "EXTERNAL_DOCUMENT_EXTRACTION_NOT_READY"
+      ],
       "type": "string"
     },
     "ExternalProcurementErrorCode": {

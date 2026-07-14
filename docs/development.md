@@ -1,5 +1,9 @@
 # Guia de desarrollo - PliegoCheck-SECOP
 
+## Documentos SECOP (Microfase 17)
+
+`pnpm secop:documents:test` y `pnpm secop:documents:eval` son offline. Los consumidores de cola son `pnpm secop:sync-run-once|sync-drain` y `pnpm secop:document-run-once|document-drain`. El smoke `pnpm secop:documents:smoke` se omite salvo opt-in explicito y nunca descarga documentos.
+
 Como trabajar en el monorepo tras la Microfase 14. Las decisiones de stack estan en
 [ADR-001](ADR-001-stack-and-architecture.md); la extraccion documental esta en
 [ADR-003](ADR-003-document-extraction.md); las reglas para agentes de programacion, en

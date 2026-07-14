@@ -102,7 +102,7 @@ flowchart TB
 
 La decisión de stack y sus alternativas están formalizadas en [docs/ADR-001-stack-and-architecture.md](docs/ADR-001-stack-and-architecture.md).
 
-## Estado actual - Microfase 16
+## Estado actual - Microfase 17
 
 Implementado: importacion manual de procesos, carga documental segura, almacenamiento local con
 SHA-256, cola transaccional inicial, extractores deterministas para PDF con texto, DOCX, XLSX, CSV y
@@ -156,8 +156,13 @@ normalización conservadora, persistencia, deduplicación, auditoría, permisos,
 offline y smoke live opt-in. Importar no descarga documentos, no ejecuta evaluaciones ni automatiza
 ofertas o trámites SECOP. Detalle en [docs/secop-connector.md](docs/secop-connector.md).
 
-No implementado todavía: OCR, descarga automática de documentos SECOP, actualización incremental,
-SSO/MFA y S3 real obligatorio.
+La Microfase 17 agrega sincronizacion incremental, inventario documental SECOP I/II, snapshots y
+eventos, descarga publica explicita con limites y proteccion SSRF, hash/deduplicacion, versiones
+inmutables, cola PostgreSQL, worker, API y panel web. La extraccion sigue siendo una accion separada
+y no se inicia ninguna evaluacion o decision.
+
+No implementado todavía: OCR, scheduler automatico de documentos SECOP, SSO/MFA y S3 real
+obligatorio.
 Categorias fuera de los adaptadores financiero, juridico, experiencia y tecnico quedan
 `NOT_EVALUATED`, por lo que no pueden producir `GO`.
 
@@ -215,6 +220,10 @@ uv sync --all-packages  # dependencias Python (workspace uv)
 Guía completa en [docs/development.md](docs/development.md).
 
 ## Documentación disponible
+
+- [Sincronizacion documental SECOP](docs/secop-document-sync.md): inventario incremental, descarga segura, worker y operacion.
+- [Descubrimiento oficial de fuentes documentales](docs/secop-document-source-discovery.md): datasets, correlacion y limites observados.
+- [ADR-017](docs/ADR-017-public-document-sync.md): decisiones de arquitectura y seguridad.
 
 | Documento | Contenido |
 | --- | --- |

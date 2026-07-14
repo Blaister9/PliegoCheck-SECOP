@@ -55,17 +55,22 @@ ROLE_PERMISSIONS: dict[AuthRoleName, set[AuthPermission]] = {
         AuthPermission.REPORT_DOWNLOAD,
         AuthPermission.EXTERNAL_SEARCH,
         AuthPermission.EXTERNAL_IMPORT,
+        AuthPermission.EXTERNAL_READ,
+        AuthPermission.EXTERNAL_SYNC,
+        AuthPermission.EXTERNAL_DOWNLOAD,
     },
     AuthRoleName.REVIEWER: {
         AuthPermission.PROCESS_READ,
         AuthPermission.COMPANY_READ,
         AuthPermission.DECISION_REVIEW,
         AuthPermission.REPORT_DOWNLOAD,
+        AuthPermission.EXTERNAL_READ,
     },
     AuthRoleName.VIEWER: {
         AuthPermission.PROCESS_READ,
         AuthPermission.COMPANY_READ,
         AuthPermission.REPORT_DOWNLOAD,
+        AuthPermission.EXTERNAL_READ,
     },
 }
 

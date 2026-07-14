@@ -57,3 +57,5 @@ limitadas e identificables y evitar extracción masiva. El conector no concede a
 usar datos personales, automatizar el portal transaccional, evadir controles ni sustituir la fuente
 oficial. Consulte [descubrimiento de fuentes](secop-source-discovery.md) y
 [limitaciones](secop-limitations.md).
+
+La extension documental de Microfase 17 se describe en [secop-documents.md](secop-documents.md), [secop-incremental-updates.md](secop-incremental-updates.md) y [secop-document-security.md](secop-document-security.md). Mantiene separadas la busqueda/importacion, la sincronizacion, la descarga y la extraccion.

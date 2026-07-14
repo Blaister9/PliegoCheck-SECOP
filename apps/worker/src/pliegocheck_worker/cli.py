@@ -21,6 +21,12 @@ from pliegocheck_worker.decision.orchestrator import (
     decision_drain,
     decision_run_once,
 )
+from pliegocheck_worker.external_documents.orchestrator import (
+    external_download_drain,
+    external_download_run_once,
+    external_sync_drain,
+    external_sync_run_once,
+)
 from pliegocheck_worker.financial.orchestrator import (
     financial_drain,
     financial_run_once,
@@ -310,6 +316,23 @@ def main(argv: list[str] | None = None) -> int:
     )
     specialized_drain_parser.add_argument("--max-jobs", type=int, default=100)
     specialized_drain_parser.add_argument("--worker-id", default=None)
+    for name, help_text in (
+        ("secop-sync-run-once", "Procesa una sincronizacion SECOP"),
+        ("secop-download-run-once", "Procesa una descarga SECOP"),
+        ("external-sync-run-once", "Procesa una sincronizacion SECOP"),
+        ("external-document-download-run-once", "Procesa una descarga SECOP"),
+    ):
+        item = subparsers.add_parser(name, help=help_text)
+        item.add_argument("--worker-id", default=None)
+    for name, help_text in (
+        ("secop-sync-drain", "Drena sincronizaciones SECOP"),
+        ("secop-download-drain", "Drena descargas SECOP"),
+        ("external-sync-drain", "Drena sincronizaciones SECOP"),
+        ("external-document-download-drain", "Drena descargas SECOP"),
+    ):
+        item = subparsers.add_parser(name, help=help_text)
+        item.add_argument("--max-jobs", type=int, default=100)
+        item.add_argument("--worker-id", default=None)
     subparsers.add_parser(
         "normalization-smoke",
         help="Prueba manual opcional contra OpenAI con fixture sintetico",
@@ -358,6 +381,21 @@ def main(argv: list[str] | None = None) -> int:
         return run_specialized_once(args.worker_id)
     if args.command == "specialized-drain":
         return run_specialized_drain(args.max_jobs, args.worker_id)
+    if args.command in {"secop-sync-run-once", "external-sync-run-once"}:
+        print(json.dumps(external_sync_run_once(args.worker_id), sort_keys=True))
+        return 0
+    if args.command in {"secop-sync-drain", "external-sync-drain"}:
+        print(json.dumps(external_sync_drain(args.max_jobs, args.worker_id), sort_keys=True))
+        return 0
+    if args.command in {
+        "secop-download-run-once",
+        "external-document-download-run-once",
+    }:
+        print(json.dumps(external_download_run_once(args.worker_id), sort_keys=True))
+        return 0
+    if args.command in {"secop-download-drain", "external-document-download-drain"}:
+        print(json.dumps(external_download_drain(args.max_jobs, args.worker_id), sort_keys=True))
+        return 0
     if args.command == "normalization-smoke":
         return run_normalization_smoke()
     if args.command == "pilot-prepare":

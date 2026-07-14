@@ -86,6 +86,16 @@ from pliegocheck_schemas.document_extraction import (
     ExtractedSegmentType,
     ExtractionErrorCode,
 )
+from pliegocheck_schemas.external_documents import (
+    EXTERNAL_DOCUMENTS_SCHEMA_VERSION,
+    ExternalDocumentAddendumStatus,
+    ExternalDocumentDiscoveryStatus,
+    ExternalDocumentDownloadStatus,
+    ExternalDocumentErrorCode,
+    ExternalDocumentsContracts,
+    ExternalProcessChangeEventType,
+    ExternalProcessSyncStatus,
+)
 from pliegocheck_schemas.external_procurement import (
     EXTERNAL_PROCUREMENT_SCHEMA_VERSION,
     ExternalProcurementContracts,
@@ -209,6 +219,45 @@ def generate_json_schema(model: type[BaseModel], filename: str) -> None:
     schema["$schema"] = "https://json-schema.org/draft/2020-12/schema"
     content = json.dumps(schema, indent=2, sort_keys=True, ensure_ascii=False) + "\n"
     write_text(GENERATED_DIR / filename, content)
+
+
+def generate_external_documents_enums_ts() -> None:
+    blocks = [
+        TS_HEADER,
+        "export const EXTERNAL_DOCUMENTS_SCHEMA_VERSION = "
+        f'"{EXTERNAL_DOCUMENTS_SCHEMA_VERSION}";\n',
+        ts_const_block(
+            "EXTERNAL_PROCESS_SYNC_STATUS_VALUES",
+            "ExternalProcessSyncStatusValue",
+            ExternalProcessSyncStatus,
+        ),
+        ts_const_block(
+            "EXTERNAL_DOCUMENT_DISCOVERY_STATUS_VALUES",
+            "ExternalDocumentDiscoveryStatusValue",
+            ExternalDocumentDiscoveryStatus,
+        ),
+        ts_const_block(
+            "EXTERNAL_DOCUMENT_DOWNLOAD_STATUS_VALUES",
+            "ExternalDocumentDownloadStatusValue",
+            ExternalDocumentDownloadStatus,
+        ),
+        ts_const_block(
+            "EXTERNAL_DOCUMENT_ADDENDUM_STATUS_VALUES",
+            "ExternalDocumentAddendumStatusValue",
+            ExternalDocumentAddendumStatus,
+        ),
+        ts_const_block(
+            "EXTERNAL_PROCESS_CHANGE_EVENT_TYPE_VALUES",
+            "ExternalProcessChangeEventTypeValue",
+            ExternalProcessChangeEventType,
+        ),
+        ts_const_block(
+            "EXTERNAL_DOCUMENT_ERROR_CODE_VALUES",
+            "ExternalDocumentErrorCodeValue",
+            ExternalDocumentErrorCode,
+        ),
+    ]
+    write_text(GENERATED_DIR / "external-documents.enums.ts", "\n".join(blocks))
 
 
 def ts_const_block(const_name: str, type_name: str, enum_cls: type[StrEnum]) -> str:
@@ -737,6 +786,7 @@ def main() -> int:
             ExternalProcurementContracts,
             "external-procurement.schema.json",
         )
+        generate_json_schema(ExternalDocumentsContracts, "external-documents.schema.json")
         generate_json_schema(DocumentExtractionContracts, "document-extraction.schema.json")
         generate_json_schema(DecisionContracts, "decision.schema.json")
         generate_json_schema(DecisionReportContracts, "decision-report.schema.json")
@@ -753,6 +803,7 @@ def main() -> int:
         generate_financial_evaluation_enums_ts()
         generate_manual_import_enums_ts()
         generate_external_procurement_enums_ts()
+        generate_external_documents_enums_ts()
         generate_document_extraction_enums_ts()
     except Exception as exc:  # el fallo debe ser visible y con codigo distinto de cero
         print(f"ERROR generando contratos: {exc}", file=sys.stderr)
