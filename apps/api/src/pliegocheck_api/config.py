@@ -3,6 +3,7 @@
 from functools import lru_cache
 from pathlib import Path
 from typing import Any
+from urllib.parse import urlsplit
 
 from pydantic import Field, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -212,6 +213,47 @@ class Settings(BaseSettings):
         default=False,
         validation_alias="PLIEGOCHECK_ALLOW_FAKE_NORMALIZATION_PROVIDER",
     )
+    secop_enabled: bool = Field(default=False, validation_alias="PLIEGOCHECK_SECOP_ENABLED")
+    secop_provider: str = Field(
+        default="datos_abiertos",
+        validation_alias="PLIEGOCHECK_SECOP_PROVIDER",
+    )
+    secop_base_url: str = Field(
+        default="https://www.datos.gov.co",
+        validation_alias="PLIEGOCHECK_SECOP_BASE_URL",
+    )
+    secop_app_token: str | None = Field(
+        default=None,
+        validation_alias="PLIEGOCHECK_SECOP_APP_TOKEN",
+    )
+    secop_timeout_seconds: int = Field(
+        default=30,
+        validation_alias="PLIEGOCHECK_SECOP_TIMEOUT_SECONDS",
+        ge=1,
+        le=120,
+    )
+    secop_max_page_size: int = Field(
+        default=100,
+        validation_alias="PLIEGOCHECK_SECOP_MAX_PAGE_SIZE",
+        ge=1,
+        le=1000,
+    )
+    secop_rate_limit_per_minute: int = Field(
+        default=60,
+        validation_alias="PLIEGOCHECK_SECOP_RATE_LIMIT_PER_MINUTE",
+        ge=1,
+        le=1000,
+    )
+    secop_cache_ttl_minutes: int = Field(
+        default=60,
+        validation_alias="PLIEGOCHECK_SECOP_CACHE_TTL_MINUTES",
+        ge=0,
+        le=1440,
+    )
+    secop_allow_live_tests: bool = Field(
+        default=False,
+        validation_alias="PLIEGOCHECK_SECOP_ALLOW_LIVE_TESTS",
+    )
 
     @field_validator("allowed_web_origins", mode="before")
     @classmethod
@@ -240,6 +282,34 @@ class Settings(BaseSettings):
         normalized = value.lower()
         if normalized not in {"development", "test", "pilot"}:
             msg = "PLIEGOCHECK_ENVIRONMENT debe ser development, test o pilot"
+            raise ValueError(msg)
+        return normalized
+
+    @field_validator("secop_provider")
+    @classmethod
+    def validate_secop_provider(cls, value: str) -> str:
+        normalized = value.lower().strip()
+        if normalized != "datos_abiertos":
+            msg = "PLIEGOCHECK_SECOP_PROVIDER solo admite datos_abiertos"
+            raise ValueError(msg)
+        return normalized
+
+    @field_validator("secop_base_url")
+    @classmethod
+    def validate_secop_base_url(cls, value: str) -> str:
+        normalized = value.rstrip("/")
+        parsed = urlsplit(normalized)
+        if (
+            parsed.scheme != "https"
+            or parsed.hostname not in {"datos.gov.co", "www.datos.gov.co"}
+            or parsed.port not in {None, 443}
+            or parsed.username is not None
+            or parsed.password is not None
+            or parsed.path not in {"", "/"}
+            or parsed.query
+            or parsed.fragment
+        ):
+            msg = "PLIEGOCHECK_SECOP_BASE_URL debe ser el origen HTTPS oficial de datos.gov.co"
             raise ValueError(msg)
         return normalized
 

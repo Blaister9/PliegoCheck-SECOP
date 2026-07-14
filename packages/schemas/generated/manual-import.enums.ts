@@ -4,7 +4,7 @@
 
 export const MANUAL_IMPORT_SCHEMA_VERSION = "1.0.0";
 
-export const PROCESS_SOURCE_VALUES = ["MANUAL"] as const;
+export const PROCESS_SOURCE_VALUES = ["MANUAL", "SECOP_IMPORT"] as const;
 export type ProcessSourceValue = (typeof PROCESS_SOURCE_VALUES)[number];
 
 export const PROCESS_STATUS_VALUES = ["DRAFT", "DOCUMENTS_PENDING", "READY_FOR_INVENTORY"] as const;

@@ -1,0 +1,38 @@
+[
+  {
+    "entidad": "ENTIDAD PUBLICA FIXTURE",
+    "nit_entidad": "800000001",
+    "departamento_entidad": "Bogota D.C.",
+    "ciudad_entidad": "Bogota",
+    "id_del_proceso": "CO1.REQ.FIXTURE-001",
+    "referencia_del_proceso": "LP-FIXTURE-001",
+    "nombre_del_procedimiento": "Servicio de vigilancia para sedes institucionales",
+    "descripci_n_del_procedimiento": "Fixture determinista sin datos personales.",
+    "fase": "Presentacion de oferta",
+    "fecha_de_publicacion_del": "2026-06-10T00:00:00.000",
+    "fecha_de_recepcion_de": "2026-07-31T17:00:00.000",
+    "precio_base": "125000000",
+    "modalidad_de_contratacion": "Licitacion publica",
+    "estado_del_procedimiento": "Publicado",
+    "urlproceso": {
+      "url": "https://community.secop.gov.co/Public/Tendering/NoticeDetail/Index?noticeUID=FIXTURE-001"
+    }
+  },
+  {
+    "entidad": "MUNICIPIO FIXTURE",
+    "nit_entidad": "800000002",
+    "departamento_entidad": "Antioquia",
+    "ciudad_entidad": "Medellin",
+    "id_del_proceso": "CO1.REQ.FIXTURE-002",
+    "referencia_del_proceso": "MC-FIXTURE-002",
+    "nombre_del_procedimiento": "Suministro de elementos de oficina",
+    "descripci_n_del_procedimiento": "Segundo fixture para paginacion y filtros.",
+    "fecha_de_publicacion_del": "2026-06-12T00:00:00.000",
+    "precio_base": "25000000",
+    "modalidad_de_contratacion": "Minima cuantia",
+    "estado_del_procedimiento": "Presentacion de oferta",
+    "urlproceso": {
+      "url": "https://community.secop.gov.co/Public/Tendering/NoticeDetail/Index?noticeUID=FIXTURE-002"
+    }
+  }
+]

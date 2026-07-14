@@ -224,4 +224,6 @@ def test_documentation_commands_and_files_exist() -> None:
     assert "Microfase 12: completada" in roadmap
     assert "Microfase 13: completada" in roadmap
     assert "Microfase 14: completada" in roadmap
-    assert "Microfase 15: siguiente" in roadmap
+    assert "Microfase 15:" in roadmap
+    assert "Microfase 16: completada" in roadmap
+    assert "Microfase 17: siguiente" in roadmap

@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import logging
 from collections.abc import Awaitable, Callable
 from http import HTTPStatus
 from uuid import uuid4
@@ -20,9 +21,16 @@ PUBLIC_PATHS = {
     ("GET", "/health/ready"),
     ("POST", "/auth/login"),
 }
+logger = logging.getLogger(__name__)
 
 
 def required_permission(method: str, path: str) -> AuthPermission | None:
+    if path.startswith("/external-procurement/results") and method == "POST":
+        return AuthPermission.EXTERNAL_IMPORT
+    if path.startswith("/external-procurement/searches") and method == "POST":
+        return AuthPermission.EXTERNAL_SEARCH
+    if path.startswith("/external-procurement"):
+        return AuthPermission.PROCESS_READ
     if path.startswith("/admin/audit-events"):
         return AuthPermission.AUDIT_READ
     if path.startswith("/admin/system-config"):
@@ -70,6 +78,10 @@ async def security_middleware(
     try:
         response = await call_next(request)
     except SQLAlchemyError:
+        logger.exception(
+            "database_request_error",
+            extra={"request_id": request_id, "path": request.url.path},
+        )
         response = _error_response(
             AuthErrorCode.AUTH_CONFIG_INVALID,
             "La solicitud no pudo completarse.",
@@ -77,6 +89,10 @@ async def security_middleware(
             request_id,
         )
     except Exception:
+        logger.exception(
+            "unhandled_request_error",
+            extra={"request_id": request_id, "path": request.url.path},
+        )
         response = _error_response(
             AuthErrorCode.AUTH_CONFIG_INVALID,
             "La solicitud no pudo completarse.",
@@ -89,6 +105,8 @@ async def security_middleware(
 
 
 def _is_public(method: str, path: str) -> bool:
+    if method == "OPTIONS":
+        return True
     return (method, path.rstrip("/") or "/") in PUBLIC_PATHS
 
 

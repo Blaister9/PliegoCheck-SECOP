@@ -86,6 +86,18 @@ from pliegocheck_schemas.document_extraction import (
     ExtractedSegmentType,
     ExtractionErrorCode,
 )
+from pliegocheck_schemas.external_procurement import (
+    EXTERNAL_PROCUREMENT_SCHEMA_VERSION,
+    ExternalProcurementContracts,
+    ExternalProcurementDocumentStatus,
+    ExternalProcurementErrorCode,
+    ExternalProcurementFieldStatus,
+    ExternalProcurementImportStatus,
+    ExternalProcurementProvider,
+    ExternalProcurementSearchStatus,
+    ExternalProcurementSourceStatus,
+    ExternalProcurementSourceSystem,
+)
 from pliegocheck_schemas.financial_evaluation import (
     FINANCIAL_EVALUATION_SCHEMA_VERSION,
     FinancialCalculationStatus,
@@ -290,6 +302,55 @@ def generate_manual_import_enums_ts() -> None:
         ts_const_block("UPLOAD_ERROR_CODE_VALUES", "UploadErrorCodeValue", UploadErrorCode),
     ]
     write_text(GENERATED_DIR / "manual-import.enums.ts", "\n".join(blocks))
+
+
+def generate_external_procurement_enums_ts() -> None:
+    blocks = [
+        TS_HEADER,
+        "export const EXTERNAL_PROCUREMENT_SCHEMA_VERSION = "
+        f'"{EXTERNAL_PROCUREMENT_SCHEMA_VERSION}";\n',
+        ts_const_block(
+            "EXTERNAL_PROCUREMENT_SOURCE_STATUS_VALUES",
+            "ExternalProcurementSourceStatusValue",
+            ExternalProcurementSourceStatus,
+        ),
+        ts_const_block(
+            "EXTERNAL_PROCUREMENT_SEARCH_STATUS_VALUES",
+            "ExternalProcurementSearchStatusValue",
+            ExternalProcurementSearchStatus,
+        ),
+        ts_const_block(
+            "EXTERNAL_PROCUREMENT_IMPORT_STATUS_VALUES",
+            "ExternalProcurementImportStatusValue",
+            ExternalProcurementImportStatus,
+        ),
+        ts_const_block(
+            "EXTERNAL_PROCUREMENT_PROVIDER_VALUES",
+            "ExternalProcurementProviderValue",
+            ExternalProcurementProvider,
+        ),
+        ts_const_block(
+            "EXTERNAL_PROCUREMENT_SOURCE_SYSTEM_VALUES",
+            "ExternalProcurementSourceSystemValue",
+            ExternalProcurementSourceSystem,
+        ),
+        ts_const_block(
+            "EXTERNAL_PROCUREMENT_FIELD_STATUS_VALUES",
+            "ExternalProcurementFieldStatusValue",
+            ExternalProcurementFieldStatus,
+        ),
+        ts_const_block(
+            "EXTERNAL_PROCUREMENT_DOCUMENT_STATUS_VALUES",
+            "ExternalProcurementDocumentStatusValue",
+            ExternalProcurementDocumentStatus,
+        ),
+        ts_const_block(
+            "EXTERNAL_PROCUREMENT_ERROR_CODE_VALUES",
+            "ExternalProcurementErrorCodeValue",
+            ExternalProcurementErrorCode,
+        ),
+    ]
+    write_text(GENERATED_DIR / "external-procurement.enums.ts", "\n".join(blocks))
 
 
 def generate_document_extraction_enums_ts() -> None:
@@ -672,6 +733,10 @@ def main() -> int:
             "requirement-normalization.schema.json",
         )
         generate_json_schema(ManualImportContracts, "manual-import.schema.json")
+        generate_json_schema(
+            ExternalProcurementContracts,
+            "external-procurement.schema.json",
+        )
         generate_json_schema(DocumentExtractionContracts, "document-extraction.schema.json")
         generate_json_schema(DecisionContracts, "decision.schema.json")
         generate_json_schema(DecisionReportContracts, "decision-report.schema.json")
@@ -687,6 +752,7 @@ def main() -> int:
         generate_company_profile_enums_ts()
         generate_financial_evaluation_enums_ts()
         generate_manual_import_enums_ts()
+        generate_external_procurement_enums_ts()
         generate_document_extraction_enums_ts()
     except Exception as exc:  # el fallo debe ser visible y con codigo distinto de cero
         print(f"ERROR generando contratos: {exc}", file=sys.stderr)

@@ -19,7 +19,11 @@ export type OperationalAuditEventType =
   | "DECISION_REVIEWED"
   | "REPORT_GENERATED"
   | "ARTIFACT_DOWNLOADED"
-  | "PERMISSION_DENIED";
+  | "PERMISSION_DENIED"
+  | "EXTERNAL_SEARCH_COMPLETED"
+  | "EXTERNAL_SEARCH_FAILED"
+  | "EXTERNAL_PROCESS_IMPORTED"
+  | "EXTERNAL_IMPORT_SKIPPED_DUPLICATE";
 export type AuthPermission =
   | "process:read"
   | "process:write"
@@ -34,7 +38,9 @@ export type AuthPermission =
   | "report:download"
   | "admin:users"
   | "admin:settings"
-  | "audit:read";
+  | "audit:read"
+  | "external:search"
+  | "external:import";
 export type AuthRoleName = "ADMIN" | "ANALYST" | "REVIEWER" | "VIEWER";
 export type AuthUserStatus = "ACTIVE" | "DISABLED" | "LOCKED" | "PENDING";
 

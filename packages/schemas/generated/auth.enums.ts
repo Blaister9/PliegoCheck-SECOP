@@ -25,6 +25,8 @@ export const AUTH_PERMISSION_VALUES = [
   "admin:users",
   "admin:settings",
   "audit:read",
+  "external:search",
+  "external:import",
 ] as const;
 export type AuthPermissionValue = (typeof AUTH_PERMISSION_VALUES)[number];
 
@@ -61,5 +63,9 @@ export const OPERATIONAL_AUDIT_EVENT_TYPE_VALUES = [
   "REPORT_GENERATED",
   "ARTIFACT_DOWNLOADED",
   "PERMISSION_DENIED",
+  "EXTERNAL_SEARCH_COMPLETED",
+  "EXTERNAL_SEARCH_FAILED",
+  "EXTERNAL_PROCESS_IMPORTED",
+  "EXTERNAL_IMPORT_SKIPPED_DUPLICATE",
 ] as const;
 export type OperationalAuditEventTypeValue = (typeof OPERATIONAL_AUDIT_EVENT_TYPE_VALUES)[number];

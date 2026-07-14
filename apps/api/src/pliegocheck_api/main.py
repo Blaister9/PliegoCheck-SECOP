@@ -7,6 +7,8 @@ from fastapi.responses import JSONResponse
 
 from pliegocheck_api.config import settings
 from pliegocheck_api.errors import DomainError
+from pliegocheck_api.external_procurement.routes import process_router as external_process_router
+from pliegocheck_api.external_procurement.routes import router as external_procurement_router
 from pliegocheck_api.middleware import security_middleware
 from pliegocheck_api.routes import (
     admin,
@@ -47,6 +49,8 @@ app.include_router(financial_evaluations.router)
 app.include_router(specialized_evaluations.router)
 app.include_router(decisions.router)
 app.include_router(decision_reports.router)
+app.include_router(external_procurement_router)
+app.include_router(external_process_router)
 
 
 @app.exception_handler(DomainError)

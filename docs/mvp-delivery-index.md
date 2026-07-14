@@ -30,3 +30,14 @@
 - `pnpm mvp:eval`
 - `pnpm mvp:data-scan`
 - `pnpm check`
+
+## Extensión posterior al cierre del MVP — Microfase 16
+
+- [ADR-016 - Búsqueda e importación SECOP](ADR-016-secop-search-import.md)
+- [Conector SECOP](secop-connector.md)
+- [Descubrimiento de fuentes](secop-source-discovery.md)
+- [Flujo de importación](secop-import-workflow.md)
+- [Limitaciones del conector](secop-limitations.md)
+- `pnpm secop:test`
+- `pnpm secop:eval`
+- `pnpm secop:smoke` (manual y opt-in; nunca en CI)

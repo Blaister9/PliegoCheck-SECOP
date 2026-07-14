@@ -2,7 +2,11 @@
 
 from fastapi.testclient import TestClient
 
-from pliegocheck_schemas import MANUAL_IMPORT_SCHEMA_VERSION, NORMALIZED_REQUIREMENT_SCHEMA_VERSION
+from pliegocheck_schemas import (
+    EXTERNAL_PROCUREMENT_SCHEMA_VERSION,
+    MANUAL_IMPORT_SCHEMA_VERSION,
+    NORMALIZED_REQUIREMENT_SCHEMA_VERSION,
+)
 
 
 def test_contracts_catalog_exposes_shared_schema_version(client: TestClient) -> None:
@@ -16,3 +20,4 @@ def test_contracts_catalog_exposes_shared_schema_version(client: TestClient) -> 
     assert by_name["normalized_requirement"]["title"] == "NormalizedRequirement"
     assert by_name["manual_import"]["schema_version"] == MANUAL_IMPORT_SCHEMA_VERSION
     assert by_name["manual_import"]["title"] == "ManualImportContracts"
+    assert by_name["external_procurement"]["schema_version"] == EXTERNAL_PROCUREMENT_SCHEMA_VERSION

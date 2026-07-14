@@ -50,6 +50,8 @@ export type {
   ProcessSummary,
 } from "./generated/manual-import";
 export * from "./generated/manual-import.enums";
+export * from "./generated/external-procurement";
+export * from "./generated/external-procurement.enums";
 
 export type {
   DocumentExtraction,

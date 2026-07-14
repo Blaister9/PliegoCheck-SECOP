@@ -59,6 +59,10 @@ from pliegocheck_schemas import (
     DocumentProcessingStatus,
     DocumentType,
     DocumentUploadStatus,
+    ExternalProcurementDocumentStatus,
+    ExternalProcurementImportStatus,
+    ExternalProcurementSearchStatus,
+    ExternalProcurementSourceStatus,
     ExtractedSegmentType,
     FinancialCalculationStatus,
     FinancialEvaluationJobStatus,
@@ -246,6 +250,18 @@ SPECIALIZED_RULE_SOURCE_BASIS_VALUES = ", ".join(
 SPECIALIZED_EVIDENCE_VALIDATION_STATUS_VALUES = ", ".join(
     f"'{item.value}'" for item in SpecializedEvidenceValidationStatus
 )
+EXTERNAL_SOURCE_STATUS_VALUES = ", ".join(
+    f"'{item.value}'" for item in ExternalProcurementSourceStatus
+)
+EXTERNAL_SEARCH_STATUS_VALUES = ", ".join(
+    f"'{item.value}'" for item in ExternalProcurementSearchStatus
+)
+EXTERNAL_IMPORT_STATUS_VALUES = ", ".join(
+    f"'{item.value}'" for item in ExternalProcurementImportStatus
+)
+EXTERNAL_DOCUMENT_STATUS_VALUES = ", ".join(
+    f"'{item.value}'" for item in ExternalProcurementDocumentStatus
+)
 
 
 class Process(Base):
@@ -279,7 +295,7 @@ class Process(Base):
     source_url: Mapped[str | None] = mapped_column(String(2083))
     selection_method: Mapped[str | None] = mapped_column(String(500))
     estimated_value: Mapped[Decimal | None] = mapped_column(Numeric(24, 2))
-    currency: Mapped[str] = mapped_column(String(3), nullable=False, default="COP")
+    currency: Mapped[str | None] = mapped_column(String(3), nullable=True)
     published_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     closing_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     status: Mapped[str] = mapped_column(
@@ -343,6 +359,214 @@ class Process(Base):
         back_populates="process",
         cascade="all, delete-orphan",
         order_by="FinancialEvaluationRun.created_at",
+    )
+
+
+class ExternalProcurementSource(Base):
+    """Catalogo verificable de datasets publicos de contratacion."""
+
+    __tablename__ = "external_procurement_sources"
+    __table_args__ = (
+        UniqueConstraint(
+            "source_system",
+            "dataset_id",
+            name="uq_external_procurement_sources_system_dataset",
+        ),
+        CheckConstraint(
+            f"status IN ({EXTERNAL_SOURCE_STATUS_VALUES})",
+            name="ck_external_procurement_sources_status",
+        ),
+        Index("ix_external_procurement_sources_system", "source_system"),
+    )
+
+    id: Mapped[UUID] = mapped_column(Uuid(as_uuid=True), primary_key=True, default=uuid4)
+    source_system: Mapped[str] = mapped_column(String(32), nullable=False)
+    provider: Mapped[str] = mapped_column(String(64), nullable=False)
+    name: Mapped[str] = mapped_column(String(255), nullable=False)
+    base_url: Mapped[str] = mapped_column(String(2083), nullable=False)
+    dataset_id: Mapped[str] = mapped_column(String(64), nullable=False)
+    human_url: Mapped[str] = mapped_column(String(2083), nullable=False)
+    api_url: Mapped[str] = mapped_column(String(2083), nullable=False)
+    status: Mapped[str] = mapped_column(String(32), nullable=False)
+    last_checked_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    source_metadata: Mapped[dict[str, Any]] = mapped_column("metadata", JSON, default=dict)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, server_default=func.now()
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, server_default=func.now(), onupdate=func.now()
+    )
+
+
+class ExternalProcurementSearch(Base):
+    __tablename__ = "external_procurement_searches"
+    __table_args__ = (
+        CheckConstraint(
+            f"status IN ({EXTERNAL_SEARCH_STATUS_VALUES})",
+            name="ck_external_procurement_searches_status",
+        ),
+        Index("ix_external_procurement_searches_created_at", "created_at"),
+        Index("ix_external_procurement_searches_source", "source_id"),
+    )
+
+    id: Mapped[UUID] = mapped_column(Uuid(as_uuid=True), primary_key=True, default=uuid4)
+    source_id: Mapped[UUID] = mapped_column(
+        Uuid(as_uuid=True),
+        ForeignKey("external_procurement_sources.id"),
+        nullable=False,
+    )
+    query: Mapped[str | None] = mapped_column(String(200))
+    filters: Mapped[dict[str, Any]] = mapped_column(JSON, nullable=False, default=dict)
+    status: Mapped[str] = mapped_column(String(32), nullable=False)
+    result_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    source_row_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    page_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    limit: Mapped[int] = mapped_column(Integer, nullable=False)
+    offset: Mapped[int] = mapped_column(Integer, nullable=False)
+    unsupported_filters: Mapped[list[str]] = mapped_column(JSON, nullable=False, default=list)
+    warnings: Mapped[list[dict[str, Any]]] = mapped_column(JSON, nullable=False, default=list)
+    started_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    finished_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    error_code: Mapped[str | None] = mapped_column(String(64))
+    error_message: Mapped[str | None] = mapped_column(String(500))
+    created_by: Mapped[UUID | None] = mapped_column(
+        Uuid(as_uuid=True), ForeignKey("auth_users.id", ondelete="SET NULL")
+    )
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, server_default=func.now()
+    )
+
+
+class ExternalProcurementSearchResult(Base):
+    __tablename__ = "external_procurement_search_results"
+    __table_args__ = (
+        UniqueConstraint(
+            "search_id",
+            "source_dataset",
+            "source_process_id",
+            name="uq_external_procurement_results_search_process",
+        ),
+        CheckConstraint(
+            f"import_status IN ({EXTERNAL_IMPORT_STATUS_VALUES})",
+            name="ck_external_procurement_results_import_status",
+        ),
+        CheckConstraint(
+            f"documents_status IN ({EXTERNAL_DOCUMENT_STATUS_VALUES})",
+            name="ck_external_procurement_results_documents_status",
+        ),
+        Index("ix_external_procurement_results_search", "search_id"),
+        Index(
+            "ix_external_procurement_results_source_key",
+            "source_system",
+            "source_dataset",
+            "source_process_id",
+        ),
+    )
+
+    id: Mapped[UUID] = mapped_column(Uuid(as_uuid=True), primary_key=True, default=uuid4)
+    search_id: Mapped[UUID] = mapped_column(
+        Uuid(as_uuid=True),
+        ForeignKey("external_procurement_searches.id", ondelete="CASCADE"),
+        nullable=False,
+    )
+    source_id: Mapped[UUID] = mapped_column(
+        Uuid(as_uuid=True), ForeignKey("external_procurement_sources.id"), nullable=False
+    )
+    source_system: Mapped[str] = mapped_column(String(32), nullable=False)
+    source_dataset: Mapped[str] = mapped_column(String(64), nullable=False)
+    source_process_id: Mapped[str] = mapped_column(String(500), nullable=False)
+    source_process_reference: Mapped[str | None] = mapped_column(String(500))
+    title: Mapped[str] = mapped_column(String(500), nullable=False)
+    entity_name: Mapped[str] = mapped_column(String(500), nullable=False)
+    modality: Mapped[str | None] = mapped_column(String(500))
+    status: Mapped[str | None] = mapped_column(String(500))
+    estimated_value: Mapped[Decimal | None] = mapped_column(Numeric(24, 2))
+    currency: Mapped[str | None] = mapped_column(String(3))
+    publication_date: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    closing_date: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    department: Mapped[str | None] = mapped_column(String(300))
+    municipality: Mapped[str | None] = mapped_column(String(300))
+    raw_payload: Mapped[dict[str, Any]] = mapped_column(JSON, nullable=False)
+    normalized_payload: Mapped[dict[str, Any]] = mapped_column(JSON, nullable=False)
+    raw_payload_hash: Mapped[str] = mapped_column(String(64), nullable=False)
+    field_statuses: Mapped[dict[str, str]] = mapped_column(JSON, nullable=False, default=dict)
+    warnings: Mapped[list[dict[str, Any]]] = mapped_column(JSON, nullable=False, default=list)
+    source_url: Mapped[str | None] = mapped_column(String(2083))
+    documents_url: Mapped[str | None] = mapped_column(String(2083))
+    documents_status: Mapped[str] = mapped_column(String(64), nullable=False)
+    import_status: Mapped[str] = mapped_column(String(32), nullable=False)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, server_default=func.now()
+    )
+
+
+class ExternalProcurementProcessLink(Base):
+    __tablename__ = "external_procurement_process_links"
+    __table_args__ = (
+        UniqueConstraint(
+            "source_system",
+            "source_dataset",
+            "source_process_id",
+            name="uq_external_procurement_links_source_key",
+        ),
+        CheckConstraint(
+            f"documents_status IN ({EXTERNAL_DOCUMENT_STATUS_VALUES})",
+            name="ck_external_procurement_links_documents_status",
+        ),
+        Index("ix_external_procurement_links_process", "process_id"),
+    )
+
+    id: Mapped[UUID] = mapped_column(Uuid(as_uuid=True), primary_key=True, default=uuid4)
+    process_id: Mapped[UUID] = mapped_column(
+        Uuid(as_uuid=True), ForeignKey("processes.id", ondelete="CASCADE"), nullable=False
+    )
+    source_result_id: Mapped[UUID] = mapped_column(
+        Uuid(as_uuid=True), ForeignKey("external_procurement_search_results.id"), nullable=False
+    )
+    source_system: Mapped[str] = mapped_column(String(32), nullable=False)
+    source_dataset: Mapped[str] = mapped_column(String(64), nullable=False)
+    source_process_id: Mapped[str] = mapped_column(String(500), nullable=False)
+    source_process_reference: Mapped[str | None] = mapped_column(String(500))
+    source_url: Mapped[str | None] = mapped_column(String(2083))
+    documents_url: Mapped[str | None] = mapped_column(String(2083))
+    documents_status: Mapped[str] = mapped_column(String(64), nullable=False)
+    external_metadata: Mapped[dict[str, Any]] = mapped_column(JSON, nullable=False, default=dict)
+    imported_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, server_default=func.now()
+    )
+
+
+class ExternalProcurementImport(Base):
+    __tablename__ = "external_procurement_imports"
+    __table_args__ = (
+        CheckConstraint(
+            f"status IN ({EXTERNAL_IMPORT_STATUS_VALUES})",
+            name="ck_external_procurement_imports_status",
+        ),
+        Index("ix_external_procurement_imports_result", "source_result_id"),
+        Index("ix_external_procurement_imports_process", "process_id"),
+        Index("ix_external_procurement_imports_dedup", "deduplication_key"),
+    )
+
+    id: Mapped[UUID] = mapped_column(Uuid(as_uuid=True), primary_key=True, default=uuid4)
+    source_result_id: Mapped[UUID] = mapped_column(
+        Uuid(as_uuid=True),
+        ForeignKey("external_procurement_search_results.id"),
+        nullable=False,
+    )
+    process_id: Mapped[UUID] = mapped_column(
+        Uuid(as_uuid=True), ForeignKey("processes.id", ondelete="CASCADE"), nullable=False
+    )
+    status: Mapped[str] = mapped_column(String(32), nullable=False)
+    deduplication_key: Mapped[str] = mapped_column(String(64), nullable=False)
+    import_manifest: Mapped[dict[str, Any]] = mapped_column(JSON, nullable=False, default=dict)
+    imported_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    created_by: Mapped[UUID | None] = mapped_column(
+        Uuid(as_uuid=True), ForeignKey("auth_users.id", ondelete="SET NULL")
+    )
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, server_default=func.now()
     )
 
 

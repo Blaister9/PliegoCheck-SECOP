@@ -113,7 +113,9 @@
         "report:download",
         "admin:users",
         "admin:settings",
-        "audit:read"
+        "audit:read",
+        "external:search",
+        "external:import"
       ],
       "type": "string"
     },
@@ -476,7 +478,11 @@
         "DECISION_REVIEWED",
         "REPORT_GENERATED",
         "ARTIFACT_DOWNLOADED",
-        "PERMISSION_DENIED"
+        "PERMISSION_DENIED",
+        "EXTERNAL_SEARCH_COMPLETED",
+        "EXTERNAL_SEARCH_FAILED",
+        "EXTERNAL_PROCESS_IMPORTED",
+        "EXTERNAL_IMPORT_SKIPPED_DUPLICATE"
       ],
       "type": "string"
     },

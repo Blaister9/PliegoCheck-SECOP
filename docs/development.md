@@ -230,6 +230,29 @@ Implementado:
   aceptacion/no produccion, demo final, checklist, indice de entrega, `mvp:eval`, `mvp:data-scan` y
   release candidate `0.14.0-mvp-controlled`.
 
-No implementado todavia: OCR, integracion automatica con SECOP II, S3 real y autenticacion externa
+No implementado todavía: OCR, descarga automatizada desde SECOP, actualización incremental, S3 real
+y autenticación externa
 corporativa. Categorias fuera de financiero, juridico, experiencia y tecnico permanecen
 `NOT_EVALUATED` y bloquean `GO`.
+
+## Conector SECOP (Microfase 16)
+
+Configure las variables `PLIEGOCHECK_SECOP_*` descritas en
+[secop-connector.md](secop-connector.md). El flujo normal de desarrollo y CI es completamente
+offline:
+
+```powershell
+pnpm secop:test
+pnpm secop:eval
+```
+
+La consulta pública manual requiere habilitación explícita y solo solicita un registro:
+
+```powershell
+$env:PLIEGOCHECK_SECOP_ENABLED='true'
+$env:PLIEGOCHECK_SECOP_ALLOW_LIVE_TESTS='true'
+pnpm secop:smoke
+```
+
+No guarde la salida del smoke ni tokens. La búsqueda web está en `/processes/import`; importar deja
+el proceso listo para la carga documental existente y no inicia análisis.

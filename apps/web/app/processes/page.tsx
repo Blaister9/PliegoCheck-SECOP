@@ -41,9 +41,14 @@ export default function ProcessesPage() {
           <h1>Procesos importados</h1>
           <p className="lead">Procesos creados manualmente y su inventario documental inicial.</p>
         </div>
-        <Link className="button" href="/processes/new">
-          Crear proceso
-        </Link>
+        <div className="actions">
+          <Link className="button secondary" href="/processes/import">
+            Buscar procesos SECOP
+          </Link>
+          <Link className="button" href="/processes/new">
+            Crear proceso
+          </Link>
+        </div>
       </header>
 
       <form className="toolbar" onSubmit={submitFilters}>

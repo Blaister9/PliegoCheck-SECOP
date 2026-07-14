@@ -19,7 +19,9 @@ Microfase 11: completada - piloto controlado end-to-end con datos sinteticos y r
 Microfase 12: completada - ajustes post-piloto y preparacion de despliegue controlado
 Microfase 13: completada - despliegue controlado y validacion con usuarios piloto
 Microfase 14: completada - ajustes derivados de usuarios piloto y cierre de MVP controlado
-Microfase 15: siguiente - Decisión ejecutiva sobre evolución a piloto real o pausa técnica
+Microfase 15: pendiente de decisión humana - evolución a piloto real o pausa técnica
+Microfase 16: completada - conector SECOP de búsqueda e importación
+Microfase 17: siguiente - descarga controlada de documentos públicos y actualización incremental
 ```
 
 ## Microfase 0 - Fundacion documental - completada
@@ -172,12 +174,29 @@ Microfase 15: siguiente - Decisión ejecutiva sobre evolución a piloto real o p
 - **Fuera de alcance:** produccion, datos reales, SSO/MFA, S3 obligatorio, OCR, SECOP en linea y
   afirmaciones de validacion juridica o de usuarios reales.
 
-## Microfase 15 - Decisión ejecutiva sobre evolución a piloto real o pausa técnica - siguiente
+## Microfase 15 - Decisión ejecutiva sobre evolución a piloto real o pausa técnica - pendiente humana
 
 - **Objetivo:** decidir con responsables humanos si el MVP controlado pasa a piloto real con datos y
   usuarios autorizados, o si se pausa tecnicamente.
 - **Entregable previsto:** decision ejecutiva, condiciones de avance o pausa, responsables,
   controles adicionales y presupuesto de riesgos.
+
+## Microfase 16 - Conector SECOP de búsqueda e importación - completada
+
+- **Objetivo:** buscar procesos en fuentes públicas oficiales e importarlos con trazabilidad.
+- **Entregable:** catálogo SECOP II/SECOP I verificado, cliente Socrata acotado, filtros, paginación,
+  normalización, persistencia, deduplicación, auditoría, permisos, API, UI, evals offline y smoke
+  live opt-in.
+- **Criterios verificados:** importar crea un proceso sin iniciar análisis; repetir la importación no
+  duplica; el payload se reduce a campos permitidos; CI no usa internet; los documentos quedan como
+  enlaces o estado explícito.
+- **Fuera de alcance:** descarga documental, actualización incremental, login, ofertas, trámites,
+  scraping agresivo y producción.
+
+## Microfase 17 - Descarga controlada de documentos públicos y actualización incremental - siguiente
+
+- **Objetivo sugerido:** descargar únicamente documentos públicos con límites, validación de tipo,
+  tamaño, hash y storage seguro, y reconciliar cambios de procesos importados.
 
 ## Despues del MVP
 
