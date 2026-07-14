@@ -6,7 +6,7 @@ from typing import Annotated, cast
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, Query, Request
-from sqlalchemy import func, select
+from sqlalchemy import case, func, select
 from sqlalchemy.orm import Session
 
 from pliegocheck_api.auth import CurrentUser
@@ -408,14 +408,38 @@ def alerts(
         filters.append(OpportunityAlert.occurred_at >= created_from)
     if created_to:
         filters.append(OpportunityAlert.occurred_at <= created_to)
-    order = (
-        OpportunityAlert.occurred_at.asc()
-        if sort == "oldest"
-        else OpportunityAlert.occurred_at.desc()
+    assessment_score = (
+        select(OpportunityAssessment.compatibility_score)
+        .where(OpportunityAssessment.id == OpportunityAlert.assessment_id)
+        .correlate(OpportunityAlert)
+        .scalar_subquery()
     )
+    assessment_closing = (
+        select(OpportunityCandidate.closing_date)
+        .join(OpportunityAssessment, OpportunityAssessment.candidate_id == OpportunityCandidate.id)
+        .where(OpportunityAssessment.id == OpportunityAlert.assessment_id)
+        .correlate(OpportunityAlert)
+        .scalar_subquery()
+    )
+    order = {
+        "oldest": OpportunityAlert.occurred_at.asc(),
+        "severity": case(
+            (OpportunityAlert.severity == "CRITICAL", 4),
+            (OpportunityAlert.severity == "HIGH", 3),
+            (OpportunityAlert.severity == "MEDIUM", 2),
+            (OpportunityAlert.severity == "LOW", 1),
+            else_=0,
+        ).desc(),
+        "closing_date": assessment_closing.asc().nulls_last(),
+        "compatibility": assessment_score.desc().nulls_last(),
+    }.get(sort, OpportunityAlert.occurred_at.desc())
     total = session.scalar(select(func.count()).select_from(OpportunityAlert).where(*filters)) or 0
     rows = session.scalars(
-        select(OpportunityAlert).where(*filters).order_by(order).offset(offset).limit(limit)
+        select(OpportunityAlert)
+        .where(*filters)
+        .order_by(order, OpportunityAlert.occurred_at.desc())
+        .offset(offset)
+        .limit(limit)
     ).all()
     return OpportunityAlertList(
         items=[_alert(x) for x in rows], total=total, limit=limit, offset=offset

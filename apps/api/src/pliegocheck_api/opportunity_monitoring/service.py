@@ -2,7 +2,7 @@
 # mypy: disable-error-code="no-untyped-def,no-untyped-call"
 
 import json
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
 from hashlib import sha256
 from http import HTTPStatus
 from uuid import UUID, uuid4
@@ -15,6 +15,7 @@ from pliegocheck_api.auth import CurrentUser, audit_event
 from pliegocheck_api.config import Settings
 from pliegocheck_api.errors import DomainError
 from pliegocheck_api.models import (
+    ExternalProcessDocument,
     OpportunityAlert,
     OpportunityAlertEvent,
     OpportunityAssessment,
@@ -191,7 +192,9 @@ def request_run(
         return existing, True
     scheduled = scheduled_for or datetime.now(UTC)
     actual_trigger = (
-        OpportunityMonitorTriggerType.BASELINE if monitor.baseline_run_id is None else trigger
+        OpportunityMonitorTriggerType.BASELINE
+        if monitor.baseline_run_id is None and trigger != OpportunityMonitorTriggerType.RETRY
+        else trigger
     )
     digest = canonical_hash(
         {
@@ -275,7 +278,10 @@ def process_next_monitor_run(
 ) -> OpportunityMonitorRun | None:
     row = session.scalar(
         select(OpportunityMonitorRun)
-        .where(OpportunityMonitorRun.status == OpportunityMonitorRunStatus.PENDING.value)
+        .where(
+            OpportunityMonitorRun.status == OpportunityMonitorRunStatus.PENDING.value,
+            OpportunityMonitorRun.scheduled_for <= datetime.now(UTC),
+        )
         .order_by(OpportunityMonitorRun.created_at)
         .with_for_update(skip_locked=True)
         .limit(1)
@@ -313,6 +319,14 @@ def process_next_monitor_run(
                 "Monitor con fallos repetidos",
                 "El monitor dejó de consultar después de fallos consecutivos.",
                 f"failure:{monitor.consecutive_failures // threshold}",
+            )
+        else:
+            request_run(
+                session,
+                monitor,
+                OpportunityMonitorTriggerType.RETRY,
+                scheduled_for=now + timedelta(minutes=2 ** (monitor.consecutive_failures - 1)),
+                commit=False,
             )
         audit_event(
             session,
@@ -360,7 +374,7 @@ def _process(
     baseline = monitor.baseline_run_id is None and not rules.alert_on_initial_results
     now = datetime.now(UTC)
     for candidate, assessment in pairs:
-        current = _snapshot(candidate, assessment)
+        current = _snapshot(session, candidate, assessment)
         state = session.scalar(
             select(OpportunityMonitorCandidateState).where(
                 OpportunityMonitorCandidateState.monitor_id == monitor.id,
@@ -386,6 +400,8 @@ def _process(
                 information_completeness=current.information_completeness,
                 closing_date=current.closing_date,
                 document_state_hash=current.document_state_hash,
+                document_count=current.document_count,
+                document_version_hash=current.document_version_hash,
                 assessment_digest=current.assessment_digest,
                 source_status=current.source_status,
                 addendum_status=current.addendum_status,
@@ -409,6 +425,8 @@ def _process(
                 "information_completeness",
                 "closing_date",
                 "document_state_hash",
+                "document_count",
+                "document_version_hash",
                 "assessment_digest",
                 "source_status",
                 "addendum_status",
@@ -509,45 +527,108 @@ def _process(
     session.commit()
 
 
-def _snapshot(candidate, assessment) -> CandidateSnapshot:
-    document_hash = sha256(
-        json.dumps(
-            {"status": candidate.document_status, "reference": candidate.source_reference},
-            sort_keys=True,
-        ).encode()
-    ).hexdigest()
-    return CandidateSnapshot(
-        candidate.source_system,
-        candidate.source_process_id,
-        str(assessment.id),
-        str(assessment.id),
-        assessment.outcome,
-        assessment.compatibility_score,
-        assessment.urgency_status,
-        assessment.information_completeness,
-        candidate.closing_date,
-        document_hash,
-        assessment.input_digest,
-        candidate.source_status,
+def _snapshot(session: Session, candidate, assessment) -> CandidateSnapshot:
+    documents = (
+        list(
+            session.scalars(
+                select(ExternalProcessDocument)
+                .where(ExternalProcessDocument.process_id == candidate.process_id)
+                .order_by(
+                    ExternalProcessDocument.source_system,
+                    ExternalProcessDocument.source_document_id,
+                )
+            )
+        )
+        if candidate.process_id
+        else []
+    )
+    if documents:
+        document_payload = [
+            {
+                "source_system": item.source_system,
+                "source_document_id": item.source_document_id,
+                "discovery_status": item.discovery_status,
+                "updated_at_source": (
+                    item.updated_at_source.isoformat() if item.updated_at_source else None
+                ),
+                "current_version_id": str(item.current_version_id)
+                if item.current_version_id
+                else None,
+                "version_count": item.version_count,
+                "addendum_status": item.addendum_status,
+            }
+            for item in documents
+        ]
+        document_hash = canonical_hash({"documents": document_payload})
+        version_hash = canonical_hash(
+            {
+                "versions": [
+                    {
+                        "source_document_id": item.source_document_id,
+                        "current_version_id": (
+                            str(item.current_version_id) if item.current_version_id else None
+                        ),
+                        "version_count": item.version_count,
+                        "updated_at_source": (
+                            item.updated_at_source.isoformat() if item.updated_at_source else None
+                        ),
+                    }
+                    for item in documents
+                ]
+            }
+        )
+    else:
+        document_hash = sha256(
+            json.dumps(
+                {"status": candidate.document_status, "reference": candidate.source_reference},
+                sort_keys=True,
+            ).encode()
+        ).hexdigest()
+        version_hash = canonical_hash({"versions": []})
+    addendum_status = next(
+        (
+            status
+            for status in ("CONFIRMED_ADDENDUM", "POTENTIAL_ADDENDUM")
+            if any(item.addendum_status == status for item in documents)
+        ),
         None,
+    )
+    return CandidateSnapshot(
+        source_system=candidate.source_system,
+        source_process_id=candidate.source_process_id,
+        opportunity_id=str(assessment.id),
+        assessment_id=str(assessment.id),
+        outcome=assessment.outcome,
+        compatibility_score=assessment.compatibility_score,
+        urgency_status=assessment.urgency_status,
+        information_completeness=assessment.information_completeness,
+        closing_date=candidate.closing_date,
+        document_state_hash=document_hash,
+        assessment_digest=assessment.input_digest,
+        document_count=len(documents),
+        document_version_hash=version_hash,
+        source_status=candidate.source_status,
+        addendum_status=addendum_status,
     )
 
 
 def _snapshot_from_state(state) -> CandidateSnapshot:
     return CandidateSnapshot(
-        state.source_system,
-        state.source_process_id,
-        str(state.opportunity_id),
-        str(state.assessment_id),
-        state.outcome,
-        state.compatibility_score,
-        state.urgency_status,
-        state.information_completeness,
-        state.closing_date,
-        state.document_state_hash,
-        state.assessment_digest,
-        state.source_status,
-        state.addendum_status,
+        source_system=state.source_system,
+        source_process_id=state.source_process_id,
+        opportunity_id=str(state.opportunity_id),
+        assessment_id=str(state.assessment_id),
+        outcome=state.outcome,
+        compatibility_score=state.compatibility_score,
+        urgency_status=state.urgency_status,
+        information_completeness=state.information_completeness,
+        closing_date=state.closing_date,
+        document_state_hash=state.document_state_hash,
+        assessment_digest=state.assessment_digest,
+        document_count=state.document_count,
+        document_version_hash=state.document_version_hash,
+        source_status=state.source_status,
+        addendum_status=state.addendum_status,
     )
 
 

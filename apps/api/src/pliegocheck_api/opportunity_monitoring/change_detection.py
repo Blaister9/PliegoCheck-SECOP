@@ -12,6 +12,8 @@ def detect_changes(
         "urgency_status",
         "closing_date",
         "document_state_hash",
+        "document_count",
+        "document_version_hash",
         "assessment_digest",
         "source_status",
         "addendum_status",
