@@ -1,0 +1,1606 @@
+{
+  "$defs": {
+    "ExternalProcurementSearchRequest": {
+      "additionalProperties": false,
+      "properties": {
+        "closing_from": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "closing_to": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "department": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "entity_name": {
+          "anyOf": [
+            {
+              "maxLength": 300,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "limit": {
+          "default": 20,
+          "maximum": 100,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "max_value": {
+          "anyOf": [
+            {
+              "minimum": 0.0,
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "min_value": {
+          "anyOf": [
+            {
+              "minimum": 0.0,
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "modality": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "municipality": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "offset": {
+          "default": 0,
+          "maximum": 1000000,
+          "minimum": 0,
+          "type": "integer"
+        },
+        "process_code": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "published_from": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "published_to": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "query": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "source_system": {
+          "$ref": "#/$defs/ExternalProcurementSourceSystem",
+          "default": "SECOP_II"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "type": "object"
+    },
+    "ExternalProcurementSourceSystem": {
+      "enum": ["SECOP_II", "SECOP_I"],
+      "type": "string"
+    },
+    "OpportunityAnalysisLevel": {
+      "enum": ["METADATA_SCREENING", "DOCUMENT_SCREENING", "DEEP_ANALYSIS"],
+      "type": "string"
+    },
+    "OpportunityAssessmentComponentDetail": {
+      "additionalProperties": false,
+      "properties": {
+        "component": {
+          "$ref": "#/$defs/OpportunityComponent"
+        },
+        "evidence": {
+          "items": {
+            "$ref": "#/$defs/OpportunityAssessmentEvidence"
+          },
+          "type": "array"
+        },
+        "evidence_refs": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "explanation": {
+          "maxLength": 2000,
+          "type": "string"
+        },
+        "explanation_parameters": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "reason_code": {
+          "maxLength": 500,
+          "minLength": 1,
+          "type": "string"
+        },
+        "score": {
+          "anyOf": [
+            {
+              "maximum": 100.0,
+              "minimum": 0.0,
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            }
+          ]
+        },
+        "status": {
+          "$ref": "#/$defs/OpportunityComponentStatus"
+        },
+        "warnings": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "weight": {
+          "anyOf": [
+            {
+              "maximum": 1.0,
+              "minimum": 0.0,
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            }
+          ]
+        },
+        "weighted_score": {
+          "anyOf": [
+            {
+              "maximum": 100.0,
+              "minimum": 0.0,
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "required": [
+        "component",
+        "status",
+        "score",
+        "weight",
+        "weighted_score",
+        "reason_code",
+        "explanation"
+      ],
+      "type": "object"
+    },
+    "OpportunityAssessmentDetail": {
+      "additionalProperties": false,
+      "properties": {
+        "analysis_level": {
+          "$ref": "#/$defs/OpportunityAnalysisLevel"
+        },
+        "candidate": {
+          "$ref": "#/$defs/OpportunityCandidateSummary"
+        },
+        "candidate_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "company_snapshot_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "compatibility_score": {
+          "anyOf": [
+            {
+              "maximum": 100.0,
+              "minimum": 0.0,
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            }
+          ]
+        },
+        "components": {
+          "items": {
+            "$ref": "#/$defs/OpportunityAssessmentComponentDetail"
+          },
+          "type": "array"
+        },
+        "created_at": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "days_remaining": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "effective_at": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "information_completeness": {
+          "anyOf": [
+            {
+              "maximum": 100.0,
+              "minimum": 0.0,
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            }
+          ]
+        },
+        "input_digest": {
+          "pattern": "^[a-f0-9]{64}$",
+          "type": "string"
+        },
+        "latest_review_action": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/OpportunityReviewAction"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "missing_information": {
+          "additionalProperties": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "type": "object"
+        },
+        "outcome": {
+          "$ref": "#/$defs/OpportunityOutcome"
+        },
+        "partner_reasons": {
+          "items": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "policy_hash": {
+          "pattern": "^[a-f0-9]{64}$",
+          "type": "string"
+        },
+        "policy_version": {
+          "type": "string"
+        },
+        "requires_human_review": {
+          "type": "boolean"
+        },
+        "summary": {
+          "type": "string"
+        },
+        "urgency_score": {
+          "anyOf": [
+            {
+              "maximum": 100.0,
+              "minimum": 0.0,
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            }
+          ]
+        },
+        "urgency_status": {
+          "$ref": "#/$defs/OpportunityUrgencyStatus"
+        },
+        "warnings": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "id",
+        "candidate_id",
+        "company_snapshot_id",
+        "policy_version",
+        "policy_hash",
+        "analysis_level",
+        "outcome",
+        "compatibility_score",
+        "urgency_score",
+        "information_completeness",
+        "urgency_status",
+        "requires_human_review",
+        "input_digest",
+        "summary",
+        "effective_at",
+        "created_at",
+        "candidate",
+        "components"
+      ],
+      "type": "object"
+    },
+    "OpportunityAssessmentEvidence": {
+      "additionalProperties": false,
+      "properties": {
+        "entity_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "entity_type": {
+          "maxLength": 500,
+          "minLength": 1,
+          "type": "string"
+        },
+        "evidence_type": {
+          "maxLength": 500,
+          "minLength": 1,
+          "type": "string"
+        },
+        "excerpt": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "metadata": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "source_reference": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": ["evidence_type", "entity_type"],
+      "type": "object"
+    },
+    "OpportunityAssessmentSummary": {
+      "additionalProperties": false,
+      "properties": {
+        "analysis_level": {
+          "$ref": "#/$defs/OpportunityAnalysisLevel"
+        },
+        "candidate_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "company_snapshot_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "compatibility_score": {
+          "anyOf": [
+            {
+              "maximum": 100.0,
+              "minimum": 0.0,
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            }
+          ]
+        },
+        "created_at": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "days_remaining": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "effective_at": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "information_completeness": {
+          "anyOf": [
+            {
+              "maximum": 100.0,
+              "minimum": 0.0,
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            }
+          ]
+        },
+        "input_digest": {
+          "pattern": "^[a-f0-9]{64}$",
+          "type": "string"
+        },
+        "missing_information": {
+          "additionalProperties": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "type": "object"
+        },
+        "outcome": {
+          "$ref": "#/$defs/OpportunityOutcome"
+        },
+        "partner_reasons": {
+          "items": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "policy_hash": {
+          "pattern": "^[a-f0-9]{64}$",
+          "type": "string"
+        },
+        "policy_version": {
+          "type": "string"
+        },
+        "requires_human_review": {
+          "type": "boolean"
+        },
+        "summary": {
+          "type": "string"
+        },
+        "urgency_score": {
+          "anyOf": [
+            {
+              "maximum": 100.0,
+              "minimum": 0.0,
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            }
+          ]
+        },
+        "urgency_status": {
+          "$ref": "#/$defs/OpportunityUrgencyStatus"
+        },
+        "warnings": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "id",
+        "candidate_id",
+        "company_snapshot_id",
+        "policy_version",
+        "policy_hash",
+        "analysis_level",
+        "outcome",
+        "compatibility_score",
+        "urgency_score",
+        "information_completeness",
+        "urgency_status",
+        "requires_human_review",
+        "input_digest",
+        "summary",
+        "effective_at",
+        "created_at"
+      ],
+      "type": "object"
+    },
+    "OpportunityCandidateSummary": {
+      "additionalProperties": false,
+      "properties": {
+        "closing_date": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "created_at": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "currency": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "department": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "discovery_run_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "document_status": {
+          "type": "string"
+        },
+        "entity_name": {
+          "type": "string"
+        },
+        "estimated_value": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "external_search_result_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "modality": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "municipality": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "process_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "publication_date": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "source_process_id": {
+          "type": "string"
+        },
+        "source_reference": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "source_status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "source_system": {
+          "$ref": "#/$defs/ExternalProcurementSourceSystem"
+        },
+        "title": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "discovery_run_id",
+        "external_search_result_id",
+        "source_system",
+        "source_process_id",
+        "title",
+        "entity_name",
+        "document_status",
+        "created_at"
+      ],
+      "type": "object"
+    },
+    "OpportunityComponent": {
+      "enum": [
+        "RELEVANCE",
+        "UNSPSC_MATCH",
+        "EXPERIENCE_MATCH",
+        "FINANCIAL_FIT",
+        "TECHNICAL_FIT",
+        "LEGAL_READINESS",
+        "GEOGRAPHIC_FIT",
+        "VALUE_FIT",
+        "DEADLINE_URGENCY",
+        "DOCUMENT_READINESS",
+        "INFORMATION_COMPLETENESS",
+        "PARTNER_NEED"
+      ],
+      "type": "string"
+    },
+    "OpportunityComponentStatus": {
+      "enum": [
+        "STRONG_MATCH",
+        "MATCH",
+        "PARTIAL_MATCH",
+        "MISMATCH",
+        "UNKNOWN",
+        "NOT_APPLICABLE",
+        "CONFLICTING"
+      ],
+      "type": "string"
+    },
+    "OpportunityDeepAnalysisResponse": {
+      "additionalProperties": false,
+      "properties": {
+        "missing_inputs": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "opportunity_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "process_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "steps_blocked": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "steps_queued": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "steps_ready": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "required": ["opportunity_id"],
+      "type": "object"
+    },
+    "OpportunityDiscoveryRequest": {
+      "additionalProperties": false,
+      "properties": {
+        "candidate_ids": {
+          "items": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "maxItems": 100,
+          "type": "array"
+        },
+        "company_profile_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "company_snapshot_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "effective_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "force": {
+          "default": false,
+          "type": "boolean"
+        },
+        "search_requests": {
+          "items": {
+            "$ref": "#/$defs/ExternalProcurementSearchRequest"
+          },
+          "maxItems": 2,
+          "type": "array"
+        }
+      },
+      "required": ["company_profile_id", "company_snapshot_id"],
+      "type": "object"
+    },
+    "OpportunityDiscoveryResponse": {
+      "additionalProperties": false,
+      "properties": {
+        "reused": {
+          "default": false,
+          "type": "boolean"
+        },
+        "run": {
+          "$ref": "#/$defs/OpportunityDiscoveryRunSummary"
+        }
+      },
+      "required": ["run"],
+      "type": "object"
+    },
+    "OpportunityDiscoveryRunDetail": {
+      "additionalProperties": false,
+      "properties": {
+        "assessed_count": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "candidate_count": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "candidates": {
+          "items": {
+            "$ref": "#/$defs/OpportunityAssessmentDetail"
+          },
+          "type": "array"
+        },
+        "company_profile_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "company_snapshot_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "created_at": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "effective_at": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "finished_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "input_digest": {
+          "pattern": "^[a-f0-9]{64}$",
+          "type": "string"
+        },
+        "policy_hash": {
+          "pattern": "^[a-f0-9]{64}$",
+          "type": "string"
+        },
+        "policy_version": {
+          "maxLength": 500,
+          "minLength": 1,
+          "type": "string"
+        },
+        "started_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "status": {
+          "$ref": "#/$defs/OpportunityDiscoveryStatus"
+        },
+        "warning_count": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "warnings": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "id",
+        "company_profile_id",
+        "company_snapshot_id",
+        "policy_version",
+        "policy_hash",
+        "status",
+        "effective_at",
+        "input_digest",
+        "candidate_count",
+        "assessed_count",
+        "warning_count",
+        "created_at"
+      ],
+      "type": "object"
+    },
+    "OpportunityDiscoveryRunSummary": {
+      "additionalProperties": false,
+      "properties": {
+        "assessed_count": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "candidate_count": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "company_profile_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "company_snapshot_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "created_at": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "effective_at": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "finished_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "input_digest": {
+          "pattern": "^[a-f0-9]{64}$",
+          "type": "string"
+        },
+        "policy_hash": {
+          "pattern": "^[a-f0-9]{64}$",
+          "type": "string"
+        },
+        "policy_version": {
+          "maxLength": 500,
+          "minLength": 1,
+          "type": "string"
+        },
+        "started_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "status": {
+          "$ref": "#/$defs/OpportunityDiscoveryStatus"
+        },
+        "warning_count": {
+          "minimum": 0,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id",
+        "company_profile_id",
+        "company_snapshot_id",
+        "policy_version",
+        "policy_hash",
+        "status",
+        "effective_at",
+        "input_digest",
+        "candidate_count",
+        "assessed_count",
+        "warning_count",
+        "created_at"
+      ],
+      "type": "object"
+    },
+    "OpportunityDiscoveryStatus": {
+      "enum": [
+        "PENDING",
+        "PROCESSING",
+        "COMPLETED",
+        "COMPLETED_WITH_WARNINGS",
+        "FAILED",
+        "CANCELLED"
+      ],
+      "type": "string"
+    },
+    "OpportunityInboxFilters": {
+      "additionalProperties": false,
+      "properties": {
+        "analysis_level": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/OpportunityAnalysisLevel"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "closing_from": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "closing_to": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "company_snapshot_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "department": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "document_status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "entity": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "limit": {
+          "default": 20,
+          "maximum": 100,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "max_value": {
+          "anyOf": [
+            {
+              "minimum": 0.0,
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "min_value": {
+          "anyOf": [
+            {
+              "minimum": 0.0,
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "modality": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "municipality": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "offset": {
+          "default": 0,
+          "minimum": 0,
+          "type": "integer"
+        },
+        "outcome": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/OpportunityOutcome"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "review_action": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/OpportunityReviewAction"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "sort": {
+          "default": "priority",
+          "pattern": "^(priority|compatibility|urgency|closing_date|publication_date|value)$",
+          "type": "string"
+        },
+        "source_system": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ExternalProcurementSourceSystem"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "urgency": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/OpportunityUrgencyStatus"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "type": "object"
+    },
+    "OpportunityInboxResponse": {
+      "additionalProperties": false,
+      "properties": {
+        "disclaimer": {
+          "type": "string"
+        },
+        "items": {
+          "items": {
+            "$ref": "#/$defs/OpportunityAssessmentDetail"
+          },
+          "type": "array"
+        },
+        "limit": {
+          "exclusiveMinimum": 0,
+          "type": "integer"
+        },
+        "offset": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "total": {
+          "minimum": 0,
+          "type": "integer"
+        }
+      },
+      "required": ["items", "total", "limit", "offset", "disclaimer"],
+      "type": "object"
+    },
+    "OpportunityOutcome": {
+      "enum": [
+        "REVISAR_PRIMERO",
+        "OPORTUNIDAD_POTENCIAL",
+        "REQUIERE_ALIADO",
+        "INFORMACION_INSUFICIENTE",
+        "POCO_COMPATIBLE",
+        "DESCARTAR"
+      ],
+      "type": "string"
+    },
+    "OpportunityReadiness": {
+      "additionalProperties": false,
+      "properties": {
+        "companies_count": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "policy_hash": {
+          "pattern": "^[a-f0-9]{64}$",
+          "type": "string"
+        },
+        "policy_version": {
+          "type": "string"
+        },
+        "published_snapshots_count": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "ready": {
+          "type": "boolean"
+        },
+        "reasons": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "ready",
+        "companies_count",
+        "published_snapshots_count",
+        "policy_version",
+        "policy_hash"
+      ],
+      "type": "object"
+    },
+    "OpportunityReviewAction": {
+      "enum": ["ACKNOWLEDGE", "SHORTLIST", "DISMISS", "SEEK_PARTNER", "REQUEST_DEEP_ANALYSIS"],
+      "type": "string"
+    },
+    "OpportunityReviewRequest": {
+      "additionalProperties": false,
+      "properties": {
+        "action": {
+          "$ref": "#/$defs/OpportunityReviewAction"
+        },
+        "reason": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": ["action"],
+      "type": "object"
+    },
+    "OpportunityReviewResponse": {
+      "additionalProperties": false,
+      "properties": {
+        "action": {
+          "$ref": "#/$defs/OpportunityReviewAction"
+        },
+        "assessment_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "created_at": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "previous_action": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/OpportunityReviewAction"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": ["assessment_id", "action", "created_at"],
+      "type": "object"
+    },
+    "OpportunityUrgencyStatus": {
+      "enum": ["CLOSED", "EXPIRED", "CRITICAL", "URGENT", "NORMAL", "LONG_HORIZON", "UNKNOWN"],
+      "type": "string"
+    }
+  },
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "assessment_component": {
+      "$ref": "#/$defs/OpportunityAssessmentComponentDetail"
+    },
+    "assessment_detail": {
+      "$ref": "#/$defs/OpportunityAssessmentDetail"
+    },
+    "assessment_evidence": {
+      "$ref": "#/$defs/OpportunityAssessmentEvidence"
+    },
+    "assessment_summary": {
+      "$ref": "#/$defs/OpportunityAssessmentSummary"
+    },
+    "candidate_summary": {
+      "$ref": "#/$defs/OpportunityCandidateSummary"
+    },
+    "deep_analysis": {
+      "$ref": "#/$defs/OpportunityDeepAnalysisResponse"
+    },
+    "discovery_request": {
+      "$ref": "#/$defs/OpportunityDiscoveryRequest"
+    },
+    "discovery_response": {
+      "$ref": "#/$defs/OpportunityDiscoveryResponse"
+    },
+    "discovery_run_detail": {
+      "$ref": "#/$defs/OpportunityDiscoveryRunDetail"
+    },
+    "discovery_run_summary": {
+      "$ref": "#/$defs/OpportunityDiscoveryRunSummary"
+    },
+    "inbox_filters": {
+      "$ref": "#/$defs/OpportunityInboxFilters"
+    },
+    "inbox_response": {
+      "$ref": "#/$defs/OpportunityInboxResponse"
+    },
+    "readiness": {
+      "$ref": "#/$defs/OpportunityReadiness"
+    },
+    "review_request": {
+      "$ref": "#/$defs/OpportunityReviewRequest"
+    },
+    "review_response": {
+      "$ref": "#/$defs/OpportunityReviewResponse"
+    }
+  },
+  "required": [
+    "discovery_request",
+    "discovery_response",
+    "discovery_run_summary",
+    "discovery_run_detail",
+    "candidate_summary",
+    "assessment_summary",
+    "assessment_detail",
+    "assessment_component",
+    "assessment_evidence",
+    "review_request",
+    "review_response",
+    "inbox_filters",
+    "inbox_response",
+    "readiness",
+    "deep_analysis"
+  ],
+  "type": "object"
+}

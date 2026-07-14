@@ -260,3 +260,6 @@ pnpm secop:smoke
 
 No guarde la salida del smoke ni tokens. La búsqueda web está en `/processes/import`; importar deja
 el proceso listo para la carga documental existente y no inicia análisis.
+# Oportunidades (Microfase 18)
+
+Validación focalizada: `pnpm opportunities:test`, `pnpm opportunities:eval` y `pnpm opportunities:semantic-scan`. Los workers se ejecutan con `pnpm opportunities:discovery-run-once` o `pnpm opportunities:assessment-run-once`; ambos consumen la unidad transaccional discovery+screening. La política se valida al cargar y no requiere red.

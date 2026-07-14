@@ -79,6 +79,9 @@ export default function Home() {
           <Link className="button secondary" href="/companies/new">
             Crear empresa
           </Link>
+          <Link className="button secondary" href="/opportunities">
+            Oportunidades SECOP
+          </Link>
         </nav>
       </header>
 

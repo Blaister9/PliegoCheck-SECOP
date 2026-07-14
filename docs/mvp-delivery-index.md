@@ -48,3 +48,15 @@
 - `pnpm secop:test`
 - `pnpm secop:eval`
 - `pnpm secop:smoke` (manual y opt-in; nunca en CI)
+
+## Extensión Microfase 18
+
+- [ADR-018](ADR-018-opportunity-prioritization.md)
+- [Discovery](opportunity-discovery.md)
+- [Compatibilidad](opportunity-compatibility.md)
+- [Política](opportunity-ranking-policy.md)
+- [Outcomes](opportunity-outcomes.md)
+- [Análisis profundo](opportunity-deep-analysis.md)
+- `pnpm opportunities:test`
+- `pnpm opportunities:eval`
+- `pnpm opportunities:semantic-scan`

@@ -77,6 +77,8 @@ jobs:
       PLIEGOCHECK_SECOP_DOCUMENT_ALLOWED_HOSTS: files.example.gov.co
       PLIEGOCHECK_SECOP_DOCUMENT_ALLOW_LIVE_TESTS: "false"
       PLIEGOCHECK_SECOP_INCREMENTAL_SYNC_ENABLED: "true"
+      PLIEGOCHECK_OPPORTUNITIES_ENABLED: "true"
+      PLIEGOCHECK_OPPORTUNITIES_MAX_CANDIDATES: "100"
       NEXT_PUBLIC_API_BASE_URL: http://localhost:8000
     steps:
       - name: Checkout
@@ -126,6 +128,15 @@ jobs:
 
       - name: Evals offline de documentos SECOP
         run: pnpm secop:documents:eval
+
+      - name: Pruebas de oportunidades
+        run: pnpm opportunities:test
+
+      - name: Evals offline de oportunidades
+        run: pnpm opportunities:eval
+
+      - name: Scan semantico de oportunidades
+        run: pnpm opportunities:semantic-scan
 
       - name: Pruebas de autenticacion y permisos
         run: pnpm auth:test

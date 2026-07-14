@@ -30,6 +30,11 @@ export const AUTH_PERMISSION_VALUES = [
   "external:read",
   "external:sync",
   "external:download",
+  "opportunity:read",
+  "opportunity:discover",
+  "opportunity:assess",
+  "opportunity:review",
+  "opportunity:import",
 ] as const;
 export type AuthPermissionValue = (typeof AUTH_PERMISSION_VALUES)[number];
 
@@ -73,5 +78,14 @@ export const OPERATIONAL_AUDIT_EVENT_TYPE_VALUES = [
   "EXTERNAL_SYNC_QUEUED",
   "EXTERNAL_DOCUMENT_DOWNLOAD_QUEUED",
   "EXTERNAL_DOCUMENT_EXTRACTION_QUEUED",
+  "OPPORTUNITY_DISCOVERY_REQUESTED",
+  "OPPORTUNITY_DISCOVERY_COMPLETED",
+  "OPPORTUNITY_ASSESSED",
+  "OPPORTUNITY_REASSESSED",
+  "OPPORTUNITY_SHORTLISTED",
+  "OPPORTUNITY_DISMISSED",
+  "OPPORTUNITY_PARTNER_REVIEW_REQUESTED",
+  "OPPORTUNITY_IMPORTED",
+  "OPPORTUNITY_DEEP_ANALYSIS_REQUESTED",
 ] as const;
 export type OperationalAuditEventTypeValue = (typeof OPERATIONAL_AUDIT_EVENT_TYPE_VALUES)[number];

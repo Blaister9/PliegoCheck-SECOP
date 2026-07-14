@@ -3,6 +3,7 @@
 ## Incluido
 
 - Conector SECOP publico e inventario documental incremental opt-in, sin login ni acciones transaccionales.
+- Bandeja determinística de oportunidades contra snapshots publicados, con revisión humana e histórico.
 
 - Flujo end-to-end con datos sinteticos de piloto.
 - API local con autenticacion configurable y roles `ADMIN`, `ANALYST`,
@@ -24,6 +25,7 @@
   documental, actualización incremental, login, ofertas ni trámites. No cambia el estatus de no
   producción del MVP controlado.
 - OCR, firma digital, notificaciones y correo.
+- Monitoreo programado, alertas y presentación de ofertas.
 - S3 obligatorio u otro almacenamiento productivo.
 - Garantias juridicas, comerciales o de cumplimiento normativo.
 

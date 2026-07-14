@@ -25,6 +25,18 @@ logger = logging.getLogger(__name__)
 
 
 def required_permission(method: str, path: str) -> AuthPermission | None:
+    if path.startswith("/opportunities/discovery-runs") and method == "POST":
+        return AuthPermission.OPPORTUNITY_DISCOVER
+    if path.startswith("/opportunities/") and path.endswith("/assess") and method == "POST":
+        return AuthPermission.OPPORTUNITY_ASSESS
+    if path.startswith("/opportunities/") and path.endswith("/review") and method == "POST":
+        return AuthPermission.OPPORTUNITY_REVIEW
+    if path.startswith("/opportunities/") and path.endswith("/import") and method == "POST":
+        return AuthPermission.OPPORTUNITY_IMPORT
+    if path.startswith("/opportunities/") and path.endswith("/request-deep-analysis"):
+        return AuthPermission.OPPORTUNITY_READ
+    if path.startswith("/opportunities"):
+        return AuthPermission.OPPORTUNITY_READ
     if path.startswith("/processes") and path.endswith("/external-sync") and method == "POST":
         return AuthPermission.EXTERNAL_SYNC
     if "/external-documents/" in path and path.endswith("/download") and method == "POST":

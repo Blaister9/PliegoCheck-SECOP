@@ -59,3 +59,6 @@ oficial. Consulte [descubrimiento de fuentes](secop-source-discovery.md) y
 [limitaciones](secop-limitations.md).
 
 La extension documental de Microfase 17 se describe en [secop-documents.md](secop-documents.md), [secop-incremental-updates.md](secop-incremental-updates.md) y [secop-document-security.md](secop-document-security.md). Mantiene separadas la busqueda/importacion, la sincronizacion, la descarga y la extraccion.
+# Consumo desde la bandeja
+
+La bandeja reutiliza búsquedas y resultados persistidos del conector. No agrega scraping ni credenciales: un discovery puede ejecutar filtros soportados o recibir IDs de resultados existentes. La importación de una oportunidad llama el flujo idempotente del conector y mantiene la identidad oficial.

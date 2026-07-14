@@ -21,7 +21,9 @@ Microfase 13: completada - despliegue controlado y validacion con usuarios pilot
 Microfase 14: completada - ajustes derivados de usuarios piloto y cierre de MVP controlado
 Microfase 15: pendiente de decisión humana - evolución a piloto real o pausa técnica
 Microfase 16: completada - conector SECOP de búsqueda e importación
-Microfase 17: siguiente - descarga controlada de documentos públicos y actualización incremental
+Microfase 17: completada - descarga controlada de documentos públicos y actualización incremental
+Microfase 18: completada - bandeja priorizada de oportunidades compatibles
+Microfase 19: siguiente - monitoreo periódico y alertas de nuevas oportunidades
 ```
 
 ## Microfase 0 - Fundacion documental - completada
@@ -197,7 +199,11 @@ Microfase 17: siguiente - descarga controlada de documentos públicos y actualiz
 
 Inventario incremental SECOP I/II, snapshots, eventos, cola PostgreSQL, descarga publica opt-in con proteccion SSRF, hashing, deduplicacion, versiones inmutables, integracion explicita con `ProcessDocument` y UI del proceso. La limitacion de descarga live queda documentada sin simular exito.
 
-Siguiente: Microfase 18 — Bandeja priorizada de oportunidades compatibles.
+## Microfase 18 - Bandeja priorizada de oportunidades compatibles - completada
+
+Discovery SECOP, screening determinístico contra snapshot publicado, política versionada, doce componentes explicables, outcomes conservadores, histórico, revisiones, worker PostgreSQL, API, permisos, auditoría y UI `/opportunities`. Compatibilidad, urgencia y completitud permanecen separadas. No incorpora ML, monitoreo periódico, alertas ni presentación de ofertas.
+
+Siguiente: Microfase 19 — Monitoreo periódico y alertas de nuevas oportunidades.
 
 ## Despues del MVP
 

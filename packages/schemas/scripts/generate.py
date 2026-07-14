@@ -155,6 +155,18 @@ from pliegocheck_schemas.normalized_requirement import (
     RequirementScope,
     RequirementSubsanability,
 )
+from pliegocheck_schemas.opportunities import (
+    OPPORTUNITIES_SCHEMA_VERSION,
+    OpportunityAnalysisLevel,
+    OpportunityComponent,
+    OpportunityComponentStatus,
+    OpportunityContracts,
+    OpportunityDiscoveryStatus,
+    OpportunityErrorCode,
+    OpportunityOutcome,
+    OpportunityReviewAction,
+    OpportunityUrgencyStatus,
+)
 from pliegocheck_schemas.pilot import (
     PILOT_SCHEMA_VERSION,
     PilotContracts,
@@ -258,6 +270,46 @@ def generate_external_documents_enums_ts() -> None:
         ),
     ]
     write_text(GENERATED_DIR / "external-documents.enums.ts", "\n".join(blocks))
+
+
+def generate_opportunities_enums_ts() -> None:
+    blocks = [
+        TS_HEADER,
+        f'export const OPPORTUNITIES_SCHEMA_VERSION = "{OPPORTUNITIES_SCHEMA_VERSION}";\n',
+        ts_const_block(
+            "OPPORTUNITY_DISCOVERY_STATUS_VALUES",
+            "OpportunityDiscoveryStatusValue",
+            OpportunityDiscoveryStatus,
+        ),
+        ts_const_block(
+            "OPPORTUNITY_ANALYSIS_LEVEL_VALUES",
+            "OpportunityAnalysisLevelValue",
+            OpportunityAnalysisLevel,
+        ),
+        ts_const_block("OPPORTUNITY_OUTCOME_VALUES", "OpportunityOutcomeValue", OpportunityOutcome),
+        ts_const_block(
+            "OPPORTUNITY_URGENCY_STATUS_VALUES",
+            "OpportunityUrgencyStatusValue",
+            OpportunityUrgencyStatus,
+        ),
+        ts_const_block(
+            "OPPORTUNITY_COMPONENT_VALUES", "OpportunityComponentValue", OpportunityComponent
+        ),
+        ts_const_block(
+            "OPPORTUNITY_COMPONENT_STATUS_VALUES",
+            "OpportunityComponentStatusValue",
+            OpportunityComponentStatus,
+        ),
+        ts_const_block(
+            "OPPORTUNITY_REVIEW_ACTION_VALUES",
+            "OpportunityReviewActionValue",
+            OpportunityReviewAction,
+        ),
+        ts_const_block(
+            "OPPORTUNITY_ERROR_CODE_VALUES", "OpportunityErrorCodeValue", OpportunityErrorCode
+        ),
+    ]
+    write_text(GENERATED_DIR / "opportunities.enums.ts", "\n".join(blocks))
 
 
 def ts_const_block(const_name: str, type_name: str, enum_cls: type[StrEnum]) -> str:
@@ -787,6 +839,7 @@ def main() -> int:
             "external-procurement.schema.json",
         )
         generate_json_schema(ExternalDocumentsContracts, "external-documents.schema.json")
+        generate_json_schema(OpportunityContracts, "opportunities.schema.json")
         generate_json_schema(DocumentExtractionContracts, "document-extraction.schema.json")
         generate_json_schema(DecisionContracts, "decision.schema.json")
         generate_json_schema(DecisionReportContracts, "decision-report.schema.json")
@@ -804,6 +857,7 @@ def main() -> int:
         generate_manual_import_enums_ts()
         generate_external_procurement_enums_ts()
         generate_external_documents_enums_ts()
+        generate_opportunities_enums_ts()
         generate_document_extraction_enums_ts()
     except Exception as exc:  # el fallo debe ser visible y con codigo distinto de cero
         print(f"ERROR generando contratos: {exc}", file=sys.stderr)

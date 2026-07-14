@@ -35,6 +35,9 @@
             },
             {
               "$ref": "#/$defs/ExternalDocumentErrorCode"
+            },
+            {
+              "$ref": "#/$defs/OpportunityErrorCode"
             }
           ]
         },
@@ -334,6 +337,18 @@
         "PROVIDER_INCOMPLETE",
         "EVIDENCE_VALIDATION_FAILED",
         "DATABASE_ERROR"
+      ],
+      "type": "string"
+    },
+    "OpportunityErrorCode": {
+      "enum": [
+        "COMPANY_SNAPSHOT_REQUIRED",
+        "COMPANY_SNAPSHOT_NOT_PUBLISHED",
+        "DISCOVERY_RUN_NOT_FOUND",
+        "OPPORTUNITY_NOT_FOUND",
+        "INVALID_POLICY",
+        "DEEP_ANALYSIS_BLOCKED",
+        "INVALID_FILTER"
       ],
       "type": "string"
     },

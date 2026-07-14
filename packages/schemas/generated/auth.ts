@@ -26,7 +26,16 @@ export type OperationalAuditEventType =
   | "EXTERNAL_IMPORT_SKIPPED_DUPLICATE"
   | "EXTERNAL_SYNC_QUEUED"
   | "EXTERNAL_DOCUMENT_DOWNLOAD_QUEUED"
-  | "EXTERNAL_DOCUMENT_EXTRACTION_QUEUED";
+  | "EXTERNAL_DOCUMENT_EXTRACTION_QUEUED"
+  | "OPPORTUNITY_DISCOVERY_REQUESTED"
+  | "OPPORTUNITY_DISCOVERY_COMPLETED"
+  | "OPPORTUNITY_ASSESSED"
+  | "OPPORTUNITY_REASSESSED"
+  | "OPPORTUNITY_SHORTLISTED"
+  | "OPPORTUNITY_DISMISSED"
+  | "OPPORTUNITY_PARTNER_REVIEW_REQUESTED"
+  | "OPPORTUNITY_IMPORTED"
+  | "OPPORTUNITY_DEEP_ANALYSIS_REQUESTED";
 export type AuthPermission =
   | "process:read"
   | "process:write"
@@ -46,7 +55,12 @@ export type AuthPermission =
   | "external:import"
   | "external:read"
   | "external:sync"
-  | "external:download";
+  | "external:download"
+  | "opportunity:read"
+  | "opportunity:discover"
+  | "opportunity:assess"
+  | "opportunity:review"
+  | "opportunity:import";
 export type AuthRoleName = "ADMIN" | "ANALYST" | "REVIEWER" | "VIEWER";
 export type AuthUserStatus = "ACTIVE" | "DISABLED" | "LOCKED" | "PENDING";
 

@@ -11,6 +11,7 @@ from pliegocheck_api.external_documents.routes import router as external_documen
 from pliegocheck_api.external_procurement.routes import process_router as external_process_router
 from pliegocheck_api.external_procurement.routes import router as external_procurement_router
 from pliegocheck_api.middleware import security_middleware
+from pliegocheck_api.opportunities.routes import router as opportunities_router
 from pliegocheck_api.routes import (
     admin,
     auth,
@@ -53,6 +54,7 @@ app.include_router(decision_reports.router)
 app.include_router(external_procurement_router)
 app.include_router(external_process_router)
 app.include_router(external_documents_router)
+app.include_router(opportunities_router)
 
 
 @app.exception_handler(DomainError)

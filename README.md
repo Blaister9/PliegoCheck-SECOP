@@ -312,3 +312,7 @@ Guía completa en [docs/development.md](docs/development.md).
 | 15 | Decision ejecutiva sobre evolucion a piloto real o pausa tecnica |
 
 Detalle completo en [docs/roadmap.md](docs/roadmap.md).
+
+## Bandeja de oportunidades SECOP
+
+La ruta `/opportunities` descubre procesos públicos y los compara de forma determinística con un snapshot empresarial publicado. La política, componentes, outcomes, urgencia, información faltante, histórico, permisos y análisis profundo se documentan en [ADR-018](docs/ADR-018-opportunity-prioritization.md) y [docs/opportunity-compatibility.md](docs/opportunity-compatibility.md). Es una priorización para revisión humana; no presenta ofertas ni reemplaza los evaluadores o el motor de decisión.

@@ -54,6 +54,32 @@ export * from "./generated/external-procurement";
 export * from "./generated/external-procurement.enums";
 export * from "./generated/external-documents";
 export * from "./generated/external-documents.enums";
+export type {
+  Opportunities,
+  OpportunityAnalysisLevel,
+  OpportunityAssessmentComponentDetail,
+  OpportunityAssessmentDetail,
+  OpportunityAssessmentEvidence,
+  OpportunityAssessmentSummary,
+  OpportunityCandidateSummary,
+  OpportunityComponent,
+  OpportunityComponentStatus,
+  OpportunityDeepAnalysisResponse,
+  OpportunityDiscoveryRequest,
+  OpportunityDiscoveryResponse,
+  OpportunityDiscoveryRunDetail,
+  OpportunityDiscoveryRunSummary,
+  OpportunityDiscoveryStatus,
+  OpportunityInboxFilters,
+  OpportunityInboxResponse,
+  OpportunityOutcome,
+  OpportunityReadiness,
+  OpportunityReviewAction,
+  OpportunityReviewRequest,
+  OpportunityReviewResponse,
+  OpportunityUrgencyStatus,
+} from "./generated/opportunities";
+export * from "./generated/opportunities.enums";
 
 export type {
   DocumentExtraction,

@@ -73,6 +73,8 @@ def pytest_configure(config: pytest.Config) -> None:
     os.environ["PLIEGOCHECK_SECOP_DOCUMENT_ALLOWED_HOSTS"] = "files.example.gov.co"
     os.environ["PLIEGOCHECK_SECOP_DOCUMENT_ALLOW_LIVE_TESTS"] = "false"
     os.environ["PLIEGOCHECK_SECOP_INCREMENTAL_SYNC_ENABLED"] = "true"
+    os.environ["PLIEGOCHECK_OPPORTUNITIES_ENABLED"] = "true"
+    os.environ["PLIEGOCHECK_OPPORTUNITIES_MAX_CANDIDATES"] = "100"
     from pliegocheck_api.config import get_settings
     from pliegocheck_api.db import get_engine, get_sessionmaker
 
@@ -99,6 +101,9 @@ def clean_database_and_storage(migrated_engine: Engine) -> Generator[None, None,
         connection.execute(
             text(
                 "TRUNCATE TABLE operational_audit_events, auth_login_events, auth_sessions, "
+                "opportunity_assessment_evidence, opportunity_events, opportunity_reviews, "
+                "opportunity_assessment_components, opportunity_assessments, "
+                "opportunity_candidates, opportunity_discovery_runs, "
                 "auth_user_roles, auth_roles, auth_users, "
                 "external_procurement_imports, external_procurement_process_links, "
                 "external_procurement_search_results, external_procurement_searches, "

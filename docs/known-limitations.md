@@ -22,5 +22,13 @@
 
 Las limitaciones específicas de fuente, filtros, payload, documentos y rate limit se detallan en
 [secop-limitations.md](secop-limitations.md).
+
+## Bandeja de oportunidades
+
+- El screening de metadatos depende de campos públicos y del snapshot; los faltantes quedan `UNKNOWN`.
+- La necesidad de aliado es preliminar hasta revisar el pliego y su régimen de participación plural.
+- El score ordena compatibilidad, no adjudicación ni éxito comercial.
+- El análisis profundo se bloquea cuando no hay proceso, documentos o normalización; no inventa evaluaciones.
+- No existen monitoreo periódico, alertas ni presentación automática de ofertas.
 - Las reglas particulares de cada pliego no deben hardcodearse como reglas
   universales.

@@ -14,6 +14,7 @@ from pliegocheck_schemas import (
     ExtractionErrorCode,
     FinancialErrorCode,
     NormalizationErrorCode,
+    OpportunityErrorCode,
     UploadErrorCode,
 )
 
@@ -34,6 +35,7 @@ class DomainError(Exception):
             | AuthErrorCode
             | ExternalProcurementErrorCode
             | ExternalDocumentErrorCode
+            | OpportunityErrorCode
         ),
         message: str,
         *,

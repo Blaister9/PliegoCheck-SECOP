@@ -81,6 +81,13 @@ from pliegocheck_schemas import (
     FinancialRuleSourceBasis,
     FinancialRuleType,
     NormalizationProvider,
+    OpportunityAnalysisLevel,
+    OpportunityComponent,
+    OpportunityComponentStatus,
+    OpportunityDiscoveryStatus,
+    OpportunityOutcome,
+    OpportunityReviewAction,
+    OpportunityUrgencyStatus,
     ProcessSource,
     ProcessStatus,
     RejectedCandidateReason,
@@ -280,6 +287,19 @@ EXTERNAL_IMPORT_STATUS_VALUES = ", ".join(
 EXTERNAL_DOCUMENT_STATUS_VALUES = ", ".join(
     f"'{item.value}'" for item in ExternalProcurementDocumentStatus
 )
+OPPORTUNITY_DISCOVERY_STATUS_VALUES = ", ".join(
+    f"'{item.value}'" for item in OpportunityDiscoveryStatus
+)
+OPPORTUNITY_ANALYSIS_LEVEL_VALUES = ", ".join(
+    f"'{item.value}'" for item in OpportunityAnalysisLevel
+)
+OPPORTUNITY_OUTCOME_VALUES = ", ".join(f"'{item.value}'" for item in OpportunityOutcome)
+OPPORTUNITY_URGENCY_VALUES = ", ".join(f"'{item.value}'" for item in OpportunityUrgencyStatus)
+OPPORTUNITY_COMPONENT_VALUES = ", ".join(f"'{item.value}'" for item in OpportunityComponent)
+OPPORTUNITY_COMPONENT_STATUS_VALUES = ", ".join(
+    f"'{item.value}'" for item in OpportunityComponentStatus
+)
+OPPORTUNITY_REVIEW_ACTION_VALUES = ", ".join(f"'{item.value}'" for item in OpportunityReviewAction)
 
 
 class Process(Base):
@@ -3908,3 +3928,249 @@ class OperationalAuditEvent(Base):
         "metadata", JSON, nullable=False, default=dict
     )
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+
+class OpportunityDiscoveryRun(Base):
+    __tablename__ = "opportunity_discovery_runs"
+    __table_args__ = (
+        CheckConstraint(
+            f"status IN ({OPPORTUNITY_DISCOVERY_STATUS_VALUES})",
+            name="ck_opportunity_discovery_status",
+        ),
+        Index("ix_opportunity_discovery_claim", "status", "available_at", "created_at"),
+        Index("ix_opportunity_discovery_digest", "input_digest"),
+    )
+    id: Mapped[UUID] = mapped_column(Uuid(as_uuid=True), primary_key=True, default=uuid4)
+    company_profile_id: Mapped[UUID] = mapped_column(
+        Uuid(as_uuid=True), ForeignKey("company_profiles.id", ondelete="CASCADE"), nullable=False
+    )
+    company_snapshot_id: Mapped[UUID] = mapped_column(
+        Uuid(as_uuid=True),
+        ForeignKey("company_profile_snapshots.id", ondelete="RESTRICT"),
+        nullable=False,
+    )
+    policy_version: Mapped[str] = mapped_column(String(64), nullable=False)
+    policy_hash: Mapped[str] = mapped_column(String(64), nullable=False)
+    filters: Mapped[dict[str, Any]] = mapped_column(JSON, nullable=False, default=dict)
+    source_systems: Mapped[list[str]] = mapped_column(JSON, nullable=False, default=list)
+    status: Mapped[str] = mapped_column(String(32), nullable=False)
+    effective_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    input_digest: Mapped[str] = mapped_column(String(64), nullable=False)
+    candidate_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    assessed_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    warning_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    warnings: Mapped[list[str]] = mapped_column(JSON, nullable=False, default=list)
+    available_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), nullable=False
+    )
+    started_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    finished_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    locked_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    locked_by: Mapped[str | None] = mapped_column(String(255))
+    attempt_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    max_attempts: Mapped[int] = mapped_column(Integer, nullable=False, default=3)
+    error_code: Mapped[str | None] = mapped_column(String(64))
+    error_message: Mapped[str | None] = mapped_column(String(500))
+    created_by: Mapped[UUID | None] = mapped_column(
+        Uuid(as_uuid=True), ForeignKey("auth_users.id", ondelete="SET NULL")
+    )
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), nullable=False
+    )
+
+
+class OpportunityCandidate(Base):
+    __tablename__ = "opportunity_candidates"
+    __table_args__ = (
+        UniqueConstraint(
+            "discovery_run_id",
+            "external_search_result_id",
+            name="uq_opportunity_candidate_run_result",
+        ),
+        Index("ix_opportunity_candidate_source", "source_system", "source_process_id"),
+    )
+    id: Mapped[UUID] = mapped_column(Uuid(as_uuid=True), primary_key=True, default=uuid4)
+    discovery_run_id: Mapped[UUID] = mapped_column(
+        Uuid(as_uuid=True),
+        ForeignKey("opportunity_discovery_runs.id", ondelete="CASCADE"),
+        nullable=False,
+    )
+    external_search_result_id: Mapped[UUID] = mapped_column(
+        Uuid(as_uuid=True),
+        ForeignKey("external_procurement_search_results.id", ondelete="RESTRICT"),
+        nullable=False,
+    )
+    process_id: Mapped[UUID | None] = mapped_column(
+        Uuid(as_uuid=True), ForeignKey("processes.id", ondelete="SET NULL")
+    )
+    source_system: Mapped[str] = mapped_column(String(32), nullable=False)
+    source_process_id: Mapped[str] = mapped_column(String(500), nullable=False)
+    source_reference: Mapped[str | None] = mapped_column(String(500))
+    title: Mapped[str] = mapped_column(String(500), nullable=False)
+    entity_name: Mapped[str] = mapped_column(String(500), nullable=False)
+    modality: Mapped[str | None] = mapped_column(String(500))
+    source_status: Mapped[str | None] = mapped_column(String(500))
+    publication_date: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    closing_date: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    estimated_value: Mapped[Decimal | None] = mapped_column(Numeric(24, 2))
+    currency: Mapped[str | None] = mapped_column(String(3))
+    department: Mapped[str | None] = mapped_column(String(300))
+    municipality: Mapped[str | None] = mapped_column(String(300))
+    document_status: Mapped[str] = mapped_column(String(64), nullable=False)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), nullable=False
+    )
+
+
+class OpportunityAssessment(Base):
+    __tablename__ = "opportunity_assessments"
+    __table_args__ = (
+        CheckConstraint(
+            f"analysis_level IN ({OPPORTUNITY_ANALYSIS_LEVEL_VALUES})",
+            name="ck_opportunity_assessment_level",
+        ),
+        CheckConstraint(
+            f"outcome IN ({OPPORTUNITY_OUTCOME_VALUES})", name="ck_opportunity_assessment_outcome"
+        ),
+        CheckConstraint(
+            f"urgency_status IN ({OPPORTUNITY_URGENCY_VALUES})",
+            name="ck_opportunity_assessment_urgency",
+        ),
+        Index("ix_opportunity_assessment_candidate", "candidate_id", "created_at"),
+        Index("ix_opportunity_assessment_digest", "input_digest"),
+    )
+    id: Mapped[UUID] = mapped_column(Uuid(as_uuid=True), primary_key=True, default=uuid4)
+    candidate_id: Mapped[UUID] = mapped_column(
+        Uuid(as_uuid=True),
+        ForeignKey("opportunity_candidates.id", ondelete="CASCADE"),
+        nullable=False,
+    )
+    company_snapshot_id: Mapped[UUID] = mapped_column(
+        Uuid(as_uuid=True),
+        ForeignKey("company_profile_snapshots.id", ondelete="RESTRICT"),
+        nullable=False,
+    )
+    policy_version: Mapped[str] = mapped_column(String(64), nullable=False)
+    policy_hash: Mapped[str] = mapped_column(String(64), nullable=False)
+    analysis_level: Mapped[str] = mapped_column(String(32), nullable=False)
+    outcome: Mapped[str] = mapped_column(String(32), nullable=False)
+    compatibility_score: Mapped[Decimal] = mapped_column(Numeric(6, 2), nullable=False)
+    urgency_score: Mapped[Decimal] = mapped_column(Numeric(6, 2), nullable=False)
+    information_completeness: Mapped[Decimal] = mapped_column(Numeric(6, 2), nullable=False)
+    days_remaining: Mapped[Decimal | None] = mapped_column(Numeric(12, 2))
+    urgency_status: Mapped[str] = mapped_column(String(32), nullable=False)
+    requires_human_review: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
+    input_digest: Mapped[str] = mapped_column(String(64), nullable=False)
+    summary: Mapped[str] = mapped_column(Text, nullable=False)
+    warnings: Mapped[list[str]] = mapped_column(JSON, nullable=False, default=list)
+    missing_information: Mapped[dict[str, list[str]]] = mapped_column(
+        JSON, nullable=False, default=dict
+    )
+    partner_reasons: Mapped[list[dict[str, Any]]] = mapped_column(
+        JSON, nullable=False, default=list
+    )
+    effective_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), nullable=False
+    )
+
+
+class OpportunityAssessmentComponentModel(Base):
+    __tablename__ = "opportunity_assessment_components"
+    __table_args__ = (
+        CheckConstraint(
+            f"component IN ({OPPORTUNITY_COMPONENT_VALUES})", name="ck_opportunity_component_name"
+        ),
+        CheckConstraint(
+            f"status IN ({OPPORTUNITY_COMPONENT_STATUS_VALUES})",
+            name="ck_opportunity_component_status",
+        ),
+        UniqueConstraint("assessment_id", "component", name="uq_opportunity_component"),
+    )
+    id: Mapped[UUID] = mapped_column(Uuid(as_uuid=True), primary_key=True, default=uuid4)
+    assessment_id: Mapped[UUID] = mapped_column(
+        Uuid(as_uuid=True),
+        ForeignKey("opportunity_assessments.id", ondelete="CASCADE"),
+        nullable=False,
+    )
+    component: Mapped[str] = mapped_column(String(64), nullable=False)
+    status: Mapped[str] = mapped_column(String(32), nullable=False)
+    score: Mapped[Decimal] = mapped_column(Numeric(6, 2), nullable=False)
+    weight: Mapped[Decimal] = mapped_column(Numeric(6, 4), nullable=False)
+    weighted_score: Mapped[Decimal] = mapped_column(Numeric(6, 2), nullable=False)
+    reason_code: Mapped[str] = mapped_column(String(100), nullable=False)
+    explanation_parameters: Mapped[dict[str, Any]] = mapped_column(
+        JSON, nullable=False, default=dict
+    )
+    evidence_refs: Mapped[list[str]] = mapped_column(JSON, nullable=False, default=list)
+    warnings: Mapped[list[str]] = mapped_column(JSON, nullable=False, default=list)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), nullable=False
+    )
+
+
+class OpportunityAssessmentEvidenceModel(Base):
+    __tablename__ = "opportunity_assessment_evidence"
+    id: Mapped[UUID] = mapped_column(Uuid(as_uuid=True), primary_key=True, default=uuid4)
+    assessment_component_id: Mapped[UUID] = mapped_column(
+        Uuid(as_uuid=True),
+        ForeignKey("opportunity_assessment_components.id", ondelete="CASCADE"),
+        nullable=False,
+    )
+    evidence_type: Mapped[str] = mapped_column(String(64), nullable=False)
+    entity_type: Mapped[str] = mapped_column(String(64), nullable=False)
+    entity_id: Mapped[UUID | None] = mapped_column(Uuid(as_uuid=True))
+    source_reference: Mapped[str | None] = mapped_column(String(500))
+    excerpt: Mapped[str | None] = mapped_column(String(1000))
+    evidence_metadata: Mapped[dict[str, Any]] = mapped_column(
+        "metadata", JSON, nullable=False, default=dict
+    )
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), nullable=False
+    )
+
+
+class OpportunityReview(Base):
+    __tablename__ = "opportunity_reviews"
+    __table_args__ = (
+        CheckConstraint(
+            f"action IN ({OPPORTUNITY_REVIEW_ACTION_VALUES})", name="ck_opportunity_review_action"
+        ),
+        Index("ix_opportunity_review_assessment", "assessment_id", "created_at"),
+    )
+    id: Mapped[UUID] = mapped_column(Uuid(as_uuid=True), primary_key=True, default=uuid4)
+    assessment_id: Mapped[UUID] = mapped_column(
+        Uuid(as_uuid=True),
+        ForeignKey("opportunity_assessments.id", ondelete="CASCADE"),
+        nullable=False,
+    )
+    action: Mapped[str] = mapped_column(String(32), nullable=False)
+    reason: Mapped[str | None] = mapped_column(Text)
+    previous_action: Mapped[str | None] = mapped_column(String(32))
+    created_by: Mapped[UUID | None] = mapped_column(
+        Uuid(as_uuid=True), ForeignKey("auth_users.id", ondelete="SET NULL")
+    )
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), nullable=False
+    )
+
+
+class OpportunityEvent(Base):
+    __tablename__ = "opportunity_events"
+    __table_args__ = (Index("ix_opportunity_event_opportunity", "opportunity_id", "created_at"),)
+    id: Mapped[UUID] = mapped_column(Uuid(as_uuid=True), primary_key=True, default=uuid4)
+    opportunity_id: Mapped[UUID] = mapped_column(
+        Uuid(as_uuid=True),
+        ForeignKey("opportunity_assessments.id", ondelete="CASCADE"),
+        nullable=False,
+    )
+    event_type: Mapped[str] = mapped_column(String(100), nullable=False)
+    event_metadata: Mapped[dict[str, Any]] = mapped_column(
+        "metadata", JSON, nullable=False, default=dict
+    )
+    created_by: Mapped[UUID | None] = mapped_column(
+        Uuid(as_uuid=True), ForeignKey("auth_users.id", ondelete="SET NULL")
+    )
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), nullable=False
+    )
