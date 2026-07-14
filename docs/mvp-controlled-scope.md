@@ -18,7 +18,10 @@
 - Produccion.
 - Datos reales de procesos o empresas.
 - SSO, MFA y gestion empresarial de identidades.
-- SECOP en linea, OCR, firma digital, notificaciones y correo.
+- La extensión de Microfase 16 permite búsqueda e importación pública SECOP, pero no descarga
+  documental, actualización incremental, login, ofertas ni trámites. No cambia el estatus de no
+  producción del MVP controlado.
+- OCR, firma digital, notificaciones y correo.
 - S3 obligatorio u otro almacenamiento productivo.
 - Garantias juridicas, comerciales o de cumplimiento normativo.
 

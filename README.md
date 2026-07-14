@@ -102,7 +102,7 @@ flowchart TB
 
 La decisión de stack y sus alternativas están formalizadas en [docs/ADR-001-stack-and-architecture.md](docs/ADR-001-stack-and-architecture.md).
 
-## Estado actual - Microfase 14
+## Estado actual - Microfase 16
 
 Implementado: importacion manual de procesos, carga documental segura, almacenamiento local con
 SHA-256, cola transaccional inicial, extractores deterministas para PDF con texto, DOCX, XLSX, CSV y
@@ -150,7 +150,14 @@ limitaciones, agrega criterios de aceptacion/no produccion, guia de demo final, 
 indice de entrega, `pnpm mvp:eval`, `pnpm mvp:data-scan` y release candidate
 `0.14.0-mvp-controlled`. No se recibió retroalimentación real de usuarios piloto en esta microfase.
 
-No implementado todavia: OCR, integracion automatica con SECOP II, SSO/MFA y S3 real obligatorio.
+La Microfase 16 agrega búsqueda e importación controlada desde las APIs públicas oficiales de Datos
+Abiertos para procesos SECOP II y SECOP I. Incluye catálogo trazable, filtros y paginación,
+normalización conservadora, persistencia, deduplicación, auditoría, permisos, API, UI, fixtures
+offline y smoke live opt-in. Importar no descarga documentos, no ejecuta evaluaciones ni automatiza
+ofertas o trámites SECOP. Detalle en [docs/secop-connector.md](docs/secop-connector.md).
+
+No implementado todavía: OCR, descarga automática de documentos SECOP, actualización incremental,
+SSO/MFA y S3 real obligatorio.
 Categorias fuera de los adaptadores financiero, juridico, experiencia y tecnico quedan
 `NOT_EVALUATED`, por lo que no pueden producir `GO`.
 
@@ -178,6 +185,8 @@ uv sync --all-packages  # dependencias Python (workspace uv)
 | `pnpm specialized:run-once` / `pnpm specialized:drain` | Procesa trabajos de evaluadores juridico, experiencia y tecnico |
 | `pnpm specialized:test` / `pnpm specialized:eval` | Pruebas y evals deterministas de evaluadores especializados |
 | `pnpm decision:run-once` / `pnpm decision:drain` | Procesa trabajos de decision preliminar |
+| `pnpm secop:test` / `pnpm secop:eval` | Pruebas y evals offline del conector SECOP |
+| `pnpm secop:smoke` | Smoke live manual de un registro, deshabilitado por defecto |
 | `pnpm decision:policy-check` / `pnpm decision:test` / `pnpm decision:eval` | Politica, pruebas y evals del motor de decision |
 | `pnpm report:run-once` / `pnpm report:drain` | Procesa trabajos de reporte ejecutivo y paquete de decision |
 | `pnpm report:test` / `pnpm report:eval` | Pruebas y evals deterministas de reportes |

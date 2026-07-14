@@ -153,3 +153,14 @@ No se recibió retroalimentación real de usuarios piloto en esta microfase. El 
 produccion ni uso con datos reales. Antes de evolucionar a piloto real deben estar aceptados los
 criterios de [non-production-criteria.md](non-production-criteria.md), el data scan debe pasar y los
 responsables humanos deben decidir continuidad en Microfase 15.
+
+## 14. Fuentes públicas SECOP (Microfase 16)
+
+El conector usa únicamente APIs públicas verificadas de Datos Abiertos Colombia. La consulta tiene
+límite, timeout, reintentos acotados, caché, rate limit y User-Agent identificable. El token Socrata
+es opcional y nunca se versiona. Una lista permitida excluye campos personales no necesarios; el
+payload reducido se almacena para auditoría y no se expone en los listados web/API.
+
+La URL oficial es evidencia de procedencia, no garantía de vigencia o completitud. Importar no
+autoriza descarga masiva, scraping, login, presentación de ofertas o trámites, y no ejecuta el motor
+de decisión. Los fallos y campos ausentes se registran explícitamente.

@@ -34,6 +34,7 @@ from pliegocheck_schemas.company_profile import CompanyErrorCode
 from pliegocheck_schemas.decision import DecisionErrorCode
 from pliegocheck_schemas.decision_report import DecisionReportErrorCode
 from pliegocheck_schemas.document_extraction import DocumentProcessingStatus, ExtractionErrorCode
+from pliegocheck_schemas.external_procurement import ExternalProcurementErrorCode
 from pliegocheck_schemas.financial_evaluation import FinancialErrorCode
 from pliegocheck_schemas.normalized_requirement import NormalizationErrorCode
 
@@ -44,9 +45,10 @@ CurrencyCode = Annotated[str, StringConstraints(pattern=r"^[A-Z]{3}$")]
 
 
 class ProcessSource(StrEnum):
-    """Origen de un proceso. La ingesta automatica llegara en la Microfase 9."""
+    """Origen del registro interno del proceso."""
 
     MANUAL = "MANUAL"
+    SECOP_IMPORT = "SECOP_IMPORT"
 
 
 class ProcessStatus(StrEnum):
@@ -108,6 +110,7 @@ ApiErrorCode = (
     | DecisionErrorCode
     | DecisionReportErrorCode
     | AuthErrorCode
+    | ExternalProcurementErrorCode
 )
 
 
@@ -209,7 +212,7 @@ class ProcessDetail(BaseModel):
     estimated_value: str | None = Field(
         description="Valor estimado serializado como string decimal para no perder precision.",
     )
-    currency: str
+    currency: str | None
     published_at: AwareDatetime | None
     closing_at: AwareDatetime | None
     status: ProcessStatus

@@ -1,0 +1,1225 @@
+{
+  "$defs": {
+    "ExternalProcurementDocumentStatus": {
+      "enum": [
+        "DOCUMENTS_NOT_AVAILABLE",
+        "DOCUMENT_LINKS_AVAILABLE",
+        "DOCUMENT_DOWNLOAD_UNSUPPORTED",
+        "DOCUMENT_DOWNLOAD_FAILED",
+        "DOCUMENTS_IMPORTED"
+      ],
+      "type": "string"
+    },
+    "ExternalProcurementErrorCode": {
+      "enum": [
+        "SOURCE_DISABLED",
+        "SOURCE_NOT_FOUND",
+        "SOURCE_UNAVAILABLE",
+        "SOURCE_TIMEOUT",
+        "SOURCE_INVALID_RESPONSE",
+        "RATE_LIMITED",
+        "UNSUPPORTED_FILTER",
+        "SEARCH_NOT_FOUND",
+        "RESULT_NOT_FOUND",
+        "IMPORT_NOT_FOUND",
+        "INVALID_EXTERNAL_PROCESS",
+        "EXTERNAL_DATABASE_ERROR"
+      ],
+      "type": "string"
+    },
+    "ExternalProcurementFieldStatus": {
+      "enum": ["PRESENT", "MISSING", "NORMALIZED", "UNMAPPED", "CONFLICTING"],
+      "type": "string"
+    },
+    "ExternalProcurementImportList": {
+      "additionalProperties": false,
+      "properties": {
+        "items": {
+          "items": {
+            "$ref": "#/$defs/ExternalProcurementImportResponse"
+          },
+          "type": "array"
+        },
+        "limit": {
+          "exclusiveMinimum": 0,
+          "type": "integer"
+        },
+        "offset": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "total": {
+          "minimum": 0,
+          "type": "integer"
+        }
+      },
+      "required": ["items", "total", "limit", "offset"],
+      "type": "object"
+    },
+    "ExternalProcurementImportRequest": {
+      "additionalProperties": false,
+      "properties": {
+        "expected_source_process_id": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "type": "object"
+    },
+    "ExternalProcurementImportResponse": {
+      "additionalProperties": false,
+      "properties": {
+        "created_at": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "deduplication_key": {
+          "pattern": "^[a-f0-9]{64}$",
+          "type": "string"
+        },
+        "id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "imported_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "message": {
+          "type": "string"
+        },
+        "process_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "source_result_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "status": {
+          "$ref": "#/$defs/ExternalProcurementImportStatus"
+        }
+      },
+      "required": [
+        "id",
+        "source_result_id",
+        "process_id",
+        "status",
+        "deduplication_key",
+        "imported_at",
+        "created_at",
+        "message"
+      ],
+      "type": "object"
+    },
+    "ExternalProcurementImportStatus": {
+      "enum": ["PENDING", "IMPORTED", "SKIPPED_DUPLICATE", "FAILED"],
+      "type": "string"
+    },
+    "ExternalProcurementProcessLink": {
+      "additionalProperties": false,
+      "properties": {
+        "created_at": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "documents_status": {
+          "$ref": "#/$defs/ExternalProcurementDocumentStatus"
+        },
+        "documents_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "external_metadata": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "imported_at": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "process_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "source_dataset": {
+          "maxLength": 500,
+          "minLength": 1,
+          "type": "string"
+        },
+        "source_process_id": {
+          "maxLength": 500,
+          "minLength": 1,
+          "type": "string"
+        },
+        "source_process_reference": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "source_system": {
+          "$ref": "#/$defs/ExternalProcurementSourceSystem"
+        },
+        "source_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "process_id",
+        "source_system",
+        "source_dataset",
+        "source_process_id",
+        "source_process_reference",
+        "source_url",
+        "documents_url",
+        "documents_status",
+        "imported_at",
+        "created_at"
+      ],
+      "type": "object"
+    },
+    "ExternalProcurementProcessLinkList": {
+      "additionalProperties": false,
+      "properties": {
+        "items": {
+          "items": {
+            "$ref": "#/$defs/ExternalProcurementProcessLink"
+          },
+          "type": "array"
+        },
+        "process_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "total": {
+          "minimum": 0,
+          "type": "integer"
+        }
+      },
+      "required": ["process_id", "items", "total"],
+      "type": "object"
+    },
+    "ExternalProcurementProvider": {
+      "enum": ["datos_abiertos"],
+      "type": "string"
+    },
+    "ExternalProcurementResultList": {
+      "additionalProperties": false,
+      "properties": {
+        "items": {
+          "items": {
+            "$ref": "#/$defs/ExternalProcurementSearchResult"
+          },
+          "type": "array"
+        },
+        "limit": {
+          "exclusiveMinimum": 0,
+          "type": "integer"
+        },
+        "offset": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "search_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "total": {
+          "minimum": 0,
+          "type": "integer"
+        }
+      },
+      "required": ["search_id", "items", "total", "limit", "offset"],
+      "type": "object"
+    },
+    "ExternalProcurementSearchList": {
+      "additionalProperties": false,
+      "properties": {
+        "items": {
+          "items": {
+            "$ref": "#/$defs/ExternalProcurementSearchSummary"
+          },
+          "type": "array"
+        },
+        "limit": {
+          "exclusiveMinimum": 0,
+          "type": "integer"
+        },
+        "offset": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "total": {
+          "minimum": 0,
+          "type": "integer"
+        }
+      },
+      "required": ["items", "total", "limit", "offset"],
+      "type": "object"
+    },
+    "ExternalProcurementSearchRequest": {
+      "additionalProperties": false,
+      "properties": {
+        "closing_from": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "closing_to": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "department": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "entity_name": {
+          "anyOf": [
+            {
+              "maxLength": 300,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "limit": {
+          "default": 20,
+          "maximum": 100,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "max_value": {
+          "anyOf": [
+            {
+              "minimum": 0.0,
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "min_value": {
+          "anyOf": [
+            {
+              "minimum": 0.0,
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "modality": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "municipality": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "offset": {
+          "default": 0,
+          "maximum": 1000000,
+          "minimum": 0,
+          "type": "integer"
+        },
+        "process_code": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "published_from": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "published_to": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "query": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "source_system": {
+          "$ref": "#/$defs/ExternalProcurementSourceSystem",
+          "default": "SECOP_II"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "type": "object"
+    },
+    "ExternalProcurementSearchResponse": {
+      "additionalProperties": false,
+      "properties": {
+        "items": {
+          "items": {
+            "$ref": "#/$defs/ExternalProcurementSearchResult"
+          },
+          "type": "array"
+        },
+        "search": {
+          "$ref": "#/$defs/ExternalProcurementSearchSummary"
+        }
+      },
+      "required": ["search", "items"],
+      "type": "object"
+    },
+    "ExternalProcurementSearchResult": {
+      "additionalProperties": false,
+      "properties": {
+        "closing_date": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "created_at": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "currency": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Z]{3}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "department": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "documents_status": {
+          "$ref": "#/$defs/ExternalProcurementDocumentStatus"
+        },
+        "entity_name": {
+          "type": "string"
+        },
+        "estimated_value": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "field_statuses": {
+          "additionalProperties": {
+            "$ref": "#/$defs/ExternalProcurementFieldStatus"
+          },
+          "type": "object"
+        },
+        "id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "import_status": {
+          "$ref": "#/$defs/ExternalProcurementImportStatus"
+        },
+        "modality": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "municipality": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "process_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "publication_date": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "raw_payload_hash": {
+          "pattern": "^[a-f0-9]{64}$",
+          "type": "string"
+        },
+        "search_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "source_dataset": {
+          "maxLength": 500,
+          "minLength": 1,
+          "type": "string"
+        },
+        "source_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "source_process_id": {
+          "maxLength": 500,
+          "minLength": 1,
+          "type": "string"
+        },
+        "source_process_reference": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "source_system": {
+          "$ref": "#/$defs/ExternalProcurementSourceSystem"
+        },
+        "source_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "title": {
+          "type": "string"
+        },
+        "warnings": {
+          "items": {
+            "$ref": "#/$defs/ExternalProcurementWarning"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "id",
+        "search_id",
+        "source_id",
+        "source_system",
+        "source_dataset",
+        "source_process_id",
+        "source_process_reference",
+        "title",
+        "entity_name",
+        "modality",
+        "status",
+        "estimated_value",
+        "currency",
+        "publication_date",
+        "closing_date",
+        "department",
+        "municipality",
+        "source_url",
+        "documents_status",
+        "raw_payload_hash",
+        "import_status",
+        "created_at"
+      ],
+      "type": "object"
+    },
+    "ExternalProcurementSearchStatus": {
+      "enum": ["PENDING", "RUNNING", "COMPLETED", "COMPLETED_WITH_WARNINGS", "FAILED"],
+      "type": "string"
+    },
+    "ExternalProcurementSearchSummary": {
+      "additionalProperties": false,
+      "properties": {
+        "created_at": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "error_code": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ExternalProcurementErrorCode"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "error_message": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "filters": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "finished_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "limit": {
+          "exclusiveMinimum": 0,
+          "type": "integer"
+        },
+        "offset": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "page_count": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "result_count": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "source_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "source_row_count": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "source_system": {
+          "$ref": "#/$defs/ExternalProcurementSourceSystem"
+        },
+        "started_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "status": {
+          "$ref": "#/$defs/ExternalProcurementSearchStatus"
+        },
+        "unsupported_filters": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "warnings": {
+          "items": {
+            "$ref": "#/$defs/ExternalProcurementWarning"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "id",
+        "source_id",
+        "source_system",
+        "query",
+        "filters",
+        "status",
+        "result_count",
+        "source_row_count",
+        "page_count",
+        "limit",
+        "offset",
+        "started_at",
+        "finished_at",
+        "error_code",
+        "error_message",
+        "created_at"
+      ],
+      "type": "object"
+    },
+    "ExternalProcurementSourceStatus": {
+      "enum": ["AVAILABLE", "PARTIAL", "STALE", "ERROR", "UNSUPPORTED"],
+      "type": "string"
+    },
+    "ExternalProcurementSourceSummary": {
+      "additionalProperties": false,
+      "properties": {
+        "api_url": {
+          "type": "string"
+        },
+        "base_url": {
+          "type": "string"
+        },
+        "created_at": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "dataset_id": {
+          "maxLength": 500,
+          "minLength": 1,
+          "type": "string"
+        },
+        "enabled": {
+          "type": "boolean"
+        },
+        "human_url": {
+          "type": "string"
+        },
+        "id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "last_checked_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "metadata": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "name": {
+          "maxLength": 500,
+          "minLength": 1,
+          "type": "string"
+        },
+        "provider": {
+          "$ref": "#/$defs/ExternalProcurementProvider"
+        },
+        "source_system": {
+          "$ref": "#/$defs/ExternalProcurementSourceSystem"
+        },
+        "status": {
+          "$ref": "#/$defs/ExternalProcurementSourceStatus"
+        },
+        "updated_at": {
+          "format": "date-time",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "source_system",
+        "provider",
+        "name",
+        "base_url",
+        "dataset_id",
+        "human_url",
+        "api_url",
+        "status",
+        "enabled",
+        "created_at",
+        "updated_at"
+      ],
+      "type": "object"
+    },
+    "ExternalProcurementSourceSystem": {
+      "enum": ["SECOP_II", "SECOP_I"],
+      "type": "string"
+    },
+    "ExternalProcurementWarning": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "maxLength": 500,
+          "minLength": 1,
+          "type": "string"
+        },
+        "field": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "message": {
+          "maxLength": 5000,
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": ["code", "message"],
+      "type": "object"
+    },
+    "SecopProcessNormalized": {
+      "additionalProperties": false,
+      "properties": {
+        "closing_date": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "currency": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Z]{3}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "department": {
+          "anyOf": [
+            {
+              "maxLength": 300,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 5000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "documents_status": {
+          "$ref": "#/$defs/ExternalProcurementDocumentStatus"
+        },
+        "documents_url": {
+          "anyOf": [
+            {
+              "maxLength": 2083,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "entity_name": {
+          "maxLength": 500,
+          "minLength": 1,
+          "type": "string"
+        },
+        "entity_nit": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "estimated_value": {
+          "anyOf": [
+            {
+              "minimum": 0.0,
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "field_statuses": {
+          "additionalProperties": {
+            "$ref": "#/$defs/ExternalProcurementFieldStatus"
+          },
+          "type": "object"
+        },
+        "modality": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "municipality": {
+          "anyOf": [
+            {
+              "maxLength": 300,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "publication_date": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "raw_payload_hash": {
+          "pattern": "^[a-f0-9]{64}$",
+          "type": "string"
+        },
+        "reference": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "source_dataset": {
+          "maxLength": 500,
+          "minLength": 1,
+          "type": "string"
+        },
+        "source_process_id": {
+          "maxLength": 500,
+          "minLength": 1,
+          "type": "string"
+        },
+        "source_system": {
+          "$ref": "#/$defs/ExternalProcurementSourceSystem"
+        },
+        "source_url": {
+          "anyOf": [
+            {
+              "maxLength": 2083,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "status": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "title": {
+          "maxLength": 500,
+          "minLength": 1,
+          "type": "string"
+        },
+        "warnings": {
+          "items": {
+            "$ref": "#/$defs/ExternalProcurementWarning"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "source_system",
+        "source_dataset",
+        "source_process_id",
+        "title",
+        "entity_name",
+        "documents_status",
+        "raw_payload_hash"
+      ],
+      "type": "object"
+    }
+  },
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "import_list": {
+      "$ref": "#/$defs/ExternalProcurementImportList"
+    },
+    "import_request": {
+      "$ref": "#/$defs/ExternalProcurementImportRequest"
+    },
+    "import_response": {
+      "$ref": "#/$defs/ExternalProcurementImportResponse"
+    },
+    "normalized_process": {
+      "$ref": "#/$defs/SecopProcessNormalized"
+    },
+    "process_link_list": {
+      "$ref": "#/$defs/ExternalProcurementProcessLinkList"
+    },
+    "result_list": {
+      "$ref": "#/$defs/ExternalProcurementResultList"
+    },
+    "search_list": {
+      "$ref": "#/$defs/ExternalProcurementSearchList"
+    },
+    "search_request": {
+      "$ref": "#/$defs/ExternalProcurementSearchRequest"
+    },
+    "search_response": {
+      "$ref": "#/$defs/ExternalProcurementSearchResponse"
+    },
+    "source": {
+      "$ref": "#/$defs/ExternalProcurementSourceSummary"
+    }
+  },
+  "required": [
+    "source",
+    "search_request",
+    "search_response",
+    "search_list",
+    "result_list",
+    "normalized_process",
+    "import_request",
+    "import_response",
+    "import_list",
+    "process_link_list"
+  ],
+  "type": "object"
+}

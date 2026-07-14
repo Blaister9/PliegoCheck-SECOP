@@ -55,6 +55,15 @@ def pytest_configure(config: pytest.Config) -> None:
     os.environ["OPENAI_NORMALIZATION_MAX_RETRIES"] = "2"
     os.environ["PLIEGOCHECK_ALLOW_FAKE_NORMALIZATION_PROVIDER"] = "true"
     os.environ["PLIEGOCHECK_EXTRACTION_SYNC"] = "1"
+    os.environ["PLIEGOCHECK_SECOP_ENABLED"] = "false"
+    os.environ["PLIEGOCHECK_SECOP_PROVIDER"] = "datos_abiertos"
+    os.environ["PLIEGOCHECK_SECOP_BASE_URL"] = "https://www.datos.gov.co"
+    os.environ["PLIEGOCHECK_SECOP_APP_TOKEN"] = ""
+    os.environ["PLIEGOCHECK_SECOP_TIMEOUT_SECONDS"] = "5"
+    os.environ["PLIEGOCHECK_SECOP_MAX_PAGE_SIZE"] = "100"
+    os.environ["PLIEGOCHECK_SECOP_RATE_LIMIT_PER_MINUTE"] = "60"
+    os.environ["PLIEGOCHECK_SECOP_CACHE_TTL_MINUTES"] = "0"
+    os.environ["PLIEGOCHECK_SECOP_ALLOW_LIVE_TESTS"] = "false"
     from pliegocheck_api.config import get_settings
     from pliegocheck_api.db import get_engine, get_sessionmaker
 
@@ -82,6 +91,9 @@ def clean_database_and_storage(migrated_engine: Engine) -> Generator[None, None,
             text(
                 "TRUNCATE TABLE operational_audit_events, auth_login_events, auth_sessions, "
                 "auth_user_roles, auth_roles, auth_users, "
+                "external_procurement_imports, external_procurement_process_links, "
+                "external_procurement_search_results, external_procurement_searches, "
+                "external_procurement_sources, "
                 "decision_report_events, decision_report_sections, "
                 "decision_report_artifacts, decision_report_packages, decision_report_jobs, "
                 "decision_events, decision_reviews, "

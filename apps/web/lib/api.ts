@@ -54,6 +54,11 @@ import type {
   ExtractedSegmentList,
   ExtractedSegmentType,
   DocumentUploadResponse,
+  ExternalProcurementImportResponse,
+  ExternalProcurementProcessLinkList,
+  ExternalProcurementSearchRequest,
+  ExternalProcurementSearchResponse,
+  ExternalProcurementSourceSummary,
   ExtractionRetryResponse,
   FinancialEvaluationList,
   FinancialEvaluationQueueResponse,
@@ -105,9 +110,13 @@ function apiBaseUrl() {
   return (process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8000").replace(/\/$/, "");
 }
 
-async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
+async function request<T>(
+  path: string,
+  init: RequestInit = {},
+  timeoutMs = DEFAULT_TIMEOUT_MS,
+): Promise<T> {
   const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), DEFAULT_TIMEOUT_MS);
+  const timeout = setTimeout(() => controller.abort(), timeoutMs);
   try {
     const response = await fetch(`${apiBaseUrl()}${path}`, {
       ...init,
@@ -201,6 +210,32 @@ export function createProcess(payload: ProcessCreate) {
     method: "POST",
     body: JSON.stringify(payload),
   });
+}
+
+export function listExternalProcurementSources() {
+  return request<ExternalProcurementSourceSummary[]>("/external-procurement/sources");
+}
+
+export function searchExternalProcurement(payload: ExternalProcurementSearchRequest) {
+  return request<ExternalProcurementSearchResponse>(
+    "/external-procurement/searches",
+    { method: "POST", body: JSON.stringify(payload) },
+    35_000,
+  );
+}
+
+export function importExternalProcurementResult(resultId: string, sourceProcessId: string) {
+  return request<ExternalProcurementImportResponse>(
+    `/external-procurement/results/${resultId}/import`,
+    {
+      method: "POST",
+      body: JSON.stringify({ expected_source_process_id: sourceProcessId }),
+    },
+  );
+}
+
+export function listProcessExternalLinks(processId: string) {
+  return request<ExternalProcurementProcessLinkList>(`/processes/${processId}/external-links`);
 }
 
 export function getProcess(processId: string) {

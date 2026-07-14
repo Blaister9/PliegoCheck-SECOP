@@ -138,6 +138,19 @@ export type AuthErrorCode =
   | "AUTH_CONFIG_INVALID"
   | "AUTH_USER_NOT_FOUND"
   | "AUTH_EMAIL_ALREADY_EXISTS";
+export type ExternalProcurementErrorCode =
+  | "SOURCE_DISABLED"
+  | "SOURCE_NOT_FOUND"
+  | "SOURCE_UNAVAILABLE"
+  | "SOURCE_TIMEOUT"
+  | "SOURCE_INVALID_RESPONSE"
+  | "RATE_LIMITED"
+  | "UNSUPPORTED_FILTER"
+  | "SEARCH_NOT_FOUND"
+  | "RESULT_NOT_FOUND"
+  | "IMPORT_NOT_FOUND"
+  | "INVALID_EXTERNAL_PROCESS"
+  | "EXTERNAL_DATABASE_ERROR";
 /**
  * Tipo documental declarado. La clasificacion automatica llega en Microfase 3.
  */
@@ -167,9 +180,9 @@ export type DocumentProcessingStatus =
  */
 export type DocumentUploadStatus = "STORED" | "REJECTED";
 /**
- * Origen de un proceso. La ingesta automatica llegara en la Microfase 9.
+ * Origen del registro interno del proceso.
  */
-export type ProcessSource = "MANUAL";
+export type ProcessSource = "MANUAL" | "SECOP_IMPORT";
 /**
  * Estado operativo del proceso durante la importacion.
  *
@@ -208,7 +221,8 @@ export interface ApiError {
     | FinancialErrorCode
     | DecisionErrorCode
     | DecisionReportErrorCode
-    | AuthErrorCode;
+    | AuthErrorCode
+    | ExternalProcurementErrorCode;
   details?: {
     [k: string]: string;
   };
@@ -270,7 +284,7 @@ export interface ProcessDetail {
   closing_at: string | null;
   contracting_entity: string;
   created_at: string;
-  currency: string;
+  currency: string | null;
   description: string | null;
   document_count: number;
   documents: ProcessDocumentMetadata[];

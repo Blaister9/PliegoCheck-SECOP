@@ -53,6 +53,8 @@ ROLE_PERMISSIONS: dict[AuthRoleName, set[AuthPermission]] = {
         AuthPermission.DECISION_RUN,
         AuthPermission.REPORT_GENERATE,
         AuthPermission.REPORT_DOWNLOAD,
+        AuthPermission.EXTERNAL_SEARCH,
+        AuthPermission.EXTERNAL_IMPORT,
     },
     AuthRoleName.REVIEWER: {
         AuthPermission.PROCESS_READ,

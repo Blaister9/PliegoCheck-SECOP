@@ -19,6 +19,7 @@ import type {
 import { EXTRACTED_SEGMENT_TYPE_VALUES } from "@pliegocheck/schemas";
 import { DecisionPanel } from "./DecisionPanel";
 import { DecisionReportPanel } from "./DecisionReportPanel";
+import { ExternalLinksPanel } from "./ExternalLinksPanel";
 import { SpecializedEvaluationPanel } from "./SpecializedEvaluationPanel";
 import {
   ApiClientError,
@@ -320,7 +321,7 @@ export function ProcessDetailClient({ processId }: { processId: string }) {
           <strong>Entidad:</strong> {process.contracting_entity}
         </p>
         <p>
-          <strong>Moneda:</strong> {process.currency}
+          <strong>Moneda:</strong> {process.currency ?? "No informada"}
         </p>
         <p>
           <strong>Valor estimado:</strong> {process.estimated_value ?? "No informado"}
@@ -329,6 +330,8 @@ export function ProcessDetailClient({ processId }: { processId: string }) {
           <strong>Cierre:</strong> {formatDate(process.closing_at)}
         </p>
       </section>
+
+      {process.source === "SECOP_IMPORT" ? <ExternalLinksPanel processId={processId} /> : null}
 
       <aside className="notice" role="note">
         La extraccion es deterministica y todavia no evalua requisitos ni produce una decision GO /

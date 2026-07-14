@@ -9,9 +9,11 @@ from pydantic import BaseModel
 
 from pliegocheck_schemas import (
     DOCUMENT_EXTRACTION_SCHEMA_VERSION,
+    EXTERNAL_PROCUREMENT_SCHEMA_VERSION,
     MANUAL_IMPORT_SCHEMA_VERSION,
     NORMALIZED_REQUIREMENT_SCHEMA_VERSION,
     DocumentExtractionContracts,
+    ExternalProcurementContracts,
     ManualImportContracts,
     NormalizedRequirement,
 )
@@ -37,6 +39,11 @@ class ContractsResponse(BaseModel):
 def list_contracts() -> ContractsResponse:
     return ContractsResponse(
         contracts=[
+            ContractInfo(
+                name="external_procurement",
+                schema_version=EXTERNAL_PROCUREMENT_SCHEMA_VERSION,
+                title=ExternalProcurementContracts.__name__,
+            ),
             ContractInfo(
                 name="normalized_requirement",
                 schema_version=NORMALIZED_REQUIREMENT_SCHEMA_VERSION,

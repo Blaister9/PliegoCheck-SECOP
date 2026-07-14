@@ -29,6 +29,9 @@
             },
             {
               "$ref": "#/$defs/AuthErrorCode"
+            },
+            {
+              "$ref": "#/$defs/ExternalProcurementErrorCode"
             }
           ]
         },
@@ -224,6 +227,23 @@
     "DocumentUploadStatus": {
       "description": "Resultado del intento de carga de un documento.",
       "enum": ["STORED", "REJECTED"],
+      "type": "string"
+    },
+    "ExternalProcurementErrorCode": {
+      "enum": [
+        "SOURCE_DISABLED",
+        "SOURCE_NOT_FOUND",
+        "SOURCE_UNAVAILABLE",
+        "SOURCE_TIMEOUT",
+        "SOURCE_INVALID_RESPONSE",
+        "RATE_LIMITED",
+        "UNSUPPORTED_FILTER",
+        "SEARCH_NOT_FOUND",
+        "RESULT_NOT_FOUND",
+        "IMPORT_NOT_FOUND",
+        "INVALID_EXTERNAL_PROCESS",
+        "EXTERNAL_DATABASE_ERROR"
+      ],
       "type": "string"
     },
     "ExtractionErrorCode": {
@@ -430,7 +450,14 @@
           "type": "string"
         },
         "currency": {
-          "type": "string"
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
         },
         "description": {
           "anyOf": [
@@ -667,8 +694,8 @@
       "type": "object"
     },
     "ProcessSource": {
-      "description": "Origen de un proceso. La ingesta automatica llegara en la Microfase 9.",
-      "enum": ["MANUAL"],
+      "description": "Origen del registro interno del proceso.",
+      "enum": ["MANUAL", "SECOP_IMPORT"],
       "type": "string"
     },
     "ProcessStatus": {
