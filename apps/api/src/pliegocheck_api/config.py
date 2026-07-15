@@ -330,9 +330,113 @@ class Settings(BaseSettings):
     alert_retention_days: int = Field(
         default=365, validation_alias="PLIEGOCHECK_ALERT_RETENTION_DAYS", ge=30, le=3650
     )
+    external_delivery_enabled: bool = Field(
+        default=False, validation_alias="PLIEGOCHECK_EXTERNAL_DELIVERY_ENABLED"
+    )
+    notification_dry_run: bool = Field(
+        default=True, validation_alias="PLIEGOCHECK_NOTIFICATION_DRY_RUN"
+    )
+    notification_max_attempts: int = Field(
+        default=5, validation_alias="PLIEGOCHECK_NOTIFICATION_MAX_ATTEMPTS", ge=1, le=20
+    )
+    notification_retry_base_seconds: int = Field(
+        default=60, validation_alias="PLIEGOCHECK_NOTIFICATION_RETRY_BASE_SECONDS", ge=1, le=86400
+    )
+    notification_retry_max_seconds: int = Field(
+        default=3600, validation_alias="PLIEGOCHECK_NOTIFICATION_RETRY_MAX_SECONDS", ge=1, le=604800
+    )
+    notification_retry_jitter_seconds: int = Field(
+        default=30, validation_alias="PLIEGOCHECK_NOTIFICATION_RETRY_JITTER_SECONDS", ge=0, le=3600
+    )
+    notification_max_per_destination_per_hour: int = Field(
+        default=20,
+        validation_alias="PLIEGOCHECK_NOTIFICATION_MAX_PER_DESTINATION_PER_HOUR",
+        ge=1,
+        le=10000,
+    )
+    notification_max_per_destination_per_day: int = Field(
+        default=100,
+        validation_alias="PLIEGOCHECK_NOTIFICATION_MAX_PER_DESTINATION_PER_DAY",
+        ge=1,
+        le=100000,
+    )
+    notification_max_global_per_hour: int = Field(
+        default=200,
+        validation_alias="PLIEGOCHECK_NOTIFICATION_MAX_GLOBAL_PER_HOUR",
+        ge=1,
+        le=100000,
+    )
+    notification_max_digest_alerts: int = Field(
+        default=50, validation_alias="PLIEGOCHECK_NOTIFICATION_MAX_DIGEST_ALERTS", ge=1, le=500
+    )
+    email_enabled: bool = Field(default=False, validation_alias="PLIEGOCHECK_EMAIL_ENABLED")
+    smtp_host: str | None = Field(default=None, validation_alias="PLIEGOCHECK_SMTP_HOST")
+    smtp_port: int = Field(default=587, validation_alias="PLIEGOCHECK_SMTP_PORT", ge=1, le=65535)
+    smtp_username: str | None = Field(default=None, validation_alias="PLIEGOCHECK_SMTP_USERNAME")
+    smtp_password: str | None = Field(default=None, validation_alias="PLIEGOCHECK_SMTP_PASSWORD")
+    smtp_use_tls: bool = Field(default=True, validation_alias="PLIEGOCHECK_SMTP_USE_TLS")
+    smtp_use_starttls: bool = Field(default=True, validation_alias="PLIEGOCHECK_SMTP_USE_STARTTLS")
+    smtp_from_address: str | None = Field(
+        default=None, validation_alias="PLIEGOCHECK_SMTP_FROM_ADDRESS"
+    )
+    smtp_from_name: str = Field(
+        default="PliegoCheck", validation_alias="PLIEGOCHECK_SMTP_FROM_NAME"
+    )
+    smtp_timeout_seconds: int = Field(
+        default=30, validation_alias="PLIEGOCHECK_SMTP_TIMEOUT_SECONDS", ge=1, le=120
+    )
+    smtp_allowed_recipient_domains: list[str] = Field(
+        default_factory=list, validation_alias="PLIEGOCHECK_SMTP_ALLOWED_RECIPIENT_DOMAINS"
+    )
+    smtp_allow_local_insecure: bool = Field(
+        default=False, validation_alias="PLIEGOCHECK_SMTP_ALLOW_LOCAL_INSECURE"
+    )
+    webhook_enabled: bool = Field(default=False, validation_alias="PLIEGOCHECK_WEBHOOK_ENABLED")
+    webhook_allowed_hosts: list[str] = Field(
+        default_factory=list, validation_alias="PLIEGOCHECK_WEBHOOK_ALLOWED_HOSTS"
+    )
+    webhook_timeout_seconds: int = Field(
+        default=15, validation_alias="PLIEGOCHECK_WEBHOOK_TIMEOUT_SECONDS", ge=1, le=120
+    )
+    webhook_max_redirects: int = Field(
+        default=0, validation_alias="PLIEGOCHECK_WEBHOOK_MAX_REDIRECTS", ge=0, le=3
+    )
+    webhook_max_payload_bytes: int = Field(
+        default=65536, validation_alias="PLIEGOCHECK_WEBHOOK_MAX_PAYLOAD_BYTES", ge=1024, le=1048576
+    )
+    webhook_allow_local_insecure: bool = Field(
+        default=False, validation_alias="PLIEGOCHECK_WEBHOOK_ALLOW_LOCAL_INSECURE"
+    )
+    pilot_allowed_recipients: list[str] = Field(
+        default_factory=list, validation_alias="PLIEGOCHECK_PILOT_ALLOWED_RECIPIENTS"
+    )
+    pilot_allowed_recipient_domains: list[str] = Field(
+        default_factory=list, validation_alias="PLIEGOCHECK_PILOT_ALLOWED_RECIPIENT_DOMAINS"
+    )
+    pilot_max_deliveries_per_day: int = Field(
+        default=50, validation_alias="PLIEGOCHECK_PILOT_MAX_DELIVERIES_PER_DAY", ge=1, le=10000
+    )
+    notification_attempt_retention_days: int = Field(
+        default=90,
+        validation_alias="PLIEGOCHECK_NOTIFICATION_ATTEMPT_RETENTION_DAYS",
+        ge=1,
+        le=3650,
+    )
+    notification_payload_retention_days: int = Field(
+        default=30,
+        validation_alias="PLIEGOCHECK_NOTIFICATION_PAYLOAD_RETENTION_DAYS",
+        ge=1,
+        le=3650,
+    )
 
     @field_validator(
-        "secop_document_allowed_hosts", "secop_document_allowed_content_types", mode="before"
+        "secop_document_allowed_hosts",
+        "secop_document_allowed_content_types",
+        "smtp_allowed_recipient_domains",
+        "webhook_allowed_hosts",
+        "pilot_allowed_recipients",
+        "pilot_allowed_recipient_domains",
+        mode="before",
     )
     @classmethod
     def parse_csv_list(cls, value: Any) -> list[str]:

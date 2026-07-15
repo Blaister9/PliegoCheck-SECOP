@@ -40,6 +40,12 @@ from pliegocheck_worker.normalization.providers import (
     NormalizationBatchRequest,
     OpenAIResponsesNormalizationProvider,
 )
+from pliegocheck_worker.notification_delivery.orchestrator import (
+    notification_digest_run_once,
+    notification_drain,
+    notification_retention_run_once,
+    notification_run_once,
+)
 from pliegocheck_worker.opportunities.orchestrator import (
     opportunity_drain,
     opportunity_run_once,
@@ -358,6 +364,27 @@ def main(argv: list[str] | None = None) -> int:
     )
     monitor_drain_parser.add_argument("--max-jobs", type=int, default=100)
     monitor_drain_parser.add_argument("--worker-id", default=None)
+    notification_once = subparsers.add_parser(
+        "notification-delivery-run-once", help="Procesa una entrega externa"
+    )
+    notification_once.add_argument("--worker-id", default=None)
+    notification_drain_parser = subparsers.add_parser(
+        "notification-delivery-drain", help="Drena entregas externas"
+    )
+    notification_drain_parser.add_argument("--max-jobs", type=int, default=100)
+    notification_drain_parser.add_argument("--worker-id", default=None)
+    notification_digest = subparsers.add_parser(
+        "notification-digest-run-once", help="Crea digests vencidos"
+    )
+    notification_digest.add_argument("--period", choices=["DAILY", "WEEKLY"], default="DAILY")
+    notification_digest_drain = subparsers.add_parser(
+        "notification-digest-drain", help="Crea digests diarios y semanales"
+    )
+    notification_digest_drain.add_argument("--max-jobs", type=int, default=2)
+    notification_retention = subparsers.add_parser(
+        "notification-retention-run-once", help="Ejecuta retención"
+    )
+    notification_retention.add_argument("--dry-run", action="store_true")
     for name, help_text in (
         ("secop-sync-drain", "Drena sincronizaciones SECOP"),
         ("secop-download-drain", "Drena descargas SECOP"),
@@ -450,6 +477,22 @@ def main(argv: list[str] | None = None) -> int:
         return 0
     if args.command == "opportunity-monitor-drain":
         print(json.dumps(monitor_drain(args.max_jobs, args.worker_id), sort_keys=True))
+        return 0
+    if args.command == "notification-delivery-run-once":
+        print(json.dumps(notification_run_once(args.worker_id), sort_keys=True))
+        return 0
+    if args.command == "notification-delivery-drain":
+        print(json.dumps(notification_drain(args.max_jobs, args.worker_id), sort_keys=True))
+        return 0
+    if args.command == "notification-digest-run-once":
+        print(json.dumps(notification_digest_run_once(args.period), sort_keys=True))
+        return 0
+    if args.command == "notification-digest-drain":
+        results = [notification_digest_run_once("DAILY"), notification_digest_run_once("WEEKLY")]
+        print(json.dumps({"status": "ok", "results": results[: args.max_jobs]}, sort_keys=True))
+        return 0
+    if args.command == "notification-retention-run-once":
+        print(json.dumps(notification_retention_run_once(args.dry_run), sort_keys=True))
         return 0
     if args.command == "normalization-smoke":
         return run_normalization_smoke()

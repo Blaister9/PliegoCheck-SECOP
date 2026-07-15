@@ -1,0 +1,5 @@
+{title}
+{summary}
+{disclaimer}
+Entrega: {delivery_id}
+Abra el historial: {opportunity_link}

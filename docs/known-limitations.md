@@ -1,5 +1,7 @@
 # Limitaciones conocidas
 
+SMTP y webhook son copias operativas opt-in sin garantía de lectura, procesamiento o alta disponibilidad. No existen SMS, WhatsApp, push ni integraciones específicas de Teams o Slack.
+
 Los monitores dependen de disponibilidad y calidad de SECOP. No hay frecuencias inferiores a una hora, entrega por correo/SMS/WhatsApp/push ni webhooks externos. Las posibles adendas requieren revisión humana.
 
 ## Fuentes documentales SECOP

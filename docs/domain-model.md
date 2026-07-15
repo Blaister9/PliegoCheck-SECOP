@@ -1,5 +1,7 @@
 # Modelo de dominio — PliegoCheck-SECOP
 
+Microfase 20 incorpora `NotificationDestination`, `NotificationSubscription`, `NotificationOutboxMessage`, `NotificationDeliveryAttempt`, `NotificationDigestRun`, `NotificationSuppression` y `NotificationOperationEvent`. La alerta interna origina copias operativas idempotentes; ningún estado externo reemplaza la fuente interna.
+
 Microfase 19 incorpora `OpportunityMonitor`, `OpportunityMonitorRun`, `OpportunityMonitorCandidateState`, `OpportunityAlert` y `OpportunityAlertEvent`. La relación preserva monitor → run → discovery/assessment → estado compacto → alerta/eventos, con snapshot y política inmutables.
 
 Entidades conceptuales iniciales de la plataforma. Este documento define **conceptos**, no tablas: el esquema físico (PostgreSQL + Alembic) se derivará de aquí en las microfases de implementación.

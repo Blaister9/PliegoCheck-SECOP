@@ -102,6 +102,8 @@ export type {
   OpportunityMonitoringReadiness,
 } from "./generated/opportunity-monitoring";
 export * from "./generated/opportunity-monitoring.enums";
+export * from "./generated/notification-delivery";
+export * from "./generated/notification-delivery.enums";
 
 export type {
   DocumentExtraction,

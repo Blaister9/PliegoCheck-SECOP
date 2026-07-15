@@ -4397,3 +4397,239 @@ class OpportunityAlertEvent(Base):
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), nullable=False
     )
+
+
+class NotificationDestination(Base):
+    __tablename__ = "notification_destinations"
+    __table_args__ = (
+        CheckConstraint(
+            "channel IN ('INTERNAL_ONLY','EMAIL_SMTP','SIGNED_WEBHOOK')",
+            name="ck_notification_destination_channel",
+        ),
+        CheckConstraint(
+            "status IN ('ACTIVE','PAUSED','DISABLED','ERROR','PENDING_VERIFICATION')",
+            name="ck_notification_destination_status",
+        ),
+        Index("ix_notification_destination_owner", "owner_actor_id", "created_at"),
+    )
+    id: Mapped[UUID] = mapped_column(Uuid(as_uuid=True), primary_key=True, default=uuid4)
+    owner_actor_id: Mapped[UUID | None] = mapped_column(
+        Uuid(as_uuid=True), ForeignKey("auth_users.id", ondelete="CASCADE")
+    )
+    channel: Mapped[str] = mapped_column(String(32), nullable=False)
+    name: Mapped[str] = mapped_column(String(200), nullable=False)
+    status: Mapped[str] = mapped_column(String(32), nullable=False, default="ACTIVE")
+    email_address: Mapped[str | None] = mapped_column(String(320))
+    webhook_url: Mapped[str | None] = mapped_column(String(2083))
+    webhook_host: Mapped[str | None] = mapped_column(String(255))
+    secret_reference: Mapped[str | None] = mapped_column(String(128))
+    configuration: Mapped[dict[str, Any]] = mapped_column(JSON, nullable=False, default=dict)
+    verified_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    last_tested_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    last_test_status: Mapped[str | None] = mapped_column(String(32))
+    created_by: Mapped[UUID | None] = mapped_column(
+        Uuid(as_uuid=True), ForeignKey("auth_users.id", ondelete="SET NULL")
+    )
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), nullable=False
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), onupdate=func.now(), nullable=False
+    )
+
+
+class NotificationSubscription(Base):
+    __tablename__ = "notification_subscriptions"
+    __table_args__ = (
+        CheckConstraint(
+            "delivery_mode IN ('IMMEDIATE','DAILY_DIGEST','WEEKLY_DIGEST','INTERNAL_ONLY')",
+            name="ck_notification_subscription_mode",
+        ),
+        Index("ix_notification_subscription_owner", "owner_actor_id", "enabled"),
+        Index("ix_notification_subscription_monitor", "monitor_id", "enabled"),
+    )
+    id: Mapped[UUID] = mapped_column(Uuid(as_uuid=True), primary_key=True, default=uuid4)
+    owner_actor_id: Mapped[UUID | None] = mapped_column(
+        Uuid(as_uuid=True), ForeignKey("auth_users.id", ondelete="CASCADE")
+    )
+    destination_id: Mapped[UUID] = mapped_column(
+        Uuid(as_uuid=True),
+        ForeignKey("notification_destinations.id", ondelete="CASCADE"),
+        nullable=False,
+    )
+    monitor_id: Mapped[UUID | None] = mapped_column(
+        Uuid(as_uuid=True), ForeignKey("opportunity_monitors.id", ondelete="CASCADE")
+    )
+    enabled: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
+    delivery_mode: Mapped[str] = mapped_column(String(32), nullable=False)
+    minimum_severity: Mapped[str] = mapped_column(String(16), nullable=False, default="INFO")
+    alert_types: Mapped[list[str]] = mapped_column(JSON, nullable=False, default=list)
+    quiet_hours: Mapped[dict[str, Any] | None] = mapped_column(JSON)
+    timezone: Mapped[str] = mapped_column(String(64), nullable=False)
+    daily_digest_time: Mapped[str] = mapped_column(String(5), nullable=False, default="08:00")
+    weekly_digest_day: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    include_summary: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
+    include_opportunity_link: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
+    created_by: Mapped[UUID | None] = mapped_column(
+        Uuid(as_uuid=True), ForeignKey("auth_users.id", ondelete="SET NULL")
+    )
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), nullable=False
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), onupdate=func.now(), nullable=False
+    )
+
+
+class NotificationOutboxMessage(Base):
+    __tablename__ = "notification_outbox_messages"
+    __table_args__ = (
+        UniqueConstraint("idempotency_key", name="uq_notification_outbox_idempotency"),
+        CheckConstraint(
+            "status IN ('PENDING','PROCESSING','DELIVERED','FAILED_RETRYABLE',"
+            "'FAILED_PERMANENT','CANCELLED','SUPPRESSED','DRY_RUN')",
+            name="ck_notification_outbox_status",
+        ),
+        Index("ix_notification_outbox_claim", "status", "available_at"),
+        Index("ix_notification_outbox_destination", "destination_id", "created_at"),
+        Index("ix_notification_outbox_alert", "alert_id", "created_at"),
+        Index("ix_notification_outbox_delivered", "delivered_at"),
+    )
+    id: Mapped[UUID] = mapped_column(Uuid(as_uuid=True), primary_key=True, default=uuid4)
+    alert_id: Mapped[UUID | None] = mapped_column(
+        Uuid(as_uuid=True), ForeignKey("opportunity_alerts.id", ondelete="SET NULL")
+    )
+    subscription_id: Mapped[UUID | None] = mapped_column(
+        Uuid(as_uuid=True), ForeignKey("notification_subscriptions.id", ondelete="SET NULL")
+    )
+    destination_id: Mapped[UUID] = mapped_column(
+        Uuid(as_uuid=True),
+        ForeignKey("notification_destinations.id", ondelete="CASCADE"),
+        nullable=False,
+    )
+    channel: Mapped[str] = mapped_column(String(32), nullable=False)
+    delivery_mode: Mapped[str] = mapped_column(String(32), nullable=False)
+    status: Mapped[str] = mapped_column(String(32), nullable=False, default="PENDING")
+    event_type: Mapped[str] = mapped_column(String(64), nullable=False, default="OPPORTUNITY_ALERT")
+    scheduled_for: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    available_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    subject: Mapped[str] = mapped_column(String(300), nullable=False)
+    template_version: Mapped[str] = mapped_column(String(32), nullable=False)
+    template_hash: Mapped[str] = mapped_column(String(64), nullable=False)
+    payload: Mapped[dict[str, Any]] = mapped_column(JSON, nullable=False, default=dict)
+    payload_hash: Mapped[str] = mapped_column(String(64), nullable=False)
+    idempotency_key: Mapped[str] = mapped_column(String(64), nullable=False)
+    attempt_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    max_attempts: Mapped[int] = mapped_column(Integer, nullable=False, default=5)
+    last_attempt_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    delivered_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    cancelled_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    failure_class: Mapped[str | None] = mapped_column(String(32))
+    last_error_code: Mapped[str | None] = mapped_column(String(64))
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), nullable=False
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), onupdate=func.now(), nullable=False
+    )
+
+
+class NotificationDeliveryAttempt(Base):
+    __tablename__ = "notification_delivery_attempts"
+    __table_args__ = (
+        UniqueConstraint(
+            "outbox_message_id", "attempt_number", name="uq_notification_attempt_number"
+        ),
+        Index("ix_notification_attempt_created", "created_at"),
+    )
+    id: Mapped[UUID] = mapped_column(Uuid(as_uuid=True), primary_key=True, default=uuid4)
+    outbox_message_id: Mapped[UUID] = mapped_column(
+        Uuid(as_uuid=True),
+        ForeignKey("notification_outbox_messages.id", ondelete="CASCADE"),
+        nullable=False,
+    )
+    attempt_number: Mapped[int] = mapped_column(Integer, nullable=False)
+    status: Mapped[str] = mapped_column(String(32), nullable=False)
+    started_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    finished_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    http_status: Mapped[int | None] = mapped_column(Integer)
+    smtp_response_code: Mapped[int | None] = mapped_column(Integer)
+    provider_message_id: Mapped[str | None] = mapped_column(String(255))
+    latency_ms: Mapped[int | None] = mapped_column(Integer)
+    error_code: Mapped[str | None] = mapped_column(String(64))
+    error_class: Mapped[str | None] = mapped_column(String(32))
+    error_message_sanitized: Mapped[str | None] = mapped_column(String(500))
+    response_metadata: Mapped[dict[str, Any]] = mapped_column(JSON, nullable=False, default=dict)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), nullable=False
+    )
+
+
+class NotificationDigestRun(Base):
+    __tablename__ = "notification_digest_runs"
+    __table_args__ = (
+        UniqueConstraint(
+            "destination_id",
+            "period",
+            "period_start",
+            "period_end",
+            name="uq_notification_digest_period",
+        ),
+    )
+    id: Mapped[UUID] = mapped_column(Uuid(as_uuid=True), primary_key=True, default=uuid4)
+    owner_actor_id: Mapped[UUID | None] = mapped_column(
+        Uuid(as_uuid=True), ForeignKey("auth_users.id", ondelete="SET NULL")
+    )
+    destination_id: Mapped[UUID] = mapped_column(
+        Uuid(as_uuid=True),
+        ForeignKey("notification_destinations.id", ondelete="CASCADE"),
+        nullable=False,
+    )
+    period: Mapped[str] = mapped_column(String(16), nullable=False)
+    period_start: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    period_end: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    status: Mapped[str] = mapped_column(String(32), nullable=False)
+    alert_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    outbox_message_id: Mapped[UUID | None] = mapped_column(Uuid(as_uuid=True))
+    input_digest: Mapped[str] = mapped_column(String(64), nullable=False)
+    started_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    finished_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), nullable=False
+    )
+
+
+class NotificationSuppression(Base):
+    __tablename__ = "notification_suppressions"
+    id: Mapped[UUID] = mapped_column(Uuid(as_uuid=True), primary_key=True, default=uuid4)
+    scope_type: Mapped[str] = mapped_column(String(32), nullable=False)
+    scope_value: Mapped[str] = mapped_column(String(500), nullable=False)
+    reason: Mapped[str] = mapped_column(String(500), nullable=False)
+    starts_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    ends_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    created_by: Mapped[UUID | None] = mapped_column(
+        Uuid(as_uuid=True), ForeignKey("auth_users.id", ondelete="SET NULL")
+    )
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), nullable=False
+    )
+
+
+class NotificationOperationEvent(Base):
+    __tablename__ = "notification_operation_events"
+    __table_args__ = (
+        Index("ix_notification_operation_entity", "entity_type", "entity_id", "created_at"),
+    )
+    id: Mapped[UUID] = mapped_column(Uuid(as_uuid=True), primary_key=True, default=uuid4)
+    entity_type: Mapped[str] = mapped_column(String(64), nullable=False)
+    entity_id: Mapped[UUID] = mapped_column(Uuid(as_uuid=True), nullable=False)
+    event_type: Mapped[str] = mapped_column(String(64), nullable=False)
+    event_metadata: Mapped[dict[str, Any]] = mapped_column(
+        "metadata", JSON, nullable=False, default=dict
+    )
+    created_by: Mapped[UUID | None] = mapped_column(
+        Uuid(as_uuid=True), ForeignKey("auth_users.id", ondelete="SET NULL")
+    )
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), nullable=False
+    )

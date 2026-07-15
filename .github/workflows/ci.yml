@@ -79,6 +79,10 @@ jobs:
       PLIEGOCHECK_SECOP_INCREMENTAL_SYNC_ENABLED: "true"
       PLIEGOCHECK_OPPORTUNITIES_ENABLED: "true"
       PLIEGOCHECK_OPPORTUNITIES_MAX_CANDIDATES: "100"
+      PLIEGOCHECK_EXTERNAL_DELIVERY_ENABLED: "false"
+      PLIEGOCHECK_NOTIFICATION_DRY_RUN: "true"
+      PLIEGOCHECK_EMAIL_ENABLED: "false"
+      PLIEGOCHECK_WEBHOOK_ENABLED: "false"
       NEXT_PUBLIC_API_BASE_URL: http://localhost:8000
     steps:
       - name: Checkout
@@ -140,6 +144,12 @@ jobs:
 
       - name: Evals offline de monitores y alertas
         run: pnpm monitors:eval
+
+      - name: Pruebas de entrega de notificaciones
+        run: pnpm notifications:test
+
+      - name: Evals offline y scans de notificaciones
+        run: pnpm notifications:eval
 
       - name: Scan semantico de oportunidades
         run: pnpm opportunities:semantic-scan

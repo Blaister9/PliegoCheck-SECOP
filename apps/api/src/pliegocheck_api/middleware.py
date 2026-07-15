@@ -25,6 +25,27 @@ logger = logging.getLogger(__name__)
 
 
 def required_permission(method: str, path: str) -> AuthPermission | None:
+    if (
+        path.startswith("/notification-delivery/readiness")
+        or path.startswith("/notification-delivery/statistics")
+        or path.startswith("/notification-retention")
+        or path.startswith("/notification-digests/run")
+    ):
+        return AuthPermission.NOTIFICATION_ADMIN
+    if path.startswith("/notification-deliveries/") and path.endswith(("/retry", "/cancel")):
+        return AuthPermission.NOTIFICATION_OPERATE
+    if path.startswith("/notification-destinations/") and path.endswith("/test"):
+        return AuthPermission.NOTIFICATION_TEST
+    if path.startswith("/notification-destinations") or path.startswith(
+        "/notification-subscriptions"
+    ):
+        return (
+            AuthPermission.NOTIFICATION_MANAGE_OWN
+            if method in {"POST", "PATCH"}
+            else AuthPermission.NOTIFICATION_READ
+        )
+    if path.startswith("/notification-"):
+        return AuthPermission.NOTIFICATION_READ
     if path.startswith("/opportunity-alerts"):
         return AuthPermission.ALERT_MANAGE if method == "POST" else AuthPermission.ALERT_READ
     if path.startswith("/opportunity-monitors"):
