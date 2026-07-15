@@ -1,5 +1,7 @@
 # Backup y restore local
 
+Para `RESTRICTED_SINGLE_HOST` use [restricted-backup-restore.md](restricted-backup-restore.md): backup externo con lock/manifest/hashes y restore verification aislado. El restore destructivo local descrito abajo no es el procedimiento del paquete restringido.
+
 ## Backup
 
 ```powershell

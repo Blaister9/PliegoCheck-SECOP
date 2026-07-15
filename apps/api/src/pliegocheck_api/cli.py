@@ -8,17 +8,17 @@ import json
 import sys
 from uuid import UUID
 
-from sqlalchemy import select
+from sqlalchemy import func, select
 
 from pliegocheck_api.auth import create_user, ensure_roles, user_summary
 from pliegocheck_api.db import get_sessionmaker
-from pliegocheck_api.models import AuthUser
+from pliegocheck_api.models import AuthRole, AuthUser, AuthUserRole
 from pliegocheck_schemas import AuthRoleName, AuthUserStatus
 
 
 def _read_password(args: argparse.Namespace) -> str:
     if getattr(args, "password_stdin", False):
-        return sys.stdin.readline().rstrip("\n")
+        return sys.stdin.readline().rstrip("\r\n")
     password = getpass.getpass("Password: ")
     confirm = getpass.getpass("Confirm password: ")
     if password != confirm:
@@ -43,6 +43,33 @@ def create_admin(args: argparse.Namespace) -> int:
         )
         session.commit()
         print(json.dumps({"id": str(user.id), "email": user.email, "roles": ["ADMIN"]}))
+    return 0
+
+
+def bootstrap_admin(args: argparse.Namespace) -> int:
+    """Crea el primer ADMIN una sola vez sin reemplazar credenciales existentes."""
+    session_factory = get_sessionmaker()
+    with session_factory() as session:
+        admin_count = session.scalar(
+            select(func.count())
+            .select_from(AuthUser)
+            .join(AuthUserRole)
+            .join(AuthRole)
+            .where(AuthRole.name == AuthRoleName.ADMIN.value)
+        )
+        if admin_count:
+            print(json.dumps({"status": "already_exists", "admin_count": int(admin_count)}))
+            return 0
+        ensure_roles(session)
+        user = create_user(
+            session,
+            email=args.email,
+            display_name=args.display_name,
+            password=_read_password(args),
+            roles=[AuthRoleName.ADMIN],
+        )
+        session.commit()
+        print(json.dumps({"status": "created", "id": str(user.id), "roles": ["ADMIN"]}))
     return 0
 
 
@@ -93,6 +120,12 @@ def main(argv: list[str] | None = None) -> int:
     create_admin_parser.add_argument("--display-name", required=True)
     create_admin_parser.add_argument("--password-stdin", action="store_true")
     create_admin_parser.set_defaults(func=create_admin)
+
+    bootstrap_parser = user_commands.add_parser("bootstrap-admin")
+    bootstrap_parser.add_argument("--email", required=True)
+    bootstrap_parser.add_argument("--display-name", required=True)
+    bootstrap_parser.add_argument("--password-stdin", action="store_true", required=True)
+    bootstrap_parser.set_defaults(func=bootstrap_admin)
 
     create_parser = user_commands.add_parser("create")
     create_parser.add_argument("--email", required=True)

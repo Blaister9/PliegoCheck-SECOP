@@ -1,5 +1,7 @@
 # PliegoCheck-SECOP
 
+Microfase 22 prepara el paquete `RESTRICTED_SINGLE_HOST`: Compose endurecido, Nginx HTTPS, imágenes multi-stage, secretos por archivo, preflight, operación, backup/restore aislado, retención, rollback, checklists y gate `PACKAGE_READY_WITH_CONDITIONS`. El paquete fue diseñado para validación local equivalente; no acredita servidor, red, dominio, certificado, SSO, MFA ni usuarios institucionales reales. Consulte [arquitectura](docs/restricted-deployment-architecture.md), [runbook](docs/restricted-deployment-runbook.md) y [ADR-022](docs/ADR-022-restricted-institutional-deployment.md).
+
 Microfase 21 incorpora operación de piloto técnico supervisado: manifiesto limitado, comandos `pilot:supervised:*`, evidencia sanitizada, recuperación, backup/restore aislado, retención dry-run, scorecard y gate conservador. Sin evidencia humana permanece `USER_VALIDATION_PENDING` y no se autoriza producción.
 
 Microfase 20 agrega entrega externa controlada de alertas mediante outbox PostgreSQL, correo SMTP y webhook HTTPS firmado, deshabilitados por defecto y con dry-run activo. Consulte [entrega de notificaciones](docs/notification-delivery.md), [runbook de piloto](docs/notification-pilot-runbook.md) y [ADR-020](docs/ADR-020-external-alert-delivery.md).
@@ -206,6 +208,9 @@ uv sync --all-packages  # dependencias Python (workspace uv)
 | `pnpm pilot:readiness` / `pnpm pilot:reset --confirm` | Diagnostico de piloto / limpieza segura de datos de piloto |
 | `pnpm pilot:supervised:deploy|validate|status|stop|reset|report` | Opera y reporta el piloto supervisado limitado |
 | `pnpm pilot:supervised:test|eval|data-scan` | Regresiones, gate semantico y escaneo offline |
+| `pnpm restricted:preflight|deploy|validate|status|stop` | Opera el paquete single-host restringido con configuración externa |
+| `pnpm restricted:backup|backup:verify|restore:verify` | Backup con hashes y restore verification aislado |
+| `pnpm restricted:test|eval|data-scan` | Regresiones, gate conservador y escaneo del paquete restricted |
 | `pnpm deployment:eval` / `pnpm deployment:backup-check` | Smoke de despliegue controlado / verificacion de backup |
 | `pnpm controlled:deploy` / `pnpm controlled:validate` | Levanta y valida entorno controlado para usuarios piloto |
 | `pnpm controlled:stop` / `pnpm controlled:reset` | Detiene sin borrar / limpia con confirmacion el entorno controlado |

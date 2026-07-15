@@ -1,5 +1,7 @@
 # Seguridad y gobernanza — PliegoCheck-SECOP
 
+Microfase 22 aplica `RESTRICTED_SINGLE_HOST`: solo Nginx publica puertos, HTTPS/cookie Secure/hosts/origins/proxies son obligatorios, los secretos llegan por archivos externos y backup/restore se verifican con hashes en un entorno aislado. Scheduler, SECOP live y entrega externa conservan opt-in. La autenticación local detrás de red restringida es temporal; SSO, MFA, firewall, certificados e infraestructura institucional real siguen `NOT_VERIFIED`.
+
 Microfase 21 mantiene SECOP live bajo opt-in y límites, exige snapshot publicado y separa datos públicos del perfil sintético o autorizado. Reportes, backups y datos live permanecen ignorados; entrega externa queda local o dry-run. Sin evidencia humana no se afirma validación de usuarios ni producción.
 
 Microfase 20 mantiene entrega externa apagada por defecto. SMTP valida headers/dominios y exige TLS fuera de Mailpit local. Webhooks requieren HTTPS, allowlist, DNS/IP pública, cero redirects y HMAC; PostgreSQL solo conserva `secret_reference`. Payloads minimizan datos y la retención limpia contenido antes que metadatos. Un fallo externo nunca altera `OpportunityAlert`.

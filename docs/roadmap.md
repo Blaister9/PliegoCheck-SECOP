@@ -1,6 +1,6 @@
 # Roadmap incremental - PliegoCheck-SECOP
 
-Estado vigente: Microfases 16, 17, 18, 19, 20 y 21 completadas.
+Estado vigente: Microfases 16, 17, 18, 19, 20, 21 y 22 completadas.
 
 ```text
 Microfase 16 — completada
@@ -9,9 +9,10 @@ Microfase 18 — completada
 Microfase 19 — completada
 Microfase 20 — completada
 Microfase 21 — completada
+Microfase 22 — completada
 ```
 
-Siguiente según gate: Microfase 22 — Preparación para despliegue institucional restringido, o remediación de hallazgos del piloto.
+Siguiente según gate: Microfase 23 — Despliegue institucional restringido y validación con usuarios autorizados.
 
 Fases pequenas, cada una con entregable verificable. Cada microfase termina integrada en `main`
 mediante Pull Request, siguiendo [AGENTS.md](../AGENTS.md).
@@ -39,6 +40,7 @@ Microfase 18: completada - bandeja priorizada de oportunidades compatibles
 Microfase 19: completada - monitoreo periódico y alertas de nuevas oportunidades
 Microfase 20: completada - entrega externa configurable de alertas y operación piloto sintético
 Microfase 21: completada - piloto técnico supervisado y cierre de brechas operativas verificables
+Microfase 22: completada - preparación para despliegue institucional restringido
 ```
 
 ## Microfase 0 - Fundacion documental - completada
@@ -218,7 +220,14 @@ Inventario incremental SECOP I/II, snapshots, eventos, cola PostgreSQL, descarga
 
 Discovery SECOP, screening determinístico contra snapshot publicado, política versionada, doce componentes explicables, outcomes conservadores, histórico, revisiones, worker PostgreSQL, API, permisos, auditoría y UI `/opportunities`. Compatibilidad, urgencia y completitud permanecen separadas. No incorpora ML, monitoreo periódico, alertas ni presentación de ofertas.
 
-Siguiente: Microfase 21 — Piloto supervisado con usuarios reales y cierre de brechas operativas.
+## Microfase 22 - Preparación para despliegue institucional restringido - completada
+
+- **Objetivo:** entregar un paquete reproducible `RESTRICTED_SINGLE_HOST` con HTTPS, configuración externa, operación reversible y gate conservador.
+- **Entregable:** Compose, imágenes multi-stage, Nginx, secretos por archivo, preflight, deploy/validate/status, backup/restore verification, retención, rollback, stop, runbooks, checklists, evals y simulación equivalente local.
+- **Resultado:** `PACKAGE_READY_WITH_CONDITIONS`; no existe evidencia de servidor, dominio, certificado, SSO/MFA ni usuarios institucionales reales.
+- **Fuera de alcance:** ejecutar la Microfase 23, producción pública, HA, Kubernetes o identidad corporativa.
+
+Siguiente: Microfase 23 — Despliegue institucional restringido y validación con usuarios autorizados.
 
 ## Despues del MVP
 

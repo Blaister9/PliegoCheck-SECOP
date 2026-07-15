@@ -1,5 +1,7 @@
 # Limitaciones conocidas
 
+El paquete `RESTRICTED_SINGLE_HOST` no es alta disponibilidad ni prueba de despliegue institucional. Usa autenticación local temporal, almacenamiento local persistente y observabilidad básica; carece de SSO, MFA, SIEM, WAF administrado, PostgreSQL administrado y operación 24/7. Host, red/VPN/firewall, dominio, certificados y usuarios institucionales requieren evidencia y aprobación externa antes de elevar el gate.
+
 El piloto supervisado no acredita usabilidad con personas mientras `USER_VALIDATION_PENDING`, no prueba alta disponibilidad ni producción, y no ejecuta entrega externa real sin credenciales, consentimiento y allowlist explícitos. Sus métricas no representan probabilidad de adjudicación.
 
 SMTP y webhook son copias operativas opt-in sin garantía de lectura, procesamiento o alta disponibilidad. No existen SMS, WhatsApp, push ni integraciones específicas de Teams o Slack.
@@ -35,6 +37,6 @@ Las limitaciones específicas de fuente, filtros, payload, documentos y rate lim
 - La necesidad de aliado es preliminar hasta revisar el pliego y su régimen de participación plural.
 - El score ordena compatibilidad, no adjudicación ni éxito comercial.
 - El análisis profundo se bloquea cuando no hay proceso, documentos o normalización; no inventa evaluaciones.
-- No existen monitoreo periódico, alertas ni presentación automática de ofertas.
+- Existen monitoreo periódico y alertas opt-in; no existe presentación automática de ofertas.
 - Las reglas particulares de cada pliego no deben hardcodearse como reglas
   universales.

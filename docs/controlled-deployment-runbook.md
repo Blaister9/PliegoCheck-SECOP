@@ -1,5 +1,7 @@
 # Runbook de despliegue controlado
 
+Para el paquete institucional restringido de Microfase 22 no use este Compose de piloto: siga [restricted-deployment-runbook.md](restricted-deployment-runbook.md). Ese modo exige HTTPS, secretos externos, puertos internos no publicados y gate propio; tampoco equivale a despliegue institucional real.
+
 Microfase 21 reutiliza este entorno mediante `pnpm pilot:supervised:deploy`. `validate` es de solo lectura, `stop` conserva volúmenes, `reset` exige `-- --Confirm` y `report` escribe bajo `var/`. SECOP live requiere opt-in y límites del manifiesto.
 
 El worker de discovery se ejecuta con `pnpm pilot:supervised:opportunity-worker-once`. El controlador aplica el opt-in SECOP exclusivamente a ese proceso y fuerza descarga documental, entrega externa, SMTP y webhook apagados, con notificaciones en dry-run. No se debe sustituir por una suposición de herencia desde la API.
