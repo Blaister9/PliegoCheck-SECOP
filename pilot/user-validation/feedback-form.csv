@@ -1,5 +1,7 @@
-escenario,rol,tarea,resultado_esperado,resultado_observado,facilidad,claridad,confianza,error_observado,severidad,evidencia,sugerencia,decision,fase_destino,estado
-sesion-piloto,ADMIN,login,acceso exitoso,PENDIENTE,,,,,OBSERVATION,,,pendiente,Microfase 13,OPEN
-sesion-piloto,ANALYST,descargar ZIP,paquete sintetico descargado,PENDIENTE,,,,,OBSERVATION,,,pendiente,Microfase 13,OPEN
-sesion-piloto,REVIEWER,override sintetico,override auditado,PENDIENTE,,,,,OBSERVATION,,,pendiente,Microfase 13,OPEN
-sesion-piloto,VIEWER,intento no permitido,403 comprensible,PENDIENTE,,,,,OBSERVATION,,,pendiente,Microfase 13,OPEN
+escenario,rol,tarea,resultado_esperado,resultado_observado,facilidad,claridad,confianza,error_observado,severidad,evidencia,sugerencia,decision,fase_destino,estado,participant,question,response,observation
+microfase-21,NOT_PROVIDED,prioritization_understood,Respuesta directa del participante,USER_VALIDATION_PENDING,,,,,OBSERVATION,,,pendiente,Microfase 22,OPEN_CONDITION,NOT_PROVIDED,prioritization_understood,NOT_PROVIDED,
+microfase-21,NOT_PROVIDED,compatibility_vs_win_probability,Respuesta directa del participante,USER_VALIDATION_PENDING,,,,,OBSERVATION,,,pendiente,Microfase 22,OPEN_CONDITION,NOT_PROVIDED,compatibility_vs_win_probability,NOT_PROVIDED,
+microfase-21,NOT_PROVIDED,missing_information_identified,Respuesta directa del participante,USER_VALIDATION_PENDING,,,,,OBSERVATION,,,pendiente,Microfase 22,OPEN_CONDITION,NOT_PROVIDED,missing_information_identified,NOT_PROVIDED,
+microfase-21,NOT_PROVIDED,next_actions_clear,Respuesta directa del participante,USER_VALIDATION_PENDING,,,,,OBSERVATION,,,pendiente,Microfase 22,OPEN_CONDITION,NOT_PROVIDED,next_actions_clear,NOT_PROVIDED,
+microfase-21,NOT_PROVIDED,alert_useful,Respuesta directa del participante,USER_VALIDATION_PENDING,,,,,OBSERVATION,,,pendiente,Microfase 22,OPEN_CONDITION,NOT_PROVIDED,alert_useful,NOT_PROVIDED,
+microfase-21,NOT_PROVIDED,weekly_use_requirements,Respuesta directa del participante,USER_VALIDATION_PENDING,,,,,OBSERVATION,,,pendiente,Microfase 22,OPEN_CONDITION,NOT_PROVIDED,weekly_use_requirements,NOT_PROVIDED,

@@ -1,5 +1,7 @@
 # Operación de monitores
 
+El piloto supervisado permite como máximo dos monitores, dos páginas y veinte alertas. Debe verificar baseline sin spam, segunda corrida deduplicada, pausa/reanudación y recuperación; un reinicio no debe crear alertas por sí mismo.
+
 La entrega externa de Microfase 20 es opt-in y se opera por separado; no añade SMS, WhatsApp, push, Slack ni Teams específico y no garantiza lectura.
 
 La capacidad está deshabilitada por defecto con `PLIEGOCHECK_MONITORING_ENABLED=false`. Operación acotada:

@@ -1,5 +1,7 @@
 # Runbook de piloto de notificaciones
 
+En el piloto supervisado la entrega queda `LOCAL_OR_DRY_RUN`. Un canal real requiere configuración explícita, consentimiento, allowlist, credenciales, kill switch y desactivar dry-run conscientemente; su ausencia no bloquea la validación técnica.
+
 1. Confirmar consentimiento y allowlist sintética.
 2. Mantener kill switch apagado y dry-run activo.
 3. Levantar PostgreSQL y `docker compose -f compose.notifications.yaml up -d`.

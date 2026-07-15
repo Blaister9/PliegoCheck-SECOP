@@ -1,5 +1,7 @@
 # Limitaciones conocidas
 
+El piloto supervisado no acredita usabilidad con personas mientras `USER_VALIDATION_PENDING`, no prueba alta disponibilidad ni producción, y no ejecuta entrega externa real sin credenciales, consentimiento y allowlist explícitos. Sus métricas no representan probabilidad de adjudicación.
+
 SMTP y webhook son copias operativas opt-in sin garantía de lectura, procesamiento o alta disponibilidad. No existen SMS, WhatsApp, push ni integraciones específicas de Teams o Slack.
 
 Los monitores dependen de disponibilidad y calidad de SECOP. No hay frecuencias inferiores a una hora, entrega por correo/SMS/WhatsApp/push ni webhooks externos. Las posibles adendas requieren revisión humana.

@@ -1,0 +1,38 @@
+{
+  "$schema": "./supervised-pilot.schema.json",
+  "pilot_id": "supervised-pilot-v1",
+  "mode": "SUPERVISED_TECHNICAL_PILOT",
+  "timezone": "America/Bogota",
+  "allowed_sources": ["SECOP_I", "SECOP_II"],
+  "max_search_results": 100,
+  "max_pages": 2,
+  "max_imported_processes": 3,
+  "max_document_downloads": 2,
+  "max_monitors": 2,
+  "max_alerts": 20,
+  "external_delivery_mode": "LOCAL_OR_DRY_RUN",
+  "dry_run": true,
+  "retention": {
+    "alert_days": 365,
+    "notification_payload_days": 30,
+    "notification_attempt_days": 90,
+    "pilot_reports_local_only": true
+  },
+  "start_conditions": [
+    "PUBLISHED_SNAPSHOT_REQUIRED",
+    "AUTHENTICATION_REQUIRED",
+    "SECOP_LIVE_OPT_IN_REQUIRED",
+    "EXTERNAL_DELIVERY_KILL_SWITCH_OFF",
+    "DRY_RUN_REQUIRED"
+  ],
+  "stop_conditions": [
+    "SECRET_EXPOSURE",
+    "UNAUTHORIZED_DATA",
+    "DATA_LOSS",
+    "MASS_DUPLICATION",
+    "UNAUTHORIZED_EXTERNAL_DELIVERY",
+    "PERMISSION_BYPASS",
+    "UNSAFE_DOWNLOAD",
+    "DATABASE_CORRUPTION"
+  ]
+}
