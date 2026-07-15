@@ -1,5 +1,7 @@
 # Alcance del MVP controlado
 
+La extensión de Microfase 22 incluye un paquete técnico para despliegue institucional restringido validable localmente. No amplía el MVP a producción ni acredita infraestructura institucional real; SSO/MFA y validación con usuarios autorizados permanecen fuera de alcance.
+
 Microfase 21 permite un piloto técnico supervisado con procesos públicos SECOP y perfil sintético o autorizado, dentro de límites conservadores. Los payloads/documentos live no se versionan y la validación humana sigue siendo evidencia separada. Esto no amplía el alcance a producción.
 
 - Entrega externa piloto opt-in por SMTP o webhook HMAC, con dry-run, allowlists y datos sintéticos; no producción ni envío masivo.

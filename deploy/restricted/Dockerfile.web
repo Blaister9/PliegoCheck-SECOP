@@ -1,0 +1,24 @@
+FROM node:22.17.0-bookworm-slim AS builder
+ENV PNPM_HOME=/pnpm PATH=/pnpm:$PATH NEXT_TELEMETRY_DISABLED=1
+RUN corepack enable && corepack prepare pnpm@11.6.0 --activate
+WORKDIR /app
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY apps/web/package.json apps/web/package.json
+COPY packages/schemas/package.json packages/schemas/package.json
+RUN pnpm install --frozen-lockfile
+COPY apps/web apps/web
+COPY packages/schemas packages/schemas
+ARG NEXT_PUBLIC_API_BASE_URL=/api
+RUN pnpm --filter @pliegocheck/web build
+
+FROM node:22.17.0-bookworm-slim AS runtime
+ARG PLIEGOCHECK_VERSION=0.1.0
+ARG PLIEGOCHECK_COMMIT=unknown
+LABEL org.opencontainers.image.version=$PLIEGOCHECK_VERSION \
+      org.opencontainers.image.revision=$PLIEGOCHECK_COMMIT
+ENV NODE_ENV=production NEXT_TELEMETRY_DISABLED=1 HOSTNAME=0.0.0.0 PORT=3000
+WORKDIR /app
+COPY --from=builder --chown=node:node /app/apps/web/.next/standalone ./
+COPY --from=builder --chown=node:node /app/apps/web/.next/static ./apps/web/.next/static
+USER node
+CMD ["node", "apps/web/server.js"]

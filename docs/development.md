@@ -1,5 +1,7 @@
 # Guia de desarrollo - PliegoCheck-SECOP
 
+Microfase 22 agrega `pnpm restricted:test|eval|data-scan` para CI offline y los comandos operativos `restricted:preflight|deploy|validate|status|backup|backup:verify|restore:verify|retention:dry-run|retention:run|rollback|stop`. Los comandos operativos requieren `PLIEGOCHECK_RESTRICTED_ENV_FILE`; nunca use un env, secreto o certificado versionado. Compose está en `deploy/restricted/compose.restricted.yaml` y el scheduler permanece opt-in.
+
 Microfase 21 usa `pnpm pilot:supervised:deploy|validate|status|stop|reset|report`. Reset requiere `-- --Confirm`; report genera artefactos locales bajo `var/pilot-reports/`. Las regresiones offline son `pilot:supervised:test`, `pilot:supervised:eval` y `pilot:supervised:data-scan`; CI no consulta servicios externos.
 
 Para Microfase 20 use `pnpm notifications:test` y `pnpm notifications:eval`. Los comandos `notifications:*` operan outbox, digests y retención. Ningún envío real ocurre con los defaults: kill switch apagado y dry-run activo.
@@ -158,6 +160,9 @@ pnpm report:eval
 pnpm auth:test
 pnpm ops:test
 pnpm pilot:eval
+pnpm restricted:test
+pnpm restricted:eval
+pnpm restricted:data-scan
 pnpm deployment:eval
 pnpm deployment:backup-check
 pnpm controlled:eval

@@ -1,5 +1,9 @@
 # Indice de entrega del MVP controlado
 
+Extensión Microfase 22: [`deploy/restricted`](../deploy/restricted/README.md), [ADR-022](ADR-022-restricted-institutional-deployment.md), [arquitectura](restricted-deployment-architecture.md), [runbook](restricted-deployment-runbook.md), [security review](restricted-deployment-security-review.md), [data policy](restricted-data-policy.md) y [gate](restricted-deployment-go-no-go.md).
+
+Evidencia técnica: [simulación local restricted](restricted-local-simulation.md).
+
 Extensión Microfase 21: `config/pilot/supervised-pilot-v1.json`, `pilot/supervised-delivery/`, `docs/pilot-readiness-assessment.md`, `docs/supervised-pilot-scorecard.md` y `docs/pilot-go-no-go.md`.
 
 - [Entrega de notificaciones](notification-delivery.md)

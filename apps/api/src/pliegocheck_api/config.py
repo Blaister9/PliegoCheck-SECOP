@@ -47,6 +47,13 @@ class Settings(BaseSettings):
         validation_alias="PLIEGOCHECK_CORS_ALLOWED_ORIGINS",
     )
     environment: str = Field(default="development", validation_alias="PLIEGOCHECK_ENVIRONMENT")
+    deployment_mode: str = Field(
+        default="development", validation_alias="PLIEGOCHECK_DEPLOYMENT_MODE"
+    )
+    trusted_hosts: list[str] = Field(
+        default_factory=lambda: ["localhost", "testserver"],
+        validation_alias="PLIEGOCHECK_TRUSTED_HOSTS",
+    )
     pilot_mode: bool = Field(default=False, validation_alias="PLIEGOCHECK_PILOT_MODE")
     auth_enabled: bool = Field(default=True, validation_alias="PLIEGOCHECK_AUTH_ENABLED")
     auth_cookie_name: str = Field(
@@ -430,6 +437,7 @@ class Settings(BaseSettings):
     )
 
     @field_validator(
+        "trusted_hosts",
         "secop_document_allowed_hosts",
         "secop_document_allowed_content_types",
         "smtp_allowed_recipient_domains",
@@ -473,6 +481,15 @@ class Settings(BaseSettings):
         normalized = value.lower()
         if normalized not in {"development", "test", "pilot"}:
             msg = "PLIEGOCHECK_ENVIRONMENT debe ser development, test o pilot"
+            raise ValueError(msg)
+        return normalized
+
+    @field_validator("deployment_mode")
+    @classmethod
+    def validate_deployment_mode(cls, value: str) -> str:
+        normalized = value.lower().strip()
+        if normalized not in {"development", "test", "pilot", "restricted"}:
+            msg = "PLIEGOCHECK_DEPLOYMENT_MODE no es valido"
             raise ValueError(msg)
         return normalized
 
@@ -541,6 +558,15 @@ class Settings(BaseSettings):
         if self.pilot_mode and not self.auth_enabled:
             msg = "PLIEGOCHECK_AUTH_ENABLED=false no esta permitido en piloto"
             raise ValueError(msg)
+        if self.deployment_mode == "restricted":
+            if not self.auth_enabled:
+                raise ValueError("PLIEGOCHECK_AUTH_ENABLED=false no esta permitido en restricted")
+            if not self.auth_cookie_secure:
+                raise ValueError("cookies Secure son obligatorias en restricted")
+            if not self.auth_secret_key:
+                raise ValueError("session secret es obligatorio en restricted")
+            if not self.trusted_hosts or "*" in self.trusted_hosts:
+                raise ValueError("trusted hosts explicitos son obligatorios en restricted")
 
     @property
     def max_file_size_bytes(self) -> int:
