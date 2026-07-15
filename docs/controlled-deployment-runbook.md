@@ -1,5 +1,9 @@
 # Runbook de despliegue controlado
 
+Microfase 21 reutiliza este entorno mediante `pnpm pilot:supervised:deploy`. `validate` es de solo lectura, `stop` conserva volúmenes, `reset` exige `-- --Confirm` y `report` escribe bajo `var/`. SECOP live requiere opt-in y límites del manifiesto.
+
+El worker de discovery se ejecuta con `pnpm pilot:supervised:opportunity-worker-once`. El controlador aplica el opt-in SECOP exclusivamente a ese proceso y fuerza descarga documental, entrega externa, SMTP y webhook apagados, con notificaciones en dry-run. No se debe sustituir por una suposición de herencia desde la API.
+
 Este runbook aplica a demo/piloto controlado. **Controlado/piloto no es
 produccion**.
 Este despliegue controlado es para validacion piloto con datos sinteticos. No es produccion.

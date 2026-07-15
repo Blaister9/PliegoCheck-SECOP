@@ -1,6 +1,6 @@
 # Roadmap incremental - PliegoCheck-SECOP
 
-Estado vigente: Microfases 16, 17, 18, 19 y 20 completadas.
+Estado vigente: Microfases 16, 17, 18, 19, 20 y 21 completadas.
 
 ```text
 Microfase 16 — completada
@@ -8,10 +8,10 @@ Microfase 17 — completada
 Microfase 18 — completada
 Microfase 19 — completada
 Microfase 20 — completada
-Microfase 21 — siguiente
+Microfase 21 — completada
 ```
 
-Siguiente: Microfase 21 — Piloto supervisado con usuarios reales y cierre de brechas operativas.
+Siguiente según gate: Microfase 22 — Preparación para despliegue institucional restringido, o remediación de hallazgos del piloto.
 
 Fases pequenas, cada una con entregable verificable. Cada microfase termina integrada en `main`
 mediante Pull Request, siguiendo [AGENTS.md](../AGENTS.md).
@@ -38,7 +38,7 @@ Microfase 17: completada - descarga controlada de documentos públicos y actuali
 Microfase 18: completada - bandeja priorizada de oportunidades compatibles
 Microfase 19: completada - monitoreo periódico y alertas de nuevas oportunidades
 Microfase 20: completada - entrega externa configurable de alertas y operación piloto sintético
-Microfase 21: siguiente - piloto supervisado con usuarios reales y cierre de brechas operativas
+Microfase 21: completada - piloto técnico supervisado y cierre de brechas operativas verificables
 ```
 
 ## Microfase 0 - Fundacion documental - completada

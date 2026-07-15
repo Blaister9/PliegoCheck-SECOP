@@ -1,0 +1,65 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "SupervisedPilotManifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "pilot_id",
+    "mode",
+    "timezone",
+    "allowed_sources",
+    "max_search_results",
+    "max_pages",
+    "max_imported_processes",
+    "max_document_downloads",
+    "max_monitors",
+    "max_alerts",
+    "external_delivery_mode",
+    "dry_run",
+    "retention",
+    "start_conditions",
+    "stop_conditions"
+  ],
+  "properties": {
+    "$schema": { "type": "string" },
+    "pilot_id": { "type": "string", "pattern": "^[a-z0-9-]+$" },
+    "mode": { "const": "SUPERVISED_TECHNICAL_PILOT" },
+    "timezone": { "const": "America/Bogota" },
+    "allowed_sources": {
+      "type": "array",
+      "items": { "enum": ["SECOP_I", "SECOP_II"] },
+      "minItems": 1,
+      "uniqueItems": true
+    },
+    "max_search_results": { "type": "integer", "minimum": 1, "maximum": 100 },
+    "max_pages": { "type": "integer", "minimum": 1, "maximum": 2 },
+    "max_imported_processes": { "type": "integer", "minimum": 0, "maximum": 3 },
+    "max_document_downloads": { "type": "integer", "minimum": 0, "maximum": 2 },
+    "max_monitors": { "type": "integer", "minimum": 0, "maximum": 2 },
+    "max_alerts": { "type": "integer", "minimum": 0, "maximum": 20 },
+    "external_delivery_mode": { "const": "LOCAL_OR_DRY_RUN" },
+    "dry_run": { "const": true },
+    "retention": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "alert_days",
+        "notification_payload_days",
+        "notification_attempt_days",
+        "pilot_reports_local_only"
+      ],
+      "properties": {
+        "alert_days": { "type": "integer", "minimum": 1 },
+        "notification_payload_days": { "type": "integer", "minimum": 1 },
+        "notification_attempt_days": { "type": "integer", "minimum": 1 },
+        "pilot_reports_local_only": { "const": true }
+      }
+    },
+    "start_conditions": {
+      "type": "array",
+      "items": { "type": "string" },
+      "contains": { "const": "PUBLISHED_SNAPSHOT_REQUIRED" }
+    },
+    "stop_conditions": { "type": "array", "items": { "type": "string" }, "minItems": 1 }
+  }
+}

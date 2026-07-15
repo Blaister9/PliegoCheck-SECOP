@@ -1,5 +1,7 @@
 # Alcance del MVP controlado
 
+Microfase 21 permite un piloto técnico supervisado con procesos públicos SECOP y perfil sintético o autorizado, dentro de límites conservadores. Los payloads/documentos live no se versionan y la validación humana sigue siendo evidencia separada. Esto no amplía el alcance a producción.
+
 - Entrega externa piloto opt-in por SMTP o webhook HMAC, con dry-run, allowlists y datos sintéticos; no producción ni envío masivo.
 
 El alcance controlado incluye alertas internas, digest en aplicación y entrega externa piloto opt-in. Excluye entrega productiva o masiva y automatización de presentación de ofertas. El monitoreo y cada canal externo deben habilitarse explícitamente por entorno.

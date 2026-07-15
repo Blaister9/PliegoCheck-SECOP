@@ -121,6 +121,15 @@ jobs:
       - name: Contratos sincronizados
         run: pnpm schemas:check
 
+      - name: Pruebas del piloto supervisado
+        run: pnpm pilot:supervised:test
+
+      - name: Eval del piloto supervisado
+        run: pnpm pilot:supervised:eval
+
+      - name: Data scan del piloto supervisado
+        run: pnpm pilot:supervised:data-scan
+
       - name: Pruebas del conector SECOP
         run: pnpm secop:test
 

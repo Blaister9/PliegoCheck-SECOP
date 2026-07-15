@@ -77,7 +77,9 @@ Wait-HttpOk "http://localhost:8000/health/ready" 60
 if (-not $SkipWeb) {
   $webLog = Join-Path $logDir "web.log"
   $webErr = Join-Path $logDir "web.err.log"
-  $webProcess = Start-Process -FilePath "pnpm" -ArgumentList @("--filter", "@pliegocheck/web", "dev", "--", "--hostname", "127.0.0.1", "--port", "3000") -WorkingDirectory $repoRoot -RedirectStandardOutput $webLog -RedirectStandardError $webErr -PassThru -WindowStyle Hidden
+  $pnpmExecutable = (Get-Command pnpm.cmd -ErrorAction SilentlyContinue).Source
+  if (-not $pnpmExecutable) { $pnpmExecutable = (Get-Command pnpm -ErrorAction Stop).Source }
+  $webProcess = Start-Process -FilePath $pnpmExecutable -ArgumentList @("--filter", "@pliegocheck/web", "dev", "--hostname", "127.0.0.1", "--port", "3000") -WorkingDirectory $repoRoot -RedirectStandardOutput $webLog -RedirectStandardError $webErr -PassThru -WindowStyle Hidden
   $webProcess.Id | Set-Content -LiteralPath (Join-Path $stateDir "web.pid") -Encoding ascii
   Wait-HttpOk "http://localhost:3000" 90
 }

@@ -1,5 +1,7 @@
 # Guia de desarrollo - PliegoCheck-SECOP
 
+Microfase 21 usa `pnpm pilot:supervised:deploy|validate|status|stop|reset|report`. Reset requiere `-- --Confirm`; report genera artefactos locales bajo `var/pilot-reports/`. Las regresiones offline son `pilot:supervised:test`, `pilot:supervised:eval` y `pilot:supervised:data-scan`; CI no consulta servicios externos.
+
 Para Microfase 20 use `pnpm notifications:test` y `pnpm notifications:eval`. Los comandos `notifications:*` operan outbox, digests y retención. Ningún envío real ocurre con los defaults: kill switch apagado y dry-run activo.
 
 Para Microfase 19 use `pnpm monitors:test` y `pnpm monitors:eval`. Con PostgreSQL disponible, `pnpm monitors:scheduler-run-once` reclama vencidos y `pnpm monitors:drain` consume runs. Las pruebas son offline y el scheduler está apagado por defecto.

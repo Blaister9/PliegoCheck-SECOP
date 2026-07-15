@@ -1,5 +1,7 @@
 # Indice de entrega del MVP controlado
 
+Extensión Microfase 21: `config/pilot/supervised-pilot-v1.json`, `pilot/supervised-delivery/`, `docs/pilot-readiness-assessment.md`, `docs/supervised-pilot-scorecard.md` y `docs/pilot-go-no-go.md`.
+
 - [Entrega de notificaciones](notification-delivery.md)
 - [Piloto de notificaciones](notification-pilot-runbook.md)
 - [Incidentes de notificaciones](notification-incident-runbook.md)
