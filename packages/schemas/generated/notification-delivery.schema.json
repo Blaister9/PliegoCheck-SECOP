@@ -1,0 +1,1139 @@
+{
+  "$defs": {
+    "NotificationAttemptStatus": {
+      "enum": ["DELIVERED", "RETRYABLE", "PERMANENT", "DRY_RUN"],
+      "type": "string"
+    },
+    "NotificationAttemptSummary": {
+      "properties": {
+        "attempt_number": {
+          "type": "integer"
+        },
+        "error_code": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "error_message_sanitized": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "finished_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "http_status": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "latency_ms": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "smtp_response_code": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "started_at": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "status": {
+          "$ref": "#/$defs/NotificationAttemptStatus"
+        }
+      },
+      "required": ["id", "attempt_number", "status", "started_at"],
+      "type": "object"
+    },
+    "NotificationChannel": {
+      "enum": ["INTERNAL_ONLY", "EMAIL_SMTP", "SIGNED_WEBHOOK"],
+      "type": "string"
+    },
+    "NotificationDeliveryDetail": {
+      "properties": {
+        "alert_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "attempt_count": {
+          "type": "integer"
+        },
+        "attempts": {
+          "items": {
+            "$ref": "#/$defs/NotificationAttemptSummary"
+          },
+          "type": "array"
+        },
+        "available_at": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "channel": {
+          "$ref": "#/$defs/NotificationChannel"
+        },
+        "created_at": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "delivered_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "delivery_mode": {
+          "$ref": "#/$defs/NotificationDeliveryMode"
+        },
+        "destination_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "disclaimer": {
+          "default": "Esta alerta señala una novedad o cambio relevante según la configuración de PliegoCheck. No constituye una recomendación automática de presentar oferta ni representa probabilidad de adjudicación.",
+          "type": "string"
+        },
+        "id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "last_error_code": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "masked_destination": {
+          "type": "string"
+        },
+        "payload_metadata": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "status": {
+          "$ref": "#/$defs/NotificationOutboxStatus"
+        },
+        "subject": {
+          "type": "string"
+        },
+        "template_version": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "alert_id",
+        "destination_id",
+        "channel",
+        "delivery_mode",
+        "status",
+        "masked_destination",
+        "attempt_count",
+        "available_at",
+        "created_at",
+        "subject",
+        "template_version",
+        "payload_metadata"
+      ],
+      "type": "object"
+    },
+    "NotificationDeliveryList": {
+      "properties": {
+        "items": {
+          "items": {
+            "$ref": "#/$defs/NotificationDeliverySummary"
+          },
+          "type": "array"
+        },
+        "limit": {
+          "type": "integer"
+        },
+        "offset": {
+          "type": "integer"
+        },
+        "total": {
+          "type": "integer"
+        }
+      },
+      "required": ["items", "total", "limit", "offset"],
+      "type": "object"
+    },
+    "NotificationDeliveryMode": {
+      "enum": ["IMMEDIATE", "DAILY_DIGEST", "WEEKLY_DIGEST", "INTERNAL_ONLY"],
+      "type": "string"
+    },
+    "NotificationDeliverySummary": {
+      "properties": {
+        "alert_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "attempt_count": {
+          "type": "integer"
+        },
+        "available_at": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "channel": {
+          "$ref": "#/$defs/NotificationChannel"
+        },
+        "created_at": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "delivered_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "delivery_mode": {
+          "$ref": "#/$defs/NotificationDeliveryMode"
+        },
+        "destination_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "last_error_code": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "masked_destination": {
+          "type": "string"
+        },
+        "status": {
+          "$ref": "#/$defs/NotificationOutboxStatus"
+        }
+      },
+      "required": [
+        "id",
+        "alert_id",
+        "destination_id",
+        "channel",
+        "delivery_mode",
+        "status",
+        "masked_destination",
+        "attempt_count",
+        "available_at",
+        "created_at"
+      ],
+      "type": "object"
+    },
+    "NotificationDestinationCreateRequest": {
+      "additionalProperties": false,
+      "properties": {
+        "channel": {
+          "$ref": "#/$defs/NotificationChannel"
+        },
+        "configuration": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "email_address": {
+          "anyOf": [
+            {
+              "maxLength": 320,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "name": {
+          "maxLength": 200,
+          "minLength": 1,
+          "type": "string"
+        },
+        "secret_reference": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Z][A-Z0-9_]{2,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "maxLength": 2083,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": ["channel", "name"],
+      "type": "object"
+    },
+    "NotificationDestinationDetail": {
+      "additionalProperties": false,
+      "properties": {
+        "channel": {
+          "$ref": "#/$defs/NotificationChannel"
+        },
+        "configuration": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "created_at": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "last_test_status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "last_tested_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "masked_destination": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "owner_actor_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "secret_configured": {
+          "default": false,
+          "type": "boolean"
+        },
+        "status": {
+          "$ref": "#/$defs/NotificationDestinationStatus"
+        },
+        "updated_at": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "verified_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "id",
+        "owner_actor_id",
+        "channel",
+        "name",
+        "status",
+        "masked_destination",
+        "created_at",
+        "updated_at"
+      ],
+      "type": "object"
+    },
+    "NotificationDestinationList": {
+      "properties": {
+        "items": {
+          "items": {
+            "$ref": "#/$defs/NotificationDestinationSummary"
+          },
+          "type": "array"
+        },
+        "total": {
+          "type": "integer"
+        }
+      },
+      "required": ["items", "total"],
+      "type": "object"
+    },
+    "NotificationDestinationStatus": {
+      "enum": ["ACTIVE", "PAUSED", "DISABLED", "ERROR", "PENDING_VERIFICATION"],
+      "type": "string"
+    },
+    "NotificationDestinationSummary": {
+      "additionalProperties": false,
+      "properties": {
+        "channel": {
+          "$ref": "#/$defs/NotificationChannel"
+        },
+        "created_at": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "last_test_status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "last_tested_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "masked_destination": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "owner_actor_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "status": {
+          "$ref": "#/$defs/NotificationDestinationStatus"
+        },
+        "updated_at": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "verified_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "id",
+        "owner_actor_id",
+        "channel",
+        "name",
+        "status",
+        "masked_destination",
+        "created_at",
+        "updated_at"
+      ],
+      "type": "object"
+    },
+    "NotificationDigestPeriod": {
+      "enum": ["DAILY", "WEEKLY"],
+      "type": "string"
+    },
+    "NotificationDigestSummary": {
+      "properties": {
+        "alert_count": {
+          "type": "integer"
+        },
+        "destination_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "outbox_message_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "period": {
+          "$ref": "#/$defs/NotificationDigestPeriod"
+        },
+        "period_end": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "period_start": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "destination_id",
+        "period",
+        "period_start",
+        "period_end",
+        "status",
+        "alert_count"
+      ],
+      "type": "object"
+    },
+    "NotificationOperationResponse": {
+      "properties": {
+        "delivery_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "status": {
+          "$ref": "#/$defs/NotificationOutboxStatus"
+        }
+      },
+      "required": ["delivery_id", "status"],
+      "type": "object"
+    },
+    "NotificationOutboxStatus": {
+      "enum": [
+        "PENDING",
+        "PROCESSING",
+        "DELIVERED",
+        "FAILED_RETRYABLE",
+        "FAILED_PERMANENT",
+        "CANCELLED",
+        "SUPPRESSED",
+        "DRY_RUN"
+      ],
+      "type": "string"
+    },
+    "NotificationQuietHours": {
+      "additionalProperties": false,
+      "properties": {
+        "critical_bypass": {
+          "default": true,
+          "type": "boolean"
+        },
+        "end": {
+          "pattern": "^([01]\\d|2[0-3]):[0-5]\\d$",
+          "type": "string"
+        },
+        "start": {
+          "pattern": "^([01]\\d|2[0-3]):[0-5]\\d$",
+          "type": "string"
+        }
+      },
+      "required": ["start", "end"],
+      "type": "object"
+    },
+    "NotificationReadiness": {
+      "properties": {
+        "delivered_last_24h": {
+          "default": 0,
+          "type": "integer"
+        },
+        "digest_last_run": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "dry_run": {
+          "type": "boolean"
+        },
+        "email_enabled": {
+          "type": "boolean"
+        },
+        "external_delivery_enabled": {
+          "type": "boolean"
+        },
+        "oldest_pending_age_seconds": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "pending_count": {
+          "default": 0,
+          "type": "integer"
+        },
+        "permanent_failure_count": {
+          "default": 0,
+          "type": "integer"
+        },
+        "processing_count": {
+          "default": 0,
+          "type": "integer"
+        },
+        "reasons": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "retention_last_run": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "retryable_count": {
+          "default": 0,
+          "type": "integer"
+        },
+        "suppressed_last_24h": {
+          "default": 0,
+          "type": "integer"
+        },
+        "webhook_enabled": {
+          "type": "boolean"
+        },
+        "worker_last_seen": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": ["external_delivery_enabled", "dry_run", "email_enabled", "webhook_enabled"],
+      "type": "object"
+    },
+    "NotificationRetentionResponse": {
+      "properties": {
+        "attempts_deleted": {
+          "type": "integer"
+        },
+        "dry_run": {
+          "type": "boolean"
+        },
+        "payloads_cleared": {
+          "type": "integer"
+        }
+      },
+      "required": ["dry_run", "payloads_cleared", "attempts_deleted"],
+      "type": "object"
+    },
+    "NotificationStatistics": {
+      "properties": {
+        "by_channel": {
+          "additionalProperties": {
+            "type": "integer"
+          },
+          "type": "object"
+        },
+        "by_status": {
+          "additionalProperties": {
+            "type": "integer"
+          },
+          "type": "object"
+        },
+        "generated_at": {
+          "format": "date-time",
+          "type": "string"
+        }
+      },
+      "required": ["by_status", "by_channel", "generated_at"],
+      "type": "object"
+    },
+    "NotificationSubscriptionCreateRequest": {
+      "additionalProperties": false,
+      "properties": {
+        "alert_types": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 100,
+          "type": "array"
+        },
+        "daily_digest_time": {
+          "default": "08:00",
+          "pattern": "^([01]\\d|2[0-3]):[0-5]\\d$",
+          "type": "string"
+        },
+        "delivery_mode": {
+          "$ref": "#/$defs/NotificationDeliveryMode",
+          "default": "IMMEDIATE"
+        },
+        "destination_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "include_opportunity_link": {
+          "default": true,
+          "type": "boolean"
+        },
+        "include_summary": {
+          "default": true,
+          "type": "boolean"
+        },
+        "minimum_severity": {
+          "default": "INFO",
+          "pattern": "^(INFO|LOW|MEDIUM|HIGH|CRITICAL)$",
+          "type": "string"
+        },
+        "monitor_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "quiet_hours": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/NotificationQuietHours"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "timezone": {
+          "default": "America/Bogota",
+          "maxLength": 64,
+          "minLength": 1,
+          "type": "string"
+        },
+        "weekly_digest_day": {
+          "default": 0,
+          "maximum": 6,
+          "minimum": 0,
+          "type": "integer"
+        }
+      },
+      "required": ["destination_id"],
+      "type": "object"
+    },
+    "NotificationSubscriptionDetail": {
+      "additionalProperties": false,
+      "properties": {
+        "alert_types": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "created_at": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "daily_digest_time": {
+          "type": "string"
+        },
+        "delivery_mode": {
+          "$ref": "#/$defs/NotificationDeliveryMode"
+        },
+        "destination_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "enabled": {
+          "type": "boolean"
+        },
+        "id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "include_opportunity_link": {
+          "type": "boolean"
+        },
+        "include_summary": {
+          "type": "boolean"
+        },
+        "minimum_severity": {
+          "type": "string"
+        },
+        "monitor_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "owner_actor_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "quiet_hours": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/NotificationQuietHours"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "timezone": {
+          "type": "string"
+        },
+        "updated_at": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "weekly_digest_day": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id",
+        "owner_actor_id",
+        "destination_id",
+        "monitor_id",
+        "enabled",
+        "delivery_mode",
+        "minimum_severity",
+        "alert_types",
+        "timezone",
+        "created_at",
+        "updated_at",
+        "daily_digest_time",
+        "weekly_digest_day",
+        "include_summary",
+        "include_opportunity_link"
+      ],
+      "type": "object"
+    },
+    "NotificationSubscriptionList": {
+      "properties": {
+        "items": {
+          "items": {
+            "$ref": "#/$defs/NotificationSubscriptionSummary"
+          },
+          "type": "array"
+        },
+        "total": {
+          "type": "integer"
+        }
+      },
+      "required": ["items", "total"],
+      "type": "object"
+    },
+    "NotificationSubscriptionSummary": {
+      "additionalProperties": false,
+      "properties": {
+        "alert_types": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "created_at": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "delivery_mode": {
+          "$ref": "#/$defs/NotificationDeliveryMode"
+        },
+        "destination_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "enabled": {
+          "type": "boolean"
+        },
+        "id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "minimum_severity": {
+          "type": "string"
+        },
+        "monitor_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "owner_actor_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "timezone": {
+          "type": "string"
+        },
+        "updated_at": {
+          "format": "date-time",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "owner_actor_id",
+        "destination_id",
+        "monitor_id",
+        "enabled",
+        "delivery_mode",
+        "minimum_severity",
+        "alert_types",
+        "timezone",
+        "created_at",
+        "updated_at"
+      ],
+      "type": "object"
+    },
+    "NotificationTestResponse": {
+      "properties": {
+        "delivery_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "status": {
+          "$ref": "#/$defs/NotificationOutboxStatus"
+        }
+      },
+      "required": ["delivery_id", "status"],
+      "type": "object"
+    }
+  },
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "properties": {
+    "delivery_detail": {
+      "$ref": "#/$defs/NotificationDeliveryDetail"
+    },
+    "delivery_list": {
+      "$ref": "#/$defs/NotificationDeliveryList"
+    },
+    "destination_create": {
+      "$ref": "#/$defs/NotificationDestinationCreateRequest"
+    },
+    "destination_detail": {
+      "$ref": "#/$defs/NotificationDestinationDetail"
+    },
+    "destination_list": {
+      "$ref": "#/$defs/NotificationDestinationList"
+    },
+    "digest": {
+      "$ref": "#/$defs/NotificationDigestSummary"
+    },
+    "operation": {
+      "$ref": "#/$defs/NotificationOperationResponse"
+    },
+    "readiness": {
+      "$ref": "#/$defs/NotificationReadiness"
+    },
+    "retention": {
+      "$ref": "#/$defs/NotificationRetentionResponse"
+    },
+    "statistics": {
+      "$ref": "#/$defs/NotificationStatistics"
+    },
+    "subscription_create": {
+      "$ref": "#/$defs/NotificationSubscriptionCreateRequest"
+    },
+    "subscription_detail": {
+      "$ref": "#/$defs/NotificationSubscriptionDetail"
+    },
+    "subscription_list": {
+      "$ref": "#/$defs/NotificationSubscriptionList"
+    },
+    "test_response": {
+      "$ref": "#/$defs/NotificationTestResponse"
+    }
+  },
+  "required": [
+    "destination_create",
+    "destination_detail",
+    "destination_list",
+    "subscription_create",
+    "subscription_detail",
+    "subscription_list",
+    "test_response",
+    "delivery_detail",
+    "delivery_list",
+    "operation",
+    "digest",
+    "readiness",
+    "statistics",
+    "retention"
+  ],
+  "type": "object"
+}

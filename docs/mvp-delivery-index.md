@@ -1,5 +1,9 @@
 # Indice de entrega del MVP controlado
 
+- [Entrega de notificaciones](notification-delivery.md)
+- [Piloto de notificaciones](notification-pilot-runbook.md)
+- [Incidentes de notificaciones](notification-incident-runbook.md)
+
 Microfase 19: [monitores](opportunity-monitors.md), [alertas](opportunity-alerts.md), [scheduler](opportunity-monitor-scheduling.md), [deduplicación](opportunity-alert-deduplication.md) y [operación](opportunity-monitor-operations.md).
 
 ## Extension SECOP

@@ -24,6 +24,7 @@ from pliegocheck_api.models import (
     OpportunityMonitorCandidateState,
     OpportunityMonitorRun,
 )
+from pliegocheck_api.notification_delivery.service import enqueue_for_alert
 from pliegocheck_api.opportunities.policy import canonical_hash, load_policy
 from pliegocheck_api.opportunities.service import enqueue_discovery, process_discovery_run
 from pliegocheck_schemas import (
@@ -314,6 +315,7 @@ def process_next_monitor_run(
                 session,
                 monitor,
                 row,
+                settings,
                 "MONITOR_FAILURE",
                 "CRITICAL",
                 "Monitor con fallos repetidos",
@@ -469,6 +471,7 @@ def _process(
                 )
                 session.add(alert)
                 session.flush()
+                enqueue_for_alert(session, alert, settings)
                 alert_count += 1
                 state.last_alerted_at = now
                 session.add(
@@ -509,6 +512,7 @@ def _process(
             session,
             monitor,
             run,
+            settings,
             "MONITOR_RECOVERED",
             "INFO",
             "Monitor recuperado",
@@ -632,7 +636,7 @@ def _snapshot_from_state(state) -> CandidateSnapshot:
     )
 
 
-def _system_alert(session, monitor, run, kind, severity, title, summary, identity):
+def _system_alert(session, monitor, run, settings, kind, severity, title, summary, identity):
     fingerprint = canonical_hash(
         {
             "monitor": str(monitor.id),
@@ -668,6 +672,7 @@ def _system_alert(session, monitor, run, kind, severity, title, summary, identit
     )
     session.add(alert)
     session.flush()
+    enqueue_for_alert(session, alert, settings)
     session.add(
         OpportunityAlertEvent(
             id=uuid4(), alert_id=alert.id, event_type="CREATED", event_metadata={}

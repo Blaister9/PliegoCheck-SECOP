@@ -1,6 +1,17 @@
 # Roadmap incremental - PliegoCheck-SECOP
 
-Estado actual: Microfases 16, 17, 18 y 19 completadas. Microfase 20 es la siguiente: entrega externa configurable de alertas y operación piloto; no forma parte de esta entrega.
+Estado vigente: Microfases 16, 17, 18, 19 y 20 completadas.
+
+```text
+Microfase 16 — completada
+Microfase 17 — completada
+Microfase 18 — completada
+Microfase 19 — completada
+Microfase 20 — completada
+Microfase 21 — siguiente
+```
+
+Siguiente: Microfase 21 — Piloto supervisado con usuarios reales y cierre de brechas operativas.
 
 Fases pequenas, cada una con entregable verificable. Cada microfase termina integrada en `main`
 mediante Pull Request, siguiendo [AGENTS.md](../AGENTS.md).
@@ -25,7 +36,9 @@ Microfase 15: pendiente de decisión humana - evolución a piloto real o pausa t
 Microfase 16: completada - conector SECOP de búsqueda e importación
 Microfase 17: completada - descarga controlada de documentos públicos y actualización incremental
 Microfase 18: completada - bandeja priorizada de oportunidades compatibles
-Microfase 19: siguiente - monitoreo periódico y alertas de nuevas oportunidades
+Microfase 19: completada - monitoreo periódico y alertas de nuevas oportunidades
+Microfase 20: completada - entrega externa configurable de alertas y operación piloto sintético
+Microfase 21: siguiente - piloto supervisado con usuarios reales y cierre de brechas operativas
 ```
 
 ## Microfase 0 - Fundacion documental - completada
@@ -205,7 +218,7 @@ Inventario incremental SECOP I/II, snapshots, eventos, cola PostgreSQL, descarga
 
 Discovery SECOP, screening determinístico contra snapshot publicado, política versionada, doce componentes explicables, outcomes conservadores, histórico, revisiones, worker PostgreSQL, API, permisos, auditoría y UI `/opportunities`. Compatibilidad, urgencia y completitud permanecen separadas. No incorpora ML, monitoreo periódico, alertas ni presentación de ofertas.
 
-Siguiente: Microfase 19 — Monitoreo periódico y alertas de nuevas oportunidades.
+Siguiente: Microfase 21 — Piloto supervisado con usuarios reales y cierre de brechas operativas.
 
 ## Despues del MVP
 

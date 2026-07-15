@@ -47,6 +47,10 @@ const CONTRACTS = [
     output: "opportunity-monitoring.ts",
   },
   {
+    schema: "notification-delivery.schema.json",
+    output: "notification-delivery.ts",
+  },
+  {
     schema: "document-extraction.schema.json",
     output: "document-extraction.ts",
   },

@@ -128,7 +128,12 @@
         "monitor:write",
         "monitor:run",
         "alert:read",
-        "alert:manage"
+        "alert:manage",
+        "notification:read",
+        "notification:manage-own",
+        "notification:test",
+        "notification:operate",
+        "notification:admin"
       ],
       "type": "string"
     },
@@ -518,7 +523,25 @@
         "OPPORTUNITY_ALERT_CREATED",
         "OPPORTUNITY_ALERT_READ",
         "OPPORTUNITY_ALERT_ARCHIVED",
-        "OPPORTUNITY_ALERT_RESOLVED"
+        "OPPORTUNITY_ALERT_RESOLVED",
+        "NOTIFICATION_DESTINATION_CREATED",
+        "NOTIFICATION_DESTINATION_UPDATED",
+        "NOTIFICATION_DESTINATION_PAUSED",
+        "NOTIFICATION_DESTINATION_RESUMED",
+        "NOTIFICATION_TEST_REQUESTED",
+        "NOTIFICATION_SUBSCRIPTION_CREATED",
+        "NOTIFICATION_SUBSCRIPTION_UPDATED",
+        "NOTIFICATION_SUBSCRIPTION_PAUSED",
+        "NOTIFICATION_SUBSCRIPTION_RESUMED",
+        "NOTIFICATION_OUTBOX_CREATED",
+        "NOTIFICATION_DELIVERED",
+        "NOTIFICATION_RETRY_SCHEDULED",
+        "NOTIFICATION_FAILED_PERMANENT",
+        "NOTIFICATION_CANCELLED",
+        "NOTIFICATION_SUPPRESSED",
+        "NOTIFICATION_RETRIED_MANUALLY",
+        "NOTIFICATION_DIGEST_CREATED",
+        "NOTIFICATION_RETENTION_EXECUTED"
       ],
       "type": "string"
     },

@@ -1,5 +1,7 @@
 # Operación de monitores
 
+La entrega externa de Microfase 20 es opt-in y se opera por separado; no añade SMS, WhatsApp, push, Slack ni Teams específico y no garantiza lectura.
+
 La capacidad está deshabilitada por defecto con `PLIEGOCHECK_MONITORING_ENABLED=false`. Operación acotada:
 
 ```text

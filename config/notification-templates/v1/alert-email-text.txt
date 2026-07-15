@@ -1,0 +1,18 @@
+{title}
+Severidad: {severity}
+Tipo: {alert_type}
+{summary}
+Entidad: {entity_name}
+Proceso: {process_title}
+Outcome: {outcome}
+Compatibilidad: {compatibility_score}
+Urgencia: {urgency_status}
+Cierre: {closing_date}
+Razón: {reason_code}
+Monitor: {monitor_name}
+{opportunity_link}
+SECOP: {secop_link}
+
+{disclaimer}
+Entrega: {delivery_id}
+Administre sus preferencias en PliegoCheck.

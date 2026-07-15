@@ -72,6 +72,8 @@ def _relative(path: Path) -> str:
 def _is_allowed(rel: str, marker: str, line: str) -> bool:
     if rel == "evals/controlled-deployment/test_controlled_data_scan.py":
         return True
+    if rel == "evals/notification-delivery/test_notification_delivery_evals.py":
+        return True
     if rel.startswith("evals/") and (
         "not in" in line
         or "assert all" in line

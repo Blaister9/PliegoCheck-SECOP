@@ -41,6 +41,9 @@ export function AuthBar() {
       <Link href="/opportunities">Oportunidades</Link>
       <Link href="/monitors">Monitores</Link>
       <Link href="/alerts">Alertas{unread ? ` (${unread})` : ""}</Link>
+      <Link href="/settings/notifications">Notificaciones</Link>
+      <Link href="/notification-deliveries">Entregas</Link>
+      {isAdmin ? <Link href="/operations/notifications">Operación</Link> : null}
       <button type="button" onClick={doLogout}>
         Cerrar sesion
       </button>

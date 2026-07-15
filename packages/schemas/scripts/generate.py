@@ -155,6 +155,17 @@ from pliegocheck_schemas.normalized_requirement import (
     RequirementScope,
     RequirementSubsanability,
 )
+from pliegocheck_schemas.notification_delivery import (
+    NOTIFICATION_DELIVERY_SCHEMA_VERSION,
+    NotificationAttemptStatus,
+    NotificationChannel,
+    NotificationContracts,
+    NotificationDeliveryMode,
+    NotificationDestinationStatus,
+    NotificationDigestPeriod,
+    NotificationOperationAction,
+    NotificationOutboxStatus,
+)
 from pliegocheck_schemas.opportunities import (
     OPPORTUNITIES_SCHEMA_VERSION,
     OpportunityAnalysisLevel,
@@ -365,6 +376,48 @@ def generate_opportunity_monitoring_enums_ts() -> None:
         ),
     ]
     write_text(GENERATED_DIR / "opportunity-monitoring.enums.ts", "\n".join(blocks))
+
+
+def generate_notification_delivery_enums_ts() -> None:
+    blocks = [
+        TS_HEADER,
+        "export const NOTIFICATION_DELIVERY_SCHEMA_VERSION = "
+        f'"{NOTIFICATION_DELIVERY_SCHEMA_VERSION}";\n',
+        ts_const_block(
+            "NOTIFICATION_CHANNEL_VALUES", "NotificationChannelValue", NotificationChannel
+        ),
+        ts_const_block(
+            "NOTIFICATION_DESTINATION_STATUS_VALUES",
+            "NotificationDestinationStatusValue",
+            NotificationDestinationStatus,
+        ),
+        ts_const_block(
+            "NOTIFICATION_DELIVERY_MODE_VALUES",
+            "NotificationDeliveryModeValue",
+            NotificationDeliveryMode,
+        ),
+        ts_const_block(
+            "NOTIFICATION_OUTBOX_STATUS_VALUES",
+            "NotificationOutboxStatusValue",
+            NotificationOutboxStatus,
+        ),
+        ts_const_block(
+            "NOTIFICATION_ATTEMPT_STATUS_VALUES",
+            "NotificationAttemptStatusValue",
+            NotificationAttemptStatus,
+        ),
+        ts_const_block(
+            "NOTIFICATION_DIGEST_PERIOD_VALUES",
+            "NotificationDigestPeriodValue",
+            NotificationDigestPeriod,
+        ),
+        ts_const_block(
+            "NOTIFICATION_OPERATION_ACTION_VALUES",
+            "NotificationOperationActionValue",
+            NotificationOperationAction,
+        ),
+    ]
+    write_text(GENERATED_DIR / "notification-delivery.enums.ts", "\n".join(blocks))
 
 
 def ts_const_block(const_name: str, type_name: str, enum_cls: type[StrEnum]) -> str:
@@ -896,6 +949,7 @@ def main() -> int:
         generate_json_schema(ExternalDocumentsContracts, "external-documents.schema.json")
         generate_json_schema(OpportunityContracts, "opportunities.schema.json")
         generate_json_schema(OpportunityMonitoringContracts, "opportunity-monitoring.schema.json")
+        generate_json_schema(NotificationContracts, "notification-delivery.schema.json")
         generate_json_schema(DocumentExtractionContracts, "document-extraction.schema.json")
         generate_json_schema(DecisionContracts, "decision.schema.json")
         generate_json_schema(DecisionReportContracts, "decision-report.schema.json")
@@ -915,6 +969,7 @@ def main() -> int:
         generate_external_documents_enums_ts()
         generate_opportunities_enums_ts()
         generate_opportunity_monitoring_enums_ts()
+        generate_notification_delivery_enums_ts()
         generate_document_extraction_enums_ts()
     except Exception as exc:  # el fallo debe ser visible y con codigo distinto de cero
         print(f"ERROR generando contratos: {exc}", file=sys.stderr)

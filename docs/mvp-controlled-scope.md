@@ -1,6 +1,8 @@
 # Alcance del MVP controlado
 
-El alcance controlado incluye alertas internas y digest en aplicación. Excluye entrega externa y automatización de presentación de ofertas. El monitoreo debe habilitarse explícitamente por entorno.
+- Entrega externa piloto opt-in por SMTP o webhook HMAC, con dry-run, allowlists y datos sintéticos; no producción ni envío masivo.
+
+El alcance controlado incluye alertas internas, digest en aplicación y entrega externa piloto opt-in. Excluye entrega productiva o masiva y automatización de presentación de ofertas. El monitoreo y cada canal externo deben habilitarse explícitamente por entorno.
 
 ## Incluido
 
@@ -26,8 +28,8 @@ El alcance controlado incluye alertas internas y digest en aplicación. Excluye 
 - La extensión de Microfase 16 permite búsqueda e importación pública SECOP, pero no descarga
   documental, actualización incremental, login, ofertas ni trámites. No cambia el estatus de no
   producción del MVP controlado.
-- OCR, firma digital, notificaciones y correo.
-- Monitoreo programado, alertas y presentación de ofertas.
+- OCR, firma digital y canales distintos de SMTP o webhook HMAC.
+- Presentación de ofertas.
 - S3 obligatorio u otro almacenamiento productivo.
 - Garantias juridicas, comerciales o de cumplimiento normativo.
 

@@ -1,5 +1,7 @@
 # PliegoCheck-SECOP
 
+Microfase 20 agrega entrega externa controlada de alertas mediante outbox PostgreSQL, correo SMTP y webhook HTTPS firmado, deshabilitados por defecto y con dry-run activo. Consulte [entrega de notificaciones](docs/notification-delivery.md), [runbook de piloto](docs/notification-pilot-runbook.md) y [ADR-020](docs/ADR-020-external-alert-delivery.md).
+
 Microfase 19 añade monitores SECOP periódicos, baseline incremental y alertas internas deduplicadas en `/monitors` y `/alerts`. La programación usa PostgreSQL y permanece deshabilitada por defecto; consulte [operación de monitores](docs/opportunity-monitor-operations.md) y [ADR-019](docs/ADR-019-opportunity-monitoring-alerts.md).
 
 Plataforma multiagente de análisis **GO / NO GO** para procesos de contratación pública publicados en **SECOP II** (Colombia).

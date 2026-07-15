@@ -1,5 +1,7 @@
 # Seguridad y gobernanza — PliegoCheck-SECOP
 
+Microfase 20 mantiene entrega externa apagada por defecto. SMTP valida headers/dominios y exige TLS fuera de Mailpit local. Webhooks requieren HTTPS, allowlist, DNS/IP pública, cero redirects y HMAC; PostgreSQL solo conserva `secret_reference`. Payloads minimizan datos y la retención limpia contenido antes que metadatos. Un fallo externo nunca altera `OpportunityAlert`.
+
 Los monitores requieren `monitor:read/write/run`; las alertas, `alert:read/manage`. Analyst administra ambos, Reviewer lee monitores y administra alertas, Viewer solo lee. Backend aplica permisos. Filtros, errores y auditoría excluyen secretos y payloads SECOP completos.
 
 Controles de seguridad, aislamiento y gobernanza de decisiones que la plataforma debe cumplir desde su primera implementación. Este documento define política; los mecanismos concretos se implementarán en las microfases del [roadmap](roadmap.md).

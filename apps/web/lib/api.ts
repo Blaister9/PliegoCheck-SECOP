@@ -99,6 +99,18 @@ import type {
   OpportunityMonitorDetail,
   OpportunityMonitorList,
   OpportunityMonitorManualRunResponse,
+  NotificationDeliveryDetail,
+  NotificationDeliveryList,
+  NotificationDestinationCreateRequest,
+  NotificationDestinationDetail,
+  NotificationDestinationList,
+  NotificationReadiness,
+  NotificationRetentionResponse,
+  NotificationStatistics,
+  NotificationSubscriptionCreateRequest,
+  NotificationSubscriptionDetail,
+  NotificationSubscriptionList,
+  NotificationTestResponse,
   ProcessInventory,
   ProcessCreate,
   ProcessDetail,
@@ -892,6 +904,62 @@ export function actOnAlert(id: string, payload: OpportunityAlertActionRequest) {
   return request<OpportunityAlertActionResponse>(`/opportunity-alerts/${id}/actions`, {
     method: "POST",
     body: JSON.stringify(payload),
+  });
+}
+
+export function notificationReadiness() {
+  return request<NotificationReadiness>("/notification-delivery/readiness");
+}
+export function notificationStatistics() {
+  return request<NotificationStatistics>("/notification-delivery/statistics");
+}
+export function listNotificationDestinations() {
+  return request<NotificationDestinationList>("/notification-destinations");
+}
+export function createNotificationDestination(payload: NotificationDestinationCreateRequest) {
+  return request<NotificationDestinationDetail>("/notification-destinations", {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
+}
+export function setNotificationDestination(id: string, action: "pause" | "resume") {
+  return request<NotificationDestinationDetail>(`/notification-destinations/${id}/${action}`, {
+    method: "POST",
+    body: JSON.stringify({}),
+  });
+}
+export function testNotificationDestination(id: string) {
+  return request<NotificationTestResponse>(`/notification-destinations/${id}/test`, {
+    method: "POST",
+    body: JSON.stringify({ message: "Prueba controlada desde preferencias" }),
+  });
+}
+export function listNotificationSubscriptions() {
+  return request<NotificationSubscriptionList>("/notification-subscriptions");
+}
+export function createNotificationSubscription(payload: NotificationSubscriptionCreateRequest) {
+  return request<NotificationSubscriptionDetail>("/notification-subscriptions", {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
+}
+export function listNotificationDeliveries(status?: string) {
+  const query = status ? `?status=${encodeURIComponent(status)}` : "";
+  return request<NotificationDeliveryList>(`/notification-deliveries${query}`);
+}
+export function getNotificationDelivery(id: string) {
+  return request<NotificationDeliveryDetail>(`/notification-deliveries/${id}`);
+}
+export function operateNotificationDelivery(id: string, action: "retry" | "cancel") {
+  return request<{ delivery_id: string; status: string }>(
+    `/notification-deliveries/${id}/${action}`,
+    { method: "POST", body: JSON.stringify({}) },
+  );
+}
+export function runNotificationRetention(dryRun = true) {
+  return request<NotificationRetentionResponse>("/notification-retention/run", {
+    method: "POST",
+    body: JSON.stringify({ dry_run: dryRun, batch_size: 500 }),
   });
 }
 
